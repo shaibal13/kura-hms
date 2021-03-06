@@ -98,6 +98,14 @@
                                             }
                                             ?>' placeholder="">
                                         </div>
+                                         <div class="form-group col-md-4">
+                                            <label for="exampleInputEmail1"> <?php echo lang('alpha_code'); ?></label>
+                                            <input type="text" class="form-control" name="alpha_code" id="exampleInputEmail1" value='<?php
+                                            if (!empty($medicine->alpha_code)) {
+                                                echo $medicine->alpha_code;
+                                            }
+                                            ?>' placeholder="">
+                                        </div>
                                         <div class="form-group col-md-4">
                                             <label for="exampleInputEmail1"> <?php echo lang('expiry_date'); ?></label>
                                             <input type="text" class="form-control default-date-picker" name="e_date" id="exampleInputEmail1" value='<?php

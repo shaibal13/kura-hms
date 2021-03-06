@@ -127,6 +127,7 @@ class Medicine extends MX_Controller {
         $company = $this->input->post('company');
         $effects = $this->input->post('effects');
         $e_date = $this->input->post('e_date');
+        $alpha_code = $this->input->post('alpha_code');
         if ((empty($id))) {
             $add_date = date('m/d/y');
         } else {
@@ -155,7 +156,8 @@ class Medicine extends MX_Controller {
         $this->form_validation->set_rules('effects', 'Effects', 'trim|min_length[2]|max_length[100]|xss_clean');
         // Validating Expire Date Field
         $this->form_validation->set_rules('e_date', 'Expire Date', 'trim|required|min_length[1]|max_length[100]|xss_clean');
-
+//alpha Code
+        $this->form_validation->set_rules('alpha_code', 'Alpha Code', 'trim|min_length[1]|max_length[100]|xss_clean');
 
         if ($this->form_validation->run() == FALSE) {
             $data = array();
@@ -177,6 +179,7 @@ class Medicine extends MX_Controller {
                 'effects' => $effects,
                 'add_date' => $add_date,
                 'e_date' => $e_date,
+                'alpha_code' => $alpha_code
             );
             if (empty($id)) {
                 $this->medicine_model->insertMedicine($data);
@@ -295,7 +298,7 @@ class Medicine extends MX_Controller {
         $id = $this->input->get('id');
         $this->medicine_model->deleteMedicineCategory($id);
         $this->session->set_flashdata('feedback', lang('deleted'));
-        redirect('medicine/medicineCategory'); 
+        redirect('medicine/medicineCategory');
     }
 
     function getMedicineList() {

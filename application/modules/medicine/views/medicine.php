@@ -141,6 +141,10 @@
                         <label for="exampleInputEmail1"> <?php echo lang('store_box'); ?></label>
                         <input type="text" class="form-control" name="box" id="exampleInputEmail1" value='' placeholder="">
                     </div>
+                     <div class="form-group col-md-5"> 
+                        <label for="exampleInputEmail1"> <?php echo lang('alpha_code'); ?></label>
+                        <input type="text" class="form-control" name="alpha_code" id="exampleInputEmail1" value='' placeholder="">
+                    </div>
                     <div class="form-group col-md-3">
                         <label for="exampleInputEmail1"> <?php echo lang('expiry_date'); ?></label>
                         <input type="text" class="form-control default-date-picker" name="e_date" id="exampleInputEmail1" value='' placeholder="" readonly="">
@@ -218,6 +222,10 @@
                     <div class="form-group col-md-4"> 
                         <label for="exampleInputEmail1"> <?php echo lang('store_box'); ?></label>
                         <input type="text" class="form-control" name="box" id="exampleInputEmail1" value='' placeholder="">
+                    </div>
+                     <div class="form-group col-md-5"> 
+                        <label for="exampleInputEmail1"> <?php echo lang('alpha_code'); ?></label>
+                        <input type="text" class="form-control" name="alpha_code" id="exampleInputEmail1" value='' placeholder="">
                     </div>
                     <div class="form-group col-md-3">
                         <label for="exampleInputEmail1"> <?php echo lang('expiry_date'); ?></label>
@@ -311,6 +319,7 @@
                 $('#editMedicineForm').find('[name="company"]').val(response.medicine.company).end()
                 $('#editMedicineForm').find('[name="effects"]').val(response.medicine.effects).end()
                 $('#editMedicineForm').find('[name="e_date"]').val(response.medicine.e_date).end()
+                 $('#editMedicineForm').find('[name="alpha_code"]').val(response.medicine.alpha_code).end()
             });
         });
     });
