@@ -210,7 +210,7 @@
                                                                                 <div class="">
                                                                                     <textarea class="ckeditor form-control" name="description" id="description" value="" rows="100" cols="50">      
                                     <?php foreach ($medical_histories as $medical_history) { ?>         
-                                                                                                                                                                                                                        <td><?php echo $medical_history->description; ?></td>
+                                                                                                                                                                                                                            <td><?php echo $medical_history->description; ?></td>
                                     <?php } ?>
                                                                                     </textarea>
                                                                                 </div>
@@ -397,7 +397,7 @@
                                                     <?php }
                                                     ?>
 
-                        <!--  <img src="<?php echo $patient_material->url; ?>" height="100" width="100">-->
+                            <!--  <img src="<?php echo $patient_material->url; ?>" height="100" width="100">-->
                                                 </div>
                                                 <div class="post-info" style="text-align:center !important;">
                                                     <?php
@@ -444,6 +444,7 @@
                                                 <th><?php echo lang('bed_id'); ?></th>
                                                 <th><?php echo lang('alloted_time'); ?></th>
                                                 <th><?php echo lang('discharge_time'); ?></th>
+                                                <th><?php echo lang('view_more'); ?></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -465,6 +466,7 @@
                                                 <td><?php echo $bed->bed_id; ?></td>            
                                                 <td><?php echo $bed->a_time; ?></td>
                                                 <td><?php echo $bed->d_time; ?></td>
+                                                <td> <a class="btn btn-info btn-xs btn_width" href="bed/bedAllotmentDetails?id=<?php echo $bed->id; ?>"> <?php echo lang('more'); ?></a></td>
                                             </tr>
                                         <?php } ?>
                                         </tbody>
