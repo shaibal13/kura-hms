@@ -71,7 +71,7 @@
             <div class="modal-body">
                 <form role="form" action="bed/addBed" class="clearfix row" method="post" enctype="multipart/form-data">
                     <div class="form-group col-md-12">
-                        <label for="exampleInputEmail1"><?php echo lang('bed_category'); ?></label>
+                        <label for="exampleInputEmail1"><?php echo lang('room_no'); ?></label>
                         <select class="form-control" name="category" value=''>
                             <?php foreach ($categories as $category) { ?>
                                 <option value="<?php echo $category->category; ?>" <?php
@@ -122,7 +122,7 @@
             <div class="modal-body">
                 <form role="form" id="editBedForm" class="clearfix row" action="bed/addBed" method="post" enctype="multipart/form-data">
                     <div class="form-group col-md-12">
-                        <label for="exampleInputEmail1"><?php echo lang('bed_category'); ?></label>
+                        <label for="exampleInputEmail1"><?php echo lang('room_no'); ?></label>
                         <select class="form-control" name="category" value=''>
                             <?php foreach ($categories as $category) { ?>
                                 <option value="<?php echo $category->category; ?>" <?php
@@ -205,13 +205,13 @@
             dom: "<'row'<'col-md-3'l><'col-sm-5 text-center'B><'col-sm-4'f>>" +
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-  
+          
              buttons: [
-                {extend: 'copyHtml5', exportOptions: {columns: [0,1,2], }},
-                {extend: 'excelHtml5', exportOptions: {columns: [0,1,2], }},
-                {extend: 'csvHtml5', exportOptions: {columns: [0,1,2], }},
-                {extend: 'pdfHtml5', exportOptions: {columns: [0,1,2], }},
-                {extend: 'print', exportOptions: {columns: [0,1,2], }},
+                {extend: 'copyHtml5', exportOptions: {columns: [0,1,2],}},
+                {extend: 'excelHtml5', exportOptions: {columns: [0,1,2],}},
+                {extend: 'csvHtml5', exportOptions: {columns: [0,1,2],}},
+                {extend: 'pdfHtml5', exportOptions: {columns: [0,1,2],}},
+                {extend: 'print', exportOptions: {columns: [0,1,2],}},
             ],
             aLengthMenu: [
                 [10, 25, 50, 100, -1],

@@ -18,9 +18,9 @@
                         <?php echo validation_errors(); ?>
                         <form role="form" action="bed/addBed" class="clearfix" method="post" enctype="multipart/form-data">
                             <div class="form-group">
-                                <label for="exampleInputEmail1"><?php echo lang('bed_category'); ?></label>
+                                <label for="exampleInputEmail1"><?php echo lang('room_no'); ?></label>
                                 <select class="form-control m-bot15" name="category" value=''>
-                                    <?php foreach ($categories as $category) { ?>
+                                    <?php foreach ($categories as $category) { ?> 
                                         <option value="<?php echo $category->category; ?>" <?php
                                         if (!empty($setval)) {
                                             if ($category->category == set_value('category')) {

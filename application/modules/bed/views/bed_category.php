@@ -5,7 +5,7 @@
         <!-- page start-->
         <section class="panel">
             <header class="panel-heading">
-                <?php echo lang('bed_categories'); ?>  
+                <?php echo lang('room_no'); ?>  
                 <div class="col-md-4 no-print pull-right"> 
                     <a data-toggle="modal" href="#myModal">
                         <div class="btn-group pull-right">
@@ -22,7 +22,7 @@
                     <table class="table table-striped table-hover table-bordered" id="editable-sample">
                         <thead>
                             <tr>
-                                <th><?php echo lang('category'); ?></th>
+                                <th><?php echo lang('room_no'); ?></th>
                                 <th><?php echo lang('description'); ?></th>
                                 <th class="no-print"><?php echo lang('options'); ?></th>
                             </tr>
@@ -79,8 +79,8 @@
             </div>
             <div class="modal-body">
                 <form role="form" action="bed/addCategory" class="clearfix row" method="post" enctype="multipart/form-data">
-                    <div class="form-group col-md-12"> 
-                        <label for="exampleInputEmail1"><?php echo lang('category'); ?></label>
+                   <div class="form-group col-md-12"> 
+                        <label for="exampleInputEmail1"><?php echo lang('room_no'); ?></label>
                         <input type="text" class="form-control" name="category" id="exampleInputEmail1" value='' placeholder="">    
                     </div>
                     <div class="form-group col-md-12">
@@ -111,12 +111,12 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title"> <?php echo lang('edit_bed_category'); ?></h4>
+                <h4 class="modal-title"> <?php echo lang('edit_room_no'); ?></h4>
             </div>
             <div class="modal-body">
                 <form role="form" id="editBedCategoryForm" class="clearfix row" action="bed/addCategory" method="post" enctype="multipart/form-data">
                     <div class="form-group col-md-12"> 
-                        <label for="exampleInputEmail1"><?php echo lang('category'); ?></label>
+                        <label for="exampleInputEmail1"><?php echo lang('room_no'); ?></label>
                         <input type="text" class="form-control" name="category" id="exampleInputEmail1" value='' placeholder="">    
                     </div>
                     <div class="form-group col-md-12">
@@ -164,20 +164,21 @@
 
 <script>
     $(document).ready(function () {
-        var table = $('#editable-sample').DataTable({
+       var table = $('#editable-sample').DataTable({
             responsive: true,
 
             dom: "<'row'<'col-sm-3'l><'col-sm-5 text-center'B><'col-sm-4'f>>" +
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-
-            buttons: [
-                {extend: 'copyHtml5', exportOptions: {columns: [0, 1], }},
-                {extend: 'excelHtml5', exportOptions: {columns: [0, 1], }},
-                {extend: 'csvHtml5', exportOptions: {columns: [0, 1], }},
-                {extend: 'pdfHtml5', exportOptions: {columns: [0, 1], }},
-                {extend: 'print', exportOptions: {columns: [0, 1], }},
+         
+             buttons: [
+                {extend: 'copyHtml5', exportOptions: {columns: [0, 1],}},
+                {extend: 'excelHtml5', exportOptions: {columns: [0, 1],}},
+                {extend: 'csvHtml5', exportOptions: {columns: [0, 1],}},
+                {extend: 'pdfHtml5', exportOptions: {columns: [0, 1],}},
+                {extend: 'print', exportOptions: {columns: [0, 1],}},
             ],
+
             aLengthMenu: [
                 [10, 25, 50, 100, -1],
                 [10, 25, 50, 100, "All"]
@@ -185,7 +186,7 @@
             iDisplayLength: -1,
             "order": [[0, "desc"]],
 
-            "language": {
+             "language": {
                 "lengthMenu": "_MENU_",
                 search: "_INPUT_",
                 "url": "common/assets/DataTables/languages/<?php echo $this->language; ?>.json"
@@ -198,6 +199,9 @@
 
 <script>
     $(document).ready(function () {
+
+   
+
         $(".flashmessage").delay(3000).fadeOut(100);
     });
 </script>

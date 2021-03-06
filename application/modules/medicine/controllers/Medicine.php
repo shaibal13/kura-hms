@@ -510,6 +510,34 @@ class Medicine extends MX_Controller {
         $this->load->view('home/footer'); // just the header file
     }
 
+    public function getGenericNameInfo() {
+// Search term
+        $searchTerm = $this->input->post('searchTerm');
+
+// Get users
+        $response = $this->medicine_model->getGenericInfo($searchTerm);
+
+        echo json_encode($response);
+    }
+
+    function getMedicineByGeneric() {
+        $id = $this->input->get('id');
+        $medicines = $this->medicine_model->getMedicineByGeneric($id);
+        $option = '<option  value="select">' . lang('select') . '</option>';
+        foreach ($medicines as $medicine) {
+            $option .= '<option value="' . $medicine->id . '">' . $medicine->name . '</option>';
+        }
+        $data['response'] = $option;
+        echo json_encode($data);
+    }
+
+    function getMedicine() {
+        $id = $this->input->get('id');
+        $data = array();
+        $data['medicine'] = $this->medicine_model->getMedicineById($id);
+        echo json_encode($data);
+    }
+
 }
 
 /* End of file medicine.php */

@@ -12,8 +12,8 @@ class Pservice_model extends CI_model {
 
     function insertPservice($data) {
        
-        $data2 = array_merge($data, $data1);
-        $this->db->insert('pservice', $data2);
+      //  $data2 = array_merge($data, $data1);
+        $this->db->insert('pservice', $data);
     }
 
     function getPservice() {

@@ -8,13 +8,16 @@ class Pservice extends MX_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('pservice_model');
-        if (!$this->ion_auth->in_group(array('admin'))) {
+        if (!$this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Accountant'))) {
+       
             redirect('home/permission');
         }
     }
 
     public function index() {
-
+ if (!$this->ion_auth->in_group(array('admin'))) {
+            redirect('home/permission');
+        }
         $data['pservices'] = $this->pservice_model->getPservice();
         $data['settings'] = $this->settings_model->getSettings();
         $this->load->view('home/dashboard', $data); // just the header file
@@ -23,6 +26,9 @@ class Pservice extends MX_Controller {
     }
 
     public function addNewView() {
+         if (!$this->ion_auth->in_group(array('admin'))) {
+            redirect('home/permission');
+        }
         $data['pservices'] = $this->pservice_model->getPservice();
         $data['settings'] = $this->settings_model->getSettings();
         $this->load->view('home/dashboard', $data); // just the header file
@@ -31,6 +37,7 @@ class Pservice extends MX_Controller {
     }
 
     public function addNew() {
+        
        $active= $this->input->post('active');
     if(empty($active)){
         $active='0';
@@ -98,6 +105,9 @@ class Pservice extends MX_Controller {
     }
 
     function editPservice() {
+         if (!$this->ion_auth->in_group(array('admin'))) {
+            redirect('home/permission');
+        }
         $data = array();
         $id = $this->input->get('id');
         $data['pservice'] = $this->pservice_model->getPserviceById($id);
@@ -107,12 +117,18 @@ class Pservice extends MX_Controller {
     }
 
     function editPserviceByJason() {
+         if (!$this->ion_auth->in_group(array('admin'))) {
+            redirect('home/permission');
+        }
         $id = $this->input->get('id');
         $data['pservice'] = $this->pservice_model->getPserviceById($id);
         echo json_encode($data);
     }
 
     function delete() {
+         if (!$this->ion_auth->in_group(array('admin'))) {
+            redirect('home/permission');
+        }
         $data = array();
         $id = $this->input->get('id');
         $this->pservice_model->delete($id);
@@ -121,6 +137,9 @@ class Pservice extends MX_Controller {
     }
 
     function getPserviceList() {
+         if (!$this->ion_auth->in_group(array('admin'))) {
+            redirect('home/permission');
+        }
         $requestData = $_REQUEST;
         $start = $requestData['start'];
         $limit = $requestData['length'];

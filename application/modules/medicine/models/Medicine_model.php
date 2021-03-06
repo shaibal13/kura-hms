@@ -326,5 +326,44 @@ class Medicine_model extends CI_model {
         $query = $this->db->get('medicine');
         return $query->result();
     }
+ function getGenericInfo($searchTerm) {
+        if (!empty($searchTerm)) {
+            $this->db->select('*');
+            
+            //$this->db->where('quantity >', '0');
+            $this->db->where("id LIKE '%" . $searchTerm . "%' OR generic LIKE '%" . $searchTerm . "%'");
+            $fetched_records = $this->db->get('medicine');
+            $users = $fetched_records->result_array();
+        } else {
+            $this->db->select('*');
+            
+            // $this->db->where('quantity >', '0');
+            $this->db->limit(10);
+            $fetched_records = $this->db->get('medicine');
+            $users = $fetched_records->result_array();
+        }
+
+        $user_gen = array();
+        foreach ($users as $user) {
+            $user_gen[] = $user['generic'];
+        }
+        $result = array_unique($user_gen);
+
+        $data = array();
+        $i = 0;
+        foreach ($result as $user) {
+            //  echo $user[$i];
+            $data[] = array("id" => $user, "text" => $user);
+        }
+
+        return $data;
+    }
+
+    function getMedicineByGeneric($id) {
+        return $this->db->where('generic', $id)
+                     
+                        ->get('medicine')
+                        ->result();
+    }
 
 }
