@@ -8,14 +8,14 @@
         <meta name="author" content="Rizvi">
         <meta name="keyword" content="Php, Hospital, Clinic, Management, Software, Php, CodeIgniter, Hms, Accounting">
         <link rel="shortcut icon" href="uploads/favicon.png">
-       <?php
-        $class_name = $this->router->fetch_class(); 
+        <?php
+        $class_name = $this->router->fetch_class();
         $class_name_lang = lang($class_name);
-        if(empty($class_name_lang)){
+        if (empty($class_name_lang)) {
             $class_name_lang = $class_name;
         }
         ?>
-        
+
         <title><?php echo $class_name_lang; ?> | <?php echo $this->db->get('settings')->row()->system_vendor; ?> </title>
         <!-- Bootstrap core CSS -->
         <link href="common/css/bootstrap.min.css" rel="stylesheet">
@@ -843,6 +843,7 @@
                                 <ul class="sub">
                                     <li><a  href="bed"><i class="fas fa-procedures"></i><?php echo lang('bed_list'); ?></a></li>
                                     <li><a  href="bed/addBedView"><i class="fa fa-plus-circle"></i><?php echo lang('add_bed'); ?></a></li>
+                                    <li><a  href="pservice"><i class="fa fa-smile"></i><?php echo lang('patient'); ?> <?php echo lang('service'); ?></a></li>
                                     <li><a  href="bed/bedCategory"><i class="fa fa-edit"></i><?php echo lang('bed_category'); ?></a></li>
                                     <li><a  href="bed/bedAllotment"><i class="fas fa-bed"></i><?php echo lang('bed_allotments'); ?></a></li>
                                     <li><a  href="bed/addAllotmentView"><i class="fa fa-plus-circle"></i><?php echo lang('add_allotment'); ?></a></li>
@@ -972,7 +973,7 @@
 
                         <!--
                         <?php if ($this->ion_auth->in_group('Doctor')) { ?>
-                                                                <li><a href="meeting/settings"><i class="fa fa-headphones"></i><?php echo lang('zoom'); ?> <?php echo lang('settings'); ?></a></li>
+                                                                    <li><a href="meeting/settings"><i class="fa fa-headphones"></i><?php echo lang('zoom'); ?> <?php echo lang('settings'); ?></a></li>
                         <?php } ?>
                         -->
 
