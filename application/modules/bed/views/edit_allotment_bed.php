@@ -463,6 +463,7 @@ foreach ($daily_progress as $daily) {
                                     </thead>
                                     <tbody id="paservice_table">
                                         <?php
+                                        if(!empty($daily_service)) {
                                         foreach ($daily_service as $service) {
                                             $price = explode("**", $service->price);
 
@@ -503,7 +504,7 @@ foreach ($daily_progress as $daily) {
     ?>
 
 
-<?php } ?>
+<?php } } ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -661,14 +662,14 @@ foreach ($daily_progress as $daily) {
                                         <div class="form-group col-md-12">
                                             <label for="exampleInputEmail1"><?php echo lang('doctor'); ?></label>
                                             <select class="form-control m-bot15" id="doctors_checkout" name="doctors_checkout" value=''> 
-                                        <?php $doctor = $this->db->get_where('doctor', array('id' => $bed_checkout->doctor))->row();
+                                        <?php $doctor1 = $this->db->get_where('doctor', array('id' => $bed_checkout->doctor))->row();
                                         ?>
                                                 <option value="<?php echo $bed_checkout->doctor; ?>"  <?php
                                                if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
                                                    echo 'selected';
                                                    echo 'disabled';
                                                }
-                                        ?>><?php echo $doctor->name . '(Id:' . $doctor->id . ')'; ?></option>
+                                        ?>><?php echo $doctor1->name . '(Id:' . $doctor1->id . ')'; ?></option>
                                             </select>
                                         </div>
                                         <input type="hidden" name="id" value="<?php

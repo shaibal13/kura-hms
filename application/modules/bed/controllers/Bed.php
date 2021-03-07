@@ -526,17 +526,21 @@ class Bed extends MX_Controller {
         $alloted_time_array = explode("-", $alloted_time);
         $alloted_timestamp = strtotime($alloted_time_array[0] . ' ' . $alloted_time_array[1]);
         $beds = $this->bed_model->getBedByCategory($id);
+        $option='';
         $option = '<option  value="select">' . lang('select') . '</option>';
         foreach ($beds as $bed) {
+            $alloted_bed=array();
             $alloted_bed = $this->bed_model->getAllotedBedByBedIdByDate($bed->id, $alloted_timestamp);
-
+           
             if (empty($alloted_bed)) {
+              
                 $option .= '<option value="' . $bed->id . '">' . $bed->number . '</option>';
             } else {
                 foreach ($alloted_bed as $al_bed) {
                     if ($al_bed->d_timestamp >= $alloted_timestamp || empty($al_bed->d_timestamp)) {
                         $option1 = "1";
                     } else {
+                        
                         $option .= '<option value="' . $bed->id . '">' . $bed->number . '</option>';
                     }
                 }
