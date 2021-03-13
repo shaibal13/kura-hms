@@ -61,6 +61,7 @@ class Users extends MX_Controller {
         $this->db->where('id', $id);
         $data['group'] = $this->db->get('groups')->row();
         $data['permissions'] = $this->db->get('permission_features')->result();
+        $data['permission_access'] = $this->users_model->getPermissionAccess($id);
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('add_group', $data);
         $this->load->view('home/footer');
@@ -188,7 +189,15 @@ class Users extends MX_Controller {
 
         $this->form_validation->set_rules('name', 'Name', 'required|trim|xss_clean');
         $this->form_validation->set_rules('permission[]', 'Permissions', 'required|trim|xss_clean');
-
+        foreach ($permission as $permission_access) {
+            $permission_access_option = array();
+            $permission_access_group = '';
+            $permission_access_option = $this->input->post($permission_access . '[]');
+            $permission_access_group .= $permission_access . ',';
+            $permission_access_group .= implode(',', $permission_access_option);
+            $permission_granted[] = $permission_access_group;
+        }
+        $permission_access_final = implode("***", $permission_granted);
         if (!empty($id)) {
             if ($this->form_validation->run() == false) {
                 $this->session->set_flashdata('feedback', 'Validation Error!');
@@ -198,6 +207,14 @@ class Users extends MX_Controller {
                     'description' => $per
                 );
                 $this->ion_auth->update_group($id, $name, $data);
+                 $data_access = array(
+                    // 'permission_name' => $permission_access,
+                    'permission_access' => $permission_access_final,
+                    'group_id' => $id,
+                    'group_name' => $name
+                );
+                 $access_id= $this->input->post('access_id');
+                  $this->users_model->updateGroupPermission($access_id,$data_access);
                 $this->session->set_flashdata('feedback', 'Edited!');
                 redirect('users/group');
             }
@@ -209,20 +226,16 @@ class Users extends MX_Controller {
 
                 $this->ion_auth->create_group($name, $per);
                 $inserted_id = $this->db->insert_id();
-                foreach ($permission as $permission_access) {
-                    $permission_access_option = array();
-                    $permission_access_option = $this->input->post($permission_access . '[]');
 
-                    $permission_access_group = implode(',', $permission_access_option);
-                    $data_access[] = array(
-                        'permission_name' => $permission_access,
-                        'permission_access' => $permission_access_group,
-                        'group_id' => $inserted_id,
-                        'group_name'=>$name
-                    );
-                }
+                $data_access = array(
+                    // 'permission_name' => $permission_access,
+                    'permission_access' => $permission_access_final,
+                    'group_id' => $inserted_id,
+                    'group_name' => $name
+                );
+
                 $this->users_model->insertGroupPermission($data_access);
-               
+
                 $this->session->set_flashdata('feedback', 'Added!');
                 redirect('users/group');
             }
@@ -238,7 +251,7 @@ class Users extends MX_Controller {
 
     function deleteGroup() {
         $id = $this->input->get('id');
-          $this->users_model->deletePermissionAccess($id);
+        $this->users_model->deletePermissionAccess($id);
         $this->ion_auth->delete_group($id);
         $this->session->set_flashdata('feedback', 'Group Deleted!');
         redirect('users/group');
@@ -246,7 +259,7 @@ class Users extends MX_Controller {
 
     function deleteUser() {
         $id = $this->input->get('id');
-      
+
         $this->ion_auth->delete_user($id);
         $this->session->set_flashdata('feedback', 'User Deleted!');
         redirect('users/users');

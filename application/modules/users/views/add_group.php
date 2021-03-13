@@ -67,41 +67,98 @@ if (!empty($group->id)) {
                                             <div class="panel col-md-12">
                                                 <div class="form-group">
                                                     <label for="exampleInputEmail1"><?php echo lang('permission'); ?>: </label><br>
-                                                    <?php foreach ($permissions as $permission) {
+                                                    <?php
+                                                    foreach ($permissions as $permission) {
+                                                        if (!empty($group->id)) {
+                                                            $permission_access_group = $permission_access->permission_access;
+                                                            $permission_access_group_explode = explode('***', $permission_access_group);
+                                                        }
                                                         ?>
                                                         <div class="col-md-6">
                                                             <div class="col-md-7">
-                                                                <input type="checkbox" class="feature" id="<?php echo $permission->feature; ?>" name="permission[]" value="<?php echo $permission->feature; ?>"/>  <?php
-                                                                //  if (!empty($group->id)) {
-                                                                //    if (in_array($permission->feature, $pers)) {
-                                                                ?>
-                                                                <!--      checked-->
-                                                                <?php
-                                                                //  }
-                                                                //  }
-                                                                ?> <label for="exampleInputEmail1"><?php echo $permission->feature; ?></label>
+                                                                <input type="checkbox" class="feature" id="<?php echo $permission->feature; ?>" name="permission[]" value="<?php echo $permission->feature; ?>"  <?php
+                                                                if (!empty($group->id)) {
+                                                                    if (in_array($permission->feature, $pers)) {
+                                                                        ?>
+                                                                               checked
+                                                                               <?php
+                                                                           }
+                                                                       }
+                                                                       ?> /> <label for="exampleInputEmail1"><?php echo $permission->feature; ?></label>
                                                             </div>
-                                                            <div class="col-md-5 hidden" id="<?php echo $permission->feature; ?>_update">
-                                                                <input  class="permission_option" id="<?php echo $permission->feature; ?>-1" type="checkbox" name="<?php echo $permission->feature; ?>[]" value="1"/>
+                                                            <div class="col-md-5  <?php
+                                                            if (!empty($group->id)) {
+                                                                if (!in_array($permission->feature, $pers)) {
+                                                                    echo 'hidden';
+                                                                }
+                                                            } else {
+                                                                echo 'hidden';
+                                                            }
+                                                            ?> " id="<?php echo $permission->feature; ?>_update">
+                                                                <input  class="permission_option" id="<?php echo $permission->feature; ?>-1" type="checkbox" name="<?php echo $permission->feature; ?>[]" value="1"
+                                                            <?php  if (!empty($group->id)) {
+                                                                if (in_array($permission->feature, $pers)) {
+                                                                    foreach ($permission_access_group_explode as $perm){
+                                                                        $perm_explode=array();
+                                                                        $perm_explode= explode(",", $perm);
+                                                                        if(in_array('1', $perm_explode) && $perm_explode[0] == $permission->feature){
+                                                                            echo 'checked';
+                                                                            //  break;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            } ?>
+                                                                        />
                                                                 <label for="exampleInputEmail1"><?php echo lang('r'); ?></label>
-                                                                <input class="permission_option" id="<?php echo $permission->feature; ?>-2" type="checkbox" name="<?php echo $permission->feature; ?>[]" value="2"/>
+                                                                <input class="permission_option" id="<?php echo $permission->feature; ?>-2" type="checkbox" name="<?php echo $permission->feature; ?>[]" value="2"
+                                                              <?php  if (!empty($group->id)) {
+                                                                if (in_array($permission->feature, $pers)) {
+                                                                    foreach ($permission_access_group_explode as $perm){
+                                                                        $perm_explode=array();
+                                                                        $perm_explode= explode(",", $perm);
+                                                                        if(in_array('2', $perm_explode) && $perm_explode[0] == $permission->feature){
+                                                                            echo 'checked';
+                                                                          //  break;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            } ?>
+                                                                       />
                                                                 <label for="exampleInputEmail1"><?php echo lang('w'); ?></label>
-                                                                <input class="permission_option" id="<?php echo $permission->feature; ?>-3" type="checkbox" name="<?php echo $permission->feature; ?>[]" value="3"/>
+                                                                <input class="permission_option" id="<?php echo $permission->feature; ?>-3" type="checkbox" name="<?php echo $permission->feature; ?>[]" value="3"
+                                                              <?php  if (!empty($group->id)) {
+                                                                if (in_array($permission->feature, $pers)) {
+                                                                    foreach ($permission_access_group_explode as $perm){
+                                                                        $perm_explode=array();
+                                                                        $perm_explode= explode(",", $perm);
+                                                                        if(in_array('3', $perm_explode) && $perm_explode[0] == $permission->feature ){
+                                                                            echo 'checked';
+                                                                           //   break;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            } ?>
+                                                                       />
                                                                 <label  for="exampleInputEmail1"><?php echo lang('d'); ?></label>
                                                             </div>
 
                                                         </div>
 
 
-                                                    <?php }
-                                                    ?>
+<?php }
+?>
                                                 </div>
                                             </div>
                                             <input type="hidden" name="id" value='<?php
-                                            if (!empty($group->id)) {
-                                                echo $group->id;
-                                            }
-                                            ?>'>
+                                                   if (!empty($group->id)) {
+                                                       echo $group->id;
+                                                   }
+                                                   ?>'>
+                                             <input type="hidden" name="access_id" value='<?php
+                                                   if (!empty($group->id)) {
+                                                       echo $permission_access->id;
+                                                   }
+                                                   ?>'>
                                             <section class="panel col-md-11">
                                                 <button type="submit" name="submit" class="btn btn-info pull-right submit_button" id="submit-btn"><?php echo lang('submit'); ?></button>
                                             </section>
@@ -154,16 +211,16 @@ if (!empty($group->id)) {
                 $('#' + id + '_update').addClass('hidden');
             }
         });
-         $(".permission_option").click(function () {
-               var id = $(this).attr('id');
-              
-               var res=id.split("-");
-             //   alert(id);
-               if(!$('#'+res[0]+'-1').is(':checked') && !$('#'+res[0]+'-2').is(':checked') && !$('#'+res[0]+'-3').is(':checked')  )
-               {
-                    $('#' + res[0] + '_update').addClass('hidden');
-                     $('#' + res[0]).prop('checked', false);
-               }
-         });
+        $(".permission_option").click(function () {
+            var id = $(this).attr('id');
+
+            var res = id.split("-");
+            //   alert(id);
+            if (!$('#' + res[0] + '-1').is(':checked') && !$('#' + res[0] + '-2').is(':checked') && !$('#' + res[0] + '-3').is(':checked'))
+            {
+                $('#' + res[0] + '_update').addClass('hidden');
+                $('#' + res[0]).prop('checked', false);
+            }
+        });
     });
 </script>

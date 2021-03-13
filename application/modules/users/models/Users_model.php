@@ -59,11 +59,20 @@ class Users_model extends CI_model {
         return $query;
     }
     function insertGroupPermission($data){
-        $this->db->insert_batch('permission_access_group', $data);
+        $this->db->insert('permission_access_group', $data);
     }
     function deletePermissionAccess($id) {
         $this->db->where('group_id',$id);
       
         $this->db->delete('permission_access_group');
+    }
+    function getPermissionAccess($id) {
+        $this->db->where('group_id',$id);
+        $query = $this->db->get('permission_access_group')->row();
+        return $query;
+    }
+    function updateGroupPermission($id,$data){
+        $this->db->where('id',$id);
+        $this->db->update('permission_access_group', $data);
     }
 }
