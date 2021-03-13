@@ -1,5 +1,6 @@
-<?php if(!empty($group->id)) {
-     $this->db->where('id', $group->id);
+<?php
+if (!empty($group->id)) {
+    $this->db->where('id', $group->id);
     $query = $this->db->get('groups')->row()->description;
     $pers = explode(',', $query);
 }
@@ -9,7 +10,7 @@
 <section id="main-content">
     <section class="wrapper site-min-height">
         <!-- page start-->
-        <section class="col-md-7 row">
+        <section class="col-md-8 row">
             <header class="panel-heading">
                 <?php
                 if (!empty($group->id))
@@ -32,68 +33,137 @@
                                         <div class="col-lg-3"></div>
                                     </div>
                                     <form role="form" action="users/addNewGroup" method="post" enctype="multipart/form-data">
-                                        <div class="row">
-                                        <div class="panel col-md-6">
-                                            <?php if(!empty($group->id)){ ?>
-                                            <div class="form-group"><label for="exampleInputEmail1">Group Name</label>
-                                            <?php if($group->name == 'admin' || $group->name == 'Super' || $group->name == 'Dispatch') { ?>
-                                        
-                                                <input class="form-control" name="name" value="<?php if(!empty($group->id)) {
-                                                    echo $group->name;
-                                                    } ?>" readonly>
-                                            <?php } else { ?>
-                                               <input class="form-control" name="name" value="<?php if(!empty($group->id)) {
-                                                    echo $group->name;
-                                                } ?>">
-                                            <?php } ?>
-                                            </div>
-                                        <?php } ?>
-                                        <?php if(empty($group->id)){ ?>
-                                                <div class="form-group"><label for="exampleInputEmail1">Group Name</label>
-                                                        <input class="form-control" name="name" value="<?php
+                                        <div class="">
+                                            <div class="panel col-md-6">
+                                                <?php if (!empty($group->id)) { ?>
+                                                    <div class="form-group"><label for="exampleInputEmail1"><?php echo lang('group_name'); ?></label>
+                                                        <?php if ($group->name == 'admin') { ?>
+
+                                                            <input class="form-control group_name" name="name" value="<?php
+                                                            if (!empty($group->id)) {
+                                                                echo $group->name;
+                                                            }
+                                                            ?>" readonly>
+                                                               <?php } else { ?>
+                                                            <input class="form-control group_name" name="name" value="<?php
+                                                            if (!empty($group->id)) {
+                                                                echo $group->name;
+                                                            }
+                                                            ?>">
+                                                               <?php } ?>
+                                                    </div>
+                                                <?php } ?>
+                                                <?php if (empty($group->id)) { ?>
+                                                    <div class="form-group"><label for="exampleInputEmail1"><?php echo lang('group_name'); ?></label>
+                                                        <input class="form-control group_name" name="name" value="<?php
                                                         if (!empty($group->id)) {
                                                             echo $group->name;
                                                         }
                                                         ?>">
                                                     </div>
-                                        <?php } ?>
+                                                <?php } ?>
+                                                <span class="group_name_alert" style="color:red;"></span>
                                             </div>
-                                                <div class="panel col-md-4">
-                                                    <div class="form-group pull-right">
-                                                        <label for="exampleInputEmail1">Permission: </label><br>
-                                                        <?php foreach ($permissions as $permission) {
-                                                            if($permission->feature == 'Report') {} else { ?>
-                                                        <input type="checkbox" name="permission[]" value="<?php echo $permission->feature; ?>" <?php if (!empty($group->id)) {
-                                                            if (in_array($permission->feature, $pers)) {
-                                                                    ?>
-                                                                           checked
-                                                                       <?php }
-                                                                   }
-                                                                   ?> /> <label for="exampleInputEmail1"><?php echo $permission->feature; ?></label><br>
-                                                
-                                                            
-                                                        <?php  } } ?>
-                                                    </div>
+                                            <div class="panel col-md-12">
+                                                <div class="form-group">
+                                                    <label for="exampleInputEmail1"><?php echo lang('permission'); ?>: </label><br>
+                                                    <?php foreach ($permissions as $permission) {
+                                                        ?>
+                                                        <div class="col-md-6">
+                                                            <div class="col-md-7">
+                                                                <input type="checkbox" class="feature" id="<?php echo $permission->feature; ?>" name="permission[]" value="<?php echo $permission->feature; ?>"/>  <?php
+                                                                //  if (!empty($group->id)) {
+                                                                //    if (in_array($permission->feature, $pers)) {
+                                                                ?>
+                                                                <!--      checked-->
+                                                                <?php
+                                                                //  }
+                                                                //  }
+                                                                ?> <label for="exampleInputEmail1"><?php echo $permission->feature; ?></label>
+                                                            </div>
+                                                            <div class="col-md-5 hidden" id="<?php echo $permission->feature; ?>_update">
+                                                                <input  class="permission_option" id="<?php echo $permission->feature; ?>-1" type="checkbox" name="<?php echo $permission->feature; ?>[]" value="1"/>
+                                                                <label for="exampleInputEmail1"><?php echo lang('r'); ?></label>
+                                                                <input class="permission_option" id="<?php echo $permission->feature; ?>-2" type="checkbox" name="<?php echo $permission->feature; ?>[]" value="2"/>
+                                                                <label for="exampleInputEmail1"><?php echo lang('w'); ?></label>
+                                                                <input class="permission_option" id="<?php echo $permission->feature; ?>-3" type="checkbox" name="<?php echo $permission->feature; ?>[]" value="3"/>
+                                                                <label  for="exampleInputEmail1"><?php echo lang('d'); ?></label>
+                                                            </div>
+
+                                                        </div>
+
+
+                                                    <?php }
+                                                    ?>
                                                 </div>
-                                        <input type="hidden" name="id" value='<?php
-                                        if (!empty($group->id)) {
-                                            echo $group->id;
-                                        }
-                                        ?>'>
-                                        <section class="panel col-md-11">
-                                            <button type="submit" name="submit" class="btn btn-info pull-right"><?php echo lang('submit'); ?></button>
-                                        </section>
+                                            </div>
+                                            <input type="hidden" name="id" value='<?php
+                                            if (!empty($group->id)) {
+                                                echo $group->id;
+                                            }
+                                            ?>'>
+                                            <section class="panel col-md-11">
+                                                <button type="submit" name="submit" class="btn btn-info pull-right submit_button" id="submit-btn"><?php echo lang('submit'); ?></button>
+                                            </section>
                                         </div>
                                     </form>
                                 </div>
-                           
-                        
+
+
+                        </div>
                     </div>
                 </div>
-            </div>
         </section>
         <!-- page end-->
     </section>
 </section>
 <!--main content end-->
 <!--footer start-->
+<script src="common/js/codearistos.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".group_name").keyup(function () {
+            var name = $(this).val();
+            $.ajax({
+                url: 'users/getGroupNameAvailable?name=' + name,
+                method: 'GET',
+                data: '',
+                dataType: 'json',
+            }).success(function (response) {
+                if (response.response === '0') {
+
+                    $('.group_name_alert').html('<?php echo lang('group_name_already_existed'); ?>');
+
+                    $(".submit_button").addClass("disabled");
+                } else {
+                    $('.group_name_alert').html(" ");
+                    $(".submit_button").removeClass("disabled");
+
+                }
+            });
+        });
+        $(".feature").click(function () {
+            var id = $(this).attr('id');
+            if ($('#' + id).is(":checked")) {
+                $('#' + id + '-1').prop('checked', true);
+                $('#' + id + '-2').prop('checked', true);
+                $('#' + id + '-3').prop('checked', true);
+                $('#' + id + '_update').removeClass('hidden');
+
+            } else {
+                $('#' + id + '_update').addClass('hidden');
+            }
+        });
+         $(".permission_option").click(function () {
+               var id = $(this).attr('id');
+              
+               var res=id.split("-");
+             //   alert(id);
+               if(!$('#'+res[0]+'-1').is(':checked') && !$('#'+res[0]+'-2').is(':checked') && !$('#'+res[0]+'-3').is(':checked')  )
+               {
+                    $('#' + res[0] + '_update').addClass('hidden');
+                     $('#' + res[0]).prop('checked', false);
+               }
+         });
+    });
+</script>

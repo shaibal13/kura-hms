@@ -799,4 +799,14 @@ $lang['dikordance'] = 'Dikordance';
 $lang['checkout_diagnosis'] = 'Checkout Diagnosis';
 $lang['checkout_state'] = 'Checkout State';
 $lang['epicrisis'] = 'Epicrisis';
+$lang['edit_user_information'] = 'Edit User Information';
+$lang['add_user_information'] = 'Add User Information';
+$lang['first_name'] = 'First Name';
+$lang['last_name'] = 'Last Name';
+$lang['group_name'] = 'Group Name';
+$lang['group_name_already_existed'] = 'Group Name already Existed';
+$lang['permission'] = 'Permission';
+$lang['r'] = 'R';
+$lang['w'] = 'W';
+$lang['d'] = 'D';
 

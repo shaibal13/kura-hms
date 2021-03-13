@@ -53,5 +53,17 @@ class Users_model extends CI_model {
         $this->db->where('id',$id);
         $this->db->delete('groups');
     }
-
+  function getGroupNameAvailable($name) {
+        $this->db->where('name',$name);
+        $query = $this->db->get('groups')->row();
+        return $query;
+    }
+    function insertGroupPermission($data){
+        $this->db->insert_batch('permission_access_group', $data);
+    }
+    function deletePermissionAccess($id) {
+        $this->db->where('group_id',$id);
+      
+        $this->db->delete('permission_access_group');
+    }
 }

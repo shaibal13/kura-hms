@@ -46,14 +46,14 @@
 
                         <?php
                         foreach ($groups as $group) {
-                            if (($group->name == 'members') || ($group->name == 'Nurse') || $group->name == 'Pharmacist' || $group->name == 'Laboratorist' || $group->name == 'Accountant' || $group->name == 'Receptionist' || $group->name == "Consultant" || $group->name == "Customer") {
+                            if (($group->name == 'members') || ($group->name == 'Nurse') || $group->name == 'Pharmacist' || $group->name == 'Laboratorist' || $group->name == 'Accountant' || $group->name == 'Receptionist' || $group->name == "Doctor" || $group->name == "Patient") {
                                 ?>
 
                             <?php } else { ?>
                                 <tr class="">
                                     <td><?php echo $group->name; ?></td>
                                     <td><?php echo $group->description; ?></td>
-                                    <?php if ($group->name == "admin" || $group->name == "Super" || $group->name == "Dispatch") { ?>
+                                    <?php if ($group->name == "admin") { ?>
                                         <td>
                                             <a class="btn btn-success btn-xs btn_width" href="users/editGroup?id=<?php echo $group->id; ?>"><i class="fa fa-edit"></i> <?php echo lang('edit'); ?></a>
                                         </td>

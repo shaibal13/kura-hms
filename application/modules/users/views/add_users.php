@@ -12,9 +12,9 @@
             <header class="panel-heading ">
                 <?php
                 if (!empty($user->id))
-                    echo 'Edit User Information';
+                    echo lang('edit_user_information');
                 else
-                    echo 'Add User Information';
+                    echo lang('add_user_information');
                 ?>
             </header>
             <div class="">
@@ -36,39 +36,39 @@
                                             if (!empty($user->id)) {
                                                 echo $user->first_name;
                                             }
-                                            ?>">
+                                            ?>" required="">
                                         </div>
                                         <div class="form-group"><label for="exampleInputEmail1"><?php echo lang('last_name'); ?></label>
                                             <input class="form-control" name="last_name" value="<?php
                                             if (!empty($user->id)) {
                                                 echo $user->last_name;
                                             }
-                                            ?>">
+                                            ?>" required="">
                                         </div>
                                         <div class="form-group"><label for="exampleInputEmail1"><?php echo lang('email'); ?></label>
                                             <input class="form-control" name="email" value="<?php
                                             if (!empty($user->id)) {
                                                 echo $user->email;
                                             }
-                                            ?>">
+                                            ?>" required>
                                         </div>
                                         <div class="form-group"><label for="exampleInputEmail1"><?php echo lang('password'); ?></label>
-                                            <input type="password" class="form-control" name="password" placeholder="******">
+                                            <input type="password" class="form-control" name="password" placeholder="******" >
                                         </div>
                                         <div class="form-group"><label for="exampleInputEmail1"><?php echo lang('phone'); ?></label>
                                             <input class="form-control" name="phone" value="<?php
                                             if (!empty($user->id)) {
                                                 echo $user->phone;
                                             }
-                                            ?>">
+                                            ?>" required>
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputEmail1"><?php echo lang('group'); ?></label>
-                                            <select class="form-control m-bot15 oi" id="group" name="group">
+                                            <select class="form-control m-bot15 oi" id="group" name="group" required>
 
                                                 <?php
                                                 foreach ($groups as $group) {
-                                                    if ($group->name == 'Consultant' || $group->name == 'Customer' || $group->name == 'Nurse' || $group->name == 'Pharmacist' || $group->name == 'Laboratorist' || $group->name == 'Accountant' || $group->name == 'Receptionist' || $group->name == 'members') {
+                                                    if ($group->name == 'Patient' || $group->name == 'Doctor' || $group->name == 'Nurse' || $group->name == 'Pharmacist' || $group->name == 'Laboratorist' || $group->name == 'Accountant' || $group->name == 'Receptionist' || $group->name == 'members') {
                                                         ?>
                                                     <?php } else {
                                                         ?>
@@ -85,6 +85,7 @@
                                                         ?>
                                             </select>
                                         </div>
+                                        <!--
                                         <input type="checkbox" id='manual' name="manual" value="ok" <?php
                                         if (!empty($user->id)) {
                                             if ($user->permission == 'ok') {
@@ -123,7 +124,7 @@
                                                 </div>
                                             </div>
                                         </div>
-
+-->
                                         <input type="hidden" id="id" name="id" value='<?php
                                         if (!empty($user->id)) {
                                             echo $user->id;

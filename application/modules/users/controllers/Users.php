@@ -12,12 +12,13 @@ class Users extends MX_Controller {
         $this->load->library('form_validation');
         $this->load->model('ion_auth_model');
         $this->load->model('finance/finance_model');
+        $this->load->model('users/users_model');
         $this->load->model('appointment/appointment_model');
-        $this->load->model('customer/customer_model');
-        $this->load->model('order/order_model');
-        $this->load->model('dispatch/dispatch_model');
+        $this->load->model('patient/patient_model');
+        //  $this->load->model('order/order_model');
+        //  $this->load->model('dispatch/dispatch_model');
         $this->load->library('upload');
-        $this->load->library('encrypt');
+        $this->load->library('encryption');
         $language = $this->db->get('settings')->row()->language;
         $this->lang->load('system_syntax', $language);
         $this->load->model('settings/settings_model');
@@ -36,162 +37,162 @@ class Users extends MX_Controller {
     public function index() {
         $data['users'] = $this->db->get('users')->result();
         $this->load->view('home/dashboard'); // just the header file
-        $this->load->view('users',$data);
+        $this->load->view('users', $data);
         $this->load->view('home/footer');
     }
-    
+
     function addUser() {
         $data['groups'] = $this->db->get('groups')->result();
         $data['permissions'] = $this->db->get('permission_features')->result();
         $this->load->view('home/dashboard'); // just the header file
-        $this->load->view('add_users',$data);
+        $this->load->view('add_users', $data);
         $this->load->view('home/footer');
     }
-    
+
     function addGroup() {
         $data['permissions'] = $this->db->get('permission_features')->result();
         $this->load->view('home/dashboard'); // just the header file
-        $this->load->view('add_group',$data);
-        $this->load->view('home/footer');    
+        $this->load->view('add_group', $data);
+        $this->load->view('home/footer');
     }
-    
+
     function editGroup() {
         $id = $this->input->get('id');
-        $this->db->where('id',$id);
+        $this->db->where('id', $id);
         $data['group'] = $this->db->get('groups')->row();
         $data['permissions'] = $this->db->get('permission_features')->result();
         $this->load->view('home/dashboard'); // just the header file
-        $this->load->view('add_group',$data);
+        $this->load->view('add_group', $data);
         $this->load->view('home/footer');
     }
-    
+
     function editUser() {
         $id = $this->input->get('id');
-        $this->db->where('id',$id);
+        $this->db->where('id', $id);
         $data['user'] = $this->db->get('users')->row();
         $data['groups'] = $this->db->get('groups')->result();
-        $this->db->where('user_id',$id);
+        $this->db->where('user_id', $id);
         $data['gid'] = $this->db->get('users_groups')->row();
         $data['permissions'] = $this->db->get('permission_features')->result();
         $this->load->view('home/dashboard'); // just the header file
-        $this->load->view('add_users',$data);
+        $this->load->view('add_users', $data);
         $this->load->view('home/footer');
-        
     }
-    
+
     function addNew() {
         $id = $this->input->post('id');
         $name = $this->input->post('name');
         $last_name = $this->input->post('last_name');
+        $username = $name . ' ' . $last_name;
         $password = $this->input->post('password');
         $group = $this->input->post('group');
+
         $phone = $this->input->post('phone');
         $email = $this->input->post('email');
-        $check = $this->input->post('manual');
-        $this->form_validation->set_rules('name','First Name','required|trim|xss_clean');
-        $this->form_validation->set_rules('phone','Phone','required|trim|xss_clean');
-        $this->form_validation->set_rules('email','Email','required|trim|xss_clean');
-        $this->form_validation->set_rules('last_name','Last Name','required|trim|xss_clean');
-        $this->form_validation->set_rules('group','Group','required|trim|xss_clean');
-        
-        if($group == 0) {
-            if(empty($id)) {
-              $this->session->set_flashdata('feedback', 'Select Group Properly!'); 
-              redirect('users/addUser');
+        //$check = $this->input->post('manual');
+        $this->form_validation->set_rules('name', 'First Name', 'required|trim|xss_clean');
+        $this->form_validation->set_rules('phone', 'Phone', 'required|trim|xss_clean');
+        $this->form_validation->set_rules('email', 'Email', 'required|trim|xss_clean');
+        $this->form_validation->set_rules('last_name', 'Last Name', 'required|trim|xss_clean');
+        $this->form_validation->set_rules('group', 'Group', 'required|trim|xss_clean');
+
+        if ($group == 0) {
+            if (empty($id)) {
+                $this->session->set_flashdata('feedback', 'Select Group Properly!');
+                redirect('users/addUser');
             } else {
-                $this->session->set_flashdata('feedback', 'Select Group Properly!'); 
-              redirect('users/editUser?id='.$id);
+                $this->session->set_flashdata('feedback', 'Select Group Properly!');
+                redirect('users/editUser?id=' . $id);
             }
         }
-        if((empty($id) || !empty($id)) && ($group == -1 || $check == 'ok')) {
-            $permission = $this->input->post('permission');
-            $per = implode(',', $permission);
-            $this->form_validation->set_rules('permission[]','Permission','required|trim|xss_clean'); 
+        /*  if((empty($id) || !empty($id)) && ($group == -1 || $check == 'ok')) {
+          $permission = $this->input->post('permission');
+          $per = implode(',', $permission);
+          $this->form_validation->set_rules('permission[]','Permission','required|trim|xss_clean');
+          } */
+        if (empty($id)) {
+            $this->form_validation->set_rules('password', 'Password', 'required|trim|xss_clean');
         }
-        if(empty($id)) {
-            $this->form_validation->set_rules('password','Password','required|trim|xss_clean');
-        }
-        if(!empty($id)) {
+        if (!empty($id)) {
             if ($this->form_validation->run() == false) {
                 $this->session->set_flashdata('feedback', 'Validation Error !');
                 redirect('users/editUser?id=' . $id);
+            } /* else {
+              if($group != -1 && $check != 'ok') {
+              $this->db->where('id',$group);
+              $per = $this->db->get('groups')->row()->description;
+              } */
+            if (!empty($password)) {
+                $data = array(
+                    'username' => $username,
+                    'first_name' => $name,
+                    'last_name' => $last_name,
+                    'phone' => $phone,
+                    'email' => $email,
+                    'password' => $password,
+                        //'permissions' => $per,
+                        // 'permission' => $check
+                );
             } else {
-                if($group != -1 && $check != 'ok') {
-                    $this->db->where('id',$group);
-                    $per = $this->db->get('groups')->row()->description;
-                }
-                if (!empty($password)) {
-                    $data = array(
-                        'username' => $username,
-                        'first_name' => $name,
-                        'last_name' => $last_name,
-                        'phone' => $phone,
-                        'email' => $email,
-                        'password' => $password,
-                        'permissions' => $per,
-                        'permission' => $check
-                    );
-                } else {
-                    $data = array(
-                        'username' => $username,
-                        'first_name' => $name,
-                        'last_name' => $last_name,
-                        'phone' => $phone,
-                        'email' => $email,
-                        'permissions' => $per,
-                        'permission' => $check
-                    );
-                }
-                $this->ion_auth->update($id,$data);
-                $this->ion_auth->remove_from_group(NULL, $id);
-                if($group == -1) {
-                    $group = 2;
-                }
-                $this->ion_auth->add_to_group($group, $id);
-                $this->session->set_flashdata('feedback', 'Edited!');
-                redirect('users');
+                $data = array(
+                    'username' => $username,
+                    'first_name' => $name,
+                    'last_name' => $last_name,
+                    'phone' => $phone,
+                    'email' => $email,
+                        // 'permissions' => $per,
+                        //  'permission' => $check
+                );
             }
+            $this->ion_auth->update($id, $data);
+            $this->ion_auth->remove_from_group(NULL, $id);
+            /*   if($group == -1) {
+              $group = 2;
+              } */
+            $this->ion_auth->add_to_group($group, $id);
+            $this->session->set_flashdata('feedback', 'Edited!');
+            redirect('users');
         } else {
-            if($this->form_validation->run()==false) {
+            if ($this->form_validation->run() == false) {
                 $this->session->set_flashdata('feedback', 'Validation Error !');
                 redirect('users/addUser');
             } else {
-                if($group != -1 && $check != 'ok') {
-                    $this->db->where('id',$group);
-                    $per = $this->db->get('groups')->row()->description;
-                }
+                /* if($group != -1 && $check != 'ok') {
+                  $this->db->where('id',$group);
+                  $per = $this->db->get('groups')->row()->description;
+                  } */
                 $data = array(
                     'first_name' => $name,
                     'last_name' => $last_name,
                     'phone' => $phone,
                     'password' => $password,
-                    'permissions' => $per,
-                    'permission' => $check
+                        // 'permissions' => $per,
+                        // 'permission' => $check
                 );
-                if ($group == -1) {
-                    $group = 2;
-                }
+                /*   if ($group == -1) {
+                  $group = 2;
+                  } */
                 $dgf = array($group);
-                $this->ion_auth->register($name, $password, $email, $dgf, $data);
+                $this->ion_auth->register($username, $password, $email, $dgf, $data);
                 $this->session->set_flashdata('feedback', 'Added!');
                 redirect('users');
             }
         }
     }
-    
+
     function addNewGroup() {
         $id = $this->input->post('id');
         $name = $this->input->post('name');
         $permission = $this->input->post('permission');
         $per = implode(",", $permission);
-        
-        $this->form_validation->set_rules('name','Name','required|trim|xss_clean');
-        $this->form_validation->set_rules('permission[]','Permissions','required|trim|xss_clean');
-        
-        if(!empty($id)) {
-            if($this->form_validation->run() == false) {
+
+        $this->form_validation->set_rules('name', 'Name', 'required|trim|xss_clean');
+        $this->form_validation->set_rules('permission[]', 'Permissions', 'required|trim|xss_clean');
+
+        if (!empty($id)) {
+            if ($this->form_validation->run() == false) {
                 $this->session->set_flashdata('feedback', 'Validation Error!');
-                redirect('users/editGroup?id='.$id);
+                redirect('users/editGroup?id=' . $id);
             } else {
                 $data = array(
                     'description' => $per
@@ -201,64 +202,89 @@ class Users extends MX_Controller {
                 redirect('users/group');
             }
         } else {
-            if($this->form_validation->run() == false) {
+            if ($this->form_validation->run() == false) {
                 $this->session->set_flashdata('feedback', 'Validation Error!');
-                redirect('users/add_group');
+                redirect('users/addGroup');
             } else {
+
                 $this->ion_auth->create_group($name, $per);
+                $inserted_id = $this->db->insert_id();
+                foreach ($permission as $permission_access) {
+                    $permission_access_option = array();
+                    $permission_access_option = $this->input->post($permission_access . '[]');
+
+                    $permission_access_group = implode(',', $permission_access_option);
+                    $data_access[] = array(
+                        'permission_name' => $permission_access,
+                        'permission_access' => $permission_access_group,
+                        'group_id' => $inserted_id,
+                        'group_name'=>$name
+                    );
+                }
+                $this->users_model->insertGroupPermission($data_access);
+               
                 $this->session->set_flashdata('feedback', 'Added!');
                 redirect('users/group');
             }
-            
         }
     }
-    
+
     function group() {
         $data['groups'] = $this->db->get('groups')->result();
         $this->load->view('home/dashboard'); // just the header file
-        $this->load->view('group',$data);
+        $this->load->view('group', $data);
         $this->load->view('home/footer');
     }
-    
+
     function deleteGroup() {
         $id = $this->input->get('id');
+          $this->users_model->deletePermissionAccess($id);
         $this->ion_auth->delete_group($id);
         $this->session->set_flashdata('feedback', 'Group Deleted!');
         redirect('users/group');
     }
-    
+
     function deleteUser() {
         $id = $this->input->get('id');
+      
         $this->ion_auth->delete_user($id);
         $this->session->set_flashdata('feedback', 'User Deleted!');
         redirect('users/users');
     }
-    
+
     function getPermissions() {
         $id = $this->input->get('id');
         $view = '';
         $permissions = $this->db->get('permission_features')->result();
-        $this->db->where('id',$id);
+        $this->db->where('id', $id);
         $per = $this->db->get('groups')->row()->description;
-        $pers = explode(',',$per);
+        $pers = explode(',', $per);
         foreach ($permissions as $permission) {
-            if(in_array($permission->feature,$pers)){
+            if (in_array($permission->feature, $pers)) {
                 $view .= '<input type="checkbox" name="permission[]" value="' . $permission->feature . '" checked /> <label for="exampleInputEmail1">' . $permission->feature . '</label><br>';
             } else {
                 $view .= '<input type="checkbox" name="permission[]" value="' . $permission->feature . '"/> <label for="exampleInputEmail1">' . $permission->feature . '</label><br>';
-            }  
+            }
         }
-        
-        $data['view'] = array (
+
+        $data['view'] = array(
             'view' => $view
         );
-        
+
         echo json_encode($data);
     }
 
-    
-
-    
+    function getGroupNameAvailable() {
+        $name = $this->input->get('name');
+        $group_name = $this->users_model->getGroupNameAvailable($name);
+        if (empty($group_name)) {
+            $response = '1';
+        } else {
+            $response = '0';
+        }
+        $data['response'] = $response;
+        echo json_encode($data);
+    }
 
 }
 

@@ -501,6 +501,18 @@
                                 </a>
                             </li>
                         <?php } ?>
+                        <li> <li class="sub-menu">
+                            <a href="javascript:;" >
+                                <i class="fa fa-users"></i>
+                                <span>Users</span>
+                            </a>
+                            <ul class="sub">
+                                <li><a href="users"><i class="fa fa-user"></i>All Users</a></li>
+                                <li><a href="users/addUser"><i class="fa fa-plus-circle"></i>Add User</a></li>
+                                <li><a href="users/group"><i class="fa fa-user"></i>All Roles</a></li>
+                                <li><a href="users/addGroup"><i class="fa fa-plus-circle"></i>Add Role</a></li>
+                            </ul>
+                        </li>
                         <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
                             <li class="sub-menu">
                                 <a href="javascript:;" >
@@ -973,7 +985,7 @@
 
                         <!--
                         <?php if ($this->ion_auth->in_group('Doctor')) { ?>
-                                                                    <li><a href="meeting/settings"><i class="fa fa-headphones"></i><?php echo lang('zoom'); ?> <?php echo lang('settings'); ?></a></li>
+                                                                        <li><a href="meeting/settings"><i class="fa fa-headphones"></i><?php echo lang('zoom'); ?> <?php echo lang('settings'); ?></a></li>
                         <?php } ?>
                         -->
 

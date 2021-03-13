@@ -47,7 +47,7 @@
                         </style>
 
                         <?php foreach ($users as $user) { ?>
-                            <?php if($this->ion_auth->get_users_groups($user->id)->row()->name == 'Nurse' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Receptionist' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Accountant' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Laboratorist' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Pharmacist' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'members' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Consultant' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Customer') {
+                            <?php if($this->ion_auth->get_users_groups($user->id)->row()->name == 'Nurse' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Receptionist' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Accountant' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Laboratorist' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Pharmacist' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'members' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Doctor' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Patient') {
                                 
                             } else { ?>
                                 <tr class="">
