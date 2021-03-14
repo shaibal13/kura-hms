@@ -3,18 +3,50 @@
 <section id="main-content">
     <section class="wrapper site-min-height">
         <!-- page start-->
+        <?php
+        $group_permission = $this->ion_auth->get_users_groups()->row();
+
+        if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
+
+            $pers = array();
+            $permission_access_group_explode = array();
+        } else {
+            $pers = explode(',', $group_permission->description);
+
+            $this->db->where('group_id', $group_permission->id);
+            $query = $this->db->get('permission_access_group')->row();
+            $permission_access_group = $query->permission_access;
+            $permission_access_group_explode = explode('***', $permission_access_group);
+        }
+        $permis = '';
+        $permis_2 = '';
+        foreach ($permission_access_group_explode as $perm) {
+            $perm_explode = array();
+            $perm_explode = explode(",", $perm);
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Bed') {
+                $permis = 'ok';
+                //  break;
+            }
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Bed') {
+                $permis_2 = 'ok';
+                //  break;
+            }
+        }
+        ?>
         <section class="panel">
             <header class="panel-heading">
-                <?php echo lang('room_no'); ?>  
-                <div class="col-md-4 no-print pull-right"> 
-                    <a data-toggle="modal" href="#myModal">
-                        <div class="btn-group pull-right">
-                            <button id="" class="btn green btn-xs">
-                                <i class="fa fa-plus-circle"></i> <?php echo lang('add_new'); ?>
-                            </button>
-                        </div>
-                    </a>
-                </div>
+                <?php echo lang('room_no'); ?>
+                <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Accountant')) || $permis == 'ok') { ?>
+                    <div class="col-md-4 no-print pull-right"> 
+                        <a data-toggle="modal" href="#myModal">
+                            <div class="btn-group pull-right">
+                                <button id="" class="btn green btn-xs">
+                                    <i class="fa fa-plus-circle"></i> <?php echo lang('add_new'); ?>
+                                </button>
+                            </div>
+                        </a>
+                    </div>
+                <?php } ?>
             </header>
             <div class="panel-body">
                 <div class="adv-table editable-table ">
@@ -24,7 +56,9 @@
                             <tr>
                                 <th><?php echo lang('room_no'); ?></th>
                                 <th><?php echo lang('description'); ?></th>
-                                <th class="no-print"><?php echo lang('options'); ?></th>
+                                <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Accountant')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
+                                    <th class="no-print"><?php echo lang('options'); ?></th>
+                                <?php } ?>
                             </tr>
                         </thead>
                         <tbody>
@@ -45,10 +79,16 @@
                             <tr class="">
                                 <td><?php echo $category->category; ?></td>
                                 <td> <?php echo $category->description; ?></td>
-                                <td class="no-print">
-                                    <button type="button" title="<?php echo lang('edit'); ?>" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="<?php echo $category->id; ?>"><i class="fa fa-edit"></i> </button>   
-                                    <a class="btn btn-info btn-xs btn_width delete_button" title="<?php echo lang('delete'); ?>" href="bed/deleteBedCategory/delete?id=<?php echo $category->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> </a>
-                                </td>
+                                <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Accountant')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
+                                    <td class="no-print">
+                                        <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Accountant')) || $permis == 'ok') { ?>
+                                            <button type="button" title="<?php echo lang('edit'); ?>" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="<?php echo $category->id; ?>"><i class="fa fa-edit"></i> </button>   
+                                        <?php } ?>
+                                        <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Accountant')) || $permis_2 == 'ok') { ?>
+                                            <a class="btn btn-info btn-xs btn_width delete_button" title="<?php echo lang('delete'); ?>" href="bed/deleteBedCategory/delete?id=<?php echo $category->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> </a>
+                                        <?php } ?>
+                                    </td>
+                                <?php } ?>
                             </tr>
                         <?php } ?>
 
@@ -79,7 +119,7 @@
             </div>
             <div class="modal-body">
                 <form role="form" action="bed/addCategory" class="clearfix row" method="post" enctype="multipart/form-data">
-                   <div class="form-group col-md-12"> 
+                    <div class="form-group col-md-12"> 
                         <label for="exampleInputEmail1"><?php echo lang('room_no'); ?></label>
                         <input type="text" class="form-control" name="category" id="exampleInputEmail1" value='' placeholder="">    
                     </div>
@@ -139,44 +179,44 @@
 
 <script src="common/js/codearistos.min.js"></script>
 <script type="text/javascript">
-                                    $(document).ready(function () {
-                                        $(".editbutton").click(function (e) {
-                                            e.preventDefault(e);
-                                            // Get the record's ID via attribute  
-                                            var iid = $(this).attr('data-id');
-                                            $('#editBedCategoryForm').trigger("reset");
-                                            $('#myModal2').modal('show');
-                                            $.ajax({
-                                                url: 'bed/editBedCategoryByJason?id=' + iid,
-                                                method: 'GET',
-                                                data: '',
-                                                dataType: 'json',
-                                            }).success(function (response) {
-                                                // Populate the form fields with the data returned from server
-                                                $('#editBedCategoryForm').find('[name="id"]').val(response.bedcategory.id).end()
-                                                $('#editBedCategoryForm').find('[name="category"]').val(response.bedcategory.category).end()
-                                                $('#editBedCategoryForm').find('[name="description"]').val(response.bedcategory.description).end()
+                                        $(document).ready(function () {
+                                            $(".editbutton").click(function (e) {
+                                                e.preventDefault(e);
+                                                // Get the record's ID via attribute  
+                                                var iid = $(this).attr('data-id');
+                                                $('#editBedCategoryForm').trigger("reset");
+                                                $('#myModal2').modal('show');
+                                                $.ajax({
+                                                    url: 'bed/editBedCategoryByJason?id=' + iid,
+                                                    method: 'GET',
+                                                    data: '',
+                                                    dataType: 'json',
+                                                }).success(function (response) {
+                                                    // Populate the form fields with the data returned from server
+                                                    $('#editBedCategoryForm').find('[name="id"]').val(response.bedcategory.id).end()
+                                                    $('#editBedCategoryForm').find('[name="category"]').val(response.bedcategory.category).end()
+                                                    $('#editBedCategoryForm').find('[name="description"]').val(response.bedcategory.description).end()
+                                                });
                                             });
                                         });
-                                    });
 </script>
 
 
 <script>
     $(document).ready(function () {
-       var table = $('#editable-sample').DataTable({
+        var table = $('#editable-sample').DataTable({
             responsive: true,
 
             dom: "<'row'<'col-sm-3'l><'col-sm-5 text-center'B><'col-sm-4'f>>" +
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-         
-             buttons: [
-                {extend: 'copyHtml5', exportOptions: {columns: [0, 1],}},
-                {extend: 'excelHtml5', exportOptions: {columns: [0, 1],}},
-                {extend: 'csvHtml5', exportOptions: {columns: [0, 1],}},
-                {extend: 'pdfHtml5', exportOptions: {columns: [0, 1],}},
-                {extend: 'print', exportOptions: {columns: [0, 1],}},
+
+            buttons: [
+                {extend: 'copyHtml5', exportOptions: {columns: [0, 1], }},
+                {extend: 'excelHtml5', exportOptions: {columns: [0, 1], }},
+                {extend: 'csvHtml5', exportOptions: {columns: [0, 1], }},
+                {extend: 'pdfHtml5', exportOptions: {columns: [0, 1], }},
+                {extend: 'print', exportOptions: {columns: [0, 1], }},
             ],
 
             aLengthMenu: [
@@ -186,7 +226,7 @@
             iDisplayLength: -1,
             "order": [[0, "desc"]],
 
-             "language": {
+            "language": {
                 "lengthMenu": "_MENU_",
                 search: "_INPUT_",
                 "url": "common/assets/DataTables/languages/<?php echo $this->language; ?>.json"
@@ -200,7 +240,7 @@
 <script>
     $(document).ready(function () {
 
-   
+
 
         $(".flashmessage").delay(3000).fadeOut(100);
     });

@@ -16,12 +16,15 @@ class Department extends MX_Controller {
         } else {
             $this->pers = explode(',', $group_permission->description);
         }
-        if (!$this->ion_auth->in_group('admin') && !in_array('Department', $this->pers)) {
+        if ($this->ion_auth->in_group(array('Pharmacist', 'Accountant', 'Doctor', 'Receptionist', 'Nurse', 'Laboratorist', 'Patient'))) {
             redirect('home/permission');
         }
     }
 
     public function index() {
+        if (!$this->ion_auth->in_group('admin') && !in_array('Department', $this->pers)) {
+            redirect('home/permission');
+        }
         $data['departments'] = $this->department_model->getDepartment();
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('department', $data);

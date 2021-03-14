@@ -13,12 +13,29 @@ class Bed extends MX_Controller {
         $this->load->model('nurse/nurse_model');
         $this->load->model('medicine/medicine_model');
         $this->load->model('pservice/pservice_model');
-        if (!$this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Accountant'))) {
+        $group_permission = $this->ion_auth->get_users_groups()->row();
+
+        if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
+
+            $this->pers = array();
+            $this->permission_access_group_explode = array();
+        } else {
+            $this->pers = explode(',', $group_permission->description);
+
+            $this->db->where('group_id', $group_permission->id);
+            $query = $this->db->get('permission_access_group')->row();
+            $permission_access_group = $query->permission_access;
+            $this->permission_access_group_explode = explode('***', $permission_access_group);
+        }
+        if ($this->ion_auth->in_group(array('pharmacist', 'Receptionist', 'Laboratorist', 'Patient'))) {
             redirect('home/permission');
         }
     }
 
     public function index() {
+        if (!$this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Accountant')) && !in_array('Bed', $this->pers)) {
+            redirect('home/permission');
+        }
         $data['beds'] = $this->bed_model->getBed();
         $data['categories'] = $this->bed_model->getBedCategory();
         $this->load->view('home/dashboard'); // just the header file
@@ -113,6 +130,9 @@ class Bed extends MX_Controller {
         if (!$this->ion_auth->logged_in()) {
             redirect('auth/login', 'refresh');
         }
+        if (!$this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Accountant')) && !in_array('Bed', $this->pers)) {
+            redirect('home/permission');
+        }
         $data['categories'] = $this->bed_model->getBedCategory();
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('bed_category', $data);
@@ -120,6 +140,7 @@ class Bed extends MX_Controller {
     }
 
     public function addCategoryView() {
+
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('add_category_view');
         $this->load->view('home/footer'); // just the header file
@@ -191,6 +212,9 @@ class Bed extends MX_Controller {
     function bedAllotment() {
         if (!$this->ion_auth->logged_in()) {
             redirect('auth/login', 'refresh');
+        }
+        if (!$this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Accountant')) && !in_array('Bed', $this->pers)) {
+            redirect('home/permission');
         }
         $data['blood_group'] = $this->bed_model->getBloodGroup();
 
@@ -362,12 +386,31 @@ class Bed extends MX_Controller {
 
         //  $data['patients'] = $this->patient_model->getVisitor();
         $i = 0;
+        $permis = '';
+        $permis_1 = '';
+        foreach ($this->permission_access_group_explode as $perm) {
+            $perm_explode = array();
+            $permis='';
+            $permis_1='';
+            $perm_explode = explode(",", $perm);
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Bed') {
+                $permis = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Bed') {
+                $permis_1 = 'ok';
+                //  break;
+            }
+        }
         foreach ($data['beds'] as $bed) {
             $i = $i + 1;
-
-            $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $bed->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</button>';
-
-            $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="bed/delete?id=' . $bed->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i> ' . lang('delete') . '</a>';
+             $option1=''; $option2='';
+            if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Accountant')) || $permis == 'ok') {
+                $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $bed->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</button>';
+            }
+            if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Accountant')) || $permis_1 == 'ok') {
+                $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="bed/delete?id=' . $bed->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i> ' . lang('delete') . '</a>';
+            }
             $last_a_time = explode('-', $bed->last_a_time);
             $last_d_time = explode('-', $bed->last_d_time);
             if (!empty($last_d_time[1])) {
@@ -453,13 +496,29 @@ class Bed extends MX_Controller {
 
         //  $data['patients'] = $this->patient_model->getVisitor();
         $i = 0;
+        foreach ($this->permission_access_group_explode as $perm) {
+            $perm_explode = array();
+            $permis='';
+            $permis_1='';
+            $perm_explode = explode(",", $perm);
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Bed') {
+                $permis = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Bed') {
+                $permis_1 = 'ok';
+                //  break;
+            }
+        }
         foreach ($data['beds'] as $bed) {
             $i = $i + 1;
-
-           $option1 = '<a class="btn btn-info btn-xs btn_width editbutton" href="bed/bedAllotmentDetails?id=' . $bed->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
-
-            $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="bed/deleteAllotment?id=' . $bed->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i> ' . lang('delete') . '</a>';
-
+            $option1=''; $option2='';
+            if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Accountant')) || $permis == 'ok') {
+                $option1 = '<a class="btn btn-info btn-xs btn_width editbutton" href="bed/bedAllotmentDetails?id=' . $bed->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
+            }
+            if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Accountant')) || $permis_1 == 'ok') {
+                $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="bed/deleteAllotment?id=' . $bed->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i> ' . lang('delete') . '</a>';
+            }
             $patientdetails = $this->patient_model->getPatientById($bed->patient);
             if (!empty($patientdetails)) {
                 $patientname = $patientdetails->name;
@@ -526,21 +585,21 @@ class Bed extends MX_Controller {
         $alloted_time_array = explode("-", $alloted_time);
         $alloted_timestamp = strtotime($alloted_time_array[0] . ' ' . $alloted_time_array[1]);
         $beds = $this->bed_model->getBedByCategory($id);
-        $option='';
+        $option = '';
         $option = '<option  value="select">' . lang('select') . '</option>';
         foreach ($beds as $bed) {
-            $alloted_bed=array();
+            $alloted_bed = array();
             $alloted_bed = $this->bed_model->getAllotedBedByBedIdByDate($bed->id, $alloted_timestamp);
-           
+
             if (empty($alloted_bed)) {
-              
+
                 $option .= '<option value="' . $bed->id . '">' . $bed->number . '</option>';
             } else {
                 foreach ($alloted_bed as $al_bed) {
                     if ($al_bed->d_timestamp >= $alloted_timestamp || empty($al_bed->d_timestamp)) {
                         $option1 = "1";
                     } else {
-                        
+
                         $option .= '<option value="' . $bed->id . '">' . $bed->number . '</option>';
                     }
                 }
@@ -783,34 +842,33 @@ class Bed extends MX_Controller {
 
     function updateServices() {
         $pservice = $this->input->post('arr');
-       
+
         $nurse = $this->input->post('nurse');
         $date = date('d-m-Y', time());
-        if(!empty($pservice)){
-        foreach ($pservice as $p_service) {
-            $price_pservice = $this->pservice_model->getPserviceById($p_service);
-            $price[] = $price_pservice->price;
-        }
-        $price_update = implode("**", $price);
-        $pservice_update = implode("**", $pservice);
-        $data = array();
-        $data = array('date' => $date,
-            'nurse' => $nurse,
-            'service' => $pservice_update,
-            'price' => $price_update,
-            'alloted_bed_id' => $this->input->post('alloted')
-        );
+        if (!empty($pservice)) {
+            foreach ($pservice as $p_service) {
+                $price_pservice = $this->pservice_model->getPserviceById($p_service);
+                $price[] = $price_pservice->price;
+            }
+            $price_update = implode("**", $price);
+            $pservice_update = implode("**", $pservice);
+            $data = array();
+            $data = array('date' => $date,
+                'nurse' => $nurse,
+                'service' => $pservice_update,
+                'price' => $price_update,
+                'alloted_bed_id' => $this->input->post('alloted')
+            );
         }
         $date_exist = $this->bed_model->getServicesByDate($date);
         if (!empty($date_exist)) {
-            if(empty($pservice)){
-                 $this->bed_model->deleteServices($date_exist->id);
-                  $arr['message'] = array('message' => lang('updated'), 'title' => lang('updated'));
-            }else{
-               $this->bed_model->updateServices($date_exist->id, $data);
-               $arr['message'] = array('message' => lang('updated'), 'title' => lang('updated'));
+            if (empty($pservice)) {
+                $this->bed_model->deleteServices($date_exist->id);
+                $arr['message'] = array('message' => lang('updated'), 'title' => lang('updated'));
+            } else {
+                $this->bed_model->updateServices($date_exist->id, $data);
+                $arr['message'] = array('message' => lang('updated'), 'title' => lang('updated'));
             }
-           
         } else {
             $this->bed_model->insertServices($data);
             $arr['message'] = array('message' => lang('added'), 'title' => lang('added'));
