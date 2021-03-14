@@ -3,9 +3,41 @@
 <section id="main-content">
     <section class="wrapper site-min-height">
         <!-- page start-->
+          <?php  
+         $group_permission = $this->ion_auth->get_users_groups()->row();
+
+        if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
+
+            $pers = array();
+            $permission_access_group_explode = array();
+        } else {
+            $pers = explode(',', $group_permission->description);
+
+            $this->db->where('group_id', $group_permission->id);
+            $query = $this->db->get('permission_access_group')->row();
+            $permission_access_group = $query->permission_access;
+            $permission_access_group_explode = explode('***', $permission_access_group);
+        }
+        $permis = '';
+        $permis_2 = '';
+        foreach ($permission_access_group_explode as $perm) {
+            $perm_explode = array();
+            $perm_explode = explode(",", $perm);
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Schedule') {
+                $permis = 'ok';
+                //  break;
+            }
+             if (in_array('3', $perm_explode) && $perm_explode[0] == 'Schedule') {
+                $permis_2 = 'ok';
+                //  break;
+            }
+             
+        }
+        ?>
         <section class="panel">
             <header class="panel-heading">
                 <?php echo lang('time_schedule'); ?> 
+                  <?php   if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') { ?>
                 <div class="col-md-4 clearfix pull-right">
                     <a data-toggle="modal" href="#myModal">
                         <div class="btn-group pull-right">
@@ -15,6 +47,7 @@
                         </div>
                     </a>  
                 </div>
+                 <?php } ?>
             </header>
 
             <div class="panel-body">
@@ -28,7 +61,7 @@
                                 <th> <?php echo lang('start_time'); ?></th>
                                 <th> <?php echo lang('end_time'); ?></th>
                                 <th> <?php echo lang('duration'); ?></th>
-                                <?php if ($this->ion_auth->in_group(array('admin', 'Doctor'))) { ?>
+                                <?php if ($this->ion_auth->in_group(array('admin', 'Doctor')) || $permis_2=='ok') { ?>
                                     <th> <?php echo lang('options'); ?></th>
                                 <?php } ?>
 
@@ -47,7 +80,7 @@
                                     <td><?php echo $schedule->s_time; ?></td>
                                     <td><?php echo $schedule->e_time; ?></td>
                                     <td><?php echo $schedule->duration * 5 . ' ' . lang('minitues'); ?></td>
-                                    <?php if ($this->ion_auth->in_group(array('admin', 'Doctor'))) { ?>
+                                    <?php if ($this->ion_auth->in_group(array('admin', 'Doctor'))|| $permis_2=='ok') { ?>
                                         <td>
                                             <!--
                                             <button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="<?php echo $schedule->id; ?>"><i class="fa fa-edit"></i> <?php echo lang('edit'); ?></button>   
