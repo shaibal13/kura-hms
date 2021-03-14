@@ -27,7 +27,7 @@
                 $permis = 'ok';
                 //  break;
             }
-             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Bed') {
+             if (in_array('3', $perm_explode) && $perm_explode[0] == 'Bed') {
                 $permis_2 = 'ok';
                 //  break;
             }
