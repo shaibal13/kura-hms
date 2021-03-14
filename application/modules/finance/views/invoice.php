@@ -1,4 +1,3 @@
-<!--main content start-->
 <?php if ($redirect == 'download') { ?>
     <!DOCTYPE html>
     <html lang="en" <?php if ($this->db->get('settings')->row()->language == 'arabic') { ?> dir="rtl" <?php } ?>>
@@ -620,13 +619,50 @@
                         </div>
                 </section>
 
-                <?php if ($redirect != 'download') { ?>
+                <?php if ($redirect != 'download') { 
+                    
+                   
+        $group_permission = $this->ion_auth->get_users_groups()->row();
+
+        if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
+
+            $pers = array();
+            $permission_access_group_explode = array();
+        } else {
+            $pers = explode(',', $group_permission->description);
+
+            $this->db->where('group_id', $group_permission->id);
+            $query = $this->db->get('permission_access_group')->row();
+            $permission_access_group = $query->permission_access;
+            $permission_access_group_explode = explode('***', $permission_access_group);
+        }
+        $permis = '';
+        $permis_2 = '';
+        $permis_1 = '';
+        foreach ($permission_access_group_explode as $perm) {
+            $perm_explode = array();
+            $perm_explode = explode(",", $perm);
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Finance') {
+                $permis = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Finance') {
+                $permis_2 = 'ok';
+                //  break;
+            }
+             if (in_array('1', $perm_explode) && $perm_explode[0] == 'Finance') {
+                $permis_1 = 'ok';
+                //  break;
+            }
+        }
+       
+                    ?>
                     <section class="col-md-6">
                         <div class="col-md-5 no-print" style="margin-top: 20px;">
                             <a href="finance/payment" class="btn btn-info btn-sm info pull-left"><i class="fa fa-arrow-circle-left"></i>  <?php echo lang('back_to_payment_modules'); ?> </a>
                             <div class="text-center col-md-12 row">
                                 <a class="btn btn-info btn-sm invoice_button pull-left" onclick="javascript:window.print();"><i class="fa fa-print"></i> <?php echo lang('print'); ?> </a>
-                                <?php if ($this->ion_auth->in_group(array('admin', 'Accountant'))) { ?>
+                                <?php if ($this->ion_auth->in_group(array('admin', 'Accountant')) || $permis=='ok') { ?>
                                     <a href="finance/editPayment?id=<?php echo $payment->id; ?>" class="btn btn-info btn-sm editbutton pull-left"><i class="fa fa-edit"></i> <?php echo lang('edit'); ?> <?php echo lang('invoice'); ?> </a>
                                     <a href="finance/download?id=<?php echo $payment->id; ?>" class="btn btn-info btn-sm detailsbutton pull-left download"><i class="fa fa-download"></i> <?php echo lang('download'); ?>  </a>
                                 <?php } ?>
@@ -635,6 +671,7 @@
                             </div>
 
                             <div class="no-print">
+                                <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Nurse', 'Laboratorist', 'Doctor')) || $permis== 'ok') { ?>
                                 <a href="finance/addPaymentView" class="pull-left">
                                     <div class="btn-group">
                                         <button id="" class="btn btn-info green btn-sm">
@@ -642,7 +679,8 @@
                                         </button>
                                     </div>
                                 </a>
-                                <?php if ($this->ion_auth->in_group(array('admin', 'Accountant'))) { ?>
+                                <?php } ?>
+                                <?php if ($this->ion_auth->in_group(array('admin', 'Accountant')) || $permis== 'ok') { ?>
                                     <a href="finance/sendInvoice?id=<?php echo $payment->id; ?>" class="btn  btn-sm pull-left send"> <i class="fa fa-paper-plane"></i> <?php echo lang('send_invoice'); ?>  </a>
                                 <?php } ?>
                             </div>

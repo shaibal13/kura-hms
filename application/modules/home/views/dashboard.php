@@ -717,7 +717,7 @@
                             foreach ($permission_access_group_explode as $perm) {
                                 $perm_explode = array();
                                 $perm_explode = explode(",", $perm);
-                                if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
+                                if (in_array('2', $perm_explode) && $perm_explode[0] == 'Finance') {
                                     $permis = 'ok';
                                     //  break;
                                 }
@@ -730,13 +730,13 @@
                                 </a>
                                 <ul class="sub">
                                     <li><a  href="finance/payment"><i class="fa fa-money-check"></i> <?php echo lang('payments'); ?></a></li>
-                                    <?php if ($permis == 'ok') { ?>
+                                    <?php if ($this->ion_auth->in_group('admin') || $permis == 'ok') { ?>
                                         <li><a  href="finance/addPaymentView"><i class="fa fa-plus-circle"></i><?php echo lang('add_payment'); ?></a></li>
 
                                     <?php } ?>
                                     <li><a  href="finance/paymentCategory"><i class="fa fa-edit"></i><?php echo lang('payment_procedures'); ?></a></li>
                                     <li><a  href="finance/expense"><i class="fa fa-money-check"></i><?php echo lang('expense'); ?></a></li>
-                                    <?php if ($permis == 'ok') { ?>
+                                    <?php if ($this->ion_auth->in_group('admin') || $permis == 'ok') { ?>
 
                                         <li><a  href="finance/addExpenseView"><i class="fa fa-plus-circle"></i><?php echo lang('add_expense'); ?></a></li>
                                     <?php } ?>
@@ -1025,19 +1025,34 @@
                                 </ul>
                             </li>
 <?php } ?>
-<?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Laboratorist', 'Doctor')) || in_array('Report', $pers)) { ?>
+<?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Laboratorist', 'Doctor')) || in_array('Report', $pers)) {
+      $permis = '';
+                            $permis_1 = '';
+                            foreach ($permission_access_group_explode as $perm) {
+                                $perm_explode = array();
+                                $perm_explode = explode(",", $perm);
+                                if (in_array('2', $perm_explode) && $perm_explode[0] == 'Report') {
+                                    $permis_1 = 'ok';
+                                    //  break;
+                                }
+                                 if (in_array('1', $perm_explode) && $perm_explode[0] == 'Report') {
+                                    $permis = 'ok';
+                                    //  break;
+                                }
+                            }
+    ?>
                             <li class="sub-menu">
                                 <a href="javascript:;" >
                                     <i class="fas fa-file-medical-alt"></i>
                                     <span><?php echo lang('report'); ?></span>
                                 </a>
                                 <ul class="sub">
-                                    <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
+                                    <?php if ($this->ion_auth->in_group(array('admin')) || $permis=='ok' ) { ?>
                                         <li><a  href="finance/financialReport"><i class="fa fa-book"></i><?php echo lang('financial_report'); ?></a></li>
                                         <li> <a href="finance/AllUserActivityReport">  <i class="fa fa-home"></i>   <span><?php echo lang('user_activity_report'); ?></span> </a></li>
     <?php } ?>
 
-    <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
+    <?php if ($this->ion_auth->in_group(array('admin')) || $permis=='ok') { ?>
                                         <li><a  href="finance/doctorsCommission"><i class="fa fa-edit"></i><?php echo lang('doctors_commission'); ?> </a></li>
                                         <li><a  href="finance/monthly"><i class="fa fa-chart-bar"></i> <?php echo lang('monthly_sales'); ?> </a></li>
                                         <li><a  href="finance/daily"><i class="fa fa-chart-bar"></i> <?php echo lang('daily_sales'); ?> </a></li>
@@ -1047,11 +1062,12 @@
 
 
     <?php } ?>
+      <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Laboratorist', 'Doctor')) || $permis_1 == 'ok') { ?>
 
                                     <li><a  href="report/birth"><i class="fas fa-file-medical"></i><?php echo lang('birth_report'); ?></a></li>
                                     <li><a  href="report/operation"><i class="fa fa-wheelchair"></i><?php echo lang('operation_report'); ?></a></li>
                                     <li><a  href="report/expire"><i class="fas fa-file-medical"></i><?php echo lang('expire_report'); ?></a></li>
-
+                                        <?php } ?>
                                 </ul>
                             </li>
                         <?php } ?>

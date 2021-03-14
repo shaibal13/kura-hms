@@ -18,8 +18,21 @@ class Finance extends MX_Controller {
 
         require APPPATH . 'third_party/stripe/stripe-php/init.php';
         $this->load->module('paypal');
+        $group_permission = $this->ion_auth->get_users_groups()->row();
 
-        if (!$this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Nurse', 'Laboratorist', 'Doctor'))) {
+        if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
+
+            $this->pers = array();
+            $this->permission_access_group_explode = array();
+        } else {
+            $this->pers = explode(',', $group_permission->description);
+
+            $this->db->where('group_id', $group_permission->id);
+            $query = $this->db->get('permission_access_group')->row();
+            $permission_access_group = $query->permission_access;
+            $this->permission_access_group_explode = explode('***', $permission_access_group);
+        }
+        if ($this->ion_auth->in_group(array('Pharmacist', 'Patient'))) {
             redirect('home/permission');
         }
     }
@@ -33,7 +46,9 @@ class Finance extends MX_Controller {
         if (!$this->ion_auth->logged_in()) {
             redirect('auth/login', 'refresh');
         }
-
+        if (!$this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Nurse', 'Laboratorist', 'Doctor')) && !in_array('Finance', $this->pers)) {
+            redirect('home/permission');
+        }
         $data['settings'] = $this->settings_model->getSettings();
 
         $this->load->view('home/dashboard'); // just the header file
@@ -675,7 +690,20 @@ class Finance extends MX_Controller {
     }
 
     function editPayment() {
-        if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist'))) {
+        $permis = '';
+       //$permis_1 = '';
+        foreach ($this->permission_access_group_explode as $perm) {
+            $perm_explode = array();
+            //$permis='';
+           // $permis_1='';
+            $perm_explode = explode(",", $perm);
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Bed') {
+                $permis = 'ok';
+                //  break;
+            }
+           
+        }
+        if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist')) || $permis== 'ok') {
             $data = array();
             $data['discount_type'] = $this->finance_model->getDiscountType();
             $data['settings'] = $this->settings_model->getSettings();
@@ -1230,7 +1258,8 @@ class Finance extends MX_Controller {
     function invoice() {
         //$this->load->module('sslcommerzpayment');
         // $rewrite=$this->sslcommerzpayment->helperFileReWriteAftertransaction();
-
+        $data['redirect'] = '';
+        $data['redirectlink'] = '';
         $id = $this->input->get('id');
         $data['settings'] = $this->settings_model->getSettings();
         $data['discount_type'] = $this->finance_model->getDiscountType();
@@ -1246,6 +1275,7 @@ class Finance extends MX_Controller {
         $data['discount_type'] = $this->finance_model->getDiscountType();
         $data['payment'] = $this->finance_model->getPaymentById($id);
         $data['redirectlink'] = 'print';
+         $data['redirect'] = '';
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('invoice', $data);
         $this->load->view('home/footer'); // just the footer fi
@@ -1351,15 +1381,15 @@ class Finance extends MX_Controller {
         } else {
             $data = array();
             $data = array('patient' => $patient,
-               // 'date' => $date,
+                // 'date' => $date,
                 'payment_id' => $payment_id,
                 'deposited_amount' => $deposited_amount,
                 'deposit_type' => $deposit_type,
                 'user' => $user
             );
-             if (empty($id)) {
-                  $data['date']=$date;
-             }
+            if (empty($id)) {
+                $data['date'] = $date;
+            }
             if (empty($id)) {
                 if ($deposit_type == 'Card') {
                     $payment_details = $this->finance_model->getPaymentById($payment_id);
@@ -1935,8 +1965,32 @@ class Finance extends MX_Controller {
             }
         }
         //  $data['payments'] = $this->finance_model->getPayment();
-
+        $permis = '';
+        $permis_1 = '';
+        $permis_2 = '';
+        foreach ($this->permission_access_group_explode as $perm) {
+            $perm_explode = array();
+            //$permis='';
+            // $permis_1='';
+            $perm_explode = explode(",", $perm);
+            if (in_array('1', $perm_explode) && $perm_explode[0] == 'Finance') {
+                $permis = 'ok';
+                //  break;
+            }
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Finance') {
+                $permis_1 = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Finance') {
+                $permis_2 = 'ok';
+                //  break;
+            }
+        }
         foreach ($data['payments'] as $payment) {
+            $options1 = ' ';
+            $options2 = ' ';
+            $options4 = ' ';
+            $options3 = '';
             $date = date('d-m-y', $payment->date);
 
             $discount = $payment->discount;
@@ -1944,13 +1998,14 @@ class Finance extends MX_Controller {
                 $discount = 0;
             }
 
-            if ($this->ion_auth->in_group(array('admin', 'Accountant'))) {
+            if ($this->ion_auth->in_group(array('admin', 'Accountant')) || $permis_1 == 'ok') {
                 $options1 = ' <a class="btn btn-info btn-xs editbutton" title="' . lang('edit') . '" href="finance/editPayment?id=' . $payment->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
             }
-
-            $options2 = '<a class="btn btn-info btn-xs invoicebutton" title="' . lang('invoice') . '" style="color: #fff;" href="finance/invoice?id=' . $payment->id . '"><i class="fa fa-file-invoice"></i> ' . lang('invoice') . '</a>';
-            $options4 = '<a class="btn btn-info btn-xs invoicebutton" title="' . lang('print') . '" style="color: #fff;" href="finance/printInvoice?id=' . $payment->id . '"target="_blank"> <i class="fa fa-print"></i> ' . lang('print') . '</a>';
-            if ($this->ion_auth->in_group(array('admin', 'Accountant'))) {
+            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Nurse', 'Laboratorist', 'Doctor')) || $permis == 'ok') {
+                $options2 = '<a class="btn btn-info btn-xs invoicebutton" title="' . lang('invoice') . '" style="color: #fff;" href="finance/invoice?id=' . $payment->id . '"><i class="fa fa-file-invoice"></i> ' . lang('invoice') . '</a>';
+                $options4 = '<a class="btn btn-info btn-xs invoicebutton" title="' . lang('print') . '" style="color: #fff;" href="finance/printInvoice?id=' . $payment->id . '"target="_blank"> <i class="fa fa-print"></i> ' . lang('print') . '</a>';
+            }
+            if ($this->ion_auth->in_group(array('admin', 'Accountant')) || $permis_2 == 'ok') {
                 $options3 = '<a class="btn btn-info btn-xs delete_button" title="' . lang('delete') . '" href="finance/delete?id=' . $payment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"></i> ' . lang('delete') . '</a>';
             }
 
@@ -2251,27 +2306,42 @@ class Finance extends MX_Controller {
             }
         }
         //  $data['payments'] = $this->finance_model->getPayment();
-
+        $permis = '';
+        $permis_1 = '';
+        $permis_2 = '';
+        foreach ($this->permission_access_group_explode as $perm) {
+            $perm_explode = array();
+            //$permis='';
+            // $permis_1='';
+            $perm_explode = explode(",", $perm);
+            if (in_array('1', $perm_explode) && $perm_explode[0] == 'Finance') {
+                $permis = 'ok';
+                //  break;
+            }
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Finance') {
+                $permis_1 = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Finance') {
+                $permis_2 = 'ok';
+                //  break;
+            }
+        }
         foreach ($data['expenses'] as $expense) {
-
-
-            if ($this->ion_auth->in_group(array('admin'))) {
+            $options1 = '';
+            $options2 = '';
+            $options3 = '';
+            if ($this->ion_auth->in_group(array('admin')) || $permis_1 == 'ok') {
                 $options1 = ' <a class="btn btn-info btn-xs editbutton" title="' . lang('edit') . '" href="finance/editExpense?id=' . $expense->id . '"><i class="fa fa-edit"> </i></a>';
             }
 
             $options2 = '<a class="btn btn-info btn-xs invoicebutton" title="' . lang('invoice') . '" style="color: #fff;" href="finance/expenseInvoice?id=' . $expense->id . '"><i class="fa fa-file-invoice"></i> </a>';
             //$options4 = '<a class="btn btn-info btn-xs invoicebutton" title="' . lang('print') . '" style="color: #fff;" href="finance/printInvoice?id=' . $payment->id . '"target="_blank"> <i class="fa fa-print"></i> ' . lang('print') . '</a>';
-            if ($this->ion_auth->in_group(array('admin'))) {
+            if ($this->ion_auth->in_group(array('admin')) || $permis_2 == 'ok') {
                 $options3 = '<a class="btn btn-info btn-xs delete_button" title="' . lang('delete') . '" href="finance/deleteExpense?id=' . $expense->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"></i> </a>';
             }
 
-            if (empty($options1)) {
-                $options1 = '';
-            }
 
-            if (empty($options3)) {
-                $options3 = '';
-            }
 
 
             $info[] = array(
@@ -2319,6 +2389,7 @@ class Finance extends MX_Controller {
         $data['payment'] = $this->finance_model->getPaymentById($id);
         $settings1 = $this->settings_model->getSettings();
         $data['redirect'] = 'download';
+        $data['redirectlink'] = '';
         $mpdf = new \Mpdf\Mpdf(['format' => 'A4']);
         $mpdf->SetHTMLFooter('
 <div style="font-weight: bold; font-size: 8pt; font-style: italic;">

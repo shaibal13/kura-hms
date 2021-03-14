@@ -86,7 +86,7 @@ if (!empty($group->id)) {
                                                                        }
                                                                        ?> /> <label for="exampleInputEmail1"><?php echo $permission->feature; ?></label>
                                                             </div>
-                                                            <?php if ($permission->feature != 'Payment Settings' && $permission->feature != 'Report'&& $permission->feature != 'Bulk Import') { ?>
+                                                            <?php if ($permission->feature != 'Payment Settings' && $permission->feature != 'Bulk Import') { ?>
                                                                 <div class="col-md-5  <?php
                                                                 if (!empty($group->id)) {
                                                                     if (!in_array($permission->feature, $pers)) {
@@ -130,6 +130,7 @@ if (!empty($group->id)) {
                                                                     ?>
                                                                            />
                                                                     <label for="exampleInputEmail1"><?php echo lang('w'); ?></label>
+                                                                      <?php if ($permission->feature != 'Report') { ?>
                                                                     <input class="permission_option" id="<?php echo $permission->feature; ?>-3" type="checkbox" name="<?php echo $permission->feature; ?>[]" value="3"
                                                                     <?php
                                                                     if (!empty($group->id)) {
@@ -147,6 +148,7 @@ if (!empty($group->id)) {
                                                                     ?>
                                                                            />
                                                                     <label  for="exampleInputEmail1"><?php echo lang('d'); ?></label>
+                                                                      <?php } ?>
                                                                 </div>
     <?php } ?>
                                                         </div>
