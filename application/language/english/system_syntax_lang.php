@@ -809,4 +809,9 @@ $lang['permission'] = 'Permission';
 $lang['r'] = 'R';
 $lang['w'] = 'W';
 $lang['d'] = 'D';
+$lang['users'] = 'Users';
+$lang['all_users'] = 'All Users';
+$lang['add_user'] = 'Add User';
+$lang['all_roles'] = 'All Roles';
+$lang['add_role'] = 'Add Role';
 
