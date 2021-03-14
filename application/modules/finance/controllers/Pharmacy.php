@@ -11,12 +11,30 @@ class Pharmacy extends MX_Controller {
         $this->load->model('medicine/medicine_model');
         $this->load->model('settings/settings_model');
         $data['settings'] = $this->settings_model->getSettings();
-        if (!$this->ion_auth->in_group(array('admin', 'Accountant', 'Pharmacist'))) {
+         $group_permission = $this->ion_auth->get_users_groups()->row();
+
+        if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
+
+            $this->pers = array();
+            $this->permission_access_group_explode = array();
+        } else {
+            $this->pers = explode(',', $group_permission->description);
+
+            $this->db->where('group_id', $group_permission->id);
+            $query = $this->db->get('permission_access_group')->row();
+            $permission_access_group = $query->permission_access;
+            $this->permission_access_group_explode = explode('***', $permission_access_group);
+        }
+        if ($this->ion_auth->in_group(array('Patient', 'Receptionist', 'Nurse', 'Laboratorist', 'Doctor'))) {
             redirect('home/permission');
         }
+       
     }
 
     function home() {
+         if (!$this->ion_auth->in_group(array('admin', 'Accountant', 'Pharmacist')) && !in_array('Pharmacy', $this->pers)) {
+            redirect('home/permission');
+        }
         $data = array();
         $data['medicines'] = $this->medicine_model->getMedicine();
         $data['latest_medicines'] = $this->medicine_model->getLatestMedicine();
@@ -634,13 +652,34 @@ class Pharmacy extends MX_Controller {
         $option1 = '';
         $option2 = '';
         $option3 = '';
+          $permis = '';
+        $permis_1 = '';
+        $permis_2 = '';
+        foreach ($this->permission_access_group_explode as $perm) {
+            $perm_explode = array();
+            //$permis='';
+            // $permis_1='';
+            $perm_explode = explode(",", $perm);
+            if (in_array('1', $perm_explode) && $perm_explode[0] == 'Pharmacy') {
+                $permis = 'ok';
+                //  break;
+            }
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Pharmacy') {
+                $permis_1 = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Pharmacy') {
+                $permis_2 = 'ok';
+                //  break;
+            }
+        }
         foreach ($data['payments'] as $payment) {
             //$i = $i + 1;
             $settings = $this->settings_model->getSettings();
-            if ($this->ion_auth->in_group(array('admin', 'Pharmacist'))) {
+            if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) ||  $permis_1 == 'ok') {
                 $option1 = '<a class="btn btn-info btn-xs editbutton" href="finance/pharmacy/editPayment?id=' . $payment->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
             }
-            if ($this->ion_auth->in_group('admin')) {
+            if ($this->ion_auth->in_group('admin') || $permis_2 == 'ok') {
                 $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="finance/pharmacy/delete?id=' . $payment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
             }
             $option3 = '<a class="btn btn-xs green" style="color: #fff;" href="finance/pharmacy/invoice?id=' . $payment->id . '"><i class="fa fa-file-invoice"></i> ' . lang('invoice') . '</a>';

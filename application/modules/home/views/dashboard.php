@@ -905,6 +905,10 @@
                                     $permis = 'ok';
                                     //  break;
                                 }
+                                if (in_array('1', $perm_explode) && $perm_explode[0] == 'Pharmacy') {
+                                    $permis_1 = 'ok';
+                                    //  break;
+                                }
                             }
                             ?>
                             <li class="sub-menu">
@@ -927,7 +931,7 @@
                                     <li><a  href="finance/pharmacy/expenseCategory"><i class="fa fa-edit"></i><?php echo lang('expense_categories'); ?> </a></li>
 
 
-    <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) || in_array('Pharmacy', $pers)) { ?>
+    <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) || (in_array('Pharmacy', $pers) && $permis_1=='ok')) { ?>
                                         <li class="sub-menu">
                                             <a href="javascript:;" >
                                                 <i class="fas fa-file-medical-alt"></i>
