@@ -1131,15 +1131,15 @@
                                     <span><?php echo lang('email'); ?></span>
                                 </a>
                                 <ul class="sub">
-                                    <?php if ($this->ion_auth->in_group(array('admin'))|| $permis_1 == 'ok'|| $permis == 'ok') { ?>
+                                   
                                     <li><a  href="email/autoEmailTemplate"><i class="fa fa-robot"></i><?php echo lang('autoemailtemplate'); ?></a></li>
-                                  <?php } ?>
+                                  
                                    <?php if ($this->ion_auth->in_group(array('admin'))|| $permis == 'ok') { ?>
                                     <li><a  href="email/sendView"><i class="fa fa-location-arrow"></i><?php echo lang('new'); ?></a></li>
                                    <?php } ?>
-                                     <?php if ($this->ion_auth->in_group(array('admin'))|| $permis_1 == 'ok'|| $permis_2 == 'ok') { ?>
+                                   
                                     <li><a  href="email/sent"><i class="fa fa-list-alt"></i><?php echo lang('sent'); ?></a></li>
-                                    <?php } ?>
+                                
                                  <?php if ($this->ion_auth->in_group(array('admin'))|| $permis == 'ok') { ?>
                                         <li><a  href="email/emailSettings"><i class="fa fa-cogs"></i><?php echo lang('settings'); ?></a></li>
                             <?php } ?>
@@ -1147,7 +1147,27 @@
                             </li> 
 <?php } ?>
 
-<?php if ($this->ion_auth->in_group(array('admin')) || in_array('SMS', $pers)) { ?>
+<?php if ($this->ion_auth->in_group(array('admin')) || in_array('SMS', $pers)) { 
+     $permis = '';
+                            $permis_1 = '';
+                            $permis_2='';
+                            foreach ($permission_access_group_explode as $perm) {
+                                $perm_explode = array();
+                                $perm_explode = explode(",", $perm);
+                                if (in_array('2', $perm_explode) && $perm_explode[0] == 'SMS') {
+                                    $permis = 'ok';
+                                    //  break;
+                                }
+                                 if (in_array('1', $perm_explode) && $perm_explode[0] == 'SMS') {
+                                    $permis_1 = 'ok';
+                                    //  break;
+                                }
+                                 if (in_array('3', $perm_explode) && $perm_explode[0] == 'SMS') {
+                                    $permis_2 = 'ok';
+                                    //  break;
+                                }
+                            }
+    ?>
                             <li class="sub-menu">
                                 <a href="javascript:;" >
                                     <i class="fa fa-sms"></i>
@@ -1155,15 +1175,38 @@
                                 </a>
                                 <ul class="sub">
                                     <li><a  href="sms/autoSMSTemplate"><i class="fa fa-robot"></i><?php echo lang('autosmstemplate'); ?></a></li>
+                                   <?php if ($this->ion_auth->in_group(array('admin'))|| $permis == 'ok') { ?>
                                     <li><a  href="sms/sendView"><i class="fa fa-location-arrow"></i><?php echo lang('write_message'); ?></a></li>
+                                     <?php } ?>
                                     <li><a  href="sms/sent"><i class="fa fa-list-alt"></i><?php echo lang('sent_messages'); ?></a></li>
-                            <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
+                            <?php if ($this->ion_auth->in_group(array('admin'))|| $permis == 'ok') { ?>
                                         <li><a  href="sms"><i class="fa fa-cogs"></i><?php echo lang('sms_settings'); ?></a></li>
     <?php } ?>
                                 </ul>
                             </li> 
 <?php } ?>
-<?php if ($this->ion_auth->in_group(array('admin')) || in_array('Website', $pers)) { ?>
+<?php if ($this->ion_auth->in_group(array('admin')) || in_array('Website', $pers)) { 
+     $permis = '';
+                            $permis_1 = '';
+                            $permis_2='';
+                            foreach ($permission_access_group_explode as $perm) {
+                                $perm_explode = array();
+                                $perm_explode = explode(",", $perm);
+                                if (in_array('2', $perm_explode) && $perm_explode[0] == 'Website') {
+                                    $permis = 'ok';
+                                    //  break;
+                                }
+                                 if (in_array('1', $perm_explode) && $perm_explode[0] == 'Website') {
+                                    $permis_1 = 'ok';
+                                    //  break;
+                                }
+                                 if (in_array('3', $perm_explode) && $perm_explode[0] == 'Website') {
+                                    $permis_2 = 'ok';
+                                    //  break;
+                                }
+                            }
+    
+    ?>
 
                             <li class="sub-menu">
                                 <a href="javascript:;" >
@@ -1172,7 +1215,9 @@
                                 </a>
                                 <ul class="sub">
                                     <li><a href="frontend" target="_blank" ><i class="fa fa-globe"></i><?php echo lang('visit_site'); ?></a></li>
+                                   <?php if ($this->ion_auth->in_group(array('admin')) || $permis=='ok') { ?>
                                     <li><a href="frontend/settings"><i class="fa fa-cog"></i><?php echo lang('website_settings'); ?></a></li>
+                                   <?php } ?>
                                     <li><a href="review"><i class="fa fa-cog"></i><?php echo lang('reviews'); ?></a></li>
                                     <li><a href="gridsection"><i class="fa fa-cog"></i><?php echo lang('gridsections'); ?></a></li>
                                     <li><a href="gallery"><i class="fa fa-cog"></i><?php echo lang('gallery'); ?></a></li>
