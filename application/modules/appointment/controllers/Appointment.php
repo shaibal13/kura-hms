@@ -130,9 +130,10 @@ class Appointment extends MX_Controller {
         if ($this->ion_auth->in_group(array('Patient'))) {
             redirect('home/permission');
         }
-
-        $data['patients'] = $this->patient_model->getPatient();
-        $data['doctors'] = $this->doctor_model->getDoctor();
+        $data['patients'] = '';
+        $data['doctors'] = '';
+        // $data['patients'] = $this->patient_model->getPatient();
+        // $data['doctors'] = $this->doctor_model->getDoctor();
         $data['settings'] = $this->settings_model->getSettings();
         $this->load->view('home/dashboard', $data); // just the header file
         $this->load->view('add_new', $data);
@@ -1200,12 +1201,12 @@ class Appointment extends MX_Controller {
         }
         foreach ($data['appointments'] as $appointment) {
             $i = $i + 1;
-            $option1='';
-            $option2='';
-            if($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
+            $option1 = '';
+            $option2 = '';
+            if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
                 $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
             }
-            if($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') { 
+            if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') {
                 $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
             }
             $patientdetails = $this->patient_model->getPatientById($appointment->patient);
@@ -1327,7 +1328,7 @@ class Appointment extends MX_Controller {
 
         //  $data['patients'] = $this->patient_model->getVisitor();
         $i = 0;
-         $permis = '';
+        $permis = '';
         $permis_1 = '';
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
@@ -1352,12 +1353,12 @@ class Appointment extends MX_Controller {
         foreach ($data['appointments'] as $appointment) {
             //  $i = $i + 1;
 
-            $option1='';
-            $option2='';
-            if($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
+            $option1 = '';
+            $option2 = '';
+            if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
                 $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
             }
-            if($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') { 
+            if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') {
                 $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
             }
             $patientdetails = $this->patient_model->getPatientById($appointment->patient);
@@ -1465,7 +1466,7 @@ class Appointment extends MX_Controller {
 
         //  $data['patients'] = $this->patient_model->getVisitor();
         $i = 0;
-         $permis = '';
+        $permis = '';
         $permis_1 = '';
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
@@ -1489,12 +1490,12 @@ class Appointment extends MX_Controller {
         }
         foreach ($data['appointments'] as $appointment) {
             //  $i = $i + 1;
- $option1='';
-            $option2='';
-            if($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
+            $option1 = '';
+            $option2 = '';
+            if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
                 $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
             }
-            if($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') { 
+            if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') {
                 $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
             }
 
@@ -1604,7 +1605,7 @@ class Appointment extends MX_Controller {
 
         //  $data['patients'] = $this->patient_model->getVisitor();
         $i = 0;
-         $permis = '';
+        $permis = '';
         $permis_1 = '';
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
@@ -1628,17 +1629,16 @@ class Appointment extends MX_Controller {
         }
         foreach ($data['appointments'] as $appointment) {
             //    $i = $i + 1;
- $option1='';
-            $option2='';
-            if($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
+            $option1 = '';
+            $option2 = '';
+            if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
                 $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
             }
-            if($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') { 
+            if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') {
                 $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
             }
-           // $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
-
-           // $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+            // $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+            // $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
             $patientdetails = $this->patient_model->getPatientById($appointment->patient);
             if (!empty($patientdetails)) {
                 $patientname = ' <a type="button" class="history" data-toggle = "modal" data-id="' . $appointment->patient . '"> ' . $patientdetails->name . '</a>';
@@ -1755,7 +1755,7 @@ class Appointment extends MX_Controller {
 
         //  $data['patients'] = $this->patient_model->getVisitor();
         $i = 0;
-         $permis = '';
+        $permis = '';
         $permis_1 = '';
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
@@ -1779,17 +1779,16 @@ class Appointment extends MX_Controller {
         }
         foreach ($data['appointments'] as $appointment) {
             //  $i = $i + 1;
- $option1='';
-            $option2='';
-            if($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
+            $option1 = '';
+            $option2 = '';
+            if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
                 $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
             }
-            if($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') { 
+            if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') {
                 $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
             }
-           // $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
-
-          //  $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+            // $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+            //  $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
             $patientdetails = $this->patient_model->getPatientById($appointment->patient);
             if (!empty($patientdetails)) {
                 $patientname = ' <a type="button" class="history" data-toggle = "modal" data-id="' . $appointment->patient . '"> ' . $patientdetails->name . '</a>';
@@ -1904,7 +1903,7 @@ class Appointment extends MX_Controller {
 
         //  $data['patients'] = $this->patient_model->getVisitor();
         $i = 0;
-         $permis = '';
+        $permis = '';
         $permis_1 = '';
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
@@ -1928,17 +1927,16 @@ class Appointment extends MX_Controller {
         }
         foreach ($data['appointments'] as $appointment) {
             // $i = $i + 1;
- $option1='';
-            $option2='';
-            if($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
+            $option1 = '';
+            $option2 = '';
+            if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
                 $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
             }
-            if($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') { 
+            if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') {
                 $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
             }
-           // $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
-
-         //   $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+            // $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+            //   $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
             $patientdetails = $this->patient_model->getPatientById($appointment->patient);
             if (!empty($patientdetails)) {
                 $patientname = ' <a type="button" class="history" data-toggle = "modal" data-id="' . $appointment->patient . '"> ' . $patientdetails->name . '</a>';
@@ -2044,7 +2042,7 @@ class Appointment extends MX_Controller {
 
         //  $data['patients'] = $this->patient_model->getVisitor();
         $i = 0;
-         $permis = '';
+        $permis = '';
         $permis_1 = '';
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
@@ -2068,17 +2066,16 @@ class Appointment extends MX_Controller {
         }
         foreach ($data['appointments'] as $appointment) {
             //$i = $i + 1;
-
-           // $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
- $option1='';
-            $option2='';
-            if($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
+            // $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+            $option1 = '';
+            $option2 = '';
+            if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
                 $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
             }
-            if($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') { 
+            if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') {
                 $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
             }
-         //   $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+            //   $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
             $patientdetails = $this->patient_model->getPatientById($appointment->patient);
             if (!empty($patientdetails)) {
                 $patientname = ' <a type="button" class="history" data-toggle = "modal" data-id="' . $appointment->patient . '"> ' . $patientdetails->name . '</a>';
@@ -2204,7 +2201,7 @@ class Appointment extends MX_Controller {
 
         //  $data['patients'] = $this->patient_model->getVisitor();
         $i = 0;
-         $permis = '';
+        $permis = '';
         $permis_1 = '';
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
@@ -2228,17 +2225,16 @@ class Appointment extends MX_Controller {
         }
         foreach ($data['appointments'] as $appointment) {
             //$i = $i + 1;
-
-         //   $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
- $option1='';
-            $option2='';
-            if($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
+            //   $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+            $option1 = '';
+            $option2 = '';
+            if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
                 $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
             }
-            if($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') { 
+            if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') {
                 $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
             }
-           // $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+            // $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
             if ($appointment->status == 'Pending Confirmation') {
                 $appointment_status = lang('pending_confirmation');
             } elseif ($appointment->status == 'Confirmed') {
