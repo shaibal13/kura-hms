@@ -390,8 +390,8 @@ class Bed extends MX_Controller {
         $permis_1 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
-            $permis='';
-            $permis_1='';
+            //$permis='';
+           // $permis_1='';
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Bed') {
                 $permis = 'ok';
@@ -496,10 +496,11 @@ class Bed extends MX_Controller {
 
         //  $data['patients'] = $this->patient_model->getVisitor();
         $i = 0;
+        $permis='';
+            $permis_1='';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
-            $permis='';
-            $permis_1='';
+            
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Bed') {
                 $permis = 'ok';

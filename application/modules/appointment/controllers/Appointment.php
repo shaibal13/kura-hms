@@ -27,6 +27,7 @@ class Appointment extends MX_Controller {
             $permission_access_group = $query->permission_access;
             $this->permission_access_group_explode = explode('***', $permission_access_group);
         }
+       
         if ($this->ion_auth->in_group(array('pharmacist', 'Laboratorist', 'Accountant'))) {
             redirect('home/permission');
         }
@@ -1063,9 +1064,9 @@ class Appointment extends MX_Controller {
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
-            $permis = '';
-            $permis_1 = '';
-            $permis_2 = '';
+          //  $permis = '';
+           // $permis_1 = '';
+          //  $permis_2 = '';
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
                 $permis = 'ok';
@@ -1182,10 +1183,11 @@ class Appointment extends MX_Controller {
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
-            $permis = '';
-            $permis_1 = '';
-            $permis_2 = '';
+           // $permis = '';
+           // $permis_1 = '';
+           // $permis_2 = '';
             $perm_explode = explode(",", $perm);
+           
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
                 $permis = 'ok';
                 //  break;
@@ -1197,8 +1199,10 @@ class Appointment extends MX_Controller {
             if (in_array('3', $perm_explode) && $perm_explode[0] == 'Appointment') {
                 $permis_2 = 'ok';
                 //  break;
-            }
+            } 
         }
+       
+      
         foreach ($data['appointments'] as $appointment) {
             $i = $i + 1;
             $option1 = '';
@@ -1209,6 +1213,7 @@ class Appointment extends MX_Controller {
             if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') {
                 $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
             }
+           
             $patientdetails = $this->patient_model->getPatientById($appointment->patient);
             if (!empty($patientdetails)) {
                 $patientname = ' <a type="button" class="history" data-toggle = "modal" data-id="' . $appointment->patient . '"> ' . $patientdetails->name . '</a>';
@@ -1254,7 +1259,7 @@ class Appointment extends MX_Controller {
                 $doctorname,
                 date('d-m-Y', $appointment->date) . ' <br> ' . $appointment->s_time . '-' . $appointment->e_time,
                 $appointment->remarks,
-                $appointment_status,
+               $appointment_status,
                 $option1 . ' ' . $option2 . ' ' . $options7
             );
         }
@@ -1333,9 +1338,9 @@ class Appointment extends MX_Controller {
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
-            $permis = '';
-            $permis_1 = '';
-            $permis_2 = '';
+          //  $permis = '';
+          //  $permis_1 = '';
+          //  $permis_2 = '';
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
                 $permis = 'ok';
@@ -1471,9 +1476,9 @@ class Appointment extends MX_Controller {
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
-            $permis = '';
-            $permis_1 = '';
-            $permis_2 = '';
+           // $permis = '';
+           // $permis_1 = '';
+            //$permis_2 = '';
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
                 $permis = 'ok';
@@ -1610,9 +1615,9 @@ class Appointment extends MX_Controller {
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
-            $permis = '';
-            $permis_1 = '';
-            $permis_2 = '';
+           // $permis = '';
+          //  $permis_1 = '';
+           // $permis_2 = '';
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
                 $permis = 'ok';
@@ -1760,9 +1765,9 @@ class Appointment extends MX_Controller {
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
-            $permis = '';
-            $permis_1 = '';
-            $permis_2 = '';
+          //  $permis = '';
+          //  $permis_1 = '';
+          //  $permis_2 = '';
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
                 $permis = 'ok';
@@ -1908,9 +1913,9 @@ class Appointment extends MX_Controller {
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
-            $permis = '';
-            $permis_1 = '';
-            $permis_2 = '';
+          //  $permis = '';
+          //  $permis_1 = '';
+           // $permis_2 = '';
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
                 $permis = 'ok';
@@ -2047,9 +2052,9 @@ class Appointment extends MX_Controller {
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
-            $permis = '';
-            $permis_1 = '';
-            $permis_2 = '';
+         //   $permis = '';
+          //  $permis_1 = '';
+          //  $permis_2 = '';
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
                 $permis = 'ok';
@@ -2206,9 +2211,9 @@ class Appointment extends MX_Controller {
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
-            $permis = '';
-            $permis_1 = '';
-            $permis_2 = '';
+           // $permis = '';
+           // $permis_1 = '';
+           // $permis_2 = '';
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
                 $permis = 'ok';
