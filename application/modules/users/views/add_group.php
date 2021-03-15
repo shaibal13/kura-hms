@@ -131,7 +131,7 @@ if (!empty($group->id)) {
                                                                     ?>
                                                                            />
                                                                     <label for="exampleInputEmail1"><?php echo lang('w'); ?></label>
-                                                                     <?php } if ($permission->feature != 'Report') { ?>
+                                                                     <?php }  ?>
                                                                     <input class="permission_option" id="<?php echo $permission->feature; ?>-3" type="checkbox" name="<?php echo $permission->feature; ?>[]" value="3"
                                                                     <?php
                                                                     if (!empty($group->id)) {
@@ -149,7 +149,7 @@ if (!empty($group->id)) {
                                                                     ?>
                                                                            />
                                                                     <label  for="exampleInputEmail1"><?php echo lang('d'); ?></label>
-                                                                      <?php } ?>
+                                                                     
                                                                 </div>
     <?php } ?>
                                                         </div>
