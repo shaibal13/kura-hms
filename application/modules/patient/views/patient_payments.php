@@ -3,9 +3,45 @@
 <section id="main-content">
     <section class="wrapper site-min-height">
         <!-- page start-->
+          <?php
+        $group_permission = $this->ion_auth->get_users_groups()->row();
+
+        if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
+
+            $pers = array();
+            $permission_access_group_explode = array();
+        } else {
+            $pers = explode(',', $group_permission->description);
+
+            $this->db->where('group_id', $group_permission->id);
+            $query = $this->db->get('permission_access_group')->row();
+            $permission_access_group = $query->permission_access;
+            $permission_access_group_explode = explode('***', $permission_access_group);
+        }
+        $permis = '';
+        $permis_2 = '';
+        $permis_1 = '';
+        foreach ($permission_access_group_explode as $perm) {
+            $perm_explode = array();
+            $perm_explode = explode(",", $perm);
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Patient') {
+                $permis = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Patient') {
+                $permis_2 = 'ok';
+                //  break;
+            }
+             if (in_array('1', $perm_explode) && $perm_explode[0] == 'Patient') {
+                $permis_1 = 'ok';
+                //  break;
+            }
+        }
+        ?>
         <section class="panel">
             <header class="panel-heading">
                 <?php echo lang('patient'); ?> <?php echo lang('payments'); ?>
+                  <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Nurse', 'Doctor', 'Laboratorist', 'Receptionist')) || $permis =='ok') { ?>
                 <div class="col-md-4 no-print pull-right"> 
                     <a data-toggle="modal" href="#myModal">
                         <div class="btn-group pull-right">
@@ -15,6 +51,7 @@
                         </div>
                     </a>
                 </div>
+                  <?php } ?>
             </header>
             <div class="panel-body">
                 <div class="adv-table editable-table ">
@@ -25,7 +62,7 @@
                                 <th><?php echo lang('patient_id'); ?></th>                        
                                 <th><?php echo lang('name'); ?></th>
                                 <th><?php echo lang('phone'); ?></th>
-                                <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist'))) { ?>
+                                <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist')) || in_array('Patient', $pers)) { ?>
                                     <th><?php echo lang('due_balance'); ?></th>
                                 <?php } ?>
                                 <th class="no-print"><?php echo lang('options'); ?></th>

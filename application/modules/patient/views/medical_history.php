@@ -3,6 +3,87 @@
 <section id="main-content">
     <section class="wrapper site-min-height">
         <!-- page start-->
+        <?php
+        $group_permission = $this->ion_auth->get_users_groups()->row();
+
+        if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
+
+            $pers = array();
+            $permission_access_group_explode = array();
+        } else {
+            $pers = explode(',', $group_permission->description);
+
+            $this->db->where('group_id', $group_permission->id);
+            $query = $this->db->get('permission_access_group')->row();
+            $permission_access_group = $query->permission_access;
+            $permission_access_group_explode = explode('***', $permission_access_group);
+        }
+        $permis = '';
+        $permis_2 = '';
+        $permis_3 = '';
+        $permis_p = '';
+        $permis_p_2 = '';
+        $permis_p_3 = '';
+          $permis_pr = '';
+        $permis_pr_2 = '';
+        $permis_pr_3 = '';
+        $permis_b = '';
+        $permis_b_2 = '';
+        $permis_b_3 = '';
+        foreach ($permission_access_group_explode as $perm) {
+            $perm_explode = array();
+            $perm_explode = explode(",", $perm);
+            if (in_array('1', $perm_explode) && $perm_explode[0] == 'Appointment') {
+                $permis = 'ok';
+                //  break;
+            }
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
+                $permis_2 = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Appointment') {
+                $permis_3 = 'ok';
+                //  break;
+            }
+            if (in_array('1', $perm_explode) && $perm_explode[0] == 'Patient') {
+                $permis_p = 'ok';
+                //  break;
+            }
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Patient') {
+                $permis_p_2 = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Patient') {
+                $permis_p_3 = 'ok';
+                //  break;
+            }
+            
+              if (in_array('1', $perm_explode) && $perm_explode[0] == 'Prescription') {
+                $permis_pr = 'ok';
+                //  break;
+            }
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Prescription') {
+                $permis_pr_2 = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Prescription') {
+                $permis_pr_3 = 'ok';
+                //  break;
+            }
+            if (in_array('1', $perm_explode) && $perm_explode[0] == 'Bed') {
+                $permis_b = 'ok';
+                //  break;
+            }
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Bed') {
+                $permis_b_2 = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Bed') {
+                $permis_b_3 = 'ok';
+                //  break;
+            }
+        }
+        ?>
         <section class="col-md-3">
             <header class="panel-heading clearfix">
                 <div class="">
@@ -87,13 +168,13 @@
                     <div class="tab-content">
                         <div id="appointments" class="tab-pane active">
                             <div class="">
-                                <?php if (!$this->ion_auth->in_group('Patient')) { ?>
+                                <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_2 == 'ok') { ?>
                                     <div class=" no-print">
                                         <a class="btn btn-info btn_width btn-xs" data-toggle="modal" href="#addAppointmentModal">
                                             <i class="fa fa-plus-circle"> </i> <?php echo lang('add_new'); ?> 
                                         </a>
                                     </div>
-                                <?php } else { ?>
+                                <?php } if ($this->ion_auth->in_group(array('Patient')))  { ?>
                                     <div class=" no-print">
                                         <a class="btn btn-info btn_width btn-xs" data-toggle="modal" href="#addAppointmentModal">
                                             <i class="fa fa-plus-circle"> </i> <?php echo lang('request_a_appointment'); ?> 
@@ -108,7 +189,7 @@
                                                 <th><?php echo lang('time_slot'); ?></th>
                                                 <th><?php echo lang('doctor'); ?></th>
                                                 <th><?php echo lang('status'); ?></th>
-                                                <?php if (!$this->ion_auth->in_group('Patient')) { ?>
+                                                <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_2 == 'ok') { ?>
                                                     <th class="no-print"><?php echo lang('options'); ?></th>
                                                 <?php } ?>
                                             </tr>
@@ -144,10 +225,14 @@
                                                         }
                                                         echo $appointment_status;
                                                         ?></td>
-                                                    <?php if (!$this->ion_auth->in_group('Patient')) { ?>
+                                                    <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_2 == 'ok' || $permis_3 == 'ok') { ?>
                                                         <td class="no-print">
-                                                            <button type="button" class="btn btn-info btn-xs btn_width editAppointmentButton" title="<?php echo lang('edit'); ?>" data-toggle="modal" data-id="<?php echo $appointment->id; ?>"><i class="fa fa-edit"></i> </button>   
-                                                            <a class="btn btn-info btn-xs btn_width delete_button" title="<?php echo lang('delete'); ?>" href="appointment/delete?id=<?php echo $appointment->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> </a>
+                                                            <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_2 == 'ok') { ?>
+                                                                <button type="button" class="btn btn-info btn-xs btn_width editAppointmentButton" title="<?php echo lang('edit'); ?>" data-toggle="modal" data-id="<?php echo $appointment->id; ?>"><i class="fa fa-edit"></i> </button>   
+                                                            <?php } ?>
+                                                            <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_3 == 'ok') { ?>
+                                                                <a class="btn btn-info btn-xs btn_width delete_button" title="<?php echo lang('delete'); ?>" href="appointment/delete?id=<?php echo $appointment->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> </a>
+                                                            <?php } ?>
                                                         </td>
                                                     <?php } ?>
                                                 </tr>
@@ -160,7 +245,7 @@
                         <div id="home" class="tab-pane">
                             <div class="">
 
-                                <?php if (!$this->ion_auth->in_group(array('Patient'))) { ?>
+                                <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 == 'ok') { ?>
                                     <div class=" no-print">
                                         <a class="btn btn-info btn_width btn-xs" data-toggle="modal" href="#myModal">
                                             <i class="fa fa-plus-circle"> </i> <?php echo lang('add_new'); ?> 
@@ -177,7 +262,7 @@
                                                 <th><?php echo lang('date'); ?></th>
                                                 <th><?php echo lang('title'); ?></th>
                                                 <th><?php echo lang('description'); ?></th>
-                                                <?php if (!$this->ion_auth->in_group(array('Patient'))) { ?>
+                                                <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 == 'ok' || $permis_p_3 == 'ok') { ?>
                                                     <th class="no-print"><?php echo lang('options'); ?></th>
                                                 <?php } ?>
                                             </tr>
@@ -189,10 +274,14 @@
                                                     <td><?php echo date('d-m-Y', $medical_history->date); ?></td>
                                                     <td><?php echo $medical_history->title; ?></td>
                                                     <td><?php echo $medical_history->description; ?></td>
-                                                    <?php if (!$this->ion_auth->in_group(array('Patient'))) { ?>
+                                                    <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 == 'ok' || $permis_p_3 == 'ok') { ?>
                                                         <td class="no-print">
-                                                            <button type="button" class="btn btn-info btn-xs btn_width editbutton" title="<?php echo lang('edit'); ?>" data-toggle="modal" data-id="<?php echo $medical_history->id; ?>"><i class="fa fa-edit"></i> </button>   
-                                                            <a class="btn btn-info btn-xs btn_width delete_button" title="<?php echo lang('delete'); ?>" href="patient/deleteCaseHistory?id=<?php echo $medical_history->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> </a>
+                                                            <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 == 'ok') { ?>
+                                                                <button type="button" class="btn btn-info btn-xs btn_width editbutton" title="<?php echo lang('edit'); ?>" data-toggle="modal" data-id="<?php echo $medical_history->id; ?>"><i class="fa fa-edit"></i> </button>   
+                                                            <?php } ?>   
+                                                            <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_3 == 'ok') { ?>
+                                                                <a class="btn btn-info btn-xs btn_width delete_button" title="<?php echo lang('delete'); ?>" href="patient/deleteCaseHistory?id=<?php echo $medical_history->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> </a>
+                                                            <?php } ?>
                                                         </td>
                                                     <?php } ?>
                                                 </tr>
@@ -210,7 +299,7 @@
                                                                                 <div class="">
                                                                                     <textarea class="ckeditor form-control" name="description" id="description" value="" rows="100" cols="50">      
                                     <?php foreach ($medical_histories as $medical_history) { ?>         
-                                                                                                                                                                                                                            <td><?php echo $medical_history->description; ?></td>
+                                                                                                                                                                                                                                    <td><?php echo $medical_history->description; ?></td>
                                     <?php } ?>
                                                                                     </textarea>
                                                                                 </div>
@@ -231,7 +320,7 @@
                             </div>
                         </div>
                         <div id="about" class="tab-pane"> <div class="">
-                                <?php if ($this->ion_auth->in_group(array('Doctor'))) { ?>
+                                <?php if ($this->ion_auth->in_group(array('Doctor')) || $permis_pr_2 =='ok') { ?>
                                     <div class=" no-print">
                                         <a class="btn btn-info btn_width btn-xs" href="prescription/addPrescriptionView">
                                             <i class="fa fa-plus-circle"> </i> <?php echo lang('add_new'); ?> 
@@ -286,22 +375,32 @@
 
 
                                                     </td>
+                                                    
                                                     <td class="no-print">
                                                         <a class="btn-xs green" href="prescription/viewPrescription?id=<?php echo $prescription->id; ?>"><i class="fa fa-eye"> <?php echo lang('view'); ?> </i></a> 
                                                         <?php
-                                                        if ($this->ion_auth->in_group('Doctor')) {
+                                                        if ($this->ion_auth->in_group('Doctor') || $permis_pr_2 =='ok' || $permis_pr_3 == 'ok') {
+                                                          if ($this->ion_auth->in_group('Doctor')) {
                                                             $current_user = $this->ion_auth->get_user_id();
                                                             $doctor_table_id = $this->doctor_model->getDoctorByIonUserId($current_user)->id;
-                                                            if ($prescription->doctor == $doctor_table_id) {
+                                                          }else{
+                                                              $doctor_table_id='';
+                                                          }
+                                                            if ($prescription->doctor == $doctor_table_id || $permis_pr_2 =='ok' || $permis_pr_3 == 'ok') {
                                                                 ?>
+                                                        <?php  if ($this->ion_auth->in_group('Doctor') || $permis_pr_2 =='ok') { ?>
                                                                 <a type="button" class="btn-info btn-xs btn_width" data-toggle="modal" href="prescription/editPrescription?id=<?php echo $prescription->id; ?>"><i class="fa fa-edit"></i> <?php echo lang('edit'); ?></a>   
+                                                        <?php } ?>
+                                                                    <?php  if ($this->ion_auth->in_group('Doctor') || $permis_pr_3 =='ok') { ?>
                                                                 <a class="btn-info btn-xs btn_width delete_button" href="prescription/delete?id=<?php echo $prescription->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> <?php echo lang('delete'); ?></a>
                                                                 <?php
+                                                                    }
                                                             }
                                                         }
                                                         ?>
                                                         <a class="btn-xs invoicebutton" title="<?php echo lang('print'); ?>" style="color: #fff;" href="prescription/viewPrescriptionPrint?id=<?php echo $prescription->id; ?>"target="_blank"> <i class="fa fa-print"></i> <?php echo lang('print'); ?></a>
                                                     </td>
+                                              
                                                 </tr>
                                             <?php } ?>
                                         </tbody>
@@ -351,11 +450,13 @@
 
 
                         <div id="profile" class="tab-pane"> <div class="">
+                                <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 =='ok' ) { ?>
                                 <div class=" no-print">
                                     <a class="btn btn-info btn_width btn-xs" data-toggle="modal" href="#myModal1">
                                         <i class="fa fa-plus-circle"> </i> <?php echo lang('add_new'); ?> 
                                     </a>
                                 </div>
+                                <?php } ?>
                                 <div class="adv-table editable-table ">
                                     <div class="">
                                         <?php foreach ($patient_materials as $patient_material) { ?>
@@ -397,7 +498,7 @@
                                                     <?php }
                                                     ?>
 
-                            <!--  <img src="<?php echo $patient_material->url; ?>" height="100" width="100">-->
+                                    <!--  <img src="<?php echo $patient_material->url; ?>" height="100" width="100">-->
                                                 </div>
                                                 <div class="post-info" style="text-align:center !important;">
                                                     <?php
@@ -412,7 +513,7 @@
                                                     <div style="display:inline-block !important;">  
                                                         <a   class="btn btn-info btn-xs btn_width" href="<?php echo $patient_material->url; ?>" download> <?php echo lang('download'); ?> </a>
                                                     </div>
-                                                    <?php if (!$this->ion_auth->in_group(array('Patient'))) { ?>
+                                                    <?php if (!$this->ion_auth->in_group(array('Patient'))|| $permis_p_3 == 'ok' ) { ?>
                                                         <div  style="display:inline-block !important;" >    
                                                             <a class="btn btn-info btn-xs btn_width" title="<?php echo lang('delete'); ?>" href="patient/deletePatientMaterial?id=<?php echo $patient_material->id; ?>"onclick="return confirm('Are you sure you want to delete this item?');"> X </a>
                                                         </div>
@@ -430,7 +531,7 @@
                         </div>
                         <div id="contact" class="tab-pane"> 
                             <div class="">
-                                <?php if ($this->ion_auth->in_group(array('Doctor'))) { ?>
+                                <?php if ($this->ion_auth->in_group(array('Doctor')) || $permis_b_2 =='ok') { ?>
                                     <div class=" no-print">
                                         <a class="btn btn-info btn_width btn-xs" data-toggle="modal" href="#myModa3">
                                             <i class="fa fa-plus-circle"> </i> <?php echo lang('add_new'); ?> 
@@ -1043,29 +1144,29 @@ if ($this->ion_auth->in_group('Doctor')) {
 
 <script src="common/js/codearistos.min.js"></script>
 <script type="text/javascript">
-                                                                $(document).ready(function () {
-                                                                    $(".editbutton").click(function (e) {
-                                                                        e.preventDefault(e);
-                                                                        // Get the record's ID via attribute  
-                                                                        var iid = $(this).attr('data-id');
-                                                                        $('#myModal2').modal('show');
-                                                                        $.ajax({
-                                                                            url: 'patient/editMedicalHistoryByJason?id=' + iid,
-                                                                            method: 'GET',
-                                                                            data: '',
-                                                                            dataType: 'json',
-                                                                        }).success(function (response) {
-                                                                            // Populate the form fields with the data returned from server
-                                                                            var date = new Date(response.medical_history.date * 1000);
-                                                                            var de = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
+                                                        $(document).ready(function () {
+                                                            $(".editbutton").click(function (e) {
+                                                                e.preventDefault(e);
+                                                                // Get the record's ID via attribute  
+                                                                var iid = $(this).attr('data-id');
+                                                                $('#myModal2').modal('show');
+                                                                $.ajax({
+                                                                    url: 'patient/editMedicalHistoryByJason?id=' + iid,
+                                                                    method: 'GET',
+                                                                    data: '',
+                                                                    dataType: 'json',
+                                                                }).success(function (response) {
+                                                                    // Populate the form fields with the data returned from server
+                                                                    var date = new Date(response.medical_history.date * 1000);
+                                                                    var de = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
 
-                                                                            $('#medical_historyEditForm').find('[name="id"]').val(response.medical_history.id).end()
-                                                                            $('#medical_historyEditForm').find('[name="date"]').val(de).end()
-                                                                            $('#medical_historyEditForm').find('[name="title"]').val(response.medical_history.title).end()
-                                                                            CKEDITOR.instances['editor'].setData(response.medical_history.description)
-                                                                        });
-                                                                    });
+                                                                    $('#medical_historyEditForm').find('[name="id"]').val(response.medical_history.id).end()
+                                                                    $('#medical_historyEditForm').find('[name="date"]').val(de).end()
+                                                                    $('#medical_historyEditForm').find('[name="title"]').val(response.medical_history.title).end()
+                                                                    CKEDITOR.instances['editor'].setData(response.medical_history.description)
                                                                 });
+                                                            });
+                                                        });
 </script>
 
 

@@ -42,7 +42,7 @@
         <section class="panel">
             <header class="panel-heading">
                 <?php echo lang('payments'); ?>
-               <?php  if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Nurse', 'Laboratorist', 'Doctor')) || $permis == 'ok') { ?>
+               <?php  if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist')) || $permis == 'ok') { ?>
                 <div class="col-md-4 clearfix no-print pull-right">
                     <a href="finance/addPaymentView"> 
                         <div class="btn-group pull-right">

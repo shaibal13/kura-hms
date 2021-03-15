@@ -21,7 +21,22 @@ class Patient extends MX_Controller {
         $this->load->model('medicine/medicine_model');
         $this->load->model('doctor/doctor_model');
         $this->load->module('paypal');
-        if (!$this->ion_auth->in_group(array('admin', 'Nurse', 'Patient', 'Doctor', 'Laboratorist', 'Accountant', 'Receptionist'))) {
+
+        $group_permission = $this->ion_auth->get_users_groups()->row();
+
+        if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
+
+            $this->pers = array();
+            $this->permission_access_group_explode = array();
+        } else {
+            $this->pers = explode(',', $group_permission->description);
+
+            $this->db->where('group_id', $group_permission->id);
+            $query = $this->db->get('permission_access_group')->row();
+            $permission_access_group = $query->permission_access;
+            $this->permission_access_group_explode = explode('***', $permission_access_group);
+        }
+        if ($this->ion_auth->in_group(array('pharmacist'))) {
             redirect('home/permission');
         }
     }
@@ -276,7 +291,6 @@ class Patient extends MX_Controller {
                         $this->email->subject($subject);
                         $this->email->message($message);
                         $this->email->send();
-                        
                     }
 
                     //end
@@ -560,15 +574,15 @@ class Patient extends MX_Controller {
         } else {
             $data = array();
             $data = array('patient' => $patient,
-               // 'date' => $date,
+                // 'date' => $date,
                 'payment_id' => $payment_id,
                 'deposited_amount' => $deposited_amount,
                 'deposit_type' => $deposit_type,
                 'user' => $user
             );
-             if (empty($id)) {
-                  $data['date']=$date;
-             }
+            if (empty($id)) {
+                $data['date'] = $date;
+            }
             if (empty($id)) {
                 if ($deposit_type == 'Card') {
                     $payment_details = $this->finance_model->getPaymentById($payment_id);
@@ -1281,25 +1295,60 @@ class Patient extends MX_Controller {
             }
         }
         //  $data['patients'] = $this->patient_model->getPatient();
-
+        $permis = '';
+        $permis_1 = '';
+        $permis_2 = '';
+        $permis_finance='';
+        $permis_finance_2='';
+        foreach ($this->permission_access_group_explode as $perm) {
+            $perm_explode = array();
+            $perm_explode = explode(",", $perm);
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Patient') {
+                $permis = 'ok';
+                //  break;
+            }
+            if (in_array('1', $perm_explode) && $perm_explode[0] == 'Patient') {
+                $permis_2 = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Patient') {
+                $permis_1 = 'ok';
+                //  break;
+            }
+             if (in_array('1', $perm_explode) && $perm_explode[0] == 'Finance') {
+                $permis_finance = 'ok';
+                //  break;
+            }
+              if (in_array('2', $perm_explode) && $perm_explode[0] == 'Finance') {
+                $permis_finance_2 = 'ok';
+                //  break;
+            }
+        }
+        $options1 = '';
+        $options2 = '';
+        $options3 = '';
+        $options4 = '';
+        $options5 = '';
+        $options6 = '';
         foreach ($data['patients'] as $patient) {
 
-            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor'))) {
+            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor')) || $permis == 'ok') {
                 //   $options1 = '<a type="button" class="btn editbutton" title="Edit" data-toggle="modal" data-id="463"><i class="fa fa-edit"> </i> Edit</a>';
                 $options1 = ' <a type="button" class="btn editbutton" title="' . lang('edit') . '" data-toggle = "modal" data-id="' . $patient->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
             }
-
-            $options2 = '<a class="btn detailsbutton" title="' . lang('info') . '" style="color: #fff;" href="patient/patientDetails?id=' . $patient->id . '"><i class="fa fa-info"></i> ' . lang('info') . '</a>';
-
-            $options3 = '<a class="btn green" title="' . lang('history') . '" style="color: #fff;" href="patient/medicalHistory?id=' . $patient->id . '"><i class="fa fa-stethoscope"></i> ' . lang('history') . '</a>';
-
-            $options4 = '<a class="btn invoicebutton" title="' . lang('payment') . '" style="color: #fff;" href="finance/patientPaymentHistory?patient=' . $patient->id . '"><i class="fa fa-money-bill-alt"></i> ' . lang('payment') . '</a>';
-
-            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor'))) {
+            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Nurse', 'Doctor', 'Laboratorist', 'Receptionist')) || $permis_2 == 'ok') {
+                $options2 = '<a class="btn detailsbutton" title="' . lang('info') . '" style="color: #fff;" href="patient/patientDetails?id=' . $patient->id . '"><i class="fa fa-info"></i> ' . lang('info') . '</a>';
+                $options6 = ' <a type="button" class="btn detailsbutton inffo" title="' . lang('info') . '" data-toggle = "modal" data-id="' . $patient->id . '"><i class="fa fa-info"> </i> ' . lang('info') . '</a>';
+                $options3 = '<a class="btn green" title="' . lang('history') . '" style="color: #fff;" href="patient/medicalHistory?id=' . $patient->id . '"><i class="fa fa-stethoscope"></i> ' . lang('history') . '</a>';
+            }
+            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Nurse', 'Doctor', 'Laboratorist', 'Receptionist')) || $permis_finance == 'ok' || $permis_finance_2 == 'ok') {
+                $options4 = '<a class="btn invoicebutton" title="' . lang('payment') . '" style="color: #fff;" href="finance/patientPaymentHistory?patient=' . $patient->id . '"><i class="fa fa-money-bill-alt"></i> ' . lang('payment') . '</a>';
+            }
+            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor')) || $permis_1 == 'ok') {
                 $options5 = '<a class="btn delete_button" title="' . lang('delete') . '" href="patient/delete?id=' . $patient->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"></i> ' . lang('delete') . '</a>';
             }
 
-            $options6 = ' <a type="button" class="btn detailsbutton inffo" title="' . lang('info') . '" data-toggle = "modal" data-id="' . $patient->id . '"><i class="fa fa-info"> </i> ' . lang('info') . '</a>';
+
 
 
             if ($this->ion_auth->in_group('Doctor')) {
@@ -1309,7 +1358,7 @@ class Patient extends MX_Controller {
             }
 
 
-            if ($this->ion_auth->in_group(array('admin'))) {
+            if ($this->ion_auth->in_group(array('admin')) || in_array('Patient', $this->pers) ) {
                 $info[] = array(
                     $patient->id,
                     $patient->name,
@@ -1471,16 +1520,40 @@ class Patient extends MX_Controller {
             }
         }
         //  $data['patients'] = $this->patient_model->getPatient();
-
+   $permis = '';
+        $permis_1 = '';
+        $permis_2 = '';
+        foreach ($this->permission_access_group_explode as $perm) {
+            $perm_explode = array();
+            //$permis='';
+            // $permis_1='';
+            $perm_explode = explode(",", $perm);
+            if (in_array('1', $perm_explode) && $perm_explode[0] == 'Patient') {
+                $permis = 'ok';
+                //  break;
+            }
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Patient') {
+                $permis_1 = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Patient') {
+                $permis_2 = 'ok';
+                //  break;
+            }
+        }
+        $options1=$options2=$options3='';
         foreach ($data['cases'] as $case) {
 
-            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor'))) {
+            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor')) || $permis_1 == 'ok') {
                 //   $options1 = '<a type="button" class="btn editbutton" title="Edit" data-toggle="modal" data-id="463"><i class="fa fa-edit"> </i> Edit</a>';
                 $options1 = ' <a type="button" class="btn btn-info btn-xs btn_width editbutton" title="' . lang('edit') . '" data-toggle = "modal" data-id="' . $case->id . '"><i class="fa fa-edit"> </i> </a>';
             }
-            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor'))) {
+            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor')) || $permis_2 == 'ok') {
                 $options2 = '<a class="btn btn-info btn-xs btn_width delete_button" title="' . lang('delete') . '" href="patient/deleteCaseHistory?id=' . $case->id . '&redirect=case" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"></i></a>';
-                $options3 = ' <a type="button" class="btn btn-info btn-xs btn_width detailsbutton case" title="' . lang('case') . '" data-toggle = "modal" data-id="' . $case->id . '"><i class="fa fa-file"> </i> </a>';
+               
+            }
+             if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor')) || in_array('Patient', $this->pers)) {
+            $options3 = ' <a type="button" class="btn btn-info btn-xs btn_width detailsbutton case" title="' . lang('case') . '" data-toggle = "modal" data-id="' . $case->id . '"><i class="fa fa-file"> </i> </a>';
             }
 
             if (!empty($case->patient_id)) {
@@ -1551,14 +1624,35 @@ class Patient extends MX_Controller {
             }
         }
         //  $data['patients'] = $this->patient_model->getPatient();
-
+  $permis = '';
+        $permis_1 = '';
+        $permis_2 = '';
+        foreach ($this->permission_access_group_explode as $perm) {
+            $perm_explode = array();
+            //$permis='';
+            // $permis_1='';
+            $perm_explode = explode(",", $perm);
+            if (in_array('1', $perm_explode) && $perm_explode[0] == 'Patient') {
+                $permis = 'ok';
+                //  break;
+            }
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Patient') {
+                $permis_1 = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Patient') {
+                $permis_2 = 'ok';
+                //  break;
+            }
+        }
+        $options1=$options2=$options3='';
         foreach ($data['documents'] as $document) {
 
-            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor'))) {
+            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor')) || in_array("Patient", $this->pers)) {
                 //   $options1 = '<a type="button" class="btn editbutton" title="Edit" data-toggle="modal" data-id="463"><i class="fa fa-edit"> </i> Edit</a>';
                 $options1 = '<a class="btn btn-info btn-xs" href="' . $document->url . '" download> ' . lang('download') . ' </a>';
             }
-            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor'))) {
+            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor')) || $permis_2 =='ok') {
                 $options2 = '<a class="btn btn-info btn-xs delete_button" href="patient/deletePatientMaterial?id=' . $document->id . '&redirect=documents"onclick="return confirm(\'You want to delete the item??\');"> X </a>';
             }
 

@@ -3,73 +3,107 @@
 <section id="main-content">
     <section class="wrapper site-min-height">
         <!-- page start-->
-        <section class="col-md-5">
-            <header class="panel-heading">
-                <?php echo lang('add'); ?> <?php echo lang('case'); ?> 
-            </header> 
+        <?php
+        $group_permission = $this->ion_auth->get_users_groups()->row();
 
-            <div class=""> 
-                <form role="form" action="patient/addMedicalHistory" class="clearfix" method="post" enctype="multipart/form-data">
-                    <div class="form-group col-md-6">
-                        <label for="exampleInputEmail1"><?php echo lang('date'); ?></label>
-                        <input type="text" class="form-control form-control-inline input-medium default-date-picker" name="date" id="exampleInputEmail1" value='' placeholder="" readonly="" required="">
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label for="exampleInputEmail1"><?php echo lang('patient'); ?></label>
-                        <select class="form-control m-bot15" id="patientchoose" name="patient_id" value=''>
+        if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
 
-                        </select>
-                    </div>
-                    <div class="form-group col-md-12">
-                        <label for="exampleInputEmail1"><?php echo lang('title'); ?></label>
-                        <input type="text" class="form-control form-control-inline input-medium" name="title" id="exampleInputEmail1" value='' placeholder="">
-                    </div>
-                    <div class="form-group col-md-12">
-                        <label class=""><?php echo lang('case'); ?></label>
-                        <textarea class="form-control ckeditor" name="description" value="" rows="70" cols="70"></textarea>
-                    </div>
-                    <input type="hidden" name="redirect" value='patient/caseList'>
-                    <section class="col-md-12">
-                        <button type="submit" name="submit" class="btn btn-info submit_button pull-right"><?php echo lang('submit'); ?></button>
-                    </section>
-                </form>
-            </div>
+            $pers = array();
+            $permission_access_group_explode = array();
+        } else {
+            $pers = explode(',', $group_permission->description);
 
-        </section>
+            $this->db->where('group_id', $group_permission->id);
+            $query = $this->db->get('permission_access_group')->row();
+            $permission_access_group = $query->permission_access;
+            $permission_access_group_explode = explode('***', $permission_access_group);
+        }
+        $permis = '';
+        $permis_2 = '';
+        foreach ($permission_access_group_explode as $perm) {
+            $perm_explode = array();
+            $perm_explode = explode(",", $perm);
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Patient') {
+                $permis = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Patient') {
+                $permis_2 = 'ok';
+                //  break;
+            }
+        }
+        ?>
+        <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Nurse', 'Doctor', 'Laboratorist', 'Receptionist')) || $permis == 'ok') { ?>
+            <section class="col-md-5">
+                <header class="panel-heading">
+                    <?php echo lang('add'); ?> <?php echo lang('case'); ?> 
+                </header> 
 
+                <div class=""> 
+                    <form role="form" action="patient/addMedicalHistory" class="clearfix" method="post" enctype="multipart/form-data">
+                        <div class="form-group col-md-6">
+                            <label for="exampleInputEmail1"><?php echo lang('date'); ?></label>
+                            <input type="text" class="form-control form-control-inline input-medium default-date-picker" name="date" id="exampleInputEmail1" value='' placeholder="" readonly="" required="">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="exampleInputEmail1"><?php echo lang('patient'); ?></label>
+                            <select class="form-control m-bot15" id="patientchoose" name="patient_id" value=''>
 
-        <section class="col-md-7">
-            <header class="panel-heading">
-                <?php echo lang('all'); ?> <?php echo lang('case'); ?>
-            </header> 
-            <div class="panel-body"> 
-
-                <div class="adv-table editable-table">
-                    <table class="table table-striped table-hover table-bordered" id="editable-sample">
-                        <thead>
-                            <tr>
-                                <th style="width: 10%"><?php echo lang('date'); ?></th>
-                                <th style="width: 15%"><?php echo lang('patient'); ?></th>
-                                <th style="width: 15%"><?php echo lang('case'); ?> <?php echo lang('title'); ?></th>
-                                <th style="width: 10%;" class="no-print"><?php echo lang('options'); ?></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-                    </table>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label for="exampleInputEmail1"><?php echo lang('title'); ?></label>
+                            <input type="text" class="form-control form-control-inline input-medium" name="title" id="exampleInputEmail1" value='' placeholder="">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label class=""><?php echo lang('case'); ?></label>
+                            <textarea class="form-control ckeditor" name="description" value="" rows="70" cols="70"></textarea>
+                        </div>
+                        <input type="hidden" name="redirect" value='patient/caseList'>
+                        <section class="col-md-12">
+                            <button type="submit" name="submit" class="btn btn-info submit_button pull-right"><?php echo lang('submit'); ?></button>
+                        </section>
+                    </form>
                 </div>
-            </div>
+
+            </section>
+
+        <?php } ?>
+        <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Nurse', 'Doctor', 'Laboratorist', 'Receptionist')) || $permis == 'ok') { ?>
+            <section class="col-md-7"><?php } else { ?>
+                <section class="col-md-12">
+                <?php } ?>
+                <header class="panel-heading">
+                    <?php echo lang('all'); ?> <?php echo lang('case'); ?>
+                </header> 
+                <div class="panel-body"> 
+
+                    <div class="adv-table editable-table">
+                        <table class="table table-striped table-hover table-bordered" id="editable-sample">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%"><?php echo lang('date'); ?></th>
+                                    <th style="width: 15%"><?php echo lang('patient'); ?></th>
+                                    <th style="width: 15%"><?php echo lang('case'); ?> <?php echo lang('title'); ?></th>
+                                    <th style="width: 10%;" class="no-print"><?php echo lang('options'); ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
+
+
+
 
         </section>
-
-
-
-
-
+        <!-- page end-->
     </section>
-    <!-- page end-->
-</section>
 </section>
 <!--main content end-->
 <!--footer start-->
@@ -368,8 +402,8 @@ if ($this->ion_auth->in_group('Doctor')) {
             dom: "<'row'<'col-sm-3'l><'col-sm-5 text-center'B><'col-sm-4'f>>" +
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-         
-             buttons: [
+
+            buttons: [
                 {extend: 'copyHtml5', exportOptions: {columns: [0, 1, 2], }},
                 {extend: 'excelHtml5', exportOptions: {columns: [0, 1, 2], }},
                 {extend: 'csvHtml5', exportOptions: {columns: [0, 1, 2], }},
