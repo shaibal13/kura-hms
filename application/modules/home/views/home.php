@@ -4,6 +4,36 @@
 <section id="main-content">
     <section class="wrapper site-min-height">
         <!--state overview start-->
+         <?php
+        $group_permission = $this->ion_auth->get_users_groups()->row();
+
+        if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
+
+            $pers = array();
+            $permission_access_group_explode = array();
+        } else {
+            $pers = explode(',', $group_permission->description);
+
+            $this->db->where('group_id', $group_permission->id);
+            $query = $this->db->get('permission_access_group')->row();
+            $permission_access_group = $query->permission_access;
+            $permission_access_group_explode = explode('***', $permission_access_group);
+        }
+        $permis = '';
+        $permis_2 = '';
+        foreach ($permission_access_group_explode as $perm) {
+            $perm_explode = array();
+            $perm_explode = explode(",", $perm);
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Users') {
+                $permis = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Users') {
+                $permis_2 = 'ok';
+                //  break;
+            }
+        }
+        ?>
 
         <!--
                 <div class="state-overview col-md-12" style="padding: 23px 0px;">
@@ -217,7 +247,7 @@
             <div class="state-overview col-md-12" style="padding: 23px 0px;">
                 <div class="clearfix">
                     <div class="col-lg-3 col-sm-6">
-                        <?php if ($this->ion_auth->in_group('admin')) { ?>
+                        <?php if ($this->ion_auth->in_group('admin') || in_array("doctor", $pers)) { ?>
                             <a href="doctor">
                             <?php } ?>
                             <section class="panel home_sec_green">
