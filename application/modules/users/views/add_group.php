@@ -86,7 +86,7 @@ if (!empty($group->id)) {
                                                                        }
                                                                        ?> /> <label for="exampleInputEmail1"><?php echo $permission->feature; ?></label>
                                                             </div>
-                                                            <?php if ($permission->feature != 'Payment Settings' && $permission->feature != 'Bulk Import') { ?>
+                                                            <?php if ($permission->feature != 'Payment Settings' && $permission->feature != 'Settings'&& $permission->feature != 'Bulk Import') { ?>
                                                                 <div class="col-md-5  <?php
                                                                 if (!empty($group->id)) {
                                                                     if (!in_array($permission->feature, $pers)) {
