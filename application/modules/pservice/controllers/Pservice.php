@@ -30,7 +30,7 @@ class Pservice extends MX_Controller {
 
     public function index() {
 
-        if (!$this->ion_auth->in_group(array('admin')) && !in_array('Bed', $this->pers)) {
+        if (!$this->ion_auth->in_group(array('admin')) && !in_array('Patient-Service', $this->pers)) {
 
             redirect('home/permission');
         }
@@ -193,15 +193,15 @@ class Pservice extends MX_Controller {
             // $permis_1 = '';
             //$permis_2 = '';
             $perm_explode = explode(",", $perm);
-            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Bed') {
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Patient-Service') {
                 $permis = 'ok';
                 //  break;
             }
-            if (in_array('1', $perm_explode) && $perm_explode[0] == 'Bed') {
+            if (in_array('1', $perm_explode) && $perm_explode[0] == 'Patient-Service') {
                 $permis_1 = 'ok';
                 //  break;
             }
-            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Bed') {
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Patient-Service') {
                 $permis_2 = 'ok';
                 //  break;
             }
