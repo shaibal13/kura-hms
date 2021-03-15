@@ -7,16 +7,16 @@
             <section class="panel">
                 <header class="panel-heading">
                     <?php echo lang('send_sms'); ?>
-
-                    <div id="templatebar" class="pull-right col-md-6 btn-toolbar">
-                        <button class='btn green pull-right' onclick="location.href = 'sms/sent'" type="button">
-                            <?php echo lang('sent_messages'); ?></button>
-                        <button class='btn green pull-right' onclick="location.href = 'sms/manualSMSTemplate'" type="button">
-                            <?php echo lang('template'); ?></button>
-                        <button class='btn green pull-right' data-toggle="modal" data-target="#myModal1" type="button">
-                            <?php echo lang('add'); ?> <?php echo lang('template'); ?></button>
-                    </div>
-
+                    <?php if ($this->ion_auth->in_group(array('admin')) || $permis = 'ok') { ?>
+                        <div id="templatebar" class="pull-right col-md-6 btn-toolbar">
+                            <button class='btn green pull-right' onclick="location.href = 'sms/sent'" type="button">
+                                <?php echo lang('sent_messages'); ?></button>
+                            <button class='btn green pull-right' onclick="location.href = 'sms/manualSMSTemplate'" type="button">
+                                <?php echo lang('template'); ?></button>
+                            <button class='btn green pull-right' data-toggle="modal" data-target="#myModal1" type="button">
+                                <?php echo lang('add'); ?> <?php echo lang('template'); ?></button>
+                        </div>
+                    <?php } ?>
                 </header>
 
                 <div class="panel-body">  
@@ -100,7 +100,7 @@
                                 ?>
                                 <input type="button" name="myBtn" value="<?php echo $shortcodes->name; ?>" onClick="addtext(this);">
                                 <?php
-                                $count+=1;
+                                $count += 1;
                                 if ($count === 7) {
                                     ?>
                                     <br>
@@ -162,7 +162,7 @@
                             ?>
                             <input type="button" name="myBtn" value="<?php echo $shortcodes->name; ?>" onClick="addtext1(this);">
                             <?php
-                            $count1+=1;
+                            $count1 += 1;
                             if ($count1 === 7) {
                                 ?>
                                 <br>
@@ -217,16 +217,16 @@
 <script type="text/javascript">
 
 
-                                $(document).ready(function () {
-                                    $(".voterAW").click(function () {
-                                        $("#area_id").val($(this).attr('data-id'));
-                                        $('#myModal2').modal('show');
-                                    });
-                                    $(".volunteerAW").click(function () {
-                                        $("#area_idd").val($(this).attr('data-id'));
-                                        $('#myModal4').modal('show');
-                                    });
+                            $(document).ready(function () {
+                                $(".voterAW").click(function () {
+                                    $("#area_id").val($(this).attr('data-id'));
+                                    $('#myModal2').modal('show');
                                 });
+                                $(".volunteerAW").click(function () {
+                                    $("#area_idd").val($(this).attr('data-id'));
+                                    $('#myModal4').modal('show');
+                                });
+                            });
 
 </script>
 
@@ -319,9 +319,9 @@
                 data: '',
                 dataType: 'json',
             }).success(function (response) {
-                   $('#myform').find('[name="message"]').val(response.user.message).end();
+                $('#myform').find('[name="message"]').val(response.user.message).end();
 
-            //    CKEDITOR.instances['editor1'].setData(response.user.message)
+                //    CKEDITOR.instances['editor1'].setData(response.user.message)
                 //  $('#myform').find('[name="message"]').val(response.user.message).end();
             })
         });
@@ -346,8 +346,8 @@
 </script>
 
 <script>
-     $(document).ready(function () {
-         $("#patientchoose").select2({
+    $(document).ready(function () {
+        $("#patientchoose").select2({
             placeholder: '<?php echo lang('select_patient'); ?>',
             allowClear: true,
             ajax: {
@@ -369,5 +369,5 @@
             }
 
         });
-     });
-    </script>
+    });
+</script>

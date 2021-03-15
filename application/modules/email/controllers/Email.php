@@ -554,7 +554,7 @@ class Email extends MX_Controller {
         }
         foreach ($data['cases'] as $case) {
             $i = $i + 1;
-            if ($this->ion_auth->in_group(array('admin')) || $permis = 'ok') {
+            if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') {
 
                 $options1 = ' <a type="button" class="btn btn-success btn-xs btn_width editbutton1" title="' . lang('edit') . '" data-toggle = "modal" data-id="' . $case->id . '"><i class="fa fa-edit"> </i></a>';
 // $options1 = '<a type='button" class="btn btn-success btn-xs btn_width" title="" . lang('edit') . '"data-toggle = "modal" data-id="' . $case->id . '"><i class="fa fa-edit"></i></a>';
@@ -737,7 +737,7 @@ class Email extends MX_Controller {
             if ($this->ion_auth->in_group(array('admin')) || $permis = 'ok' || $permis_1 = 'ok') {
                if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') {
                     $options1 = ' <a type="button" class="btn btn-success btn-xs btn_width editbutton1" title="' . lang('edit') . '" data-toggle = "modal" data-id="' . $case->id . '"><i class="fa fa-edit"> </i></a>';
-                }if ($this->ion_auth->in_group(array('admin')) || $permis_1 == 'ok') {
+                } if ($this->ion_auth->in_group(array('admin')) || $permis_1 == 'ok') {
 // $options1 = '<a type='button" class="btn btn-success btn-xs btn_width" title="" . lang('edit') . '"data-toggle = "modal" data-id="' . $case->id . '"><i class="fa fa-edit"></i></a>';
                     $options2 = '<a class="btn btn-danger btn-xs btn_width" title="' . lang('delete') . '" href="email/deleteManualEmailTemplate?id=' . $case->id . '&redirect=sms/smsTemplate" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"></i></a>';
                 }
