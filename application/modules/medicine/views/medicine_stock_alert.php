@@ -3,19 +3,50 @@
 <section id="main-content">
     <section class="wrapper site-min-height">
         <!-- page start-->
+        <?php
+        $group_permission = $this->ion_auth->get_users_groups()->row();
+
+        if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
+
+            $pers = array();
+            $permission_access_group_explode = array();
+        } else {
+            $pers = explode(',', $group_permission->description);
+
+            $this->db->where('group_id', $group_permission->id);
+            $query = $this->db->get('permission_access_group')->row();
+            $permission_access_group = $query->permission_access;
+            $permission_access_group_explode = explode('***', $permission_access_group);
+        }
+        $permis = '';
+        $permis_2 = '';
+        foreach ($permission_access_group_explode as $perm) {
+            $perm_explode = array();
+            $perm_explode = explode(",", $perm);
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Medicine') {
+                $permis = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Medicine') {
+                $permis_2 = 'ok';
+                //  break;
+            }
+        }
+        ?>
         <section class="panel">
             <header class="panel-heading">
                 <?php echo lang('medicine'); ?>  <?php echo lang('alert_stock_list'); ?>
-                <div class="col-md-4 no-print pull-right"> 
-                    <a data-toggle="modal" href="#myModal">
-                        <div class="btn-group pull-right">
-                            <button id="" class="btn green btn-xs">
-                                <i class="fa fa-plus-circle"></i> <?php echo lang('add_medicine'); ?>
-                            </button>
-                        </div>
-                    </a>
-                </div>
-
+                <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
+                    <div class="col-md-4 no-print pull-right"> 
+                        <a data-toggle="modal" href="#myModal">
+                            <div class="btn-group pull-right">
+                                <button id="" class="btn green btn-xs">
+                                    <i class="fa fa-plus-circle"></i> <?php echo lang('add_medicine'); ?>
+                                </button>
+                            </div>
+                        </a>
+                    </div>
+                <?php } ?>
             </header>
 
             <style>
@@ -70,7 +101,9 @@
                                 <th> <?php echo lang('company'); ?></th>
                                 <th> <?php echo lang('effects'); ?></th>
                                 <th> <?php echo lang('expiry_date'); ?></th>
-                                <th> <?php echo lang('options'); ?></th>
+                                <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
+                                    <th> <?php echo lang('options'); ?></th>
+                                <?php } ?>
                             </tr>
                         </thead>
                         <tbody>
@@ -120,10 +153,16 @@
                                 <td><?php echo $medicine->company; ?></td>
                                 <td><?php echo $medicine->effects; ?></td>
                                 <td> <?php echo $medicine->e_date; ?></td>
-                                <td>
-                                    <button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="<?php echo $medicine->id; ?>"><i class="fa fa-edit"></i>  <?php echo lang('edit'); ?></button>   
-                                    <a class="btn btn-info btn-xs btn_width delete_button" href="medicine/delete?id=<?php echo $medicine->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash-o"> </i> <?php echo lang('delete'); ?></a>
-                                </td>
+                                <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
+                                    <td>
+                                        <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
+                                            <button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="<?php echo $medicine->id; ?>"><i class="fa fa-edit"></i>  <?php echo lang('edit'); ?></button>   
+                                        <?php } ?>
+                                        <?php if ($this->ion_auth->in_group(array('admin')) || $permis_2 == 'ok') { ?>
+                                            <a class="btn btn-info btn-xs btn_width delete_button" href="medicine/delete?id=<?php echo $medicine->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash-o"> </i> <?php echo lang('delete'); ?></a>
+                                        <?php } ?>
+                                    </td>
+                                <?php } ?>
                             </tr>
                         <?php } ?>
                         </tbody>
@@ -133,20 +172,20 @@
                     <!--
                     <?php if (empty($key)) { ?>
 
-                                <div class="row">
-                                    <div class="col-lg-6"><div class="dataTables_paginate paging_bootstrap pagination"><ul>
-                                                <li class="next disabled"><a href="medicine/medicineStockAlertByPageNumber?page_number=<?php
+                                    <div class="row">
+                                        <div class="col-lg-6"><div class="dataTables_paginate paging_bootstrap pagination"><ul>
+                                                    <li class="next disabled"><a href="medicine/medicineStockAlertByPageNumber?page_number=<?php
                         if (($pagee_number > 1)) {
                             echo $pagee_number - 1;
                         }
                         ?>"><-- Prev</a>
-                                                </li>
+                                                    </li>
 
                         <?php
                         if ($pagee_number < 5) {
                             for ($pagee = 1; $pagee < 6; $pagee++) {
                                 ?>
-                                                                        <li class="active"><a href="medicine/medicineStockAlertByPageNumber?page_number=<?php echo $pagee; ?>"><?php echo $pagee; ?></a></li>
+                                                                                    <li class="active"><a href="medicine/medicineStockAlertByPageNumber?page_number=<?php echo $pagee; ?>"><?php echo $pagee; ?></a></li>
                                 <?php
                             }
                         }
@@ -154,44 +193,44 @@
                         if ($pagee_number >= 5) {
                             for ($x = 3; $x > 0; $x--) {
                                 ?>
-                                                                        <li class="active"><a href="medicine/medicineStockAlertByPageNumber?page_number=<?php echo $pagee_number - $x; ?>"><?php echo $pagee_number - $x; ?></a></li>
+                                                                                    <li class="active"><a href="medicine/medicineStockAlertByPageNumber?page_number=<?php echo $pagee_number - $x; ?>"><?php echo $pagee_number - $x; ?></a></li>
                                 <?php
                             }
                             for ($x = 0; $x < 4; $x++) {
                                 ?>
-                                                                        <li class="active"><a href="medicine/medicineStockAlertByPageNumber?page_number=<?php echo $pagee_number + $x; ?>"><?php echo $pagee_number + $x; ?></a></li>
+                                                                                    <li class="active"><a href="medicine/medicineStockAlertByPageNumber?page_number=<?php echo $pagee_number + $x; ?>"><?php echo $pagee_number + $x; ?></a></li>
                                 <?php
                             }
                         }
                         ?>
-                                                <li class="next disabled"><a href="medicine/medicineStockAlertByPageNumber?page_number=<?php
+                                                    <li class="next disabled"><a href="medicine/medicineStockAlertByPageNumber?page_number=<?php
                         if (!empty($pagee_number)) {
                             echo $pagee_number + 1;
                         } else {
                             echo '1';
                         }
                         ?>">Next → </a>
-                                                </li>
-                                            </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
                     <?php } else { ?>
-                                <div class="row">
-                                    <div class="col-lg-6"><div class="dataTables_paginate paging_bootstrap pagination"><ul>
-                                                <li class="next disabled"><a href="medicine/searchMedicineInAlertStock?page_number=<?php
+                                    <div class="row">
+                                        <div class="col-lg-6"><div class="dataTables_paginate paging_bootstrap pagination"><ul>
+                                                    <li class="next disabled"><a href="medicine/searchMedicineInAlertStock?page_number=<?php
                         if (($pagee_number > 1)) {
                             echo $pagee_number - 1;
                         }
                         ?>"><-- Prev</a>
-                                                </li>
+                                                    </li>
 
                         <?php
                         if ($pagee_number < 5) {
                             for ($pagee = 1; $pagee < 6; $pagee++) {
                                 ?>
-                                                                        <li class="active"><a href="medicine/searchMedicineInAlertStock?key=<?php echo $key; ?>&page_number=<?php echo $pagee; ?>"><?php echo $pagee; ?></a></li>
+                                                                                    <li class="active"><a href="medicine/searchMedicineInAlertStock?key=<?php echo $key; ?>&page_number=<?php echo $pagee; ?>"><?php echo $pagee; ?></a></li>
                                 <?php
                             }
                         }
@@ -199,28 +238,28 @@
                         if ($pagee_number >= 5) {
                             for ($x = 3; $x > 0; $x--) {
                                 ?>
-                                                                        <li class="active"><a href="medicine/searchMedicineInAlertStock?key=<?php echo $key; ?>&page_number=<?php echo $pagee_number - $x; ?>"><?php echo $pagee_number - $x; ?></a></li>
+                                                                                    <li class="active"><a href="medicine/searchMedicineInAlertStock?key=<?php echo $key; ?>&page_number=<?php echo $pagee_number - $x; ?>"><?php echo $pagee_number - $x; ?></a></li>
                                 <?php
                             }
                             for ($x = 0; $x < 4; $x++) {
                                 ?>
-                                                                        <li class="active"><a href="medicine/searchMedicineInAlertStock?key=<?php echo $key; ?>&page_number=<?php echo $pagee_number + $x; ?>"><?php echo $pagee_number + $x; ?></a></li>
+                                                                                    <li class="active"><a href="medicine/searchMedicineInAlertStock?key=<?php echo $key; ?>&page_number=<?php echo $pagee_number + $x; ?>"><?php echo $pagee_number + $x; ?></a></li>
                                 <?php
                             }
                         }
                         ?>
-                                                <li class="next disabled"><a href="medicine/searchMedicineInAlertStock?key=<?php echo $key; ?>&page_number=<?php
+                                                    <li class="next disabled"><a href="medicine/searchMedicineInAlertStock?key=<?php echo $key; ?>&page_number=<?php
                         if (!empty($pagee_number)) {
                             echo $pagee_number + 1;
                         } else {
                             echo '1';
                         }
                         ?>">Next → </a>
-                                                </li>
-                                            </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
                     <?php } ?>
 
                     -->
