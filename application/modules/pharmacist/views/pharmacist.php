@@ -59,7 +59,9 @@
                                 <th><?php echo lang('email'); ?></th>
                                 <th><?php echo lang('address'); ?></th>
                                 <th><?php echo lang('phone'); ?></th>
-                                <th class="no-print"><?php echo lang('options'); ?></th>
+                               <?php if ($this->ion_auth->in_group('admin') || $permis == 'ok' || $permis_2 == 'ok') { ?>
+                                <th> <?php echo lang('options'); ?></th>
+                                 <?php } ?>
                             </tr>
                         </thead>
                         <tbody>
