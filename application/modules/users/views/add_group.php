@@ -113,6 +113,7 @@ if (!empty($group->id)) {
                                                                     ?>
                                                                             />
                                                                     <label for="exampleInputEmail1"><?php echo lang('r'); ?></label>
+                                                                     <?php if ($permission->feature != 'Prescription') { ?>
                                                                     <input class="permission_option" id="<?php echo $permission->feature; ?>-2" type="checkbox" name="<?php echo $permission->feature; ?>[]" value="2"
                                                                     <?php
                                                                     if (!empty($group->id)) {
@@ -130,7 +131,7 @@ if (!empty($group->id)) {
                                                                     ?>
                                                                            />
                                                                     <label for="exampleInputEmail1"><?php echo lang('w'); ?></label>
-                                                                      <?php if ($permission->feature != 'Report') { ?>
+                                                                     <?php } if ($permission->feature != 'Report') { ?>
                                                                     <input class="permission_option" id="<?php echo $permission->feature; ?>-3" type="checkbox" name="<?php echo $permission->feature; ?>[]" value="3"
                                                                     <?php
                                                                     if (!empty($group->id)) {
