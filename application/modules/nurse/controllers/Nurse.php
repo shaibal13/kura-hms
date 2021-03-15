@@ -8,12 +8,31 @@ class Nurse extends MX_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('nurse_model');
-         if (!$this->ion_auth->in_group(array('admin','Doctor','Patient'))) {
+         $group_permission = $this->ion_auth->get_users_groups()->row();
+
+        if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
+
+            $this->pers = array();
+            $this->permission_access_group_explode = array();
+        } else {
+            $this->pers = explode(',', $group_permission->description);
+
+            $this->db->where('group_id', $group_permission->id);
+            $query = $this->db->get('permission_access_group')->row();
+            $permission_access_group = $query->permission_access;
+            $this->permission_access_group_explode = explode('***', $permission_access_group);
+        }
+         if ($this->ion_auth->in_group(array( 'Accountant', 'Receptionist', 'Nurse', 'Laboratorist','pharmacist'))) {
+            
             redirect('home/permission');
         }
+         
     }
 
     public function index() {
+        if (!$this->ion_auth->in_group(array('admin','Doctor','Patient')) && !in_array('Nurse', $this->pers)) {
+            redirect('home/permission');
+        }
         $data['nurses'] = $this->nurse_model->getNurse();
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('nurse', $data);
