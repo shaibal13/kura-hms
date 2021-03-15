@@ -3,10 +3,40 @@
 <section id="main-content">
     <section class="wrapper site-min-height">
         <!-- page start-->
+        <?php
+        $group_permission = $this->ion_auth->get_users_groups()->row();
+
+        if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
+
+            $pers = array();
+            $permission_access_group_explode = array();
+        } else {
+            $pers = explode(',', $group_permission->description);
+
+            $this->db->where('group_id', $group_permission->id);
+            $query = $this->db->get('permission_access_group')->row();
+            $permission_access_group = $query->permission_access;
+            $permission_access_group_explode = explode('***', $permission_access_group);
+        }
+        $permis = '';
+        $permis_2 = '';
+        foreach ($permission_access_group_explode as $perm) {
+            $perm_explode = array();
+            $perm_explode = explode(",", $perm);
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Users') {
+                $permis = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Users') {
+                $permis_2 = 'ok';
+                //  break;
+            }
+        }
+        ?>
         <section class="panel">
             <header class="panel-heading">
-                Users
-                <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
+                <?php echo lang('users'); ?>
+                <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
                     <div class="col-md-4 no-print pull-right"> 
                         <a href="users/addUser">
                             <div class="btn-group pull-right">
@@ -27,9 +57,11 @@
                                 <th> <?php echo lang('name'); ?></th>
                                 <th> <?php echo lang('email'); ?></th>
                                 <th> <?php echo lang('phone'); ?></th>
-                                <th> Role</th>
-                                <th> <?php echo lang('options'); ?></th>
-                                
+                                <th> <?php echo lang('role'); ?></th>
+                                <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
+                                    <th> <?php echo lang('options'); ?></th>
+                                <?php } ?>
+
                             </tr>
                         </thead>
                         <tbody>
@@ -47,26 +79,34 @@
                         </style>
 
                         <?php foreach ($users as $user) { ?>
-                            <?php if($this->ion_auth->get_users_groups($user->id)->row()->name == 'Nurse' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Receptionist' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Accountant' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Laboratorist' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Pharmacist' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'members' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Doctor' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Patient') {
+                            <?php if ($this->ion_auth->get_users_groups($user->id)->row()->name == 'Nurse' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Receptionist' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Accountant' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Laboratorist' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Pharmacist' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'members' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Doctor' || $this->ion_auth->get_users_groups($user->id)->row()->name == 'Patient') {
                                 
-                            } else { ?>
-                                <tr class="">
-                                <td><?php echo $user->first_name ." ".$user->last_name; ?></td>
-                                <td><?php echo $user->email; ?></td>
-                                <td><?php echo $user->phone; ?></td>
-                                <?php $this->db->where('user_id',$user->id);
-                                $gid = $this->db->get('users_groups')->row()->group_id;
-                                $this->db->where('id',$gid);
-                                $gn = $this->db->get('groups')->row()->name;
+                            } else {
                                 ?>
-                                <td> <?php echo ucfirst($gn); ?> </td>
-                                <td>
-                                    <a class="btn btn-info btn-xs btn_width" href="users/editUser?id=<?php echo $user->id; ?>"><i class="fa fa-edit"></i> <?php echo lang('edit'); ?></a>
-                                    <a class="btn btn-danger btn-xs btn_width delete_button" href="users/deleteUser?id=<?php echo $user->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> <?php echo lang('delete'); ?></a>
-                                </td>
-                            </tr>
-                            <?php }?>
-                        <?php } ?>
+                                <tr class="">
+                                    <td><?php echo $user->first_name . " " . $user->last_name; ?></td>
+                                    <td><?php echo $user->email; ?></td>
+                                    <td><?php echo $user->phone; ?></td>
+                                    <?php
+                                    $this->db->where('user_id', $user->id);
+                                    $gid = $this->db->get('users_groups')->row()->group_id;
+                                    $this->db->where('id', $gid);
+                                    $gn = $this->db->get('groups')->row()->name;
+                                    ?>
+                                    <td> <?php echo ucfirst($gn); ?> </td>
+                                        <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
+                                        <td>
+                                            <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
+                                                <a class="btn btn-info btn-xs btn_width" href="users/editUser?id=<?php echo $user->id; ?>"><i class="fa fa-edit"></i> <?php echo lang('edit'); ?></a>
+                                            <?php } ?>
+                                            <?php if ($this->ion_auth->in_group(array('admin')) || $permis_2 == 'ok') { ?>
+                                                <a class="btn btn-danger btn-xs btn_width delete_button" href="users/deleteUser?id=<?php echo $user->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> <?php echo lang('delete'); ?></a>
+                                        <?php } ?>
+                                        </td>
+                                <?php } ?>
+                                </tr>
+                            <?php } ?>
+<?php } ?>
                         </tbody>
                     </table>
                 </div>

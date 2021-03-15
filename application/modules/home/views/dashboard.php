@@ -539,15 +539,15 @@
                                     <span><?php echo lang('users') ?></span>
                                 </a>
                                 <ul class="sub">
-                                    <?php if ($permis_1 == 'ok' || $this->ion_auth->in_group('admin')) { ?>
+                                   
                                         <li><a href="users"><i class="fa fa-user"></i><?php echo lang('all_users'); ?></a></li>
-                                    <?php } ?>
+                                   
                                     <?php if ($permis == 'ok' || $this->ion_auth->in_group('admin')) { ?>
                                         <li><a href="users/addUser"><i class="fa fa-plus-circle"></i><?php echo lang('add_user'); ?></a></li>
                                     <?php } ?>
-                                    <?php if ($permis_1 == 'ok' || $this->ion_auth->in_group('admin')) { ?>
+                               
                                         <li><a href="users/group"><i class="fa fa-user"></i><?php echo lang('all_roles'); ?></a></li>
-                                    <?php } ?>
+                                  
                                     <?php if ($permis == 'ok' || $this->ion_auth->in_group('admin')) { ?>
                                         <li><a href="users/addGroup"><i class="fa fa-plus-circle"></i><?php echo lang('add_role'); ?></a></li>
                                     <?php } ?>
