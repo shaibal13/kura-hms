@@ -32,6 +32,8 @@
                 //  break;
             }
         }
+      
+      //  $num_of_admin=$this->db->get_where('')
         ?>
         <section class="panel">
             <header class="panel-heading">
@@ -99,9 +101,11 @@
                                             <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
                                                 <a class="btn btn-info btn-xs btn_width" href="users/editUser?id=<?php echo $user->id; ?>"><i class="fa fa-edit"></i> <?php echo lang('edit'); ?></a>
                                             <?php } ?>
-                                            <?php if ($this->ion_auth->in_group(array('admin')) || $permis_2 == 'ok') { ?>
+                                            <?php if ($this->ion_auth->in_group(array('admin')) || $permis_2 == 'ok') {
+                                                
+                                                if($this->ion_auth->get_user_id() != $user->id && empty($user->permission)) { ?>
                                                 <a class="btn btn-danger btn-xs btn_width delete_button" href="users/deleteUser?id=<?php echo $user->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> <?php echo lang('delete'); ?></a>
-                                        <?php } ?>
+                                            <?php } } ?>
                                         </td>
                                 <?php } ?>
                                 </tr>
