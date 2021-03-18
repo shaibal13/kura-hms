@@ -628,20 +628,50 @@ if (!defined('BASEPATH'))
         redirect('settings/language');
     }
 
-    function timeZone($timezone) {
+   function timeZone($timezone) {
 
-        $path = '.htaccess';
-        unlink($path);
-        $option = "RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php?/$1 [L]
-php_value date.timezone '" . $timezone . "'
-SetEnv TZ " . $timezone;
-        $file_handle = fopen($path, 'a+');
-        fwrite($file_handle, $option);
+        /*   $path = '.htaccess';
+          unlink($path);
+          $option = "RewriteEngine On
+          RewriteCond %{REQUEST_FILENAME} !-f
+          RewriteCond %{REQUEST_FILENAME} !-d
+          RewriteRule ^(.*)$ index.php?/$1 [L]
+          php_value date.timezone '" . $timezone . "'
+          SetEnv TZ " . $timezone;
+          $file_handle = fopen($path, 'a+');
+          fwrite($file_handle, $option);
 
-        fclose($file_handle);
+          fclose($file_handle); */
+
+
+        $reading = fopen('index.php', 'r');
+        $writing = fopen('index.tmp', 'w');
+
+        $replaced = false;
+
+        while (!feof($reading)) {
+            $line = fgets($reading);
+            // echo $line;
+            if (stristr($line, 'ini_set("date.timezone"')) {
+                //echo $line;
+                // die();
+                $line = 'ini_set("date.timezone","' . $timezone . '");';
+
+                $replaced = true;
+            }
+            fputs($writing, $line);
+        }
+        // echo $line;
+        //  die();
+        fclose($reading);
+        fclose($writing);
+
+        // might as well not overwrite the file if we didn't replace anything
+        if ($replaced) {
+            rename('index.tmp', 'index.php');
+        } else {
+            unlink('index.tmp');
+        }
     }
 
     function gmtTime() {
