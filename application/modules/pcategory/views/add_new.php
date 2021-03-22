@@ -8,9 +8,9 @@
             <header class="panel-heading">
                 <?php
                 if (!empty($accountant->id))
-                    echo '<i class="fa fa-edit"></i> ' . lang('edit_accountant');
+                    echo '<i class="fa fa-edit"></i> ' . lang('edit_patient_category');
                 else
-                    echo '<i class="fa fa-plus-circle"></i> ' . lang('add_accountant');
+                    echo '<i class="fa fa-plus-circle"></i> ' . lang('add_patient_category');
                 ?>
             </header>
             <div class="panel-body col-md-7">
@@ -28,64 +28,48 @@
                                         </div>
                                         <div class="col-lg-3"></div>
                                     </div>
-                                    <form role="form" action="accountant/addNew" method="post" enctype="multipart/form-data">
+                                    <form role="form" action="pcategory/addNew" method="post" enctype="multipart/form-data">
                                         <div class="form-group">    
                                             <label for="exampleInputEmail1"><?php echo lang('name'); ?></label>
                                             <input type="text" class="form-control" name="name" id="exampleInputEmail1" value='<?php
                                             if (!empty($setval)) {
                                                 echo set_value('name');
                                             }
-                                            if (!empty($accountant->name)) {
-                                                echo $accountant->name;
+                                            if (!empty($pcategory->name)) {
+                                                echo $pcategory->name;
                                             }
-                                            ?>' placeholder="">   
+                                            ?>' placeholder="" required>   
                                         </div>
                                         <div class="form-group">
-                                            <label for="exampleInputEmail1"><?php echo lang('email'); ?></label>
-                                            <input type="text" class="form-control" name="email" id="exampleInputEmail1" value='<?php
+                                            <label for="exampleInputEmail1"><?php echo lang('description'); ?></label>
+                                            <input type="text" class="form-control" name="description" id="exampleInputEmail1" value='<?php
                                             if (!empty($setval)) {
-                                                echo set_value('email');
+                                                echo set_value('description');
                                             }
-                                            if (!empty($accountant->email)) {
-                                                echo $accountant->email;
+                                            if (!empty($pcategory->description)) {
+                                                echo $pcategory->description;
                                             }
-                                            ?>' placeholder="">
-                                        </div>
-                                        <div class="form-group">       
-                                            <label for="exampleInputEmail1"><?php echo lang('password'); ?></label>
-                                            <input type="password" class="form-control" name="password" id="exampleInputEmail1" placeholder="********">
+                                            ?>' placeholder="" required>
                                         </div>
                                         <div class="form-group">
-                                            <label for="exampleInputEmail1"><?php echo lang('address'); ?></label>
-                                            <input type="text" class="form-control" name="address" id="exampleInputEmail1" value='<?php
+                                            <label for="exampleInputEmail1"><?php echo lang('discount'); ?></label>
+                                            <input type="text" class="form-control" name="discount" id="exampleInputEmail1" value='<?php
                                             if (!empty($setval)) {
-                                                echo set_value('address');
+                                                echo set_value('discount');
                                             }
-                                            if (!empty($accountant->address)) {
-                                                echo $accountant->address;
+                                            if (!empty($pcategory->discount)) {
+                                                echo $pcategory->discount;
                                             }
-                                            ?>' placeholder="">
+                                            ?>' placeholder="" required>
                                         </div>
                                         <div class="form-group">
-                                            <label for="exampleInputEmail1"><?php echo lang('phone'); ?></label>
-                                            <input type="text" class="form-control" name="phone" id="exampleInputEmail1" value='<?php
-                                            if (!empty($setval)) {
-                                                echo set_value('phone');
-                                            }
-                                            if (!empty($accountant->phone)) {
-                                                echo $accountant->phone;
-                                            }
-                                            ?>' placeholder="">
+                                            <label for="exampleInputEmail1"><?php echo lang('status'); ?></label>
+                                            <select class="js-example-basic-single" name="status">
+                                                <option value="active"><?php echo lang('active'); ?></option>
+                                                <option value="disable"><?php echo lang('in_active'); ?></option>
+                                            </select>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="exampleInputEmail1"><?php echo lang('image'); ?></label>
-                                            <input type="file" name="img_url">
-                                        </div>
-                                        <input type="hidden" name="id" value='<?php
-                                        if (!empty($accountant->id)) {
-                                            echo $accountant->id;
-                                        }
-                                        ?>'>
+
                                         <button type="submit" name="submit" class="btn btn-info"><?php echo lang('submit'); ?></button>
                                     </form>
                                 </div>

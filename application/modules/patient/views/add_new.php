@@ -148,7 +148,26 @@
                                             }
                                             ?>" placeholder="">      
                                         </div>
-
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1"><?php echo lang('category'); ?></label>
+                                            <select class="form-control m-bot15" name="category" value=''>
+                                                <option value="0"><?php echo lang('select'); ?></option>
+                                                <?php foreach ($pcategory as $patient_category) { ?>
+                                                    <option value="<?php echo $patient_category->id; ?>" <?php
+                                                    if (!empty($setval)) {
+                                                        if ($patient_category->id == set_value('category')) {
+                                                            echo 'selected';
+                                                        }
+                                                    }
+                                                    if (!empty($patient->category)) {
+                                                        if ($patient_category->id == $patient->category) {
+                                                            echo 'selected';
+                                                        }
+                                                    }
+                                                    ?> > <?php echo $patient_category->description; ?> </option>
+                                                        <?php } ?> 
+                                            </select>
+                                        </div>
                                         <div class="form-group">
                                             <label for="exampleInputEmail1"><?php echo lang('blodd_group'); ?></label>
                                             <select class="form-control m-bot15" name="bloodgroup" value=''>

@@ -12,6 +12,7 @@ class Patient extends MX_Controller {
         $this->load->model('appointment/appointment_model');
         $this->load->model('bed/bed_model');
         $this->load->model('lab/lab_model');
+        $this->load->model('pcategory/pcategory_model');
         $this->load->model('finance/finance_model');
         $this->load->model('finance/pharmacy_model');
         $this->load->model('sms/sms_model');
@@ -47,6 +48,7 @@ class Patient extends MX_Controller {
         }
         $data['doctors'] = $this->doctor_model->getDoctor();
         $data['groups'] = $this->donor_model->getBloodBank();
+        $data['pcategory'] = $this->pcategory_model->getPcategoryByStatus();
         $data['settings'] = $this->settings_model->getSettings();
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('patient', $data);
@@ -110,8 +112,12 @@ class Patient extends MX_Controller {
             $email = $name . '@' . $phone . '.com';
         }
 
-
-
+        $category = $this->input->post('category');
+        if ($category !='0') {
+            $category_name = $this->pcategory_model->getPcategoryById($category)->description;
+        } else {
+            $category_name = "";
+        }
         $this->load->library('form_validation');
         $this->form_validation->set_error_delimiters('<div class="error">', '</div>');
 
@@ -192,7 +198,9 @@ class Patient extends MX_Controller {
                     'birthdate' => $birthdate,
                     'bloodgroup' => $bloodgroup,
                     'add_date' => $add_date,
-                    'registration_time' => $registration_time
+                    'registration_time' => $registration_time,
+                    'category' => $category,
+                    'category_name' => $category_name
                 );
             } else {
                 //$error = array('error' => $this->upload->display_errors());
@@ -208,7 +216,9 @@ class Patient extends MX_Controller {
                     'birthdate' => $birthdate,
                     'bloodgroup' => $bloodgroup,
                     'add_date' => $add_date,
-                    'registration_time' => $registration_time
+                    'registration_time' => $registration_time,
+                    'category' => $category,
+                    'category_name' => $category_name
                 );
             }
 
@@ -421,6 +431,7 @@ class Patient extends MX_Controller {
 
     function patientPayments() {
         $data['groups'] = $this->donor_model->getBloodBank();
+        $data['pcategory'] = $this->pcategory_model->getPcategoryByStatus();
         $data['settings'] = $this->settings_model->getSettings();
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('patient_payments', $data);
@@ -1298,8 +1309,8 @@ class Patient extends MX_Controller {
         $permis = '';
         $permis_1 = '';
         $permis_2 = '';
-        $permis_finance='';
-        $permis_finance_2='';
+        $permis_finance = '';
+        $permis_finance_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
             $perm_explode = explode(",", $perm);
@@ -1315,11 +1326,11 @@ class Patient extends MX_Controller {
                 $permis_1 = 'ok';
                 //  break;
             }
-             if (in_array('1', $perm_explode) && $perm_explode[0] == 'Finance') {
+            if (in_array('1', $perm_explode) && $perm_explode[0] == 'Finance') {
                 $permis_finance = 'ok';
                 //  break;
             }
-              if (in_array('2', $perm_explode) && $perm_explode[0] == 'Finance') {
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Finance') {
                 $permis_finance_2 = 'ok';
                 //  break;
             }
@@ -1358,7 +1369,7 @@ class Patient extends MX_Controller {
             }
 
 
-            if ($this->ion_auth->in_group(array('admin')) || in_array('Patient', $this->pers) ) {
+            if ($this->ion_auth->in_group(array('admin')) || in_array('Patient', $this->pers)) {
                 $info[] = array(
                     $patient->id,
                     $patient->name,
@@ -1520,7 +1531,7 @@ class Patient extends MX_Controller {
             }
         }
         //  $data['patients'] = $this->patient_model->getPatient();
-   $permis = '';
+        $permis = '';
         $permis_1 = '';
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
@@ -1541,7 +1552,7 @@ class Patient extends MX_Controller {
                 //  break;
             }
         }
-        $options1=$options2=$options3='';
+        $options1 = $options2 = $options3 = '';
         foreach ($data['cases'] as $case) {
 
             if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor')) || $permis_1 == 'ok') {
@@ -1550,10 +1561,9 @@ class Patient extends MX_Controller {
             }
             if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor')) || $permis_2 == 'ok') {
                 $options2 = '<a class="btn btn-info btn-xs btn_width delete_button" title="' . lang('delete') . '" href="patient/deleteCaseHistory?id=' . $case->id . '&redirect=case" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"></i></a>';
-               
             }
-             if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor')) || in_array('Patient', $this->pers)) {
-            $options3 = ' <a type="button" class="btn btn-info btn-xs btn_width detailsbutton case" title="' . lang('case') . '" data-toggle = "modal" data-id="' . $case->id . '"><i class="fa fa-file"> </i> </a>';
+            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor')) || in_array('Patient', $this->pers)) {
+                $options3 = ' <a type="button" class="btn btn-info btn-xs btn_width detailsbutton case" title="' . lang('case') . '" data-toggle = "modal" data-id="' . $case->id . '"><i class="fa fa-file"> </i> </a>';
             }
 
             if (!empty($case->patient_id)) {
@@ -1624,7 +1634,7 @@ class Patient extends MX_Controller {
             }
         }
         //  $data['patients'] = $this->patient_model->getPatient();
-  $permis = '';
+        $permis = '';
         $permis_1 = '';
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
@@ -1645,14 +1655,14 @@ class Patient extends MX_Controller {
                 //  break;
             }
         }
-        $options1=$options2=$options3='';
+        $options1 = $options2 = $options3 = '';
         foreach ($data['documents'] as $document) {
 
             if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor')) || in_array("Patient", $this->pers)) {
                 //   $options1 = '<a type="button" class="btn editbutton" title="Edit" data-toggle="modal" data-id="463"><i class="fa fa-edit"> </i> Edit</a>';
                 $options1 = '<a class="btn btn-info btn-xs" href="' . $document->url . '" download> ' . lang('download') . ' </a>';
             }
-            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor')) || $permis_2 =='ok') {
+            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor')) || $permis_2 == 'ok') {
                 $options2 = '<a class="btn btn-info btn-xs delete_button" href="patient/deletePatientMaterial?id=' . $document->id . '&redirect=documents"onclick="return confirm(\'You want to delete the item??\');"> X </a>';
             }
 

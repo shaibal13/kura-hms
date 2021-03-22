@@ -3,8 +3,8 @@
 <section id="main-content">
     <section class="wrapper site-min-height">
         <!-- page start-->
-         <?php  
-         $group_permission = $this->ion_auth->get_users_groups()->row();
+        <?php
+        $group_permission = $this->ion_auth->get_users_groups()->row();
 
         if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
 
@@ -27,7 +27,7 @@
                 $permis = 'ok';
                 //  break;
             }
-             if (in_array('3', $perm_explode) && $perm_explode[0] == 'Patient') {
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Patient') {
                 $permis_2 = 'ok';
                 //  break;
             }
@@ -37,17 +37,17 @@
 
             <header class="panel-heading">
                 <?php echo lang('patient'); ?> <?php echo lang('database'); ?>
-                 <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Nurse', 'Doctor', 'Laboratorist', 'Receptionist')) || $permis =='ok') { ?>
-                <div class="col-md-4 no-print pull-right"> 
-                    <a data-toggle="modal" href="#myModal">
-                        <div class="btn-group pull-right">
-                            <button id="" class="btn green btn-xs">
-                                <i class="fa fa-plus-circle"></i> <?php echo lang('add_new'); ?>
-                            </button>
-                        </div>
-                    </a>
-                </div>
-                 <?php } ?>
+                <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Nurse', 'Doctor', 'Laboratorist', 'Receptionist')) || $permis == 'ok') { ?>
+                    <div class="col-md-4 no-print pull-right"> 
+                        <a data-toggle="modal" href="#myModal">
+                            <div class="btn-group pull-right">
+                                <button id="" class="btn green btn-xs">
+                                    <i class="fa fa-plus-circle"></i> <?php echo lang('add_new'); ?>
+                                </button>
+                            </div>
+                        </a>
+                    </div>
+                <?php } ?>
             </header>
             <div class="panel-body">
 
@@ -169,7 +169,21 @@
                         <input class="form-control form-control-inline input-medium default-date-picker" type="text" name="birthdate" value="" placeholder="" readonly="">      
                     </div>
 
-
+                    <div class="form-group col-md-6">
+                        <label for="exampleInputEmail1"><?php echo lang('category'); ?></label>
+                        <select class="form-control m-bot15" name="category" value=''>
+                            <option value="0"><?php echo lang('select'); ?></option>
+                            <?php foreach ($pcategory as $patient_category) { ?>
+                                <option value="<?php echo $patient_category->id; ?>" <?php
+                                if (!empty($patient->category)) {
+                                    if ($patient_category->id == $patient->category) {
+                                        echo 'selected';
+                                    }
+                                }
+                                ?> > <?php echo $patient_category->description; ?> </option>
+                                    <?php } ?> 
+                        </select>
+                    </div>
                     <div class="form-group col-md-6">
                         <label for="exampleInputEmail1"><?php echo lang('blood_group'); ?></label>
                         <select class="form-control m-bot15" name="bloodgroup" value=''>
@@ -317,7 +331,21 @@
                         <label><?php echo lang('birth_date'); ?></label>
                         <input class="form-control form-control-inline input-medium default-date-picker" type="text" name="birthdate" value="" placeholder="" readonly="">      
                     </div>
-
+                    <div class="form-group col-md-6">
+                        <label for="exampleInputEmail1"><?php echo lang('category'); ?></label>
+                        <select class="form-control m-bot15" name="category" value=''>
+                            <option value="0"><?php echo lang('select'); ?></option>
+                            <?php foreach ($pcategory as $patient_category) { ?>
+                                <option value="<?php echo $patient_category->id; ?>" <?php
+                                if (!empty($patient->category)) {
+                                    if ($patient_category->id == $patient->category) {
+                                        echo 'selected';
+                                    }
+                                }
+                                ?> > <?php echo $patient_category->description; ?> </option>
+                                    <?php } ?> 
+                        </select>
+                    </div>
 
                     <div class="form-group col-md-6">
                         <label for="exampleInputEmail1"><?php echo lang('blood_group'); ?></label>
@@ -592,6 +620,7 @@
 
 
             $('.js-example-basic-single.doctor').val(response.patient.doctor).trigger('change');
+             $('#editPatientForm').find('[name="category"]').val(response.patient.category).trigger('change');
 
             $('#myModal2').modal('show');
 
@@ -683,8 +712,8 @@
             dom: "<'row'<'col-sm-3'l><'col-sm-5 text-center'B><'col-sm-4'f>>" +
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-         
-             buttons: [
+
+            buttons: [
                 {extend: 'copyHtml5', exportOptions: {columns: [0, 1, 2], }},
                 {extend: 'excelHtml5', exportOptions: {columns: [0, 1, 2], }},
                 {extend: 'csvHtml5', exportOptions: {columns: [0, 1, 2], }},

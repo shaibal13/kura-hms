@@ -570,7 +570,7 @@
                                 </ul>
                             </li>
                         <?php } ?>
-                        <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Nurse', 'Doctor', 'Laboratorist', 'Receptionist')) || in_array('Patient', $pers)) { ?>
+                        <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Nurse', 'Doctor', 'Laboratorist', 'Receptionist')) || in_array('Patient', $pers) || in_array('Patient-Category', $pers)) { ?>
 
                             <li class="sub-menu">
                                 <a href="javascript:;" >
@@ -579,7 +579,9 @@
                                 </a>
                                 <ul class="sub"> 
                                     <li><a href="patient"><i class="fa fa-user"></i><?php echo lang('patient_list'); ?></a></li>
-
+                                     <?php if ($this->ion_auth->in_group(array('admin')) || in_array('Patient-Category', $pers)) { ?>
+                                        <li><a href="pcategory"><i class="fa fa-list-alt"></i><?php echo lang('patient_category'); ?></a></li>
+                                    <?php } ?>
                                     <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Doctor', 'Receptionist')) || in_array('Patient', $pers)) { ?>
                                         <li><a href="patient/patientPayments"><i class="fa fa-money-check"></i><?php echo lang('payments'); ?></a></li>
                                     <?php } ?>

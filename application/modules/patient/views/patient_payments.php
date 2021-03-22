@@ -95,11 +95,9 @@
 
 
 
-
-
 <!-- Add Patient Modal-->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -108,32 +106,32 @@
             <div class="modal-body row">
                 <form role="form" action="patient/addNew" class="clearfix" method="post" enctype="multipart/form-data">
 
-                    <div class="form-group col-md-5">
+                    <div class="form-group col-md-6">
                         <label for="exampleInputEmail1"><?php echo lang('name'); ?></label>
                         <input type="text" class="form-control" name="name" id="exampleInputEmail1" value='' placeholder="">
                     </div>
 
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-6">
                         <label for="exampleInputEmail1"><?php echo lang('email'); ?></label>
                         <input type="text" class="form-control" name="email" id="exampleInputEmail1" value='' placeholder="">
                     </div>
 
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-6">
                         <label for="exampleInputEmail1"><?php echo lang('password'); ?></label>
                         <input type="password" class="form-control" name="password" id="exampleInputEmail1" placeholder="">
                     </div>
 
 
 
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-6">
                         <label for="exampleInputEmail1"><?php echo lang('address'); ?></label>
                         <input type="text" class="form-control" name="address" id="exampleInputEmail1" value='' placeholder="">
                     </div>
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-6">
                         <label for="exampleInputEmail1"><?php echo lang('phone'); ?></label>
                         <input type="text" class="form-control" name="phone" id="exampleInputEmail1" value='' placeholder="">
                     </div>
-                    <div class="form-group col-md-2">
+                    <div class="form-group col-md-6">
                         <label for="exampleInputEmail1"><?php echo lang('sex'); ?></label>
                         <select class="form-control m-bot15" name="sex" value=''>
 
@@ -161,12 +159,26 @@
                         </select>
                     </div>
 
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-6">
                         <label><?php echo lang('birth_date'); ?></label>
                         <input class="form-control form-control-inline input-medium default-date-picker" type="text" name="birthdate" value="" placeholder="" readonly="">      
                     </div>
 
-
+                    <div class="form-group col-md-6">
+                        <label for="exampleInputEmail1"><?php echo lang('category'); ?></label>
+                        <select class="form-control m-bot15" name="category" value=''>
+                            <option value="0"><?php echo lang('select'); ?></option>
+                            <?php foreach ($pcategory as $patient_category) { ?>
+                                <option value="<?php echo $patient_category->id; ?>" <?php
+                                if (!empty($patient->category)) {
+                                    if ($patient_category->id == $patient->category) {
+                                        echo 'selected';
+                                    }
+                                }
+                                ?> > <?php echo $patient_category->description; ?> </option>
+                                    <?php } ?> 
+                        </select>
+                    </div>
                     <div class="form-group col-md-6">
                         <label for="exampleInputEmail1"><?php echo lang('blood_group'); ?></label>
                         <select class="form-control m-bot15" name="bloodgroup" value=''>
@@ -184,17 +196,14 @@
 
                     <div class="form-group col-md-6">    
                         <label for="exampleInputEmail1"><?php echo lang('doctor'); ?></label>
-                        <select class="form-control js-example-basic-single"  name="doctor" value=''> 
-                            <option value=""> </option>
-                            <?php foreach ($doctors as $doctor) { ?>                                        
-                                <option value="<?php echo $doctor->id; ?>"><?php echo $doctor->name; ?> </option>
-                            <?php } ?> 
+                        <select class="form-control m-bot15" id="doctorchoose1" name="doctor" value=''>
+
                         </select>
                     </div>
 
 
 
-                    <div class="form-group last col-md-8">
+                    <div class="form-group last col-md-6">
                         <label class="control-label">Image Upload</label>
                         <div class="">
                             <div class="fileupload fileupload-new" data-provides="fileupload">
@@ -215,18 +224,19 @@
                         </div>
                     </div>
 
+                    <!--
+                                        <div class="form-group last col-md-6">
+                                            <div style="text-align:center;" class="col-md-12">
+                                                <video id="video" width="200" height="200" autoplay></video>
+                                                <div class="snap" id="snap">Capture Photo</div>
+                                                <canvas id="canvas" width="200" height="200"></canvas>
+                                                Right click on the captured image and save. Then select the saved image from the left side's Select Image button.
+                                            </div>
+                                        </div>
+                    -->
 
-                    <div class="form-group last col-md-4">
-                        <div style="text-align:center;">
-                            <video id="video" width="200" height="200" autoplay></video>
-                            <div class="snap" id="snap">Capture Photo</div>
-                            <canvas id="canvas" width="200" height="200"></canvas>
-                            Right click on the captured image and save. Then select the saved image from the left side's Select Image button.
-                        </div>
-                    </div>
 
-
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-6">
                         <input type="checkbox" name="sms" value="sms"> <?php echo lang('send_sms') ?><br>
                     </div>
 
@@ -241,6 +251,7 @@
     </div><!-- /.modal-dialog -->
 </div>
 <!-- Add Patient Modal-->
+
 
 
 

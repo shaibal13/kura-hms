@@ -36,7 +36,7 @@
         ?>
         <section class="panel">
             <header class="panel-heading">
-                <?php echo lang('accountant'); ?>
+                <?php echo lang('patient_category'); ?>
                 <div class="clearfix no-print col-md-8 pull-right">
                    <?php if ($this->ion_auth->in_group('admin') || $permis == 'ok') { ?>
                     <div class="pull-right"></div>

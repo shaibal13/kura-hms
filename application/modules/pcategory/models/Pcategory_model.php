@@ -25,7 +25,11 @@ class Pcategory_model extends CI_model {
         $query = $this->db->get('patient_category');
         return $query->row();
     }
-
+ function getPcategoryByStatus() {
+        $this->db->where('status', 'active');
+        $query = $this->db->get('patient_category');
+        return $query->result();
+    }
     function updatePcategory($id, $data) {
         $this->db->where('id', $id);
         $this->db->update('patient_category', $data);
