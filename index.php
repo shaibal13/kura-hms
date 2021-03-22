@@ -1,4 +1,5 @@
 <?php
+ini_set("date.timezone","Asia/Yekaterinburg");
 /**
  * CodeIgniter
  *
@@ -53,7 +54,7 @@
  *
  * NOTE: If you change these, also change the error_reporting() code below
  */
-	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'production'); 
+	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development'); 
 
 /*
  *---------------------------------------------------------------
@@ -313,4 +314,3 @@ switch (ENVIRONMENT)
  * And away we go...
  */
 require_once BASEPATH.'core/CodeIgniter.php';
-ini_set("date.timezone","Asia/Yekaterinburg");

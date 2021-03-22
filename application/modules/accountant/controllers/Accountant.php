@@ -19,7 +19,8 @@ class Accountant extends MX_Controller {
             $this->pers = explode(',', $group_permission->description);
          
         }
-        if (!$this->ion_auth->in_group('admin') && !in_array('Accountant', $this->pers)) {
+         if ($this->ion_auth->in_group(array('pharmacist', 'Accountant', 'Doctor', 'Receptionist', 'Nurse', 'Laboratorist', 'Patient'))) {
+
             redirect('home/permission');
         }
     }

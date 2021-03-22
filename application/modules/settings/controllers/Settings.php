@@ -660,6 +660,9 @@ if (!defined('BASEPATH'))
                 $replaced = true;
             }
             fputs($writing, $line);
+              if (stristr($line, 'ini_set("date.timezone"')) {
+                  fputs($writing, "\n");
+              }
         }
         // echo $line;
         //  die();
