@@ -826,3 +826,7 @@ $lang['visit'] = 'Visit';
 $lang['charges'] = 'Charges';
 $lang['pay_now'] = 'Pay Now';
 $lang['date_time'] = 'Date-Time';
+$lang['medical_data'] = 'Medical Data';
+$lang['packages'] = 'Packages';
+$lang['add_new_category'] = 'Add New Category';
+$lang['edit_category'] = 'Edit Category';

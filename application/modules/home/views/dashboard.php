@@ -751,7 +751,35 @@
                                 </ul>
                             </li> 
                         <?php } ?>
+  <?php
+                        if ($this->ion_auth->in_group('admin') || in_array('Finance', $pers)) {
+                            $permis = '';
+                            $permis_1 = '';
+                            foreach ($permission_access_group_explode as $perm) {
+                                $perm_explode = array();
+                                $perm_explode = explode(",", $perm);
+                                if (in_array('2', $perm_explode) && $perm_explode[0] == 'Finance') {
+                                    $permis = 'ok';
+                                    //  break;
+                                }
+                            }
+                            ?>
+                            <li class="sub-menu">
+                                <a href="javascript:;" >
+                                  <i class="fa fa-file-medical-alt"></i>
+                                    <span><?php echo lang('medical_data'); ?></span>
+                                </a>
+                                <ul class="sub">
+                                    <li><a  href="finance/paymentCategory"><i class="fa fa-edit"></i><?php echo lang('payment_procedures'); ?></a></li>
+                                    <li><a  href="packages"><i class="fa fa-object-group"></i><?php echo lang('packages'); ?></a></li>
+                                    <li><a  href="category"><i class="fa fa-list-alt"></i><?php echo lang('category'); ?></a></li>
+                                   
+                                   
 
+
+                                </ul>
+                            </li> 
+                        <?php } ?>
                         <?php if ($this->ion_auth->in_group('Receptionist')) { ?>
                             <li>
                                 <a href="appointment/calendar" >
