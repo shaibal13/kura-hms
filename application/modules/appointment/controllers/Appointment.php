@@ -12,7 +12,10 @@ class Appointment extends MX_Controller {
         $this->load->model('doctor/doctor_model');
         $this->load->model('patient/patient_model');
         $this->load->model('sms/sms_model');
+        $this->load->model('pgateway/pgateway_model');
+        $this->load->model('finance/finance_model');
         $this->load->module('sms');
+        require APPPATH . 'third_party/stripe/stripe-php/init.php';
         $group_permission = $this->ion_auth->get_users_groups()->row();
 
         if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
@@ -27,7 +30,7 @@ class Appointment extends MX_Controller {
             $permission_access_group = $query->permission_access;
             $this->permission_access_group_explode = explode('***', $permission_access_group);
         }
-       
+
         if ($this->ion_auth->in_group(array('pharmacist', 'Laboratorist', 'Accountant'))) {
             redirect('home/permission');
         }
@@ -45,7 +48,9 @@ class Appointment extends MX_Controller {
 
         $data['patients'] = $this->patient_model->getPatient();
         $data['doctors'] = $this->doctor_model->getDoctor();
+        $data['appointment'] = array();
         $data['settings'] = $this->settings_model->getSettings();
+        $data['gateway'] = $this->pgateway_model->getPaymentGatewaySettingsByName($data['settings']->payment_gateway);
         $this->load->view('home/dashboard', $data); // just the header file
         $this->load->view('appointment', $data);
         $this->load->view('home/footer'); // just the header file
@@ -56,7 +61,9 @@ class Appointment extends MX_Controller {
 
         $data['patients'] = $this->patient_model->getPatient();
         $data['doctors'] = $this->doctor_model->getDoctor();
+        $data['appointment'] = array();
         $data['settings'] = $this->settings_model->getSettings();
+        $data['gateway'] = $this->pgateway_model->getPaymentGatewaySettingsByName($data['settings']->payment_gateway);
         $this->load->view('home/dashboard', $data); // just the header file
         $this->load->view('appointment_request', $data);
         $this->load->view('home/footer'); // just the header file
@@ -70,7 +77,9 @@ class Appointment extends MX_Controller {
 
         $data['patients'] = $this->patient_model->getPatient();
         $data['doctors'] = $this->doctor_model->getDoctor();
+        $data['appointment'] = array();
         $data['settings'] = $this->settings_model->getSettings();
+        $data['gateway'] = $this->pgateway_model->getPaymentGatewaySettingsByName($data['settings']->payment_gateway);
         $this->load->view('home/dashboard', $data); // just the header file
         $this->load->view('todays', $data);
         $this->load->view('home/footer'); // just the header file
@@ -84,7 +93,9 @@ class Appointment extends MX_Controller {
 
         $data['patients'] = $this->patient_model->getPatient();
         $data['doctors'] = $this->doctor_model->getDoctor();
+        $data['appointment'] = array();
         $data['settings'] = $this->settings_model->getSettings();
+        $data['gateway'] = $this->pgateway_model->getPaymentGatewaySettingsByName($data['settings']->payment_gateway);
         $this->load->view('home/dashboard', $data); // just the header file
         $this->load->view('upcoming', $data);
         $this->load->view('home/footer'); // just the header file
@@ -135,7 +146,9 @@ class Appointment extends MX_Controller {
         $data['doctors'] = '';
         // $data['patients'] = $this->patient_model->getPatient();
         // $data['doctors'] = $this->doctor_model->getDoctor();
+        $data['appointment'] = array();
         $data['settings'] = $this->settings_model->getSettings();
+        $data['gateway'] = $this->pgateway_model->getPaymentGatewaySettingsByName($data['settings']->payment_gateway);
         $this->load->view('home/dashboard', $data); // just the header file
         $this->load->view('add_new', $data);
         $this->load->view('home/footer'); // just the header file
@@ -239,7 +252,8 @@ class Appointment extends MX_Controller {
             } else {
                 $data['patients'] = $this->patient_model->getPatient();
                 $data['doctors'] = $this->doctor_model->getDoctor();
-                $data['settings'] = $this->settings_model->getSettings();
+              $data['settings'] = $this->settings_model->getSettings();
+        $data['gateway'] = $this->pgateway_model->getPaymentGatewaySettingsByName($data['settings']->payment_gateway);
                 $this->load->view('home/dashboard', $data); // just the header file
                 $this->load->view('add_new', $data);
                 $this->load->view('home/footer'); // just the header file
@@ -261,6 +275,7 @@ class Appointment extends MX_Controller {
                 );
                 $username = $this->input->post('p_name');
                 // Adding New Patient
+
                 if ($this->ion_auth->email_check($p_email)) {
                     $this->session->set_flashdata('feedback', lang('this_email_address_is_already_registered'));
                     if (!empty($redirect)) {
@@ -282,6 +297,7 @@ class Appointment extends MX_Controller {
                 //    }
             }
             // $error = array('error' => $this->upload->display_errors());
+            $redirectlink = $this->input->post('redirectlink');
 
             $patient_phone = $this->patient_model->getPatientById($patient)->phone;
             if (empty($id)) {
@@ -296,7 +312,7 @@ class Appointment extends MX_Controller {
 
             $patientname = $this->patient_model->getPatientById($patient)->name;
             $doctorname = $this->doctor_model->getDoctorById($doctor)->name;
-
+            $patient_details = $this->patient_model->getPatientById($patient);
             $data = array();
             $data = array(
                 'patient' => $patient,
@@ -318,20 +334,45 @@ class Appointment extends MX_Controller {
                 'live_meeting_link' => $live_meeting_link,
                 'app_time' => $app_time,
                 'app_time_full_format' => $app_time_full_format,
-                'category_appointment' => $this->input->post('category_appointment')
+                'category_appointment' => $this->input->post('category_appointment'),
+                'visit_description' => $this->input->post('visit_description'),
+                'visit_charges' => $this->input->post('visit_charges'),
             );
             $username = $this->input->post('name');
-            if (empty($id)) {     // Adding New department
+            $consultant_fee = $this->input->post('visit_charges');
+            $data_appointment = array();
+            $data_appointment = array(
+                'category_name' => 'Consultant Fee',
+                'patient' => $patient,
+                'amount' => $consultant_fee,
+                'doctor' => $doctor,
+                'discount' => '0',
+                'flat_discount' => '0',
+                'gross_total' => $consultant_fee,
+                'status' => 'unpaid',
+                'hospital_amount' => '0',
+                'doctor_amount' => $consultant_fee,
+                'user' => $user,
+                'patient_name' => $patient_details->name,
+                'patient_phone' => $patient_details->phone,
+                'patient_address' => $patient_details->address,
+                'doctor_name' => $doctorname,
+                'remarks' => $remarks,
+                'payment_from' => 'appointment'
+            );
+            if (empty($id)) {
+                // Adding New department
+                $data['payment_status'] = 'unpaid';
                 $this->appointment_model->insertAppointment($data);
-
-                /* if (!empty($sms)) {
-                  $this->sms->sendSmsDuringAppointment($patient, $doctor, $date, $s_time, $e_time);
-                  } */
-
+                $appointment_id = $this->db->insert_id('appointment');
+                $data_appointment['appointment_id'] = $appointment_id;
+                $this->finance_model->insertPayment($data_appointment);
+                $inserted_id = $this->db->insert_id('payment');
+                $deposit_type = $this->input->post('deposit_type');
                 $patient_doctor = $this->patient_model->getPatientById($patient)->doctor;
-
+                $data_update_payment_id_in_appointment = array('payment_id' => $inserted_id);
+                $this->appointment_model->updateAppointment($appointment_id, $data_update_payment_id_in_appointment);
                 $patient_doctors = explode(',', $patient_doctor);
-
 
 
                 if (!in_array($doctor, $patient_doctors)) {
@@ -341,26 +382,334 @@ class Appointment extends MX_Controller {
                     $data_d = array('doctor' => $doctorss);
                     $this->patient_model->updatePatient($patient, $data_d);
                 }
-                $this->sendSmsDuringAppointment($id, $data, $patient, $doctor, $status);
-                $this->session->set_flashdata('feedback', lang('added'));
+                $response = $this->sendSmsDuringAppointment($id, $data, $patient, $doctor, $status);
+                $pay_now_appointment = $this->input->post('pay_now_appointment');
+                if (!empty($pay_now_appointment)) {
+                    $data_for_payment = array();
+                    $data_for_payment = array(
+                        'card_type' => $this->input->post('card_type'),
+                        'card_number' => $this->input->post('card_number'),
+                        'expire_date' => $this->input->post('expire_date'),
+                        'cardHoldername' => $this->input->post('cardholder'),
+                        'cvv' => $this->input->post('cvv'),
+                        'token' => $this->input->post('token')
+                    );
+                    $date = time();
+                    $this->appointmentPayment($deposit_type, $data_for_payment, $patient, $doctor, $consultant_fee, $date, $inserted_id, $redirectlink);
+                } else {
+                    if ($redirectlink == 'my_today') {
+                        redirect('appointment/todays');
+                    } elseif ($redirectlink == 'upcoming') {
+                        redirect('appointment/upcoming');
+                    } elseif ($redirectlink == 'med_his') {
+                        redirect("patient/medicalHistory?id=" . $patient);
+                    } elseif ($redirectlink == 'request') {
+                        redirect("appointment/request");
+                    } else {
+                        redirect('appointment');
+                    }
+                }
             } else { // Updating department
                 $previous_status = $this->appointment_model->getAppointmentById($id)->status;
                 if ($previous_status != "Confirmed") {
                     if ($status == "Confirmed") {
-                        $this->sendSmsDuringAppointment($id, $data, $patient, $doctor, $status);
+                        $response = $this->sendSmsDuringAppointment($id, $data, $patient, $doctor, $status);
                     }
                 }
                 $this->appointment_model->updateAppointment($id, $data);
-
+                $appointment_contingent = $this->appointment_model->getAppointmentById($id);
+                if ($appointment_contingent->payment_status == 'unpaid') {
+                    $pay_now_appointment = $this->input->post('pay_now_appointment');
+                    if (!empty($pay_now_appointment)) {
+                        $deposit_type = $this->input->post('deposit_type');
+                        $data_for_payment = array();
+                        $data_for_payment = array(
+                            'card_type' => $this->input->post('card_type'),
+                            'card_number' => $this->input->post('card_number'),
+                            'expire_date' => $this->input->post('expire_date'),
+                            'cardHoldername' => $this->input->post('cardholder'),
+                            'cvv' => $this->input->post('cvv'),
+                            'token' => $this->input->post('token')
+                        );
+                        $date = time();
+                        $this->appointmentPayment($deposit_type, $data_for_payment, $patient, $doctor, $consultant_fee, $date, $appointment_contingent->payment_id, $redirectlink);
+                    }
+                }
                 $this->session->set_flashdata('feedback', lang('updated'));
+                if ($redirectlink == 'my_today') {
+                    redirect('appointment/todays');
+                } elseif ($redirectlink == 'upcoming') {
+                    redirect('appointment/upcoming');
+                } elseif ($redirectlink == 'med_his') {
+                    redirect("patient/medicalHistory?id=" . $patient);
+                } elseif ($redirectlink == 'request') {
+                    redirect("appointment/request");
+                } else {
+                    redirect('appointment');
+                }
             }
             // Loading View
 
-            if (!empty($redirect)) {
-                redirect($redirect);
+            /*   if (!empty($redirect)) {
+              redirect($redirect);
+              } else {
+              redirect('appointment');
+              } */
+        }
+    }
+
+    public function appointmentPayment($deposit_type, $data, $patient, $doctor, $consultant_fee, $date, $inserted_id, $redirectlink) {
+        $patient_details = $this->patient_model->getPatientById($patient);
+        $user = $this->ion_auth->get_user_id();
+        $doctorname = $this->doctor_model->getDoctorById($doctor)->name;
+        if ($deposit_type == 'Card') {
+            $gateway = $this->settings_model->getSettings()->payment_gateway;
+            if ($gateway == 'PayPal') {
+
+                $card_type = $data['cardtype'];
+                $card_number = $data['card_number'];
+                $expire_date = $data['expire_date'];
+                $cardHoldername = $data['cardHoldername'];
+                $cvv = $data['cvv'];
+
+                $all_details = array(
+                    'patient' => $patient,
+                    'date' => $date,
+                    'amount' => $consultant_fee,
+                    'doctor' => $doctor,
+                    'gross_total' => $consultant_fee,
+                    //'hospital_amount' => $hospital_amount,
+                    // 'doctor_amount' => $doctor_amount,
+                    'patient_name' => $patient_details->name,
+                    'patient_phone' => $patient_details->phone,
+                    'patient_address' => $patient_details->address,
+                    'doctor_name' => $doctorname,
+                    'date_string' => date('d-m-y', $date),
+                    'deposited_amount' => $consultant_fee,
+                    'payment_id' => $inserted_id,
+                    'card_type' => $card_type,
+                    'card_number' => $card_number,
+                    'expire_date' => $expire_date,
+                    'cvv' => $cvv,
+                    'from' => 'appointment',
+                    'user' => $this->ion_auth->get_user_id(),
+                    'cardholdername' => $cardHoldername,
+                    'from' => $redirectlink
+                );
+
+                $this->paypal->paymentPaypal($all_details);
+            } elseif ($gateway == 'Stripe') {
+
+                $card_number = $data['card_number'];
+                $expire_date = $data['expire_date'];
+
+                $cvv = $data['cvv'];
+
+                $token = $data['token'];
+                $stripe = $this->db->get_where('paymentGateway', array('name =' => 'Stripe'))->row();
+                \Stripe\Stripe::setApiKey($stripe->secret);
+                $charge = \Stripe\Charge::create(array(
+                            "amount" => $consultant_fee * 100,
+                            "currency" => "usd",
+                            "source" => $token
+                ));
+                $chargeJson = $charge->jsonSerialize();
+                if ($chargeJson['status'] == 'succeeded') {
+                    $data1 = array(
+                        'date' => $date,
+                        'patient' => $patient,
+                        'payment_id' => $inserted_id,
+                        'deposited_amount' => $consultant_fee,
+                        'amount_received_id' => $inserted_id . '.' . 'gp',
+                        'gateway' => 'Stripe',
+                        'user' => $user,
+                        'payment_from' => 'appointment'
+                    );
+                    $this->finance_model->insertDeposit($data1);
+                    $data_payment = array('amount_received' => $consultant_fee, 'deposit_type' => $deposit_type, 'status' => 'paid', 'date' => time(), 'date_string' => date('d-m-y', time()));
+                    $this->finance_model->updatePayment($inserted_id, $data_payment);
+                    $appointment_id = $this->finance_model->getPaymentById($inserted_id)->appointment_id;
+
+                    $appointment_details = $this->appointment_model->getAppointmentById($appointment_id);
+                    if ($appointment_details->status == 'Requested') {
+                        $data_appointment_status = array('status' => 'Confirmed', 'payment_status' => 'paid');
+                    } else {
+                        $data_appointment_status = array('payment_status' => 'paid');
+                    }
+
+                    $this->appointment_model->updateAppointment($appointment_id, $data_appointment_status);
+                    $this->session->set_flashdata('feedback', lang('payment_successful'));
+                } else {
+                    $this->session->set_flashdata('feedback', lang('transaction_failed'));
+                }
+            } elseif ($gateway == 'Pay U Money') {
+                redirect("payu/check4?deposited_amount=" . $consultant_fee . '&payment_id=' . $inserted_id . '&redirectlink=' . $redirectlink);
+            } elseif ($gateway == 'Paystack') {
+
+                $ref = date('Y') . '-' . rand() . date('d') . '-' . date('m');
+                $amount_in_kobo = $consultant_fee;
+                $this->load->module('paystack');
+                $this->paystack->paystack_standard($amount_in_kobo, $ref, $patient, $inserted_id, $this->ion_auth->get_user_id(), $redirectlink);
+
+                // $email=$patient_email;
+            } elseif ($gateway == 'Paytm') {
+
+                if ($redirectlink == '10') {
+                    $ref = date('Y') . '-' . rand() . date('d') . '-' . date('m') . '-10';
+                } elseif ($redirectlink == 'my_today') {
+                    $ref = date('Y') . '-' . rand() . date('d') . '-' . date('m') . '-11';
+                } elseif ($redirectlink == 'upcoming') {
+                    $ref = date('Y') . '-' . rand() . date('d') . '-' . date('m') . '-12';
+                } elseif ($redirectlink == 'med_his') {
+                    $ref = date('Y') . '-' . rand() . date('d') . '-' . date('m') . '-13';
+                } elseif ($redirectlink == 'request') {
+                    $ref = date('Y') . '-' . rand() . date('d') . '-' . date('m') . '-14';
+                }
+                $amount = $consultant_fee;
+                $this->load->module('paytm');
+                // $configuration=$this->paytm->Configuration();
+                //   if($configuration){
+                $datapayment = array(
+                    'ref' => $ref,
+                    'amount' => $amount,
+                    'patient' => $patient,
+                    'insertid' => $inserted_id,
+                    'channel_id' => 'WEB',
+                    'industry_type' => 'Retail',
+                    'email' => $patient_details->email,
+                );
+                //  $this->load->module('paytm/pgRedirects');
+                $this->paytm->PaytmGateway($datapayment);
+                //}
+                // $email=$patient_email;
+            } elseif ($gateway == 'Authorize.Net') {
+
+                $card_type = $data['cardtype'];
+                $card_number = $data['card_number'];
+                $expire_date = $data['expire_date'];
+                //  $cardHoldername =  $data['cardHoldername'];
+                $cvv = $data['cvv'];
+                $ref = date('Y') . rand() . date('d');
+                $amount = $consultant_fee;
+
+                $card_number = base64_encode($card_number);
+                $cvv = base64_encode($cvv);
+                //     if ($configuration) {
+                $datapayment = array(
+                    'ref' => $ref,
+                    'amount' => $amount,
+                    'patient' => $patient,
+                    'insertid' => $inserted_id,
+                    'card_type' => $card_type,
+                    'card_number' => $card_number,
+                    'expire_date' => $expire_date,
+                    'cvv' => $cvv,
+                );
+                //  print_r($datapayment);
+                //    die();
+                $this->load->module('authorizenet');
+                $response = $this->authorizenet->paymentAuthorize($datapayment, $redirectlink);
+            } elseif ($gateway == '2Checkout') {
+
+                $card_type = $data['cardtype'];
+                $card_number = $data['card_number'];
+                $expire_date = $data['expire_date'];
+                $cardHoldername = $data['cardHoldername'];
+                $cvv = $data['cvv'];
+                $ref = date('Y') . rand() . date('d');
+                $amount = $consultant_fee;
+                $token = $this->input->post('token');
+                //   $token = $this->input->post('token');
+                //  $card_number = base64_encode($card_number);
+                //   $cvv = base64_encode($cvv);
+                //     if ($configuration) {
+                $datapayment = array(
+                    'ref' => $ref,
+                    'amount' => $consultant_fee,
+                    'patient' => $patient,
+                    'insertid' => $inserted_id,
+                    'card_type' => $card_type,
+                    'card_number' => $card_number,
+                    'expire_date' => $expire_date,
+                    'cvv' => $cvv,
+                    'cardholder' => $cardHoldername
+                );
+
+                $this->load->module('twocheckoutpay');
+                $charge = $this->twocheckoutpay->createCharge($ref, $token, $amount, $datapayment);
+
+                if ($charge['response']['responseCode'] == 'APPROVED') {
+                    $data1 = array(
+                        'date' => $date,
+                        'patient' => $patient,
+                        'deposited_amount' => $consultant_fee,
+                        'payment_id' => $inserted_id,
+                        'amount_received_id' => $inserted_id . '.' . 'gp',
+                        'deposit_type' => $deposit_type,
+                        'user' => $user,
+                        'payment_from' => 'appointment'
+                    );
+                    $this->finance_model->insertDeposit($data1);
+
+                    $data_payment = array('amount_received' => $consultant_fee, 'deposit_type' => $deposit_type, 'status' => 'paid', 'date' => time(), 'date_string' => date('d-m-y', time()));
+                    $this->finance_model->updatePayment($inserted_id, $data_payment);
+                    $appointment_id = $this->finance_model->getPaymentById($inserted_id)->appointment_id;
+                    $appointment_details = $this->appointment_model->getAppointmentById($appointment_id);
+                    if ($appointment_details->status == 'Requested') {
+                        $data_appointment_status = array('status' => 'Confirmed', 'payment_status' => 'paid');
+                    } else {
+                        $data_appointment_status = array('payment_status' => 'paid');
+                    }
+                    $this->appointment_model->updateAppointment($appointment_id, $data_appointment_status);
+                    $this->session->set_flashdata('feedback', lang('added'));
+                } else {
+                    $this->session->set_flashdata('feedback', lang('transaction_failed'));
+                }
+            } elseif ($gateway == 'SSLCOMMERZ') {
+
+                //   $SSLCOMMERZ = $this->db->get_where('paymentGateway', array('name =' => 'SSLCOMMERZ'))->row();
+
+
+                $this->load->module('sslcommerzpayment');
+
+                $this->sslcommerzpayment->request_api_hosted($consultant_fee, $patient, $inserted_id, $this->ion_auth->get_user_id(), $redirectlink);
             } else {
-                redirect('appointment');
+                $this->session->set_flashdata('feedback', lang('payment_failed_no_gateway_selected'));
+                $appointment_id = $this->finance_model->getPaymentById($inserted_id)->appointment_id;
+                $data_appointment_status = array('payment_status' => 'unpaid');
+                $this->appointment_model->updateAppointment($appointment_id, $data_appointment_status);
             }
+        } else {
+            $data1 = array();
+            $data1 = array(
+                'date' => $date,
+                'patient' => $patient,
+                'deposited_amount' => $consultant_fee,
+                'payment_id' => $inserted_id,
+                'amount_received_id' => $inserted_id . '.' . 'gp',
+                'deposit_type' => $deposit_type,
+                'user' => $this->ion_auth->get_user_id(),
+                'payment_from' => 'appointment'
+            );
+            $this->finance_model->insertDeposit($data1);
+
+            $data_payment = array('amount_received' => $consultant_fee, 'deposit_type' => 'Cash', 'status' => 'paid');
+            $this->finance_model->updatePayment($inserted_id, $data_payment);
+            $appointment_id = $this->finance_model->getPaymentById($inserted_id)->appointment_id;
+            $data_appointment_status = array('payment_status' => 'paid');
+            $this->appointment_model->updateAppointment($appointment_id, $data_appointment_status);
+            $this->session->set_flashdata('feedback', lang('payment_successful'));
+        }
+        if ($redirectlink == '10') {
+            redirect("appointment");
+        } elseif ($redirectlink == 'my_today') {
+            redirect("appointment/todays");
+        } elseif ($redirectlink == 'upcoming') {
+            redirect("appointment/upcoming");
+        } elseif ($redirectlink == 'med_his') {
+            redirect("patient/medicalHistory?id=" . $patient);
+        } elseif ($redirectlink == 'request') {
+            redirect("appointment/request");
         }
     }
 
@@ -402,7 +751,7 @@ class Appointment extends MX_Controller {
             $messageprint = $this->parser->parse_string($message, $data1);
 
             $data2[] = array($to => $messageprint);
-            $this->sms->sendSms($to, $message, $data2);
+            $response = $this->sms->sendSmsDuringAppointmentCreation($to, $message, $data2);
         }
         //end
         //email
@@ -424,7 +773,7 @@ class Appointment extends MX_Controller {
             $this->email->message($messageprint1);
             $this->email->send();
         }
-
+        return $response;
         //end
     }
 
@@ -967,9 +1316,11 @@ class Appointment extends MX_Controller {
         $id = $this->input->get('id');
 
         $data['settings'] = $this->settings_model->getSettings();
+        $data['gateway'] = $this->pgateway_model->getPaymentGatewaySettingsByName($data['settings']->payment_gateway);
         $data['appointment'] = $this->appointment_model->getAppointmentById($id);
         $data['patients'] = $this->patient_model->getPatientById($data['appointment']->patient);
         $data['doctors'] = $this->doctor_model->getDoctorById($data['appointment']->doctor);
+          $data['visits'] = $this->doctor_model->getDoctorVisitByDoctorId($data['appointment']->doctor);
         $this->load->view('home/dashboard', $data); // just the header file
         $this->load->view('add_new', $data);
         $this->load->view('home/footer'); // just the footer file 
@@ -1064,9 +1415,9 @@ class Appointment extends MX_Controller {
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
-          //  $permis = '';
-           // $permis_1 = '';
-          //  $permis_2 = '';
+            //  $permis = '';
+            // $permis_1 = '';
+            //  $permis_2 = '';
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
                 $permis = 'ok';
@@ -1183,11 +1534,11 @@ class Appointment extends MX_Controller {
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
-           // $permis = '';
-           // $permis_1 = '';
-           // $permis_2 = '';
+            // $permis = '';
+            // $permis_1 = '';
+            // $permis_2 = '';
             $perm_explode = explode(",", $perm);
-           
+
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
                 $permis = 'ok';
                 //  break;
@@ -1199,21 +1550,25 @@ class Appointment extends MX_Controller {
             if (in_array('3', $perm_explode) && $perm_explode[0] == 'Appointment') {
                 $permis_2 = 'ok';
                 //  break;
-            } 
+            }
         }
-       
-      
+
+
         foreach ($data['appointments'] as $appointment) {
             $i = $i + 1;
             $option1 = '';
             $option2 = '';
             if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
-                $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+                if ($appointment->status == 'Pending Confirmation' || $this->ion_auth->in_group(array('admin'))) {
+                    $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+                }
             }
             if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') {
-                $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+                if ($appointment->status == 'Pending Confirmation' || $this->ion_auth->in_group(array('admin'))) {
+                    $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+                }
             }
-           
+
             $patientdetails = $this->patient_model->getPatientById($appointment->patient);
             if (!empty($patientdetails)) {
                 $patientname = ' <a type="button" class="history" data-toggle = "modal" data-id="' . $appointment->patient . '"> ' . $patientdetails->name . '</a>';
@@ -1226,7 +1581,15 @@ class Appointment extends MX_Controller {
             } else {
                 $doctorname = $appointment->doctorname;
             }
-
+            if (!$this->ion_auth->in_group(array('Doctor'))) {
+                if ($appointment->status == 'Confirmed') {
+                    $option3 = '<a class="btn btn-info btn-xs btn_width" href="patient/myInvoice?id=' . $appointment->payment_id . '"><i class="fa fa-file-invoice"> </i></a>';
+                } else {
+                    $option3 = '';
+                }
+            } else {
+                $option3 = '';
+            }
 
             if ($this->ion_auth->in_group(array('Doctor'))) {
                 if ($appointment->status == 'Confirmed') {
@@ -1253,14 +1616,20 @@ class Appointment extends MX_Controller {
             } elseif ($appointment->status == 'Requested') {
                 $appointment_status = lang('requested');
             }
+            if ($appointment->payment_status == 'paid') {
+                $payment_status = lang('paid');
+            } else {
+                $payment_status = lang('unpaid');
+            }
             $info[] = array(
                 $appointment->id,
                 $patientname,
                 $doctorname,
                 date('d-m-Y', $appointment->date) . ' <br> ' . $appointment->s_time . '-' . $appointment->e_time,
                 $appointment->remarks,
-               $appointment_status,
-                $option1 . ' ' . $option2 . ' ' . $options7
+                $payment_status,
+                $appointment_status,
+                $option1 . ' ' . $option2 . ' ' . $options7.' '. $option3
             );
         }
 
@@ -1338,9 +1707,9 @@ class Appointment extends MX_Controller {
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
-          //  $permis = '';
-          //  $permis_1 = '';
-          //  $permis_2 = '';
+            //  $permis = '';
+            //  $permis_1 = '';
+            //  $permis_2 = '';
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
                 $permis = 'ok';
@@ -1361,10 +1730,14 @@ class Appointment extends MX_Controller {
             $option1 = '';
             $option2 = '';
             if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
-                $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+                if ($appointment->status == 'Pending Confirmation' || $this->ion_auth->in_group(array('admin'))) {
+                    $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+                }
             }
             if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') {
-                $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+                if ($appointment->status == 'Pending Confirmation' || $this->ion_auth->in_group(array('admin'))) {
+                    $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+                }
             }
             $patientdetails = $this->patient_model->getPatientById($appointment->patient);
             if (!empty($patientdetails)) {
@@ -1390,14 +1763,29 @@ class Appointment extends MX_Controller {
             } elseif ($appointment->status == 'Requested') {
                 $appointment_status = lang('requested');
             }
+            if ($appointment->payment_status == 'paid') {
+                $payment_status = lang('paid');
+            } else {
+                $payment_status = lang('unpaid');
+            }
+            if (!$this->ion_auth->in_group(array('Doctor'))) {
+                if ($appointment->status == 'Confirmed') {
+                    $option3 = '<a class="btn btn-info btn-xs btn_width" href="patient/myInvoice?id=' . $appointment->payment_id . '"><i class="fa fa-file-invoice"> </i></a>';
+                } else {
+                    $option3 = '';
+                }
+            } else {
+                $option3 = '';
+            }
             $info[] = array(
                 $appointment->id,
                 $patientname,
                 $doctorname,
                 date('d-m-Y', $appointment->date) . ' <br> ' . $appointment->s_time . '-' . $appointment->e_time,
                 $appointment->remarks,
+                $payment_status,
                 $appointment_status,
-                $option1 . ' ' . $option2
+                $option1 . ' ' . $option2 . ' ' . $option3
             );
             $i = $i + 1;
         }
@@ -1476,8 +1864,8 @@ class Appointment extends MX_Controller {
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
-           // $permis = '';
-           // $permis_1 = '';
+            // $permis = '';
+            // $permis_1 = '';
             //$permis_2 = '';
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
@@ -1498,10 +1886,14 @@ class Appointment extends MX_Controller {
             $option1 = '';
             $option2 = '';
             if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
-                $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+                if ($appointment->status == 'Pending Confirmation' || $this->ion_auth->in_group(array('admin'))) {
+                    $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+                }
             }
             if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') {
-                $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+                if ($appointment->status == 'Pending Confirmation' || $this->ion_auth->in_group(array('admin'))) {
+                    $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+                }
             }
 
 
@@ -1529,14 +1921,30 @@ class Appointment extends MX_Controller {
             } elseif ($appointment->status == 'Requested') {
                 $appointment_status = lang('requested');
             }
+
+            if ($appointment->payment_status == 'paid') {
+                $payment_status = lang('paid');
+            } else {
+                $payment_status = lang('unpaid');
+            }
+            if (!$this->ion_auth->in_group(array('Doctor'))) {
+                if ($appointment->status == 'Confirmed') {
+                    $option3 = '<a class="btn btn-info btn-xs btn_width" href="patient/myInvoice?id=' . $appointment->payment_id . '"><i class="fa fa-file-invoice"> </i></a>';
+                } else {
+                    $option3 = '';
+                }
+            } else {
+                $option3 = '';
+            }
             $info[] = array(
                 $appointment->id,
                 $patientname,
                 $doctorname,
                 date('d-m-Y', $appointment->date) . ' <br> ' . $appointment->s_time . '-' . $appointment->e_time,
                 $appointment->remarks,
+                $payment_status,
                 $appointment_status,
-                $option1 . ' ' . $option2
+                $option1 . ' ' . $option2 . ' ' . $option3
             );
             $i = $i + 1;
         }
@@ -1615,9 +2023,9 @@ class Appointment extends MX_Controller {
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
-           // $permis = '';
-          //  $permis_1 = '';
-           // $permis_2 = '';
+            // $permis = '';
+            //  $permis_1 = '';
+            // $permis_2 = '';
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
                 $permis = 'ok';
@@ -1637,10 +2045,14 @@ class Appointment extends MX_Controller {
             $option1 = '';
             $option2 = '';
             if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
-                $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+                if ($appointment->status == 'Pending Confirmation' || $this->ion_auth->in_group(array('admin'))) {
+                    $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+                }
             }
             if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') {
-                $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+                if ($appointment->status == 'Pending Confirmation' || $this->ion_auth->in_group(array('admin'))) {
+                    $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+                }
             }
             // $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
             // $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
@@ -1678,14 +2090,29 @@ class Appointment extends MX_Controller {
             } elseif ($appointment->status == 'Requested') {
                 $appointment_status = lang('requested');
             }
+            if ($appointment->payment_status == 'paid') {
+                $payment_status = lang('paid');
+            } else {
+                $payment_status = lang('unpaid');
+            }
+            if (!$this->ion_auth->in_group(array('Doctor'))) {
+                if ($appointment->status == 'Confirmed') {
+                    $option3 = '<a class="btn btn-info btn-xs btn_width" href="patient/myInvoice?id=' . $appointment->payment_id . '"><i class="fa fa-file-invoice"> </i></a>';
+                } else {
+                    $option3 = '';
+                }
+            } else {
+                $option3 = '';
+            }
             $info[] = array(
                 $appointment->id,
                 $patientname,
                 $doctorname,
                 date('d-m-Y', $appointment->date) . ' <br> ' . $appointment->s_time . '-' . $appointment->e_time,
                 $appointment->remarks,
+                $payment_status,
                 $appointment_status,
-                $option1 . ' ' . $option2 . ' ' . $options7
+                $option1 . ' ' . $option2 . ' ' . $options7 . ' ' . $option3
             );
             $i = $i + 1;
         }
@@ -1765,9 +2192,9 @@ class Appointment extends MX_Controller {
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
-          //  $permis = '';
-          //  $permis_1 = '';
-          //  $permis_2 = '';
+            //  $permis = '';
+            //  $permis_1 = '';
+            //  $permis_2 = '';
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
                 $permis = 'ok';
@@ -1787,10 +2214,14 @@ class Appointment extends MX_Controller {
             $option1 = '';
             $option2 = '';
             if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
-                $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+                if ($appointment->status == 'Pending Confirmation' || $this->ion_auth->in_group(array('admin'))) {
+                    $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+                }
             }
             if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') {
-                $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+                if ($appointment->status == 'Pending Confirmation' || $this->ion_auth->in_group(array('admin'))) {
+                    $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+                }
             }
             // $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
             //  $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
@@ -1827,14 +2258,30 @@ class Appointment extends MX_Controller {
             } elseif ($appointment->status == 'Requested') {
                 $appointment_status = lang('requested');
             }
+
+            if ($appointment->payment_status == 'paid') {
+                $payment_status = lang('paid');
+            } else {
+                $payment_status = lang('unpaid');
+            }
+            if (!$this->ion_auth->in_group(array('Doctor'))) {
+                if ($appointment->status == 'Confirmed') {
+                    $option3 = '<a class="btn btn-info btn-xs btn_width" href="patient/myInvoice?id=' . $appointment->payment_id . '"><i class="fa fa-file-invoice"> </i></a>';
+                } else {
+                    $option3 = '';
+                }
+            } else {
+                $option3 = '';
+            }
             $info[] = array(
                 $appointment->id,
                 $patientname,
                 $doctorname,
                 date('d-m-Y', $appointment->date) . ' <br> ' . $appointment->s_time . '-' . $appointment->e_time,
                 $appointment->remarks,
+                $payment_status,
                 $appointment_status,
-                $option1 . ' ' . $option2
+                $option1 . ' ' . $option2 . ' ' . $option3
             );
             $i = $i + 1;
         }
@@ -1913,9 +2360,9 @@ class Appointment extends MX_Controller {
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
-          //  $permis = '';
-          //  $permis_1 = '';
-           // $permis_2 = '';
+            //  $permis = '';
+            //  $permis_1 = '';
+            // $permis_2 = '';
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
                 $permis = 'ok';
@@ -1935,10 +2382,14 @@ class Appointment extends MX_Controller {
             $option1 = '';
             $option2 = '';
             if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
-                $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+                if ($appointment->status == 'Pending Confirmation' || $this->ion_auth->in_group(array('admin'))) {
+                    $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+                }
             }
             if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') {
-                $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+                if ($appointment->status == 'Pending Confirmation' || $this->ion_auth->in_group(array('admin'))) {
+                    $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+                }
             }
             // $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
             //   $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
@@ -1965,15 +2416,29 @@ class Appointment extends MX_Controller {
             } elseif ($appointment->status == 'Requested') {
                 $appointment_status = lang('requested');
             }
-
+            if ($appointment->payment_status == 'paid') {
+                $payment_status = lang('paid');
+            } else {
+                $payment_status = lang('unpaid');
+            }
+            if (!$this->ion_auth->in_group(array('Doctor'))) {
+                if ($appointment->status == 'Confirmed') {
+                    $option3 = '<a class="btn btn-info btn-xs btn_width" href="patient/myInvoice?id=' . $appointment->payment_id . '"><i class="fa fa-file-invoice"> </i></a>';
+                } else {
+                    $option3 = '';
+                }
+            } else {
+                $option3 = '';
+            }
             $info[] = array(
                 $appointment->id,
                 $patientname,
                 $doctorname,
                 date('d-m-Y', $appointment->date) . ' <br> ' . $appointment->s_time . '-' . $appointment->e_time,
                 $appointment->remarks,
+                $payment_status,
                 $appointment_status,
-                $option1 . ' ' . $option2
+                $option1 . ' ' . $option2 . ' ' . $option3
             );
             $i = $i + 1;
         }
@@ -2052,9 +2517,9 @@ class Appointment extends MX_Controller {
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
-         //   $permis = '';
-          //  $permis_1 = '';
-          //  $permis_2 = '';
+            //   $permis = '';
+            //  $permis_1 = '';
+            //  $permis_2 = '';
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
                 $permis = 'ok';
@@ -2075,11 +2540,16 @@ class Appointment extends MX_Controller {
             $option1 = '';
             $option2 = '';
             if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
-                $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+                if ($appointment->status == 'Pending Confirmation' || $this->ion_auth->in_group(array('admin'))) {
+                    $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+                }
             }
             if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') {
-                $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+                if ($appointment->status == 'Pending Confirmation' || $this->ion_auth->in_group(array('admin'))) {
+                    $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+                }
             }
+
             //   $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
             $patientdetails = $this->patient_model->getPatientById($appointment->patient);
             if (!empty($patientdetails)) {
@@ -2114,15 +2584,30 @@ class Appointment extends MX_Controller {
             } elseif ($appointment->status == 'Requested') {
                 $appointment_status = lang('requested');
             }
-            if ($appointment->date == strtotime(date('Y-m-d'))) {
+            if ($appointment->payment_status == 'paid') {
+                $payment_status = lang('paid');
+            } else {
+                $payment_status = lang('unpaid');
+            }
+            if (!$this->ion_auth->in_group(array('Doctor'))) {
+                if ($appointment->status == 'Confirmed') {
+                    $option3 = '<a class="btn btn-info btn-xs btn_width" href="patient/myInvoice?id=' . $appointment->payment_id . '"><i class="fa fa-file-invoice"> </i></a>';
+                } else {
+                    $option3 = '';
+                }
+            } else {
+                $option3 = '';
+            }
+            if (date('Y-m-d', $appointment->date) == date('Y-m-d')) {
                 $info[] = array(
                     $appointment->id,
                     $patientname,
                     $doctorname,
                     date('d-m-Y', $appointment->date) . '<br>' . $appointment->s_time . '-' . $appointment->e_time,
                     $appointment->remarks,
+                    $payment_status,
                     $appointment_status,
-                    $option1 . ' ' . $option2 . ' ' . $options7
+                    $option1 . ' ' . $option2 . ' ' . $options7 . ' ' . $option3
                 );
                 $i = $i + 1;
             } else {
@@ -2211,9 +2696,9 @@ class Appointment extends MX_Controller {
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
-           // $permis = '';
-           // $permis_1 = '';
-           // $permis_2 = '';
+            // $permis = '';
+            // $permis_1 = '';
+            // $permis_2 = '';
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
                 $permis = 'ok';
@@ -2234,10 +2719,14 @@ class Appointment extends MX_Controller {
             $option1 = '';
             $option2 = '';
             if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok') {
-                $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+                if ($appointment->status == 'Pending Confirmation' || $this->ion_auth->in_group(array('admin'))) {
+                    $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $appointment->id . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+                }
             }
             if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Receptionist')) || $permis_2 == 'ok') {
-                $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+                if ($appointment->status == 'Pending Confirmation' || $this->ion_auth->in_group(array('admin'))) {
+                    $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+                }
             }
             // $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="appointment/delete?id=' . $appointment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
             if ($appointment->status == 'Pending Confirmation') {
@@ -2264,6 +2753,15 @@ class Appointment extends MX_Controller {
                 } else {
                     $doctorname = $appointment->doctorname;
                 }
+                if (!$this->ion_auth->in_group(array('Doctor'))) {
+                    if ($appointment->status == 'Confirmed') {
+                        $option3 = '<a class="btn btn-info btn-xs btn_width" href="patient/myInvoice?id=' . $appointment->payment_id . '"><i class="fa fa-file-invoice"> </i></a>';
+                    } else {
+                        $option3 = '';
+                    }
+                } else {
+                    $option3 = '';
+                }
                 if ($this->ion_auth->in_group(array('admin', 'Doctor'))) {
                     if ($appointment->status == 'Confirmed') {
                         $options7 = '<a class="btn btn-info btn-xs btn_width detailsbutton" title="' . lang('start_live') . '" style="color: #fff;" href="meeting/instantLive?id=' . $appointment->id . '" target="_blank" onclick="return confirm(\'Are you sure you want to start a live meeting with this patient? SMS and Email will be sent to the Patient.\');"><i class="fa fa-headphones"></i> ' . lang('live') . '</a>';
@@ -2273,14 +2771,20 @@ class Appointment extends MX_Controller {
                 } else {
                     $options7 = '';
                 }
+                if ($appointment->payment_status == 'paid') {
+                    $payment_status = lang('paid');
+                } else {
+                    $payment_status = lang('unpaid');
+                }
                 $info[] = array(
                     $appointment->id,
                     $patientname,
                     $doctorname,
                     date('d-m-Y', $appointment->date) . ' <br> ' . $appointment->s_time . '-' . $appointment->e_time,
                     $appointment->remarks,
+                    $payment_status,
                     $appointment_status,
-                    $option1 . ' ' . $option2 . ' ' . $options7
+                    $option1 . ' ' . $option2 . ' ' . $options7 . ' ' . $option3
                 );
                 $i = $i + 1;
             } else {
@@ -2396,7 +2900,15 @@ class Appointment extends MX_Controller {
                 } else {
                     $doctorname = $appointment->doctorname;
                 }
-
+                if (!$this->ion_auth->in_group(array('Doctor'))) {
+                    if ($appointment->status === 'Confirmed') {
+                        $option3 = '<a class="btn btn-info btn-xs btn_width" href="patient/myInvoice?id=' . $appointment->payment_id . '"><i class="fa fa-file-invoice"> </i></a>';
+                    } else {
+                        $option3 = '';
+                    }
+                } else {
+                    $option3 = '';
+                }
 
                 if ($this->ion_auth->in_group(array('Patient'))) {
                     if ($appointment->status == 'Confirmed') {
@@ -2418,15 +2930,21 @@ class Appointment extends MX_Controller {
                 } elseif ($appointment->status == 'Requested') {
                     $appointment_status = lang('requested');
                 }
-                if ($appointment->date == strtotime(date('Y-m-d'))) {
+                if ($appointment->payment_status == 'paid') {
+                    $payment_status = lang('paid');
+                } else {
+                    $payment_status = lang('unpaid');
+                }
+                if (date('Y-m-d', $appointment->date) == date('Y-m-d')) {
                     $info[] = array(
                         $appointment->id,
                         $patientname,
                         $doctorname,
                         date('d-m-Y', $appointment->date) . ' <br> ' . $appointment->s_time . '-' . $appointment->e_time,
                         $appointment->remarks,
+                        $payment_status,
                         $appointment_status,
-                        $options7
+                        $options7.' '.$option3
                     );
                     $i = $i + 1;
                 } else {
@@ -2436,7 +2954,7 @@ class Appointment extends MX_Controller {
                         date('d-m-Y', $appointment->date) . ' <br> ' . $appointment->s_time . '-' . $appointment->e_time,
                         $appointment->remarks,
                         $appointment_status,
-                        $options7
+                        $options7 . ' ' . $option3
                     );
                 }
             }

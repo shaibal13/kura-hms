@@ -136,8 +136,17 @@
 
 
 
-                                        <td  class="no-print"> 
+                                        <td  class="no-print">
+                                            <?php if($payment->payment_from == 'payment'){ ?>
                                             <a class="btn-xs invoicebutton" title="<?php echo lang('invoice'); ?>" style="color: #fff; width: 23px;" href="patient/myInvoice?id=<?php echo $payment->id; ?>"><i class="fas fa-file-invoice"></i> </a>
+                                <?php } else { 
+                                    $appointment=$this->db->get_where('appointment',array('payment_id'=>$payment->id))->row(); 
+                                       if($appointment->status=='Confirmed'){ ?> 
+                                            <a class="btn-xs invoicebutton" title="<?php echo lang('invoice'); ?>" style="color: #fff; width: 23px;" href="patient/myInvoice?id=<?php echo $payment->id; ?>"><i class="fas fa-file-invoice"></i> </a>
+                                      <?php } ?>
+                              
+                                           
+                                <?php } ?>
                                         </td>
                                     </tr>
 

@@ -11,6 +11,7 @@ class Paypal extends MX_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('finance/finance_model');
+        $this->load->model('appointment/appointment_model');
     }
 
     public function paymentPaypal($data) {
@@ -58,7 +59,8 @@ class Paypal extends MX_Controller {
                         'amount_received_id' => $data['payment_id'] . '.' . 'gp',
                         'gateway' => 'PayPal',
                         'deposit_type' => 'Card',
-                        'user' => $this->ion_auth->get_user_id()
+                        'user' => $this->ion_auth->get_user_id(),
+                        'payment_from' => 'payment'
                     );
                     $this->finance_model->insertDeposit($data1);
 
@@ -67,7 +69,46 @@ class Paypal extends MX_Controller {
 
                     $this->session->set_flashdata('feedback', lang('payment_successful'));
                     redirect("finance/invoice?id=" . $data['payment_id']);
-                } else {
+                } elseif ($data['from'] == '10' || $data['from'] == 'my_today' || $data['from'] == 'upcoming' || $data['from'] == 'med_his' || $data['from'] == 'request' || $data['from'] == 'frontend') {
+
+                    $data1 = array(
+                        'date' => $date,
+                        'patient' => $data['patient'],
+                        'deposited_amount' => $data['deposited_amount'],
+                        'payment_id' => $data['payment_id'],
+                        'amount_received_id' => $data['payment_id'] . '.' . 'gp',
+                        'gateway' => 'PayPal',
+                        'deposit_type' => 'Card',
+                        'user' => $this->ion_auth->get_user_id(),
+                        'payment_from' => 'appointment'
+                    );
+                    $this->finance_model->insertDeposit($data1);
+
+                    $data_payment = array('amount_received' => $data['deposited_amount'], 'deposit_type' => 'Card','date'=> time(),'date_string'=>date('d-m-y',time()));
+                    $this->finance_model->updatePayment($data['payment_id'], $data_payment);
+                    $appointment_id = $this->finance_model->getPaymentById($data['payment_id'])->appointment_id;
+                    $appointment_details = $this->appointment_model->getAppointmentById($appointment_id);
+                    if ($appointment_details->status == 'Requested') {
+                        $data_appointment_status = array('status' => 'Confirmed', 'payment_status' => 'paid');
+                    } else {
+                        $data_appointment_status = array('payment_status' => 'paid');
+                    }
+                    $this->appointment_model->updateAppointment($appointment_id, $data_appointment_status);
+                    $this->session->set_flashdata('feedback', lang('payment_successful'));
+                    if ($data['from'] == 'my_today') {
+                        redirect('appointment/todays');
+                    } elseif ($data['from'] == 'upcoming') {
+                        redirect('appointment/upcoming');
+                    } elseif ($data['from'] == 'med_his') {
+                        redirect("patient/medicalHistory?id=" . $data['patient']);
+                    } elseif ($data['from'] == 'request') {
+                        redirect("appointment/request");
+                    } elseif ($data['from'] == 'frontend') {
+                        redirect("frontend");
+                    } else {
+                        redirect("appointment");
+                    }
+                }else {
                     $date = time();
                     $data1 = array('patient' => $data['patient'],
                         'date' => $date,
@@ -75,7 +116,8 @@ class Paypal extends MX_Controller {
                         'deposited_amount' => $data['deposited_amount'],
                         'deposit_type' => 'Card',
                         'gateway' => 'PayPal',
-                        'user' => $this->ion_auth->get_user_id()
+                        'user' => $this->ion_auth->get_user_id(),
+                        'payment_from' => 'payment'
                     );
                     $this->finance_model->insertDeposit($data1);
                     $this->session->set_flashdata('feedback', lang('payment_successful'));

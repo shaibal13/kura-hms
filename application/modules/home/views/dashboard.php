@@ -554,7 +554,7 @@
                                 </ul>
                             </li>
                         <?php } ?>
-                        <?php if ($this->ion_auth->in_group(array('admin')) || in_array('Doctor', $pers) || in_array('Appointment', $pers)) { ?>
+                        <?php if ($this->ion_auth->in_group(array('admin')) || in_array('Doctor', $pers) || in_array('Appointment', $pers)|| in_array('Doctor-Visit', $pers)) { ?>
                             <li class="sub-menu">
                                 <a href="javascript:;" >
                                     <i class="fa fa-user-md"></i>
@@ -566,6 +566,9 @@
                                     <?php } ?>
                                     <?php if ($this->ion_auth->in_group(array('admin')) || in_array('Appointment', $pers)) { ?>
                                         <li><a href="appointment/treatmentReport"><i class="fa fa-history"></i><?php echo lang('treatment_history'); ?></a></li>
+                                    <?php } ?>
+                                        <?php if ($this->ion_auth->in_group(array('admin')) || in_array('Doctor-Visit', $pers)) { ?>
+                                        <li><a href="doctor/doctorvisit"><i class="fa fa-clinic-medical"></i><?php echo lang('doctor_visit'); ?></a></li>
                                     <?php } ?>
                                 </ul>
                             </li>

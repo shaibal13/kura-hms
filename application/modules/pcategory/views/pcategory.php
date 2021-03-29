@@ -107,7 +107,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">  <?php echo lang('add_accountant'); ?></h4>
+                <h4 class="modal-title">  <?php echo lang('add_patient_category'); ?></h4>
             </div>
             <div class="modal-body">
                 <form role="form" action="pcategory/addNew" class="clearfix" method="post" enctype="multipart/form-data">

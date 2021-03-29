@@ -19,6 +19,7 @@
                                 <th> <?php echo lang('doctor'); ?></th>
                                 <th> <?php echo lang('date-time'); ?></th>
                                 <th> <?php echo lang('remarks'); ?></th>
+                                <th> <?php echo lang('payment'); ?> <?php echo lang('status'); ?></th>
                                 <th> <?php echo lang('status'); ?></th>
                                 <th> <?php echo lang('options'); ?></th>
                             </tr>
@@ -314,6 +315,9 @@
             var id = $(this).attr('data-id');
 
             $('#editAppointmentForm').trigger("reset");
+
+            $('#editAppointmentForm').find('[name="doctor"]').html(" ");
+            $('#editAppointmentForm').find('[name="patient"]').html(" ");
             $('#myModal2').modal('show');
             $.ajax({
                 url: 'appointment/editAppointmentByJason?id=' + iid,
@@ -440,8 +444,8 @@
             dom: "<'row'<'col-sm-3'l><'col-sm-5 text-center'B><'col-sm-4'f>>" +
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-       
-             buttons: [
+
+            buttons: [
                 {extend: 'copyHtml5', exportOptions: {columns: [0, 1, 2, 3, 4, 5], }},
                 {extend: 'excelHtml5', exportOptions: {columns: [0, 1, 2, 3, 4, 5], }},
                 {extend: 'csvHtml5', exportOptions: {columns: [0, 1, 2, 3, 4, 5], }},
@@ -711,7 +715,7 @@
             placeholder: '<?php echo lang('select_patient'); ?>',
             allowClear: true,
             ajax: {
-                url:'patient/getPatientinfoWithAddNewOption',
+                url: 'patient/getPatientinfoWithAddNewOption',
                 type: "post",
                 dataType: 'json',
                 delay: 250,

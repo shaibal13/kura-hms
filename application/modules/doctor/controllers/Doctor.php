@@ -7,16 +7,16 @@ class Doctor extends MX_Controller {
 
     function __construct() {
         parent::__construct();
-        
+
         $this->load->model('doctor_model');
 
         $this->load->model('department/department_model');
-       
+        $this->load->model('doctor/doctorvisit_model');
         $this->load->model('appointment/appointment_model');
         $this->load->model('patient/patient_model');
         $this->load->model('prescription/prescription_model');
         $this->load->model('schedule/schedule_model');
-       // $this->load->module('patient');
+        // $this->load->module('patient');
         $this->load->module('sms');
         $group_permission = $this->ion_auth->get_users_groups()->row();
 
@@ -32,16 +32,15 @@ class Doctor extends MX_Controller {
             $permission_access_group = $query->permission_access;
             $this->permission_access_group_explode = explode('***', $permission_access_group);
         }
-        
-       if ($this->ion_auth->in_group(array('pharmacist'))) {
+
+        if ($this->ion_auth->in_group(array('pharmacist'))) {
             redirect('home/permission');
         }
-       
     }
 
     public function index() {
-       if (!$this->ion_auth->in_group(array('admin', 'Accountant', 'Doctor', 'Receptionist', 'Nurse', 'Laboratorist', 'Patient')) && !in_array('Doctor', $this->pers)) {
-            
+        if (!$this->ion_auth->in_group(array('admin', 'Accountant', 'Doctor', 'Receptionist', 'Nurse', 'Laboratorist', 'Patient')) && !in_array('Doctor', $this->pers)) {
+
             redirect('home/permission');
         }
         $data['doctors'] = $this->doctor_model->getDoctor();
@@ -277,7 +276,8 @@ class Doctor extends MX_Controller {
         $this->load->view('details', $data);
         $this->load->view('home/footer'); // just the footer file
     }
-      function getPatientByAppointmentByDctorId($doctor_id) {
+
+    function getPatientByAppointmentByDctorId($doctor_id) {
         $data = array();
         $appointments = $this->appointment_model->getAppointmentByDoctor($doctor_id);
         foreach ($appointments as $appointment) {
@@ -295,6 +295,7 @@ class Doctor extends MX_Controller {
 
         return $patients;
     }
+
     function editDoctorByJason() {
         $id = $this->input->get('id');
         $data['doctor'] = $this->doctor_model->getDoctorById($id);
@@ -368,21 +369,21 @@ class Doctor extends MX_Controller {
                 //  break;
             }
         }
-        $options1='';
-         $options2='';
-          $options3='';
-           $options4='';
-            $options5='';
-             $options6='';
+        $options1 = '';
+        $options2 = '';
+        $options3 = '';
+        $options4 = '';
+        $options5 = '';
+        $options6 = '';
         foreach ($data['doctors'] as $doctor) {
             if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist')) || $permis == 'ok') {
                 $options1 = '<a type="button" class="btn btn-info btn-xs btn_width editbutton" title="' . lang('edit') . '" data-toggle="modal" data-id="' . $doctor->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
                 //   $options1 = '<a class="btn btn-info btn-xs btn_width" title="' . lang('edit') . '" href="doctor/editDoctor?id='.$doctor->id.'"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
             }
-             if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Doctor', 'Receptionist', 'Nurse', 'Laboratorist', 'Patient')) || in_array('Appointment', $this->pers)) {
-               $options2 = '<a class="btn btn-info btn-xs detailsbutton" title="' . lang('appointments') . '"  href="appointment/getAppointmentByDoctorId?id=' . $doctor->id . '"> <i class="fa fa-calendar"> </i> ' . lang('appointments') . '</a>';
-             }
-             if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist')) || $permis_1 == 'ok') {
+            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Doctor', 'Receptionist', 'Nurse', 'Laboratorist', 'Patient')) || in_array('Appointment', $this->pers)) {
+                $options2 = '<a class="btn btn-info btn-xs detailsbutton" title="' . lang('appointments') . '"  href="appointment/getAppointmentByDoctorId?id=' . $doctor->id . '"> <i class="fa fa-calendar"> </i> ' . lang('appointments') . '</a>';
+            }
+            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist')) || $permis_1 == 'ok') {
                 $options3 = '<a class="btn btn-info btn-xs btn_width delete_button" title="' . lang('delete') . '" href="doctor/delete?id=' . $doctor->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i> ' . lang('delete') . '</a>';
             }
 
@@ -444,6 +445,42 @@ class Doctor extends MX_Controller {
         $response = $this->doctor_model->getDoctorWithAddNewOption($searchTerm);
 
         echo json_encode($response);
+    }
+
+    public function getDoctorVisit() {
+        $id = $this->input->get('id');
+       // $description = $this->input->get('description');
+        $visits = $this->doctor_model->getDoctorVisitByDoctorId($id);
+        $option = '<option>' . lang('select') . '</option>';
+        foreach ($visits as $visit) {
+           
+                $option .= '<option value="' . $visit->id . '">' . $visit->visit_description . '</option>';
+            
+        }
+        $data['response'] = $option;
+        echo json_encode($data);
+    }
+    public function getDoctorVisitForEdit() {
+        $id = $this->input->get('id');
+        $description = $this->input->get('description');
+        $visits = $this->doctor_model->getDoctorVisitByDoctorId($id);
+        $option = '<option>' . lang('select') . '</option>';
+        foreach ($visits as $visit) {
+            if($visit->id == $description){
+              $option .= '<option value="' . $visit->id . '" selected>' . $visit->visit_description . '</option>';
+            }else{
+                $option .= '<option value="' . $visit->id . '">' . $visit->visit_description . '</option>';
+            }
+        }
+        $data['response'] = $option;
+        echo json_encode($data);
+    }
+    public function getDoctorVisitCharges() {
+        $id = $this->input->get('id');
+        $data['response'] = $this->doctorvisit_model->getDoctorvisitById($id);
+
+
+        echo json_encode($data);
     }
 
 }

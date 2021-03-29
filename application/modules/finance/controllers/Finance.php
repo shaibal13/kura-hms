@@ -319,7 +319,8 @@ class Finance extends MX_Controller {
                     'patient_address' => $patient_address,
                     'doctor_name' => $doctor_name,
                     'date_string' => $date_string,
-                    'remarks' => $remarks
+                    'remarks' => $remarks,
+                    'payment_from' => 'payment'
                 );
 
 
@@ -399,7 +400,8 @@ class Finance extends MX_Controller {
                                 'deposited_amount' => $amount_received,
                                 'amount_received_id' => $inserted_id . '.' . 'gp',
                                 'gateway' => 'Stripe',
-                                'user' => $user
+                                'user' => $user,
+                                'payment_from' => 'payment'
                             );
                             if ($amount_received > 0) {
 
@@ -521,7 +523,8 @@ class Finance extends MX_Controller {
                                 'payment_id' => $inserted_id,
                                 'amount_received_id' => $inserted_id . '.' . 'gp',
                                 'deposit_type' => $deposit_type,
-                                'user' => $user
+                                'user' => $user,
+                                'payment_from' => 'payment'
                             );
                             $this->finance_model->insertDeposit($data1);
 
@@ -565,7 +568,8 @@ class Finance extends MX_Controller {
                         'payment_id' => $inserted_id,
                         'amount_received_id' => $inserted_id . '.' . 'gp',
                         'deposit_type' => $deposit_type,
-                        'user' => $user
+                        'user' => $user,
+                        'payment_from' => 'payment'
                     );
                     $this->finance_model->insertDeposit($data1);
 

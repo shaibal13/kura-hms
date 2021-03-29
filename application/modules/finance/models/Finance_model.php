@@ -16,6 +16,7 @@ class Finance_model extends CI_model {
 
     function getPayment() {
         $this->db->order_by('id', 'desc');
+      
         $query = $this->db->get('payment');
         return $query->result();
     }
@@ -26,6 +27,7 @@ class Finance_model extends CI_model {
         } else {
             $this->db->order_by('id', 'desc');
         }
+       $this->db->where('payment_from','payment');
         $query = $this->db->get('payment');
         return $query->result();
     }
@@ -37,15 +39,8 @@ class Finance_model extends CI_model {
             $this->db->order_by('id', 'desc');
         }
         $this->db->like('id', $search);
-        $this->db->or_like('amount', $search);
-        $this->db->or_like('gross_total', $search);
-        $this->db->or_like('patient_name', $search);
-        $this->db->or_like('patient_phone', $search);
-        $this->db->or_like('patient_address', $search);
-        $this->db->or_like('remarks', $search);
-        $this->db->or_like('doctor_name', $search);
-        $this->db->or_like('flat_discount', $search);
-        $this->db->or_like('date_string', $search);
+         $this->db->where('payment_from','payment');
+         $this->db->where("(id LIKE '%" . $search . "%' OR amount LIKE '%" . $search . "%' OR gross_total LIKE '%" . $search . "%' OR patient_name LIKE '%" . $search . "%'OR patient_phone LIKE '%" . $search . "%'OR patient_address LIKE '%" . $search . "%' OR remarks LIKE '%" . $search . "%' OR doctor_name LIKE '%" . $search . "%' OR flat_discount LIKE '%" . $search . "%' OR date_string LIKE '%" . $search . "%')", NULL, FALSE);
         $query = $this->db->get('payment');
         return $query->result();
     }
@@ -57,6 +52,7 @@ class Finance_model extends CI_model {
             $this->db->order_by('id', 'desc');
         }
         $this->db->limit($limit, $start);
+      $this->db->where('payment_from','payment');
         $query = $this->db->get('payment');
         return $query->result();
     }
@@ -76,15 +72,8 @@ class Finance_model extends CI_model {
         }
 
         $this->db->like('id', $search);
-        $this->db->or_like('amount', $search);
-        $this->db->or_like('gross_total', $search);
-        $this->db->or_like('patient_name', $search);
-        $this->db->or_like('patient_phone', $search);
-        $this->db->or_like('patient_address', $search);
-        $this->db->or_like('remarks', $search);
-        $this->db->or_like('doctor_name', $search);
-        $this->db->or_like('flat_discount', $search);
-        $this->db->or_like('date_string', $search);
+         $this->db->where('payment_from','payment');
+          $this->db->where("(id LIKE '%" . $search . "%' OR amount LIKE '%" . $search . "%' OR gross_total LIKE '%" . $search . "%' OR patient_name LIKE '%" . $search . "%'OR patient_phone LIKE '%" . $search . "%'OR patient_address LIKE '%" . $search . "%' OR remarks LIKE '%" . $search . "%' OR doctor_name LIKE '%" . $search . "%' OR flat_discount LIKE '%" . $search . "%' OR date_string LIKE '%" . $search . "%')", NULL, FALSE);
         $this->db->limit($limit, $start);
         $query = $this->db->get('payment');
         return $query->result();

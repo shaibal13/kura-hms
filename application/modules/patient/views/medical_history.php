@@ -24,7 +24,7 @@
         $permis_p = '';
         $permis_p_2 = '';
         $permis_p_3 = '';
-          $permis_pr = '';
+        $permis_pr = '';
         $permis_pr_2 = '';
         $permis_pr_3 = '';
         $permis_b = '';
@@ -57,8 +57,8 @@
                 $permis_p_3 = 'ok';
                 //  break;
             }
-            
-              if (in_array('1', $perm_explode) && $perm_explode[0] == 'Prescription') {
+
+            if (in_array('1', $perm_explode) && $perm_explode[0] == 'Prescription') {
                 $permis_pr = 'ok';
                 //  break;
             }
@@ -174,7 +174,7 @@
                                             <i class="fa fa-plus-circle"> </i> <?php echo lang('add_new'); ?> 
                                         </a>
                                     </div>
-                                <?php } if ($this->ion_auth->in_group(array('Patient')))  { ?>
+                                <?php } if ($this->ion_auth->in_group(array('Patient'))) { ?>
                                     <div class=" no-print">
                                         <a class="btn btn-info btn_width btn-xs" data-toggle="modal" href="#addAppointmentModal">
                                             <i class="fa fa-plus-circle"> </i> <?php echo lang('request_a_appointment'); ?> 
@@ -188,8 +188,9 @@
                                                 <th><?php echo lang('date'); ?></th>
                                                 <th><?php echo lang('time_slot'); ?></th>
                                                 <th><?php echo lang('doctor'); ?></th>
+                                                <th> <?php echo lang('payment'); ?> <?php echo lang('status'); ?></th>
                                                 <th><?php echo lang('status'); ?></th>
-                                                <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_2 == 'ok') { ?>
+                                                <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist', 'Patient')) || $permis_2 == 'ok') { ?>
                                                     <th class="no-print"><?php echo lang('options'); ?></th>
                                                 <?php } ?>
                                             </tr>
@@ -211,6 +212,16 @@
                                                         echo $appointment_doctor;
                                                         ?>
                                                     </td>
+                                                    <td>
+                                                        <?php
+                                                        if ($appointment->payment_status == 'paid') {
+                                                            $payment_status = lang('paid');
+                                                        } else {
+                                                            $payment_status = lang('unpaid');
+                                                        }
+                                                        echo $payment_status;
+                                                        ?>
+                                                    </td>
                                                     <td><?php
                                                         if ($appointment->status == 'Pending Confirmation') {
                                                             $appointment_status = lang('pending_confirmation');
@@ -225,13 +236,17 @@
                                                         }
                                                         echo $appointment_status;
                                                         ?></td>
-                                                    <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_2 == 'ok' || $permis_3 == 'ok') { ?>
+                                                    <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist', 'Patient')) || $permis_2 == 'ok' || $permis_3 == 'ok') { ?>
                                                         <td class="no-print">
                                                             <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_2 == 'ok') { ?>
+
                                                                 <button type="button" class="btn btn-info btn-xs btn_width editAppointmentButton" title="<?php echo lang('edit'); ?>" data-toggle="modal" data-id="<?php echo $appointment->id; ?>"><i class="fa fa-edit"></i> </button>   
                                                             <?php } ?>
                                                             <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_3 == 'ok') { ?>
                                                                 <a class="btn btn-info btn-xs btn_width delete_button" title="<?php echo lang('delete'); ?>" href="appointment/delete?id=<?php echo $appointment->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> </a>
+                                                            <?php } ?>
+                                                            <?php if (!$this->ion_auth->in_group(array('Doctor')) && $appointment->status == 'Confirmed') { ?>
+                                                                <a class="btn btn-info btn-xs btn_width" href="patient/myInvoice?id=<?php echo $appointment->payment_id ?>"><i class="fa fa-file-invoice"> </i></a>
                                                             <?php } ?>
                                                         </td>
                                                     <?php } ?>
@@ -299,7 +314,7 @@
                                                                                 <div class="">
                                                                                     <textarea class="ckeditor form-control" name="description" id="description" value="" rows="100" cols="50">      
                                     <?php foreach ($medical_histories as $medical_history) { ?>         
-                                                                                                                                                                                                                                    <td><?php echo $medical_history->description; ?></td>
+                                                                                                                                                                                                                                                    <td><?php echo $medical_history->description; ?></td>
                                     <?php } ?>
                                                                                     </textarea>
                                                                                 </div>
@@ -320,7 +335,7 @@
                             </div>
                         </div>
                         <div id="about" class="tab-pane"> <div class="">
-                                <?php if ($this->ion_auth->in_group(array('Doctor')) || $permis_pr_2 =='ok') { ?>
+                                <?php if ($this->ion_auth->in_group(array('Doctor')) || $permis_pr_2 == 'ok') { ?>
                                     <div class=" no-print">
                                         <a class="btn btn-info btn_width btn-xs" href="prescription/addPrescriptionView">
                                             <i class="fa fa-plus-circle"> </i> <?php echo lang('add_new'); ?> 
@@ -375,32 +390,32 @@
 
 
                                                     </td>
-                                                    
+
                                                     <td class="no-print">
                                                         <a class="btn-xs green" href="prescription/viewPrescription?id=<?php echo $prescription->id; ?>"><i class="fa fa-eye"> <?php echo lang('view'); ?> </i></a> 
                                                         <?php
-                                                        if ($this->ion_auth->in_group('Doctor') || $permis_pr_2 =='ok' || $permis_pr_3 == 'ok') {
-                                                          if ($this->ion_auth->in_group('Doctor')) {
-                                                            $current_user = $this->ion_auth->get_user_id();
-                                                            $doctor_table_id = $this->doctor_model->getDoctorByIonUserId($current_user)->id;
-                                                          }else{
-                                                              $doctor_table_id='';
-                                                          }
-                                                            if ($prescription->doctor == $doctor_table_id || $permis_pr_2 =='ok' || $permis_pr_3 == 'ok') {
+                                                        if ($this->ion_auth->in_group('Doctor') || $permis_pr_2 == 'ok' || $permis_pr_3 == 'ok') {
+                                                            if ($this->ion_auth->in_group('Doctor')) {
+                                                                $current_user = $this->ion_auth->get_user_id();
+                                                                $doctor_table_id = $this->doctor_model->getDoctorByIonUserId($current_user)->id;
+                                                            } else {
+                                                                $doctor_table_id = '';
+                                                            }
+                                                            if ($prescription->doctor == $doctor_table_id || $permis_pr_2 == 'ok' || $permis_pr_3 == 'ok') {
                                                                 ?>
-                                                        <?php  if ($this->ion_auth->in_group('Doctor') || $permis_pr_2 =='ok') { ?>
-                                                                <a type="button" class="btn-info btn-xs btn_width" data-toggle="modal" href="prescription/editPrescription?id=<?php echo $prescription->id; ?>"><i class="fa fa-edit"></i> <?php echo lang('edit'); ?></a>   
-                                                        <?php } ?>
-                                                                    <?php  if ($this->ion_auth->in_group('Doctor') || $permis_pr_3 =='ok') { ?>
-                                                                <a class="btn-info btn-xs btn_width delete_button" href="prescription/delete?id=<?php echo $prescription->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> <?php echo lang('delete'); ?></a>
-                                                                <?php
-                                                                    }
+                                                                <?php if ($this->ion_auth->in_group('Doctor') || $permis_pr_2 == 'ok') { ?>
+                                                                    <a type="button" class="btn-info btn-xs btn_width" data-toggle="modal" href="prescription/editPrescription?id=<?php echo $prescription->id; ?>"><i class="fa fa-edit"></i> <?php echo lang('edit'); ?></a>   
+                                                                <?php } ?>
+                                                                <?php if ($this->ion_auth->in_group('Doctor') || $permis_pr_3 == 'ok') { ?>
+                                                                    <a class="btn-info btn-xs btn_width delete_button" href="prescription/delete?id=<?php echo $prescription->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> <?php echo lang('delete'); ?></a>
+                                                                    <?php
+                                                                }
                                                             }
                                                         }
                                                         ?>
                                                         <a class="btn-xs invoicebutton" title="<?php echo lang('print'); ?>" style="color: #fff;" href="prescription/viewPrescriptionPrint?id=<?php echo $prescription->id; ?>"target="_blank"> <i class="fa fa-print"></i> <?php echo lang('print'); ?></a>
                                                     </td>
-                                              
+
                                                 </tr>
                                             <?php } ?>
                                         </tbody>
@@ -450,12 +465,12 @@
 
 
                         <div id="profile" class="tab-pane"> <div class="">
-                                <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 =='ok' ) { ?>
-                                <div class=" no-print">
-                                    <a class="btn btn-info btn_width btn-xs" data-toggle="modal" href="#myModal1">
-                                        <i class="fa fa-plus-circle"> </i> <?php echo lang('add_new'); ?> 
-                                    </a>
-                                </div>
+                                <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 == 'ok') { ?>
+                                    <div class=" no-print">
+                                        <a class="btn btn-info btn_width btn-xs" data-toggle="modal" href="#myModal1">
+                                            <i class="fa fa-plus-circle"> </i> <?php echo lang('add_new'); ?> 
+                                        </a>
+                                    </div>
                                 <?php } ?>
                                 <div class="adv-table editable-table ">
                                     <div class="">
@@ -498,7 +513,7 @@
                                                     <?php }
                                                     ?>
 
-                                    <!--  <img src="<?php echo $patient_material->url; ?>" height="100" width="100">-->
+                                                    <!--  <img src="<?php echo $patient_material->url; ?>" height="100" width="100">-->
                                                 </div>
                                                 <div class="post-info" style="text-align:center !important;">
                                                     <?php
@@ -513,7 +528,7 @@
                                                     <div style="display:inline-block !important;">  
                                                         <a   class="btn btn-info btn-xs btn_width" href="<?php echo $patient_material->url; ?>" download> <?php echo lang('download'); ?> </a>
                                                     </div>
-                                                    <?php if (!$this->ion_auth->in_group(array('Patient'))|| $permis_p_3 == 'ok' ) { ?>
+                                                    <?php if (!$this->ion_auth->in_group(array('Patient')) || $permis_p_3 == 'ok') { ?>
                                                         <div  style="display:inline-block !important;" >    
                                                             <a class="btn btn-info btn-xs btn_width" title="<?php echo lang('delete'); ?>" href="patient/deletePatientMaterial?id=<?php echo $patient_material->id; ?>"onclick="return confirm('Are you sure you want to delete this item?');"> X </a>
                                                         </div>
@@ -531,7 +546,7 @@
                         </div>
                         <div id="contact" class="tab-pane"> 
                             <div class="">
-                                <?php if ($this->ion_auth->in_group(array('Doctor')) || $permis_b_2 =='ok') { ?>
+                                <?php if ($this->ion_auth->in_group(array('Doctor')) || $permis_b_2 == 'ok') { ?>
                                     <div class=" no-print">
                                         <a class="btn btn-info btn_width btn-xs" data-toggle="modal" href="#myModa3">
                                             <i class="fa fa-plus-circle"> </i> <?php echo lang('add_new'); ?> 
@@ -758,7 +773,7 @@ if ($this->ion_auth->in_group('Doctor')) {
                 <h4 class="modal-title">   <?php echo lang('add_appointment'); ?></h4>
             </div>
             <div class="modal-body">
-                <form role="form" action="appointment/addNew" class="clearfix row" method="post" enctype="multipart/form-data">
+                <form role="form" id="addAppointmentForm" action="appointment/addNew" class="clearfix row" method="post" enctype="multipart/form-data">
                     <div class="col-md-4 panel">
                         <label for="exampleInputEmail1">  <?php echo lang('patient'); ?></label>
                         <select class="form-control m-bot15 js-example-basic-single pos_select" id="pos_select" name="patient" value=''> 
@@ -807,10 +822,18 @@ if ($this->ion_auth->in_group('Doctor')) {
                         <select class="form-control m-bot15" name="category_appointment" value=''> 
                             <option value="Bed Allotment" <?php
                             ?> > <?php echo lang('bed_allotment'); ?> </option>
-                            <option value="Ambulator" <?php
-                            ?> > <?php echo lang('ambulator'); ?> </option>
+                            <option value="Ambulator" <?php ?> > <?php echo lang('ambulator'); ?> </option>
 
                         </select>
+                    </div>
+                    <div class="col-md-6 panel">
+
+                        <label class=""><?php echo lang('visit'); ?> <?php echo lang('description'); ?></label>
+
+                        <select class="form-control m-bot15" name="visit_description" id="visit_description" value=''> 
+
+                        </select>
+
                     </div>
                     <div class="col-md-8 panel">
                         <label for="exampleInputEmail1"> <?php echo lang('remarks'); ?></label>
@@ -820,10 +843,10 @@ if ($this->ion_auth->in_group('Doctor')) {
 
 
 
-                    <div class="col-md-5 panel">
-                        <input type="checkbox" name="sms" value="sms"> <?php echo lang('send_sms') ?><br>
-                    </div>
-
+                    <!-- <div class="col-md-5 panel">
+                         <input type="checkbox" name="sms" value="sms"> <?php echo lang('send_sms') ?><br>
+                     </div>-->
+                    <input type="hidden" name="redirectlink" value="med_his">
                     <input type="hidden" name="redirect" value='patient/medicalHistory?id=<?php echo $patient->id; ?>'>
 
                     <input type="hidden" name="request" value='<?php
@@ -832,9 +855,126 @@ if ($this->ion_auth->in_group('Doctor')) {
                     }
                     ?>'>
 
-                    <div class="col-md-12 panel">
-                        <button type="submit" name="submit" class="btn btn-info pull-right"> <?php echo lang('submit'); ?></button>
+
+                    <div class="form-group col-md-4" >
+                        <label for="exampleInputEmail1"><?php echo lang('visit'); ?> <?php echo lang('charges'); ?></label>
+                        <input type="number" class="form-control"  name="visit_charges" id="visit_charges" value='' placeholder="" readonly="">
                     </div>
+                    <?php if (!$this->ion_auth->in_group(array('Nurse', 'Doctor'))) { ?>    
+                        <div class="col-md-12">
+                            <input type="checkbox" id="pay_now_appointment" name="pay_now_appointment" value="pay_now_appointment">
+                            <label for=""> <?php echo lang('pay_now'); ?></label><br>
+                            <?php if (!$this->ion_auth->in_group(array('Patient'))) { ?> 
+                                <span style="color:red;"><?php echo lang('if_pay_now_checked_please_select_status_to_confirmed') ?></span>
+                            <?php } ?>
+                        </div>
+
+                        <div class="payment_label col-md-12 hidden deposit_type" style="text-align: left !important ;margin: 0% !important ;"> 
+                            <label for="exampleInputEmail1"><?php echo lang('deposit_type'); ?></label>
+
+                            <div class=""> 
+                                <select class="form-control m-bot15 js-example-basic-single selecttype" id="selecttype" name="deposit_type" value=''> 
+                                    <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Patient'))) { ?>
+                                        <?php if (!$this->ion_auth->in_group(array('Patient'))) { ?>
+                                            <option value="Cash"> <?php echo lang('cash'); ?> </option>
+                                        <?php } ?>
+                                        <?php if ($this->ion_auth->in_group(array('Patient'))) { ?>
+                                            <option value="0"> <?php echo lang('select'); ?> </option>
+                                        <?php } ?>    
+
+                                        <option value="Card"> <?php echo lang('card'); ?> </option>
+                                    <?php } ?>
+
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="col-md-12">
+                            <?php
+                            $payment_gateway = $settings->payment_gateway;
+                            ?>
+
+
+
+                            <div class = "card">
+
+                                <hr>
+                                <?php if ($payment_gateway != 'Paymob') { ?>
+                                    <div class="col-md-12 payment pad_bot">
+                                        <label for="exampleInputEmail1"> <?php echo lang('accepted'); ?> <?php echo lang('cards'); ?></label>
+                                        <div class="payment pad_bot">
+                                            <img src="uploads/card.png" width="100%">
+                                        </div> 
+                                    </div>
+                                <?php }
+                                ?>
+
+                                <?php
+                                if ($payment_gateway == 'PayPal') {
+                                    ?>
+                                    <div class="col-md-12 payment pad_bot">
+                                        <label for="exampleInputEmail1"> <?php echo lang('card'); ?> <?php echo lang('type'); ?></label>
+                                        <select class="form-control m-bot15" name="card_type" value=''>
+
+                                            <option value="Mastercard"> <?php echo lang('mastercard'); ?> </option>   
+                                            <option value="Visa"> <?php echo lang('visa'); ?> </option>
+                                            <option value="American Express" > <?php echo lang('american_express'); ?> </option>
+                                        </select>
+                                    </div>
+                                <?php } ?>
+                                <?php if ($payment_gateway == '2Checkout' || $payment_gateway == 'PayPal') {
+                                    ?>
+                                    <div class="col-md-12 payment pad_bot">
+                                        <label for="exampleInputEmail1"> <?php echo lang('cardholder'); ?> <?php echo lang('name'); ?></label>
+                                        <input type="text"  id="cardholder" class="form-control pay_in" name="cardholder" value='' placeholder="">
+                                    </div>
+                                <?php } ?>
+                                <?php if ($payment_gateway != 'Pay U Money' && $payment_gateway != 'Paystack' && $payment_gateway != 'SSLCOMMERZ' && $payment_gateway != 'Paytm') { ?>
+                                    <div class="col-md-12 payment pad_bot">
+                                        <label for="exampleInputEmail1"> <?php echo lang('card'); ?> <?php echo lang('number'); ?></label>
+                                        <input type="text"  id="card" class="form-control pay_in" name="card_number" value='' placeholder="">
+                                    </div>
+
+
+
+                                    <div class="col-md-8 payment pad_bot">
+                                        <label for="exampleInputEmail1"> <?php echo lang('expire'); ?> <?php echo lang('date'); ?></label>
+                                        <input type="text" class="form-control pay_in" id="expire" data-date="" data-date-format="MM YY" placeholder="Expiry (MM/YY)" name="expire_date" maxlength="7" aria-describedby="basic-addon1" value='' placeholder="">
+                                    </div>
+                                    <div class="col-md-4 payment pad_bot">
+                                        <label for="exampleInputEmail1"> <?php echo lang('cvv'); ?> </label>
+                                        <input type="text" class="form-control pay_in" id="cvv" maxlength="3" name="cvv" value='' placeholder="">
+                                    </div> 
+                                    <?php
+                                }
+                                ?>
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-12 panel">
+                            <div class="col-md-3 payment_label"> 
+                            </div>
+                            <div class="col-md-9"> 
+                                <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
+                                <div class="form-group cashsubmit payment  right-six col-md-12">
+                                    <button type="submit" name="submit2" id="submit1" class="btn btn-info row pull-right"> <?php echo lang('submit'); ?></button>
+                                </div>
+                                <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
+                                <div class="form-group cardsubmit  right-six col-md-12 hidden">
+                                    <button type="submit" name="pay_now" id="submit-btn" class="btn btn-info row pull-right" <?php if ($settings->payment_gateway == 'Stripe') {
+                                    ?>onClick="stripePay(event);"<?php }
+                                ?> <?php if ($settings->payment_gateway == '2Checkout' && $twocheckout->status == 'live') {
+                                    ?>onClick="twoCheckoutPay(event);"<?php }
+                                ?>> <?php echo lang('submit'); ?></button>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } else { ?>
+                        <div class="form-group  payment  right-six col-md-12">
+                            <button type="submit" name="submit2" id="submit1" class="btn btn-info row pull-right"> <?php echo lang('submit'); ?></button>
+                        </div>
+                    <?php } ?>
 
                 </form>
 
@@ -893,8 +1033,7 @@ if ($this->ion_auth->in_group('Doctor')) {
                         <select class="form-control m-bot15" name="status" value=''>
                             <?php if (!$this->ion_auth->in_group('Patient')) { ?>
                                 <option value="Pending Confirmation" <?php ?> > <?php echo lang('pending_confirmation'); ?> </option>
-                                <option value="Confirmed" <?php
-                                ?> > <?php echo lang('confirmed'); ?> </option>
+                                <option value="Confirmed" <?php ?> > <?php echo lang('confirmed'); ?> </option>
                                 <option value="Treated" <?php
                                 ?> > <?php echo lang('treated'); ?> </option>
                                 <option value="Cancelled" <?php ?> > <?php echo lang('cancelled'); ?> </option>
@@ -921,18 +1060,137 @@ if ($this->ion_auth->in_group('Doctor')) {
 
 
 
-                    <div class="col-md-6 panel">
-                        <input type="checkbox" name="sms" value="sms"> <?php echo lang('send_sms') ?><br>
-                    </div>
+                    <!--   <div class="col-md-6 panel">
+                           <input type="checkbox" name="sms" value="sms"> <?php echo lang('send_sms') ?><br>
+                       </div>-->
 
-
+                    <input type="hidden" name="redirectlink" value="med_his">
 
                     <input type="hidden" name="redirect" value='patient/medicalHistory?id=<?php echo $patient->id; ?>'>>
                     <input type="hidden" name="id" id="appointment_id" value=''>
 
-                    <div class="col-md-12 panel">
-                        <button type="submit" name="submit" class="btn btn-info pull-right"> <?php echo lang('submit'); ?></button>
+                    <div class="form-group col-md-12 hidden consultant_fee_div" style="padding-top: 20px;">
+                        <label for="exampleInputEmail1"><?php echo lang('visit'); ?> <?php echo lang('charges'); ?></label>
+                        <input type="number" class="form-control" name="visit_charges" id="visit_charges1" value='' placeholder="" readonly="">
                     </div>
+                    <?php if (!$this->ion_auth->in_group(array('Nurse', 'Doctor'))) { ?> 
+                        <div class="col-md-12 hidden pay_now">
+                            <input type="checkbox" id="pay_now_appointment1" name="pay_now_appointment" value="pay_now_appointment">
+                            <label for=""> <?php echo lang('pay_now'); ?></label><br>
+                            <span style="color:red;"><?php echo lang('if_pay_now_checked_please_select_status_to_confirmed') ?></span>
+                        </div>
+                        <div class="col-md-12 hidden payment_status form-group">
+                            <label for=""> <?php echo lang('payment'); ?> <?php echo lang('status'); ?></label><br>
+                            <input type="text"class="form-control" id="pay_now_appointment" name="payment_status_appointment" value="paid" readonly="">
+
+
+                        </div>
+                        <div class="payment_label col-md-12 hidden deposit_type1" style="text-align: left !important ;margin: 0% !important ;"> 
+                            <label for="exampleInputEmail1"><?php echo lang('deposit_type'); ?></label>
+
+                            <div class=""> 
+                                <select class="form-control m-bot15 js-example-basic-single selecttype1" id="selecttype1" name="deposit_type" value=''> 
+                                    <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Patient'))) { ?>
+                                        <?php if (!$this->ion_auth->in_group(array('Patient'))) { ?>
+                                            <option value="Cash"> <?php echo lang('cash'); ?> </option>
+                                        <?php } ?>
+                                        <?php if ($this->ion_auth->in_group(array('Patient'))) { ?>
+                                            <option value="0"> <?php echo lang('select'); ?> </option>
+                                        <?php } ?>
+
+                                        <option value="Card"> <?php echo lang('card'); ?> </option>
+                                    <?php } ?>
+
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="col-md-12">
+                            <?php
+                            $payment_gateway = $settings->payment_gateway;
+                            ?>
+
+
+
+                            <div class = "card">
+
+                                <hr>
+                                <?php if ($payment_gateway != 'Paymob') { ?>
+                                    <div class="col-md-12 payment pad_bot">
+                                        <label for="exampleInputEmail1"> <?php echo lang('accepted'); ?> <?php echo lang('cards'); ?></label>
+                                        <div class="payment pad_bot">
+                                            <img src="uploads/card.png" width="100%">
+                                        </div> 
+                                    </div>
+                                    <?php
+                                }
+                                ?>
+                                <?php
+                                if ($payment_gateway == 'PayPal') {
+                                    ?>
+                                    <div class="col-md-12 payment pad_bot">
+                                        <label for="exampleInputEmail1"> <?php echo lang('card'); ?> <?php echo lang('type'); ?></label>
+                                        <select class="form-control m-bot15" name="card_type" value=''>
+
+                                            <option value="Mastercard"> <?php echo lang('mastercard'); ?> </option>   
+                                            <option value="Visa"> <?php echo lang('visa'); ?> </option>
+                                            <option value="American Express" > <?php echo lang('american_express'); ?> </option>
+                                        </select>
+                                    </div>
+                                <?php } ?>
+                                <?php if ($payment_gateway == '2Checkout' || $payment_gateway == 'PayPal') {
+                                    ?>
+                                    <div class="col-md-12 payment pad_bot">
+                                        <label for="exampleInputEmail1"> <?php echo lang('cardholder'); ?> <?php echo lang('name'); ?></label>
+                                        <input type="text"  id="cardholder1" class="form-control pay_in" name="cardholder" value='' placeholder="">
+                                    </div>
+                                <?php } ?>
+                                <?php if ($payment_gateway != 'Pay U Money' && $payment_gateway != 'Paystack' && $payment_gateway != 'SSLCOMMERZ' && $payment_gateway != 'Paytm') { ?>
+                                    <div class="col-md-12 payment pad_bot">
+                                        <label for="exampleInputEmail1"> <?php echo lang('card'); ?> <?php echo lang('number'); ?></label>
+                                        <input type="text"  id="card1" class="form-control pay_in" name="card_number" value='' placeholder="">
+                                    </div>
+
+
+
+                                    <div class="col-md-8 payment pad_bot">
+                                        <label for="exampleInputEmail1"> <?php echo lang('expire'); ?> <?php echo lang('date'); ?></label>
+                                        <input type="text" class="form-control pay_in" id="expire1" data-date="" data-date-format="MM YY" placeholder="Expiry (MM/YY)" name="expire_date" maxlength="7" aria-describedby="basic-addon1" value='' placeholder="">
+                                    </div>
+                                    <div class="col-md-4 payment pad_bot">
+                                        <label for="exampleInputEmail1"> <?php echo lang('cvv'); ?> </label>
+                                        <input type="text" class="form-control pay_in" id="cvv1" maxlength="3" name="cvv" value='' placeholder="">
+                                    </div> 
+                                    <?php
+                                }
+                                ?>
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-12 panel">
+                            <div class="col-md-3 payment_label"> 
+                            </div>
+                            <div class="col-md-9"> 
+                                <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
+                                <div class="form-group cashsubmit1 payment  right-six col-md-12">
+                                    <button type="submit" name="submit2" id="submit1" class="btn btn-info row pull-right"> <?php echo lang('submit'); ?></button>
+                                </div>
+                                <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
+                                <div class="form-group cardsubmit1  right-six col-md-12 hidden">
+                                    <button type="submit" name="pay_now" id="submit-btn1" class="btn btn-info row pull-right" <?php if ($settings->payment_gateway == 'Stripe') {
+                                    ?>onClick="stripePay1(event);"<?php }
+                                ?> <?php if ($settings->payment_gateway == '2Checkout' && $twocheckout->status == 'live') {
+                                    ?>onClick="twoCheckoutPay1(event);"<?php }
+                                ?>> <?php echo lang('submit'); ?></button>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } else { ?>
+                        <div class="form-group  payment  right-six col-md-12">
+                            <button type="submit" name="submit2" id="submit1" class="btn btn-info row pull-right"> <?php echo lang('submit'); ?></button>
+                        </div>
+                    <?php } ?>
 
                 </form>
 
@@ -1144,29 +1402,29 @@ if ($this->ion_auth->in_group('Doctor')) {
 
 <script src="common/js/codearistos.min.js"></script>
 <script type="text/javascript">
-                                                        $(document).ready(function () {
-                                                            $(".editbutton").click(function (e) {
-                                                                e.preventDefault(e);
-                                                                // Get the record's ID via attribute  
-                                                                var iid = $(this).attr('data-id');
-                                                                $('#myModal2').modal('show');
-                                                                $.ajax({
-                                                                    url: 'patient/editMedicalHistoryByJason?id=' + iid,
-                                                                    method: 'GET',
-                                                                    data: '',
-                                                                    dataType: 'json',
-                                                                }).success(function (response) {
-                                                                    // Populate the form fields with the data returned from server
-                                                                    var date = new Date(response.medical_history.date * 1000);
-                                                                    var de = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
+                                        $(document).ready(function () {
+                                            $(".editbutton").click(function (e) {
+                                                e.preventDefault(e);
+                                                // Get the record's ID via attribute  
+                                                var iid = $(this).attr('data-id');
+                                                $('#myModal2').modal('show');
+                                                $.ajax({
+                                                    url: 'patient/editMedicalHistoryByJason?id=' + iid,
+                                                    method: 'GET',
+                                                    data: '',
+                                                    dataType: 'json',
+                                                }).success(function (response) {
+                                                    // Populate the form fields with the data returned from server
+                                                    var date = new Date(response.medical_history.date * 1000);
+                                                    var de = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear();
 
-                                                                    $('#medical_historyEditForm').find('[name="id"]').val(response.medical_history.id).end()
-                                                                    $('#medical_historyEditForm').find('[name="date"]').val(de).end()
-                                                                    $('#medical_historyEditForm').find('[name="title"]').val(response.medical_history.title).end()
-                                                                    CKEDITOR.instances['editor'].setData(response.medical_history.description)
-                                                                });
-                                                            });
-                                                        });
+                                                    $('#medical_historyEditForm').find('[name="id"]').val(response.medical_history.id).end()
+                                                    $('#medical_historyEditForm').find('[name="date"]').val(de).end()
+                                                    $('#medical_historyEditForm').find('[name="title"]').val(response.medical_history.title).end()
+                                                    CKEDITOR.instances['editor'].setData(response.medical_history.description)
+                                                });
+                                            });
+                                        });
 </script>
 
 
@@ -1206,6 +1464,12 @@ if ($this->ion_auth->in_group('Doctor')) {
             var id = $(this).attr('data-id');
 
             $('#editAppointmentForm').trigger("reset");
+            $('.consultant_fee_div').addClass('hidden');
+            $('.pay_now').addClass('hidden');
+            $('.payment_status').addClass('hidden');
+            $('.deposit_type1').addClass('hidden');
+            $('#editAppointmentForm').find('[name="doctor"]').html(" ");
+            $('#editAppointmentForm').find('[name="patient"]').html(" ");
             $('#editAppointmentModal').modal('show');
             $.ajax({
                 url: 'appointment/editAppointmentByJason?id=' + iid,
@@ -1229,7 +1493,34 @@ if ($this->ion_auth->in_group('Doctor')) {
                 $('.js-example-basic-single.patient').val(response.appointment.patient).trigger('change');
 
                 $('#editAppointmentForm').find('[name="category_appointment"]').val(response.appointment.category_appointment).end()
+                $('#visit_description1').html("")
+                $.ajax({
+                    url: 'doctor/getDoctorVisitForEdit?id=' + response.doctor.id + '&description=' + response.appointment.visit_description,
+                    method: 'GET',
+                    data: '',
+                    dataType: 'json',
+                }).success(function (response) {
 
+
+                    $('#visit_description1').html(response.response).end();
+                    // $('#editAppointmentForm').find('[name="visit_description"]').val(response.appointment.visit_description).trigger('change').end();
+
+                });
+
+                if (response.appointment.payment_status == 'unpaid') {
+                    $('.consultant_fee_div').removeClass('hidden');
+                    $('.pay_now').removeClass('hidden');
+                    $('.payment_status').addClass('hidden');
+                    // $('.deposit_type1').removeClass('hidden');
+                    $('#editAppointmentForm').find('[name="visit_charges"]').val(response.appointment.visit_charges).end()
+                } else {
+                    $('.payment_status').removeClass('hidden');
+                    $('.pay_now').addClass('hidden');
+                    $('.consultant_fee_div').addClass('hidden');
+                    //  $('.deposit_type1').addClass('hidden');
+                    $("#editAppointmentForm").find('[id="adoctors1"]').select2([{id: response.doctor.id, text: response.doctor.name + '-' + response.doctor.id, locked: true}]);
+                    $("#editAppointmentForm").find('[id="pos_select"]').select2([{id: response.patient.id, text: response.patient.name + '-' + response.patient.id, locked: true}]);
+                }
 
                 var date = $('#date1').val();
                 var doctorr = $('#adoctors1').val();
@@ -1298,7 +1589,27 @@ if ($this->ion_auth->in_group('Doctor')) {
                 // Populate the form fields with the data returned from server
                 //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
             });
+              $('#visit_description').html(" ");
+                 $('#visit_charges').val(" ");
+            $.ajax({
+                url: 'doctor/getDoctorVisit?id=' + doctorr,
+                method: 'GET',
+                data: '',
+                dataType: 'json',
+            }).success(function (response) {
+
+
+                $('#visit_description').html(response.response).end();
+
+                //   $("#default-step-1 .button-next").trigger("click");
+                //if ($('#visit_description').has('option').length == 0) {                    //if it is blank. 
+                //   $('#visit_description').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
+                // }
+                // Populate the form fields with the data returned from server
+                //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
+            });
         });
+
 
     });
 
@@ -1407,6 +1718,25 @@ if ($this->ion_auth->in_group('Doctor')) {
                 if ($('#aslots1').has('option').length == 0) {                    //if it is blank. 
                     $('#aslots1').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
                 }
+                // Populate the form fields with the data returned from server
+                //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
+            });
+              $('#visit_description1').html(" ");
+                 $('#visit_charges1').val(" ");
+            $.ajax({
+                url: 'doctor/getDoctorVisit?id=' + doctorr,
+                method: 'GET',
+                data: '',
+                dataType: 'json',
+            }).success(function (response) {
+
+
+                $('#visit_description1').html(response.response).end();
+
+                //   $("#default-step-1 .button-next").trigger("click");
+                //if ($('#visit_description').has('option').length == 0) {                    //if it is blank. 
+                //   $('#visit_description').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
+                // }
                 // Populate the form fields with the data returned from server
                 //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
             });
@@ -1608,6 +1938,407 @@ if ($this->ion_auth->in_group('Doctor')) {
 
     });
 </script>
+<script>
+    $(document).ready(function () {
+        $("#visit_description").change(function () {
+            // Get the record's ID via attribute  
+            var id = $(this).val();
+
+            $('#visit_charges').val(" ");
+            // $('#default').trigger("reset");
+
+            $.ajax({
+                url: 'doctor/getDoctorVisitCharges?id=' + id,
+                method: 'GET',
+                data: '',
+                dataType: 'json',
+            }).success(function (response) {
+
+
+                $('#visit_charges').val(response.response.visit_charges).end();
+
+
+            });
+        });
+
+    });
+    $(document).ready(function () {
+        $("#visit_description1").change(function () {
+            // Get the record's ID via attribute  
+            var id = $(this).val();
+
+            $('#visit_charges1').val(" ");
+            // $('#default').trigger("reset");
+
+            $.ajax({
+                url: 'doctor/getDoctorVisitCharges?id=' + id,
+                method: 'GET',
+                data: '',
+                dataType: 'json',
+            }).success(function (response) {
+
+
+                $('#visit_charges1').val(response.response.visit_charges).end();
+
+
+            });
+        });
+
+    });
+</script>
+<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+<script>
+    $(document).ready(function () {
+
+        $('.card').hide();
+        $(document.body).on('change', '#selecttype', function () {
+
+            var v = $("select.selecttype option:selected").val()
+            if (v == 'Card') {
+                $('.cardsubmit').removeClass('hidden');
+                $('.cashsubmit').addClass('hidden');
+                // $("#amount_received").prop('required', true);
+                // $('#amount_received').attr("required");;
+                $('.card').show();
+            } else {
+                $('.card').hide();
+                $('.cashsubmit').removeClass('hidden');
+                $('.cardsubmit').addClass('hidden');
+                // $("#amount_received").prop('required', false);
+                //$('#amount_received').removeAttr('required');
+            }
+        });
+        $('.card1').hide();
+        $(document.body).on('change', '#selecttype1', function () {
+
+            var v = $("select.selecttype1 option:selected").val()
+            if (v == 'Card') {
+                $('.cardsubmit1').removeClass('hidden');
+                $('.cashsubmit1').addClass('hidden');
+                // $("#amount_received").prop('required', true);
+                // $('#amount_received').attr("required");;
+                $('.card1').show();
+            } else {
+                $('.card1').hide();
+                $('.cashsubmit1').removeClass('hidden');
+                $('.cardsubmit1').addClass('hidden');
+                // $("#amount_received").prop('required', false);
+                //$('#amount_received').removeAttr('required');
+            }
+        });
+        $('#pay_now_appointment').change(function () {
+            if ($(this).prop("checked") == true) {
+                $('.deposit_type').removeClass('hidden');
+                $('#addAppointmentForm').find('[name="deposit_type"]').trigger("reset")
+                // $('#editAppointmentForm').find('[name="status"]').val("Confirmed").end()
+            } else {
+                $('#addAppointmentForm').find('[name="deposit_type"]').val("").end()
+                $('.deposit_type').addClass('hidden');
+                //  $('#editAppointmentForm').find('[name="status"]').val("").end()
+
+                $('.card').hide();
+            }
+
+        })
+        $('#pay_now_appointment1').change(function () {
+            if ($(this).prop("checked") == true) {
+                $('.deposit_type1').removeClass('hidden');
+                $('#editAppointmentForm').find('[name="deposit_type"]').trigger("reset")
+                // $('#editAppointmentForm').find('[name="status"]').val("Confirmed").end()
+            } else {
+                $('#editAppointmentForm').find('[name="deposit_type"]').val("").end()
+                $('.deposit_type1').addClass('hidden');
+                //  $('#editAppointmentForm').find('[name="status"]').val("").end()
+
+                $('.card1').hide();
+            }
+
+        })
+    });
+
+
+</script>
+<script>
+    function cardValidation() {
+        var valid = true;
+        var cardNumber = $('#card').val();
+        var expire = $('#expire').val();
+        var cvc = $('#cvv').val();
+
+        $("#error-message").html("").hide();
+
+        if (cardNumber.trim() == "") {
+            valid = false;
+        }
+
+        if (expire.trim() == "") {
+            valid = false;
+        }
+        if (cvc.trim() == "") {
+            valid = false;
+        }
+
+        if (valid == false) {
+            $("#error-message").html("All Fields are required").show();
+        }
+
+        return valid;
+    }
+//set your publishable key
+    Stripe.setPublishableKey("<?php echo $gateway->publish; ?>");
+
+//callback to handle the response from stripe
+    function stripeResponseHandler(status, response) {
+        if (response.error) {
+            //enable the submit button
+            $("#submit-btn").show();
+            $("#loader").css("display", "none");
+            //display the errors on the form
+            $("#error-message").html(response.error.message).show();
+        } else {
+            //get token id
+            var token = response['id'];
+            //insert the token into the form
+            $('#token').val(token);
+            $("#addAppointmentForm").append("<input type='hidden' name='token' value='" + token + "' />");
+            //submit form to the server
+            $("#addAppointmentForm").submit();
+        }
+    }
+
+    function stripePay(e) {
+        e.preventDefault();
+        var valid = cardValidation();
+
+        if (valid == true) {
+            $("#submit-btn").attr("disabled", true);
+            $("#loader").css("display", "inline-block");
+            var expire = $('#expire').val()
+            var arr = expire.split('/');
+            Stripe.createToken({
+                number: $('#card').val(),
+                cvc: $('#cvv').val(),
+                exp_month: arr[0],
+                exp_year: arr[1]
+            }, stripeResponseHandler);
+
+            //submit from callback
+            return false;
+        }
+    }
+
+</script>
+<script>
+    function cardValidation1() {
+        var valid = true;
+        var cardNumber = $('#card1').val();
+        var expire = $('#expire1').val();
+        var cvc = $('#cvv1').val();
+
+        $("#error-message").html("").hide();
+
+        if (cardNumber.trim() == "") {
+            valid = false;
+        }
+
+        if (expire.trim() == "") {
+            valid = false;
+        }
+        if (cvc.trim() == "") {
+            valid = false;
+        }
+
+        if (valid == false) {
+            $("#error-message").html("All Fields are required").show();
+        }
+
+        return valid;
+    }
+//set your publishable key
+    Stripe.setPublishableKey("<?php echo $gateway->publish; ?>");
+
+//callback to handle the response from stripe
+    function stripeResponseHandler1(status, response) {
+        if (response.error) {
+            //enable the submit button
+            $("#submit-btn1").show();
+            $("#loader").css("display", "none");
+            //display the errors on the form
+            $("#error-message").html(response.error.message).show();
+        } else {
+            //get token id
+            var token = response['id'];
+            //insert the token into the form
+            $('#token').val(token);
+            $("#editAppointmentForm").append("<input type='hidden' name='token' value='" + token + "' />");
+            //submit form to the server
+            $("#editAppointmentForm").submit();
+        }
+    }
+
+    function stripePay1(e) {
+        e.preventDefault();
+        var valid = cardValidation1();
+
+        if (valid == true) {
+            $("#submit-btn1").attr("disabled", true);
+            $("#loader").css("display", "inline-block");
+            var expire = $('#expire1').val()
+            var arr = expire.split('/');
+            Stripe.createToken({
+                number: $('#card1').val(),
+                cvc: $('#cvv1').val(),
+                exp_month: arr[0],
+                exp_year: arr[1]
+            }, stripeResponseHandler1);
+
+            //submit from callback
+            return false;
+        }
+    }
+
+</script>
+<script src="common/js/moment.min.js"></script>
+
+<script type="text/javascript" src="https://www.2checkout.com/checkout/api/2co.min.js"></script>
+<?php if ($settings->payment_gateway == '2Checkout') { ?> 
+    <script>
+
+    //   $(document).ready(function () {
+    // Called when token created successfully.
+        var successCallback = function (data) {
+            var myForm = document.getElementById('addAppointmentForm');
+            // Set the token as the value for the token input
+            // alert(data.response.token.token);
+            $("#addAppointmentForm").append("<input type='hidden' name='token' value='" + data.response.token.token + "' />");
+            //    myForm.token.value = data.response.token.token;
+            // IMPORTANT: Here we call `submit()` on the form element directly instead of using jQuery to prevent and infinite token request loop.
+            myForm.submit();
+        };
+    // Called when token creation fails.
+        var errorCallback = function (data) {
+            if (data.errorCode === 200) {
+                tokenRequest();
+            } else {
+                alert(data.errorMsg);
+            }
+        };
+        var tokenRequest = function () {
+    <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
+            // Setup token request arguments  
+            var expire = $("#expire").val();
+            var expiresep = expire.split("/");
+            var dateformat = moment(expiresep[1], "YY");
+            var year = dateformat.format("YYYY");
+            var args = {
+                sellerId: "<?php echo $twocheckout->merchantcode; ?>",
+                publishableKey: "<?php echo $twocheckout->publishablekey; ?>",
+                ccNo: $("#card").val(),
+                cvv: $("#cvv").val(),
+                expMonth: expiresep[0],
+                expYear: year
+            };
+            console.log($("#card").val() + '-' + $("#cvv").val() + expiresep[0] + year + "<?php echo $twocheckout->merchantcode; ?>");
+            // Make the token request
+
+            TCO.requestToken(successCallback, errorCallback, args);
+        };
+    //   });
+        function twoCheckoutPay(e) {
+            e.preventDefault();
+
+            // try {
+            // Pull in the public encryption key for our environment
+            // TCO.loadPubKey('production');
+            TCO.loadPubKey('sandbox', function () {  // for sandbox environment
+                publishableKey = "<?php echo $twocheckout->publishablekey; ?>"//your public key
+                tokenRequest();
+            });
+            //  $("#editPaymentForm").submit(function (e) {
+            // Call our token request function
+
+
+            // Prevent form from submitting
+            return false;
+            // });
+            // } catch (e) {
+            //     alert(e.toSource());
+            //  }
+        }
+    // Pull in the public encryption key for our environment
+
+    //});
+    </script>
+<?php } ?>
+<?php if ($settings->payment_gateway == '2Checkout') { ?> 
+    <script>
+
+        //   $(document).ready(function () {
+        // Called when token created successfully.
+        var successCallback1 = function (data) {
+            var myForm = document.getElementById('editAppointmentForm');
+            // Set the token as the value for the token input
+            // alert(data.response.token.token);
+            $("#editAppointmentForm").append("<input type='hidden' name='token' value='" + data.response.token.token + "' />");
+            //    myForm.token.value = data.response.token.token;
+            // IMPORTANT: Here we call `submit()` on the form element directly instead of using jQuery to prevent and infinite token request loop.
+            myForm.submit();
+        };
+        // Called when token creation fails.
+        var errorCallback1 = function (data) {
+            if (data.errorCode === 200) {
+                tokenRequest();
+            } else {
+                alert(data.errorMsg);
+            }
+        };
+        var tokenRequest1 = function () {
+    <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
+            // Setup token request arguments  
+            var expire = $("#expire1").val();
+            var expiresep = expire.split("/");
+            var dateformat = moment(expiresep[1], "YY");
+            var year = dateformat.format("YYYY");
+            var args = {
+                sellerId: "<?php echo $twocheckout->merchantcode; ?>",
+                publishableKey: "<?php echo $twocheckout->publishablekey; ?>",
+                ccNo: $("#card1").val(),
+                cvv: $("#cvv1").val(),
+                expMonth: expiresep[0],
+                expYear: year
+            };
+            console.log($("#card1").val() + '-' + $("#cvv1").val() + expiresep[0] + year + "<?php echo $twocheckout->merchantcode; ?>");
+            // Make the token request
+
+            TCO.requestToken(successCallback1, errorCallback1, args);
+        };
+        //   });
+        function twoCheckoutPay1(e) {
+            e.preventDefault();
+
+            // try {
+            // Pull in the public encryption key for our environment
+            // TCO.loadPubKey('production');
+            TCO.loadPubKey('sandbox', function () {  // for sandbox environment
+                publishableKey = "<?php echo $twocheckout->publishablekey; ?>"//your public key
+                tokenRequest1();
+            });
+            //  $("#editPaymentForm").submit(function (e) {
+            // Call our token request function
+
+
+            // Prevent form from submitting
+            return false;
+            // });
+            // } catch (e) {
+            //     alert(e.toSource());
+            //  }
+        }
+        // Pull in the public encryption key for our environment
+
+        //});
+    </script>
+<?php } ?>
 <script>
     $(document).ready(function () {
         $(".flashmessage").delay(3000).fadeOut(100);

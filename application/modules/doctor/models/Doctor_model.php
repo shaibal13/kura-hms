@@ -178,5 +178,10 @@ class Doctor_model extends CI_model {
         }
         return $data;
     }
+       function getDoctorVisitByDoctorId($id) {
+        $this->db->where('doctor_id', $id);
+        $query = $this->db->get('doctor_visit');
+        return $query->result();
+    }
 
 }

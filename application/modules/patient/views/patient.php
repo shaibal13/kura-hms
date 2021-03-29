@@ -523,7 +523,9 @@
 
                     <div class="form-group col-md-4">    
                     </div>
-                    <div class="form-group col-md-4">    
+                    <div class="form-group col-md-4">   
+                         <label for="exampleInputEmail1"><?php echo lang('category'); ?></label>
+                        <div class="categoryClass"></div>
                     </div>
                     <div class="form-group col-md-4">    
                         <label for="exampleInputEmail1"><?php echo lang('doctor'); ?></label>
@@ -650,6 +652,7 @@
         $('.patientidClass').html("").end()
         $('.doctorClass').html("").end()
         $('.ageClass').html("").end()
+        $('.categoryClass').html("").end()
         $.ajax({
             url: 'patient/getPatientByJason?id=' + iid,
             method: 'GET',
@@ -668,7 +671,7 @@
             $('.ageClass').append(response.age).end()
             $('.bloodgroupClass').append(response.patient.bloodgroup).end()
             $('.patientidClass').append(response.patient.patient_id).end()
-
+             $('.categoryClass').append(response.patient.category_name).end()
             if (response.doctor !== null) {
                 $('.doctorClass').append(response.doctor.name).end()
             } else {

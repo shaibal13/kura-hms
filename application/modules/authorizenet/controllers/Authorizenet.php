@@ -24,7 +24,7 @@ class Authorizenet extends MX_Controller {
         //   $AnetController="net\authorize\api\controller";
         //  use net\authorize\api\contract\v1 as AnetAPI;
 //  use net\authorize\api\controller as AnetController;
-       
+
         $patientdetails = $this->db->get_where('patient', array('id =' => $data['patient']))->row();
 
 
@@ -112,13 +112,13 @@ class Authorizenet extends MX_Controller {
 
         // Create the controller and get the response
         $controller = new net\authorize\api\controller\CreateTransactionController($request);
-        if( $authorizenet->status=='test'){
-        $response = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::SANDBOX);
-        }else{
-              $response = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::PRODUCTION);
+        if ($authorizenet->status == 'test') {
+            $response = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::SANDBOX);
+        } else {
+            $response = $controller->executeWithApiResponse(\net\authorize\api\constants\ANetEnvironment::PRODUCTION);
         }
-      //  print_r($response);
-      //  die();
+        //  print_r($response);
+        //  die();
 
         if ($response != null) {
             // Check to see if the API request was successfully received and acted upon
@@ -129,6 +129,46 @@ class Authorizenet extends MX_Controller {
 
 
                 if ($tresponse != null && $tresponse->getMessages() != null) {
+                    if ($redirect == '10' || $redirect == 'my_today' || $redirect == 'upcoming' || $redirect == 'med_his' || $redirect == 'request') {
+                        $data1 = array(
+                            'date' => $date,
+                            'patient' => $data['patient'],
+                            'deposited_amount' => $data['amount'],
+                            'payment_id' => $data['insertid'],
+                            'amount_received_id' => $data['insertid'] . '.' . 'gp',
+                            'gateway' => 'Authorize.Net',
+                            'deposit_type' => 'Card',
+                            'user' => $this->ion_auth->get_user_id(),
+                            'payment_from' => 'appointment'
+                        );
+                        $this->finance_model->insertDeposit($data1);
+
+                        $data_payment = array('amount_received' => $data['amount'], 'deposit_type' => 'Card', 'status' => 'paid', 'date' => time(), 'date_string' => date('d-m-y', time()));
+                        $this->finance_model->updatePayment($data['insertid'], $data_payment);
+                        $appointment_id = $this->finance_model->getPaymentById($data['insertid'])->appointment_id;
+                        $appointment_details = $this->appointment_model->getAppointmentById($appointment_id);
+                        if ($appointment_details->status == 'Requested') {
+                            $data_appointment_status = array('status' => 'Confirmed', 'payment_status' => 'paid');
+                        } else {
+                            $data_appointment_status = array('payment_status' => 'paid');
+                        }
+                        $this->appointment_model->updateAppointment($appointment_id, $data_appointment_status);
+                        $this->session->set_flashdata('feedback', lang('payment_successful'));
+                        if ($redirect == '10') {
+                            redirect("appointment");
+                        } elseif ($redirect == 'my_today') {
+                            redirect("appointment/todays");
+                        } elseif ($redirect == 'upcoming') {
+                            redirect("appointment/upcoming");
+                        } elseif ($redirect == 'request') {
+                            redirect("appointment/request");
+                        } elseif ($redirect == 'frontend') {
+                            redirect("frontend");
+                        } elseif ($redirect == 'med_his') {
+
+                            redirect("patient/medicalHistory?id=" . $data['patient']);
+                        }
+                    }
                     if ($redirect == 'pos') {
                         $data1 = array(
                             'date' => $date,
@@ -138,7 +178,8 @@ class Authorizenet extends MX_Controller {
                             'amount_received_id' => $data['insertid'] . '.' . 'gp',
                             'gateway' => 'Authorize.Net',
                             'deposit_type' => 'Card',
-                            'user' => $this->ion_auth->get_user_id()
+                            'user' => $this->ion_auth->get_user_id(),
+                            'payment_from' => 'payment'
                         );
                         $this->finance_model->insertDeposit($data1);
 
@@ -156,7 +197,8 @@ class Authorizenet extends MX_Controller {
                             'deposited_amount' => $data['amount'],
                             'deposit_type' => 'Card',
                             'gateway' => 'Authorize.Net',
-                            'user' => $this->ion_auth->get_user_id()
+                            'user' => $this->ion_auth->get_user_id(),
+                            'payment_from' => 'payment'
                         );
                         $this->finance_model->insertDeposit($data1);
                         $this->session->set_flashdata('feedback', lang('payment_successful'));
@@ -170,13 +212,34 @@ class Authorizenet extends MX_Controller {
                             'deposited_amount' => $data['amount'],
                             'deposit_type' => 'Card',
                             'gateway' => 'Authorize.Net',
-                            'user' => $this->ion_auth->get_user_id()
+                            'user' => $this->ion_auth->get_user_id(),
+                            'payment_from' => 'payment'
                         );
                         $this->finance_model->insertDeposit($data1);
                         $this->session->set_flashdata('feedback', lang('payment_successful'));
                         redirect('patient/myPaymentHistory');
                     }
                 } else {
+                    if ($redirect == '10') {
+                        $this->session->set_flashdata('feedback', lang('transaction_failed'));
+                        redirect("appointment");
+                    }
+                    if ($redirect == 'my_today') {
+                        $this->session->set_flashdata('feedback', lang('transaction_failed'));
+                        redirect("appointment/todays");
+                    }
+                    if ($redirect == 'upcoming') {
+                        $this->session->set_flashdata('feedback', lang('transaction_failed'));
+                        redirect("appointment/upcoming");
+                    }
+                    if ($redirect == 'med_his') {
+                        $this->session->set_flashdata('feedback', lang('transaction_failed'));
+                        redirect("patient/medicalHistory?id=" . $data['patient']);
+                    }
+                    if ($redirect == 'request') {
+                        $this->session->set_flashdata('feedback', lang('transaction_failed'));
+                        redirect("appointment/request");
+                    }
                     if ($redirect == 'pos') {
                         $this->session->set_flashdata('feedback', lang('transaction_failed'));
                         redirect("finance/invoice?id=" . $data['insertid']);
@@ -196,6 +259,29 @@ class Authorizenet extends MX_Controller {
                 $tresponse = $response->getTransactionResponse();
 
                 if ($tresponse != null && $tresponse->getErrors() != null) {
+                    if ($redirect == '10') {
+                        $this->session->set_flashdata('feedback', lang('transaction_failed'));
+                        redirect("appointment");
+                    } if ($redirect == 'my_today') {
+                        $this->session->set_flashdata('feedback', lang('transaction_failed'));
+                        redirect("appointment/todays");
+                    }
+                    if ($redirect == 'upcoming') {
+                        $this->session->set_flashdata('feedback', lang('transaction_failed'));
+                        redirect("appointment/upcoming");
+                    }
+                    /*   if ($redirect == 'frontend') {
+                      $this->session->set_flashdata('feedback', lang('transaction_failed'));
+                      redirect("frontend");
+                      } */
+                    if ($redirect == 'med_his') {
+                        $this->session->set_flashdata('feedback', lang('transaction_failed'));
+                        redirect("patient/medicalHistory?id=" . $data['patient']);
+                    }
+                    if ($redirect == 'request') {
+                        $this->session->set_flashdata('feedback', lang('transaction_failed'));
+                        redirect("appointment/request");
+                    }
                     if ($redirect == 'pos') {
                         $this->session->set_flashdata('feedback', lang('transaction_failed'));
                         redirect("finance/invoice?id=" . $data['insertid']);
@@ -222,7 +308,30 @@ class Authorizenet extends MX_Controller {
                 }
             }
         } else {
-
+            if ($redirect == '10') {
+                $this->session->set_flashdata('feedback', lang('no_response'));
+                redirect("appointment");
+            }
+            if ($redirect == 'my_today') {
+                $this->session->set_flashdata('feedback', lang('no_response'));
+                redirect("appointment/todays");
+            }
+            /*  if ($redirect == 'frontend') {
+              $this->session->set_flashdata('feedback', lang('no_response'));
+              redirect("frontend");
+              } */
+            if ($redirect == 'upcoming') {
+                $this->session->set_flashdata('feedback', lang('no_response'));
+                redirect("appointment/upcoming");
+            }
+            if ($redirect == 'med_his') {
+                $this->session->set_flashdata('feedback', lang('no_response'));
+                redirect("patient/medicalHistory?id=" . $data['patient']);
+            }
+            if ($redirect == 'request') {
+                $this->session->set_flashdata('feedback', lang('no_response'));
+                redirect("appointment/request");
+            }
             if ($redirect == 'pos') {
                 $this->session->set_flashdata('feedback', lang('no_response'));
                 redirect("finance/invoice?id=" . $data['insertid']);

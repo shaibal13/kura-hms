@@ -816,6 +816,13 @@ $lang['all_roles'] = 'All Roles';
 $lang['add_role'] = 'Add Role';
 $lang['role'] = 'Role';
 $lang['permissions'] = 'Permissions';
+//
 $lang['patient_category'] = 'Patient Category';
 $lang['add_patient_category'] = 'Add Patient Category';
 $lang['edit_patient_category'] = 'Edit Patient Category';
+$lang['doctor_visit'] = 'Doctor Visit';
+$lang['add_doctor_visit'] = 'Add Doctor Visit';
+$lang['edit_doctor_visit'] = 'Edit Doctor Visit';
+$lang['visit'] = 'Visit';
+$lang['charges'] = 'Charges';
+$lang['pay_now'] = 'Pay Now';

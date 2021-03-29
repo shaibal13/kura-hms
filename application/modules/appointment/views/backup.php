@@ -34,13 +34,12 @@
                     <?php echo validation_errors(); ?>
                     <?php echo $this->session->flashdata('feedback'); ?>
                 </div>
-                <form role="form" id="editAppointmentForm" action="appointment/addNew" class="clearfix row" method="post" enctype="multipart/form-data">
+                <form role="form" action="appointment/addNew" id="editAppointmentForm"class="clearfix row" method="post" enctype="multipart/form-data">
                     <div class="col-md-7">
                         <div class="col-md-12 panel">
                             <div class="col-md-3 payment_label"> 
                                 <label for="exampleInputEmail1"> <?php echo lang('patient'); ?></label>
                             </div>
-
                             <div class="col-md-9"> 
                                 <select class="form-control m-bot15  pos_select" id="pos_select" name="patient" value=''> 
                                     <?php if (!empty($patients)) { ?>
@@ -49,7 +48,6 @@
                                 </select>
                             </div>
                         </div>
-                        <input type="hidden" name="redirectlink" value="10">
                         <div class="pos_client clearfix">
                             <div class="col-md-8 payment pad_bot pull-right">
                                 <div class="col-md-3 payment_label"> 
@@ -144,30 +142,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-12 panel">
-                            <div class="col-md-3 payment_label"> 
-                                <label class=""><?php echo lang('visit'); ?> <?php echo lang('description'); ?></label>
-                            </div>
-                            <div class="col-md-9"> 
-                                <select class="form-control m-bot15" name="visit_description" id="visit_description" value=''> 
-                                    <?php
-                                    if (!empty($appointment->id)) {
-                                        ?>
-                                        <option value="0"><?php echo lang('select'); ?></option>
-                                        <?php
-                                        foreach ($visits as $visit) {
-                                            ?>
-                                            <option value="<?php echo $visit->id; ?>"<?php
-                                            if ($visit->id == $appointment->visit_description) {
-                                                echo 'selected';
-                                            }
-                                            ?>><?php echo $visit->visit_description ?> </option>
-                                                <?php }
-                                            }
-                                            ?>
-                                </select>
-                            </div>
-                        </div>
+
 
                         <div class="col-md-12 panel">
                             <div class="col-md-3 payment_label"> 
@@ -213,7 +188,7 @@
                                 <label for="exampleInputEmail1"> <?php echo lang('appointment'); ?> <?php echo lang('status'); ?></label>
                             </div>
                             <div class="col-md-9"> 
-                                <select class="form-control m-bot15" name="status" value=''>
+                                <select class="form-control m-bot15" name="status" value='' id="appointment_status">
                                     <option value="Pending Confirmation" <?php
                                     if (!empty($appointment->status)) {
                                         if ($appointment->status == 'Pending Confirmation') {
@@ -245,31 +220,15 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-12 panel">
-                            <div class="col-md-3 payment_label"> 
-                                <label for="exampleInputEmail1"> <?php echo lang('category'); ?> </label>
-                            </div>
-                            <div class="col-md-9"> 
-                                <select class="form-control m-bot15" name="category_appointment" value=''>
-                                    <option value="Bed Allotment" <?php
-                                    if (!empty($appointment->category_appointment)) {
-                                        if ($appointment->category_appointment == 'Bed Allotment') {
-                                            echo 'selected';
-                                        }
-                                    }
-                                    ?> > <?php echo lang('bed_allotment'); ?> </option> 
-                                    <option value="Ambulator" <?php
-                                    if (!empty($appointment->category_appointment)) {
-                                        if ($appointment->category_appointment == 'Ambulator') {
-                                            echo 'selected';
-                                        }
-                                    }
-                                    ?> > <?php echo lang('ambulator'); ?> </option>
 
-                                </select>
-                            </div>
-                        </div>
-
+                        <!--     <div class="col-md-12 panel">
+                             <div class="col-md-3 payment_label"> 
+                             </div>
+                             <div class="col-md-9"> 
+                                 <input type="checkbox" name="sms" value="sms"> <?php echo lang('send_sms') ?><br>
+                             </div>
+                         </div>
+                        -->
 
 
 
@@ -280,141 +239,160 @@
                             echo $appointment->id;
                         }
                         ?>'>
+
+
                     </div>
+                     <input type="hidden" name="redirectlink" value="10">
                     <div class="col-md-5 clearfix" style="background:#fff !important;">
-
+                        
                         <div class="form-group col-md-12" style="padding-top: 20px;">
-                            <label for="exampleInputEmail1"><?php echo lang('visit'); ?> <?php echo lang('charges'); ?></label>
-                            <input type="number" class="form-control" name="visit_charges" id="visit_charges" value='<?php if(!empty($appointment->id)){
-                                echo $appointment->visit_charges;
-                            } ?>' placeholder="" readonly="">
+                            <label for="exampleInputEmail1"><?php echo lang('consultant_fee'); ?></label>
+                            <input type="number" class="form-control" name="consultant_fee" id="consultant_fee" value='<?php if(!empty($appointment)){
+                                echo $doctors->consultant_fee;
+                            }?>' placeholder="" readonly="">
                         </div>
-
+                        
                         <?php if (!$this->ion_auth->in_group(array('Nurse', 'Doctor'))) { ?> 
-                        <?php if ($appointment->payment_status == 'paid') { ?>
-                                <div class="form-group col-md-12" style="padding-top: 20px;">
-                                    <label for="exampleInputEmail1"><?php echo lang('payment'); ?> <?php echo lang('status'); ?></label>
-                                    <input type="text" class="form-control" name="" id="" value='<?php echo lang('paid'); ?>' placeholder="" readonly="">
-                                </div> 
-                                <div class="form-group  payment  right-six col-md-12">
-                                    <button type="submit" name="submit2" id="submit1" class="btn btn-info row pull-right"> <?php echo lang('submit'); ?></button>
-                                </div>
-    <?php } else { ?>
-                                <div class="col-md-12">
-                                    <input type="checkbox" id="pay_now_appointment" name="pay_now_appointment" value="pay_now_appointment">
-                                    <label for=""> <?php echo lang('pay_now'); ?></label><br>
-                                    <?php if (!$this->ion_auth->in_group(array('Patient'))) { ?> 
-                                        <span style="color:red;"><?php echo lang('if_pay_now_checked_please_select_status_to_confirmed') ?></span>
-        <?php } ?>
-                                </div>
-                                <div class="payment_label col-md-12 hidden deposit_type" style="text-align: left !important ;margin: 0% !important ;"> 
-                                    <label for="exampleInputEmail1"><?php echo lang('deposit_type'); ?></label>
+                        <?php if($appointment->payment_status=='paid') { ?>
+                            <div class="form-group col-md-12" style="padding-top: 20px;">
+                            <label for="exampleInputEmail1"><?php echo lang('payment'); ?> <?php echo lang('status'); ?></label>
+                            <input type="text" class="form-control" name="" id="" value='<?php echo lang('paid'); ?>' placeholder="" readonly="">
+                        </div> 
+                         <div class="form-group  payment  right-six col-md-12">
+                                <button type="submit" name="submit2" id="submit1" class="btn btn-info row pull-right"> <?php echo lang('submit'); ?></button>
+                            </div>
+                        <?php } else { ?>
+                            <div class="col-md-12">
+                                <input type="checkbox" id="pay_now_appointment" name="pay_now_appointment" value="pay_now_appointment">
+                                <label for=""> <?php echo lang('pay_now'); ?></label><br>
+                                <?php if (!$this->ion_auth->in_group(array('Patient'))) { ?> 
+                            <span style="color:red;"><?php echo lang('if_pay_now_checked_please_select_status_to_confirmed') ?></span>
+                       <?php } ?>
+                            </div>
+                            <div class="payment_label col-md-12 hidden deposit_type" style="text-align: left !important ;margin: 0% !important ;"> 
+                                <label for="exampleInputEmail1"><?php echo lang('deposit_type'); ?></label>
 
-                                    <div class=""> 
-                                        <select class="form-control m-bot15 js-example-basic-single selecttype" id="selecttype" name="deposit_type" value=''> 
-        <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist'))) { ?>
-                                                <option value="Cash"> <?php echo lang('cash'); ?> </option>
-                                                <option value="Card"> <?php echo lang('card'); ?> </option>
-        <?php } ?>
+                                <div class=""> 
+                                    <select class="form-control m-bot15 js-example-basic-single selecttype" id="selecttype" name="deposit_type" value=''> 
+                                        <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist'))) { ?>
+                                            <option value="Cash"> <?php echo lang('cash'); ?> </option>
+                                            <option value="Card"> <?php echo lang('card'); ?> </option>
+                                        <?php } ?>
 
-                                        </select>
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div class="col-md-12">
+                                <?php
+                                $payment_gateway = $settings->payment_gateway;
+                                ?>
+
+
+
+                                <div class = "card">
+
+                                    <hr>
+                                 <?php if ($payment_gateway != 'Paymob') { ?>
+                                    <div class="col-md-12 payment pad_bot">
+                                        <label for="exampleInputEmail1"> <?php echo lang('accepted'); ?> <?php echo lang('cards'); ?></label>
+                                        <div class="payment pad_bot">
+                                            <img src="uploads/card.png" width="100%">
+                                        </div> 
                                     </div>
-
-                                </div>
-                                <div class="col-md-12">
                                     <?php
-                                    $payment_gateway = $settings->payment_gateway;
+                                }
+                                if ($payment_gateway == 'Paymob') {
+                                    $gateway_datails = $this->db->get_where('paymentGateway', array('name' => 'Paymob'))->row();
                                     ?>
+  <div class="col-md-12 payment pad_bot">
+                                                                <label for="exampleInputEmail1"> <?php echo lang('accepted'); ?> <?php echo lang('medium'); ?></label> <br>
+                                                                <input type="radio" id="payment_option" name="payment_option" value="card_payment">
+                                                                <label for="male"><?php echo lang('card');?></label><br>
+                                                                <?php if(!empty($gateway_datails->wallet_instance_id)){ ?>
+                                                                <input type="radio" id="payment_option" name="payment_option" value="wallet">
+                                                                <label for="male"><?php echo lang('wallet');?></label><br>
+                                                                <?php } ?>
+                                                                <?php if(!empty($gateway_datails->at_kiosk_instance_id)){ ?>
+                                                                <input type="radio" id="payment_option" name="payment_option" value="at_kiosk">
+                                                                <label for="male"><?php echo lang('at_kiosk');?></label><br>
+                                                                <?php } ?>
+                                                                <div class="form-group hidden" id="wallet_mobile">
+                                                                <label for="exampleInputEmail1">Wallet Mobile No:</label> <br>
+                                                                <input type="text" name="wallet_mobile" class="form-control">
+                                                                </div>
+                                                            </div>
+                                <?php } ?>
 
-
-
-                                    <div class = "card">
-
-                                        <hr>
-        <?php if ($payment_gateway != 'Paymob') { ?>
-                                            <div class="col-md-12 payment pad_bot">
-                                                <label for="exampleInputEmail1"> <?php echo lang('accepted'); ?> <?php echo lang('cards'); ?></label>
-                                                <div class="payment pad_bot">
-                                                    <img src="uploads/card.png" width="100%">
-                                                </div> 
-                                            </div>
-                                        <?php }
-                                        ?> 
-
-
-                                        <?php
-                                        if ($payment_gateway == 'PayPal') {
-                                            ?>
-                                            <div class="col-md-12 payment pad_bot">
-                                                <label for="exampleInputEmail1"> <?php echo lang('card'); ?> <?php echo lang('type'); ?></label>
-                                                <select class="form-control m-bot15" name="card_type" value=''>
-
-                                                    <option value="Mastercard"> <?php echo lang('mastercard'); ?> </option>   
-                                                    <option value="Visa"> <?php echo lang('visa'); ?> </option>
-                                                    <option value="American Express" > <?php echo lang('american_express'); ?> </option>
-                                                </select>
-                                            </div>
-                                        <?php } ?>
-                                        <?php if ($payment_gateway == '2Checkout' || $payment_gateway == 'PayPal') {
-                                            ?>
-                                            <div class="col-md-12 payment pad_bot">
-                                                <label for="exampleInputEmail1"> <?php echo lang('cardholder'); ?> <?php echo lang('name'); ?></label>
-                                                <input type="text"  id="cardholder" class="form-control pay_in" name="cardholder" value='' placeholder="">
-                                            </div>
-                                        <?php } ?>
-        <?php if ($payment_gateway != 'Pay U Money' && $payment_gateway != 'Paystack' && $payment_gateway != 'SSLCOMMERZ' && $payment_gateway != 'Paytm') { ?>
-                                            <div class="col-md-12 payment pad_bot">
-                                                <label for="exampleInputEmail1"> <?php echo lang('card'); ?> <?php echo lang('number'); ?></label>
-                                                <input type="text"  id="card" class="form-control pay_in" name="card_number" value='' placeholder="">
-                                            </div>
-
-
-
-                                            <div class="col-md-8 payment pad_bot">
-                                                <label for="exampleInputEmail1"> <?php echo lang('expire'); ?> <?php echo lang('date'); ?></label>
-                                                <input type="text" class="form-control pay_in" id="expire" data-date="" data-date-format="MM YY" placeholder="Expiry (MM/YY)" name="expire_date" maxlength="7" aria-describedby="basic-addon1" value='' placeholder="">
-                                            </div>
-                                            <div class="col-md-4 payment pad_bot">
-                                                <label for="exampleInputEmail1"> <?php echo lang('cvv'); ?> </label>
-                                                <input type="text" class="form-control pay_in" id="cvv" maxlength="3" name="cvv" value='' placeholder="">
-                                            </div> 
-                                            <?php
-                                        }
+                                    <?php
+                                    if ($payment_gateway == 'PayPal') {
                                         ?>
-                                    </div>
+                                        <div class="col-md-12 payment pad_bot">
+                                            <label for="exampleInputEmail1"> <?php echo lang('card'); ?> <?php echo lang('type'); ?></label>
+                                            <select class="form-control m-bot15" name="card_type" value=''>
+
+                                                <option value="Mastercard"> <?php echo lang('mastercard'); ?> </option>   
+                                                <option value="Visa"> <?php echo lang('visa'); ?> </option>
+                                                <option value="American Express" > <?php echo lang('american_express'); ?> </option>
+                                            </select>
+                                        </div>
+                                    <?php } ?>
+                                    <?php if ($payment_gateway == '2Checkout' || $payment_gateway == 'PayPal') {
+                                        ?>
+                                        <div class="col-md-12 payment pad_bot">
+                                            <label for="exampleInputEmail1"> <?php echo lang('cardholder'); ?> <?php echo lang('name'); ?></label>
+                                            <input type="text"  id="cardholder" class="form-control pay_in" name="cardholder" value='' placeholder="">
+                                        </div>
+                                    <?php } ?>
+                                    <?php if ($payment_gateway != 'Paymob' && $payment_gateway != 'Pay U Money' && $payment_gateway != 'Paystack' && $payment_gateway != 'SSLCOMMERZ' && $payment_gateway != 'Paytm') { ?>
+                                        <div class="col-md-12 payment pad_bot">
+                                            <label for="exampleInputEmail1"> <?php echo lang('card'); ?> <?php echo lang('number'); ?></label>
+                                            <input type="text"  id="card" class="form-control pay_in" name="card_number" value='' placeholder="">
+                                        </div>
 
 
-                                </div>
-                                <div class="col-md-12 panel">
-                                    <div class="col-md-3 payment_label"> 
-                                    </div>
-                                    <div class="col-md-9"> 
-        <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
-                                        <div class="form-group cashsubmit payment  right-six col-md-12">
-                                            <button type="submit" name="submit2" id="submit1" class="btn btn-info row pull-right"> <?php echo lang('submit'); ?></button>
+
+                                        <div class="col-md-8 payment pad_bot">
+                                            <label for="exampleInputEmail1"> <?php echo lang('expire'); ?> <?php echo lang('date'); ?></label>
+                                            <input type="text" class="form-control pay_in" id="expire" data-date="" data-date-format="MM YY" placeholder="Expiry (MM/YY)" name="expire_date" maxlength="7" aria-describedby="basic-addon1" value='' placeholder="">
                                         </div>
-        <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
-                                        <div class="form-group cardsubmit  right-six col-md-12 hidden">
-                                            <button type="submit" name="pay_now" id="submit-btn" class="btn btn-info row pull-right" <?php if ($settings->payment_gateway == 'Stripe') {
-            ?>onClick="stripePay(event);"<?php }
-        ?> <?php if ($settings->payment_gateway == '2Checkout' && $twocheckout->status == 'live') {
-            ?>onClick="twoCheckoutPay(event);"<?php }
-                                        ?>> <?php echo lang('submit'); ?></button>
-                                        </div>
+                                        <div class="col-md-4 payment pad_bot">
+                                            <label for="exampleInputEmail1"> <?php echo lang('cvv'); ?> </label>
+                                            <input type="text" class="form-control pay_in" id="cvv" maxlength="3" name="cvv" value='' placeholder="">
+                                        </div> 
+                                        <?php
+                                    }
+                                    ?>
+                                </div>
+
+
+                            </div>
+                            <div class="col-md-12 panel">
+                                <div class="col-md-3 payment_label"> 
+                                </div>
+                                <div class="col-md-9"> 
+                                    <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
+                                    <div class="form-group cashsubmit payment  right-six col-md-12">
+                                        <button type="submit" name="submit2" id="submit1" class="btn btn-info row pull-right"> <?php echo lang('submit'); ?></button>
+                                    </div>
+                                    <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
+                                    <div class="form-group cardsubmit  right-six col-md-12 hidden">
+                                        <button type="submit" name="pay_now" id="submit-btn" class="btn btn-info row pull-right" <?php if ($settings->payment_gateway == 'Stripe') {
+                                        ?>onClick="stripePay(event);"<?php }
+                                    ?> <?php if ($settings->payment_gateway == '2Checkout' && $twocheckout->status == 'live') {
+                                        ?>onClick="twoCheckoutPay(event);"<?php }
+                                    ?>> <?php echo lang('submit'); ?></button>
                                     </div>
                                 </div>
-                            <?php
-                            }
-                        } else {
-                            ?>
+                            </div>
+                        <?php } 
+                        
+                                    }else { ?>
                             <div class="form-group  payment  right-six col-md-12">
                                 <button type="submit" name="submit2" id="submit1" class="btn btn-info row pull-right"> <?php echo lang('submit'); ?></button>
                             </div>
-<?php } ?>
+                        <?php } ?>
                     </div>
-
-
-
                 </form>
             </div>
 
@@ -427,29 +405,29 @@
 
 
 <script src="common/js/codearistos.min.js"></script>
-<!--<script type="text/javascript" src="https://js.stripe.com/v2/"></script>-->
+<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
 <script>
-                                                    $(document).ready(function () {
-                                                        $('.card').hide();
-                                                        $(document.body).on('change', '#selecttype', function () {
+                                        $(document).ready(function () {
+                                            $('.card').hide();
+                                            $(document.body).on('change', '#selecttype', function () {
 
-                                                            var v = $("select.selecttype option:selected").val()
-                                                            if (v == 'Card') {
-                                                                $('.cardsubmit').removeClass('hidden');
-                                                                $('.cashsubmit').addClass('hidden');
-                                                                // $("#amount_received").prop('required', true);
-                                                                // $('#amount_received').attr("required");;
-                                                                $('.card').show();
-                                                            } else {
-                                                                $('.card').hide();
-                                                                $('.cashsubmit').removeClass('hidden');
-                                                                $('.cardsubmit').addClass('hidden');
-                                                                // $("#amount_received").prop('required', false);
-                                                                //$('#amount_received').removeAttr('required');
-                                                            }
-                                                        });
+                                                var v = $("select.selecttype option:selected").val()
+                                                if (v == 'Card') {
+                                                    $('.cardsubmit').removeClass('hidden');
+                                                    $('.cashsubmit').addClass('hidden');
+                                                    // $("#amount_received").prop('required', true);
+                                                    // $('#amount_received').attr("required");;
+                                                    $('.card').show();
+                                                } else {
+                                                    $('.card').hide();
+                                                    $('.cashsubmit').removeClass('hidden');
+                                                    $('.cardsubmit').addClass('hidden');
+                                                    // $("#amount_received").prop('required', false);
+                                                    //$('#amount_received').removeAttr('required');
+                                                }
+                                            });
 
-                                                    });
+                                        });
 
 
 </script>
@@ -472,7 +450,6 @@
 </script>
 
 
-
 <?php if (!empty($appointment->id)) { ?>
 
     <script type="text/javascript">
@@ -482,6 +459,7 @@
                 var id = $('#appointment_id').val();
                 var date = $('#date').val();
                 var doctorr = $('#adoctors').val();
+
                 $('#aslots').find('option').remove();
                 // $('#default').trigger("reset");
                 $.ajax({
@@ -498,22 +476,9 @@
                     if ($('#aslots').has('option').length == 0) {                    //if it is blank. 
                         $('#aslots').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
                     }
+
                     // Populate the form fields with the data returned from server
                     //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
-                });
-                $('#visit_description').html(" ");
-                $('#visit_charges').val(" ");
-                $.ajax({
-                    url: 'doctor/getDoctorVisit?id=' + doctorr,
-                    method: 'GET',
-                    data: '',
-                    dataType: 'json',
-                }).success(function (response) {
-
-
-                    $('#visit_description').html(response.response).end();
-
-
                 });
             });
 
@@ -523,6 +488,7 @@
             var id = $('#appointment_id').val();
             var date = $('#date').val();
             var doctorr = $('#adoctors').val();
+            //  var consultant_fee=$('#consultant_fee').val();
             $('#aslots').find('option').remove();
             // $('#default').trigger("reset");
             $.ajax({
@@ -600,14 +566,39 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
+            /* $('#appointment_status').change(function(){
+             var value=$(this).val();
+             if(value=='Confirmed'){
+             $('#pay_now_appointment').prop("checked",true);
+             $('.deposit_type').removeClass('hidden');
+             }else{
+             $('#pay_now_appointment').prop("checked",false);
+             $('.deposit_type').addClass('hidden');
+             $('.card').hide();
+             }
+             })*/
+            $('#pay_now_appointment').change(function () {
+                if ($(this).prop("checked") == true) {
+                    $('.deposit_type').removeClass('hidden');
+                    $('#editAppointmentForm').find('[name="deposit_type"]').trigger("reset")
+                    // $('#editAppointmentForm').find('[name="status"]').val("Confirmed").end()
+                } else {
+                    $('#editAppointmentForm').find('[name="deposit_type"]').val("").end()
+                    $('.deposit_type').addClass('hidden');
+                    //  $('#editAppointmentForm').find('[name="status"]').val("").end()
+
+                    $('.card').hide();
+                }
+
+            })
             $("#adoctors").change(function () {
                 // Get the record's ID via attribute  
-
                 var id = $('#appointment_id').val();
                 var date = $('#date').val();
                 var doctorr = $('#adoctors').val();
+                $('#consultant_fee').val(" ");
+
                 $('#aslots').find('option').remove();
-                $('#visit_description').html(" ");
                 // $('#default').trigger("reset");
                 $.ajax({
                     url: 'schedule/getAvailableSlotByDoctorByDateByJason?date=' + date + '&doctor=' + doctorr,
@@ -623,22 +614,9 @@
                     if ($('#aslots').has('option').length == 0) {                    //if it is blank. 
                         $('#aslots').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
                     }
+                    $('#consultant_fee').val(response.doctor.consultant_fee).end();
                     // Populate the form fields with the data returned from server
                     //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
-                });
-                $('#visit_description').html(" ");
-                 $('#visit_charges').val(" ");
-                $.ajax({
-                    url: 'doctor/getDoctorVisit?id=' + doctorr,
-                    method: 'GET',
-                    data: '',
-                    dataType: 'json',
-                }).success(function (response) {
-
-
-                    $('#visit_description').html(response.response).end();
-
-
                 });
             });
 
@@ -668,7 +646,6 @@
                 if ($('#aslots').has('option').length == 0) {                    //if it is blank. 
                     $('#aslots').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
                 }
-
                 // Populate the form fields with the data returned from server
                 //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
             });
@@ -716,49 +693,13 @@
             });
 
         }
-        $(document).ready(function () {
-            $("#visit_description").change(function () {
-                // Get the record's ID via attribute  
-                var id = $(this).val();
 
-                $('#visit_charges').val(" ");
-                // $('#default').trigger("reset");
-
-                $.ajax({
-                    url: 'doctor/getDoctorVisitCharges?id=' + id,
-                    method: 'GET',
-                    data: '',
-                    dataType: 'json',
-                }).success(function (response) {
-
-
-                    $('#visit_charges').val(response.response.visit_charges).end();
-
-
-                });
-            });
-
-        });
     </script>
 
 <?php } ?>
 
 <script>
     $(document).ready(function () {
-        $('#pay_now_appointment').change(function () {
-            if ($(this).prop("checked") == true) {
-                $('.deposit_type').removeClass('hidden');
-                $('#editAppointmentForm').find('[name="deposit_type"]').trigger("reset")
-                // $('#editAppointmentForm').find('[name="status"]').val("Confirmed").end()
-            } else {
-                $('#editAppointmentForm').find('[name="deposit_type"]').val("").end()
-                $('.deposit_type').addClass('hidden');
-                //  $('#editAppointmentForm').find('[name="status"]').val("").end()
-
-                $('.card').hide();
-            }
-
-        })
         $("#pos_select").select2({
             placeholder: '<?php echo lang('select_patient'); ?>',
             allowClear: true,
@@ -807,9 +748,6 @@
 
     });
 </script>
-
-
-<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
 <script>
     function cardValidation() {
         var valid = true;
@@ -889,69 +827,91 @@
 
     //   $(document).ready(function () {
     // Called when token created successfully.
-        var successCallback = function (data) {
-            var myForm = document.getElementById('editAppointmentForm');
-            // Set the token as the value for the token input
-            // alert(data.response.token.token);
-            $("#editAppointmentForm").append("<input type='hidden' name='token' value='" + data.response.token.token + "' />");
-            //    myForm.token.value = data.response.token.token;
-            // IMPORTANT: Here we call `submit()` on the form element directly instead of using jQuery to prevent and infinite token request loop.
-            myForm.submit();
-        };
+    var successCallback = function (data) {
+        var myForm = document.getElementById('editAppointmentForm');
+        // Set the token as the value for the token input
+        // alert(data.response.token.token);
+        $("#editAppointmentForm").append("<input type='hidden' name='token' value='" + data.response.token.token + "' />");
+        //    myForm.token.value = data.response.token.token;
+        // IMPORTANT: Here we call `submit()` on the form element directly instead of using jQuery to prevent and infinite token request loop.
+        myForm.submit();
+    };
     // Called when token creation fails.
-        var errorCallback = function (data) {
-            if (data.errorCode === 200) {
-                tokenRequest();
-            } else {
-                alert(data.errorMsg);
-            }
-        };
-        var tokenRequest = function () {
-    <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
-            // Setup token request arguments  
-            var expire = $("#expire").val();
-            var expiresep = expire.split("/");
-            var dateformat = moment(expiresep[1], "YY");
-            var year = dateformat.format("YYYY");
-            var args = {
-                sellerId: "<?php echo $twocheckout->merchantcode; ?>",
-                publishableKey: "<?php echo $twocheckout->publishablekey; ?>",
-                ccNo: $("#card").val(),
-                cvv: $("#cvv").val(),
-                expMonth: expiresep[0],
-                expYear: year
-            };
-            console.log($("#card").val() + '-' + $("#cvv").val() + expiresep[0] + year + "<?php echo $twocheckout->merchantcode; ?>");
-            // Make the token request
-
-            TCO.requestToken(successCallback, errorCallback, args);
-        };
-    //   });
-        function twoCheckoutPay(e) {
-            e.preventDefault();
-
-            // try {
-            // Pull in the public encryption key for our environment
-            // TCO.loadPubKey('production');
-            TCO.loadPubKey('sandbox', function () {  // for sandbox environment
-                publishableKey = "<?php echo $twocheckout->publishablekey; ?>"//your public key
-                tokenRequest();
-            });
-            //  $("#editPaymentForm").submit(function (e) {
-            // Call our token request function
-
-
-            // Prevent form from submitting
-            return false;
-            // });
-            // } catch (e) {
-            //     alert(e.toSource());
-            //  }
+    var errorCallback = function (data) {
+        if (data.errorCode === 200) {
+            tokenRequest();
+        } else {
+            alert(data.errorMsg);
         }
+    };
+    var tokenRequest = function () {
+    <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
+        // Setup token request arguments  
+        var expire = $("#expire").val();
+        var expiresep = expire.split("/");
+        var dateformat = moment(expiresep[1], "YY");
+        var year = dateformat.format("YYYY");
+        var args = {
+            sellerId: "<?php echo $twocheckout->merchantcode; ?>",
+            publishableKey: "<?php echo $twocheckout->publishablekey; ?>",
+            ccNo: $("#card").val(),
+            cvv: $("#cvv").val(),
+            expMonth: expiresep[0],
+            expYear: year
+        };
+        console.log($("#card").val() + '-' + $("#cvv").val() + expiresep[0] + year + "<?php echo $twocheckout->merchantcode; ?>");
+        // Make the token request
+
+        TCO.requestToken(successCallback, errorCallback, args);
+    };
+    //   });
+    function twoCheckoutPay(e) {
+        e.preventDefault();
+
+        // try {
+        // Pull in the public encryption key for our environment
+        // TCO.loadPubKey('production');
+        TCO.loadPubKey('sandbox', function () {  // for sandbox environment
+            publishableKey = "<?php echo $twocheckout->publishablekey; ?>"//your public key
+            tokenRequest();
+        });
+        //  $("#editPaymentForm").submit(function (e) {
+        // Call our token request function
+
+
+        // Prevent form from submitting
+        return false;
+        // });
+        // } catch (e) {
+        //     alert(e.toSource());
+        //  }
+    }
     // Pull in the public encryption key for our environment
 
     //});
     </script>
 <?php } ?>
 
+
+    <script>
+         //    $('#wallet_mobile').hide();
+        $(document).ready(function(){
+       $('input[type=radio][id=payment_option]').on('change', function() {
+           // $("#payment_option").change(function(){ // bind a function to the change event
+
+       // check if the radio is checked
+            var val = $(this).val(); // retrieve the value
+          
+            if(val=='wallet'){
+                $('#wallet_mobile').removeClass('hidden');
+              //  $("input[value=card_payment]").removeAttr("Checked");
+            }else{
+                $('#wallet_mobile').addClass('hidden');
+                
+                // $("input[value=card_payment]").removeAttr("Checked");
+            }
+        
+    });
+        })
+        </script>
 

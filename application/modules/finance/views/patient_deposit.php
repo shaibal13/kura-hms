@@ -180,9 +180,16 @@
 
 
                                         <td  class="no-print"> 
-                                            <?php if ($this->ion_auth->in_group(array('admin', 'Accountant'))|| $permis =='ok') { ?>
-                                                <a class="btn-xs btn-info" title="<?php echo lang('edit'); ?>" style="width: 25%;" href="finance/editPayment?id=<?php echo $payment->id; ?>"><i class="fa fa-edit"> </i></a>
-                                            <?php } ?>
+                                            <?php if ($this->ion_auth->in_group(array('admin', 'Accountant'))|| $permis =='ok') { 
+                                              if ($payment->payment_from == 'payment') { 
+                                                    ?>
+
+                                                    <a class="btn-xs btn-info" title="<?php echo lang('edit'); ?>" style="width: 25%;" href="finance/editPayment?id=<?php echo $payment->id; ?>"><i class="fa fa-edit"> </i></a>
+                                                <?php } else { ?> 
+                                                    <a class="btn-xs btn-info" title="<?php echo lang('edit'); ?>" style="width: 25%;" href="appointment/editAppointment?id=<?php echo $payment->appointment_id; ?>"><i class="fa fa-edit"> </i></a>
+                                                    <?php
+                                                }
+                                            } ?>
                                             <a class="btn-xs invoicebutton" title="<?php echo lang('invoice'); ?>" style="color: #fff; width: 25%;" href="finance/invoice?id=<?php echo $payment->id; ?>"><i class="fa fa-file-invoice"></i> </a>
                                             <?php if ($this->ion_auth->in_group(array('admin', 'Accountant')) || $permis_2 =='ok') { ?> 
                                                 <a class="btn-xs btn-info delete_button" title="<?php echo lang('delete'); ?>" style="width: 25%;"  href="finance/delete?id=<?php echo $payment->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> </a>

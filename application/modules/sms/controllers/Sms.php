@@ -145,7 +145,7 @@ class Sms extends MX_Controller {
         $j = sizeof($data);
         foreach ($data as $key => $value) {
             foreach ($value as $key2 => $value2) {
-                
+
                 if ($smsSettings->name == 'Clickatell') {
                     $username = urldecode(base64_decode($smsSettings->username));
                     $password = urldecode(base64_decode($smsSettings->password));
@@ -561,9 +561,9 @@ class Sms extends MX_Controller {
         //  $data['patients'] = $this->patient_model->getVisitor();
         $i = 0;
         $count = 0;
-         $options1 = '';
+        $options1 = '';
         $permis = '';
-       // $permis_1 = '';
+        // $permis_1 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
             $perm_explode = explode(",", $perm);
@@ -736,9 +736,9 @@ class Sms extends MX_Controller {
         //  $data['patients'] = $this->patient_model->getVisitor();
         $i = 0;
         $count = 0;
-         $permis = '';
+        $permis = '';
         $permis_1 = '';
-        $options1=$options2='';
+        $options1 = $options2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
             $perm_explode = explode(",", $perm);
@@ -753,11 +753,11 @@ class Sms extends MX_Controller {
         }
         foreach ($data['cases'] as $case) {
             $i = $i + 1;
-      if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') {
+            if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') {
 
                 $options1 = ' <a type="button" class="btn btn-success btn-xs btn_width editbutton1" title="' . lang('edit') . '" data-toggle = "modal" data-id="' . $case->id . '"><i class="fa fa-edit"> </i></a>';
                 // $options1 = '<a type='button" class="btn btn-success btn-xs btn_width" title="" . lang('edit') . '"data-toggle = "modal" data-id="' . $case->id . '"><i class="fa fa-edit"></i></a>';
-                } if ($this->ion_auth->in_group(array('admin')) || $permis_1 == 'ok') {
+            } if ($this->ion_auth->in_group(array('admin')) || $permis_1 == 'ok') {
                 $options2 = '<a class="btn btn-danger btn-xs btn_width" title="' . lang('delete') . '" href="sms/deleteManualSMSTemplate?id=' . $case->id . '&redirect=sms/smsTemplate" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash-o"></i></a>';
             }
             $info[] = array(
@@ -818,6 +818,84 @@ class Sms extends MX_Controller {
         $type = $this->input->get('type');
         $data['user'] = $this->sms_model->getManualSMSTemplateById($id, $type);
         echo json_encode($data);
+    }
+
+    function sendSmsDuringAppointmentCreation($to, $message, $data) {
+        $sms_gateway = $this->settings_model->getSettings()->sms_gateway;
+        if (!empty($sms_gateway)) {
+            $smsSettings = $this->sms_model->getSmsSettingsByGatewayName($sms_gateway);
+        } else {
+            $this->session->set_flashdata('feedback', lang('gatewany_not_selected'));
+            redirect('sms/sendView');
+        }
+        $j = sizeof($data);
+        foreach ($data as $key => $value) {
+            foreach ($value as $key2 => $value2) {
+
+                if ($smsSettings->name == 'Clickatell') {
+                    $username = urldecode(base64_decode($smsSettings->username));
+                    $password = urldecode(base64_decode($smsSettings->password));
+                    $api_id = urldecode($smsSettings->api_id);
+                    //$to=$key2;
+                    $value2 = urlencode($value2);
+                    file_get_contents("https://api.clickatell.com/http/sendmsg"
+                            . "?user=$username&password=$password&api_id=$api_id&to=$key2&text=$value2");
+                }
+
+                if ($smsSettings->name == 'MSG91') {
+                    $authkey = $smsSettings->authkey;
+                    $sender = $smsSettings->sender;
+                    $value2 = urlencode($value2);
+                    //  file_get_contents('http://api.msg91.com/api/v2/sendsms?route=4&sender=' . $sender . '&mobiles=' . $key2 . '&authkey=' . $authkey . '&message=' . $value2 . '&country=0');           // file_get_contents('https://platform.clickatell.com/messages/http/send?apiKey='.$api_id.'&to='.$to.'&content='.$message1);           // file_get_contents('https://api.clickatell.com/http/sendmsg?user=' . $username . '&password=' . $password . '&api_id=' . $api_id . '&to=' . $to . '&text=' . $message1);
+                    file_get_contents('http://world.msg91.com/api/v2/sendsms?authkey=' . $authkey . '&mobiles=' . $key2 . '&message=' . $value2 . '&sender=' . $sender . '&route=4&country=0');
+                }
+
+                if ($smsSettings->name == 'Twilio') {
+                    $sid = $smsSettings->sid;
+                    $token = $smsSettings->token;
+                    $sendername = $smsSettings->sendernumber;
+                    if (!empty($sid) && !empty($token) && !empty($sendername)) {
+                        $client = new Client($sid, $token);
+                        $client->messages->create(
+                                $key2, // Text this number
+                                array(
+                            'from' => $sendername, // From a valid Twilio number
+                            'body' => $value2
+                                )
+                        );
+                    }
+                }
+                if ($smsSettings->name == 'Bulk Sms') {
+                    $username = base64_decode($smsSettings->username);
+                    $password = base64_decode($smsSettings->password);
+                    $messages = array(
+                        array('to' => $key2, 'body' => $value2),
+                    );
+
+                    $result = $this->send_message(json_encode($messages), 'https://api.bulksms.com/v1/messages?auto-unicode=true&longMessageMaxParts=30', $username, $password);
+                }
+                if ($smsSettings->name == 'Bd Bulk Sms') {
+                    $token = $smsSettings->token;
+                    $to = $key2;
+                    $message = $value2;
+                    $data = array(
+                        'to' => "$to",
+                        'message' => "$message",
+                        'token' => "$token"
+                    );
+
+                    $url = "http://api.greenweb.com.bd/api.php";
+                    $ch = curl_init(); // Initialize cURL
+                    curl_setopt($ch, CURLOPT_URL, $url);
+                    curl_setopt($ch, CURLOPT_ENCODING, '');
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    $smsresult = curl_exec($ch);
+                }
+            }
+        }
+        $response = '1';
+        return $response;
     }
 
 }

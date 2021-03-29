@@ -52,6 +52,7 @@
                                 <th> <?php echo lang('doctor'); ?></th>
                                 <th> <?php echo lang('date-time'); ?></th>
                                 <th> <?php echo lang('remarks'); ?></th>
+                                 <th> <?php echo lang('payment'); ?> <?php echo lang('status'); ?></th>
                                 <th> <?php echo lang('status'); ?></th>
                                 <th> <?php echo lang('options'); ?></th>
                             </tr>
@@ -347,6 +348,8 @@
             var id = $(this).attr('data-id');
 
             $('#editAppointmentForm').trigger("reset");
+               $('#editAppointmentForm').find('[name="doctor"]').html(" ");
+                $('#editAppointmentForm').find('[name="patient"]').html(" ");
             $('#myModal2').modal('show');
             $.ajax({
                 url: 'appointment/editAppointmentByJason?id=' + iid,

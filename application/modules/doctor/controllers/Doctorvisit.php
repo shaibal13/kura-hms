@@ -3,12 +3,13 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Pcategory extends MX_Controller {
+class Doctorvisit extends MX_Controller {
 
     function __construct() {
         parent::__construct();
 
-        $this->load->model('pcategory_model');
+        $this->load->model('doctorvisit_model');
+        $this->load->model('doctor/doctor_model');
         $group_permission = $this->ion_auth->get_users_groups()->row();
 
         if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
@@ -31,35 +32,34 @@ class Pcategory extends MX_Controller {
 
     public function index() {
 
-        $data['pcategorys'] = $this->pcategory_model->getPcategory();
+        $data['settings'] = $this->settings_model->getSettings();
         $this->load->view('home/dashboard'); // just the header file
-        $this->load->view('pcategory', $data);
+        $this->load->view('doctorvisit/doctor_visit', $data);
         $this->load->view('home/footer'); // just the header file
     }
 
     public function addNewView() {
         $this->load->view('home/dashboard'); // just the header file
-        $this->load->view('add_new');
+        $this->load->view('doctorvisit/add_new');
         $this->load->view('home/footer'); // just the header file
     }
 
     public function addNew() {
 
         $id = $this->input->post('id');
-        $name = $this->input->post('name');
-        $description = $this->input->post('description');
-        $discount = $this->input->post('discount');
+        //$name = $this->input->post('name');
+        $visit_description = $this->input->post('visit_description');
+        $visit_charges = $this->input->post('visit_charges');
         $status = $this->input->post('status');
+        $doctor = $this->input->post('doctor');
 
         $this->load->library('form_validation');
         $this->form_validation->set_error_delimiters('<div class="error">', '</div>');
 
         // Validating Name Field
-        $this->form_validation->set_rules('name', 'Name', 'trim|required|min_length[1]|max_length[100]|xss_clean');
+        $this->form_validation->set_rules('visit_description', 'Name', 'trim|required|min_length[1]|max_length[100]|xss_clean');
         // Validating Password Field
-
-        $this->form_validation->set_rules('description', 'Description', 'trim|required|min_length[1]|max_length[100]|xss_clean');
-
+        // $this->form_validation->set_rules('description', 'Description', 'trim|required|min_length[1]|max_length[100]|xss_clean');
         // Validating Email Field
         //  $this->form_validation->set_rules('email', 'Email', 'trim|required|min_length[1]|max_length[100]|xss_clean');
         // Validating Address Field   
@@ -69,11 +69,11 @@ class Pcategory extends MX_Controller {
 
         if ($this->form_validation->run() == FALSE) {
             if (!empty($id)) {
-                redirect("pcategory/editPcategory?id=" . $id);
+                redirect("doctorvisit/doctorvisit/editDoctorvisit?id=" . $id);
             } else {
                 $data['setval'] = 'setval';
                 $this->load->view('home/dashboard'); // just the header file
-                $this->load->view('add_new', $data);
+                $this->load->view('doctorvisit/add_new', $data);
                 $this->load->view('home/footer'); // just the header file
             }
         } else {
@@ -81,58 +81,61 @@ class Pcategory extends MX_Controller {
 
             //$error = array('error' => $this->upload->display_errors());
             $data = array();
+            $doctor_name = $this->doctor_model->getDoctorById($doctor)->name;
             $data = array(
-                'name' => $name,
-                'description' => $description,
-                'discount' => $discount,
+                'doctor_id' => $doctor,
+                'doctor_name' => $doctor_name,
+                'visit_description' => $visit_description,
+                'visit_charges' => $visit_charges,
                 'status' => $status
             );
 
 
             ///   $username = $this->input->post('name');
 
-            if (empty($id)) {     // Adding New Pcategory
-                $this->pcategory_model->insertPcategory($data);
-                $this->session->set_flashdata('feedback', lang('added'));
-            } else { // Updating Pcategory
-                $this->pcategory_model->updatePcategory($id, $data);
+            if (empty($id)) {     // Adding New Doctorvisit
+                $this->doctorvisit_model->insertDoctorvisit($data);
+                 $this->session->set_flashdata('feedback', lang('added'));
+            } else { // Updating Doctorvisit
+                $this->doctorvisit_model->updateDoctorvisit($id, $data);
                 $this->session->set_flashdata('feedback', lang('updated'));
             }
             // Loading View
-            redirect('pcategory');
+            redirect('doctor/doctorvisit');
         }
     }
 
-    function getPcategory() {
-        $data['pcategorys'] = $this->pcategory_model->getPcategory();
-        $this->load->view('pcategory', $data);
+    function getDoctorvisit() {
+        $data['doctorvisits'] = $this->doctorvisit_model->getDoctorvisit();
+        $this->load->view('doctorvisit/doctor_visit', $data);
     }
 
-    function editPcategory() {
+    function editDoctorvisit() {
         $data = array();
         $id = $this->input->get('id');
-        $data['pcategory'] = $this->pcategory_model->getPcategoryById($id);
+        $data['doctorvisit'] = $this->doctorvisit_model->getDoctorvisitById($id);
         $this->load->view('home/dashboard'); // just the header file
-        $this->load->view('add_new', $data);
+        $this->load->view('doctorvisit/add_new', $data);
         $this->load->view('home/footer'); // just the footer file
     }
 
-    function editPcategoryByJason() {
+    function editDoctorvisitByJason() {
         $id = $this->input->get('id');
-        $data['pcategory'] = $this->pcategory_model->getPcategoryById($id);
+        $data['doctorvisit'] = $this->doctorvisit_model->getDoctorvisitById($id);
+        $data['doctor']= $this->doctor_model->getDoctorById($data['doctorvisit']->doctor_id);
         echo json_encode($data);
     }
 
     function delete() {
-       
+
         $id = $this->input->get('id');
-       
-        $this->pcategory_model->delete($id);
+
+        $this->doctorvisit_model->delete($id);
         $this->session->set_flashdata('feedback', lang('deleted'));
-        redirect('pcategory');
+        redirect('doctor/doctorvisit');
     }
 
-    function getPcategoryList() {
+    function getDoctorvisitList() {
         $requestData = $_REQUEST;
         $start = $requestData['start'];
         $limit = $requestData['length'];
@@ -150,15 +153,15 @@ class Pcategory extends MX_Controller {
 
         if ($limit == -1) {
             if (!empty($search)) {
-                $data['pcategorys'] = $this->pcategory_model->getPcategoryBysearch($search, $order, $dir);
+                $data['doctorvisits'] = $this->doctorvisit_model->getDoctorvisitBysearch($search, $order, $dir);
             } else {
-                $data['pcategorys'] = $this->pcategory_model->getPcategoryWithoutSearch($order, $dir);
+                $data['doctorvisits'] = $this->doctorvisit_model->getDoctorvisitWithoutSearch($order, $dir);
             }
         } else {
             if (!empty($search)) {
-                $data['pcategorys'] = $this->pcategory_model->getPcategoryByLimitBySearch($limit, $start, $search, $order, $dir);
+                $data['doctorvisits'] = $this->doctorvisit_model->getDoctorvisitByLimitBySearch($limit, $start, $search, $order, $dir);
             } else {
-                $data['pcategorys'] = $this->pcategory_model->getPcategoryByLimit($limit, $start, $order, $dir);
+                $data['doctorvisits'] = $this->doctorvisit_model->getDoctorvisitByLimit($limit, $start, $order, $dir);
             }
         }
         //  $data['patients'] = $this->patient_model->getPatient();
@@ -170,15 +173,15 @@ class Pcategory extends MX_Controller {
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
             $perm_explode = explode(",", $perm);
-            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Patient-Category') {
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Doctor-Visit') {
                 $permis = 'ok';
                 //  break;
             }
-            if (in_array('1', $perm_explode) && $perm_explode[0] == 'Patient-Category') {
+            if (in_array('1', $perm_explode) && $perm_explode[0] == 'Doctor-Visit') {
                 $permis_2 = 'ok';
                 //  break;
             }
-            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Patient-Category') {
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Doctor-Visit') {
                 $permis_1 = 'ok';
                 //  break;
             }
@@ -188,31 +191,36 @@ class Pcategory extends MX_Controller {
         $options5 = '';
 
         $i = 1;
-        foreach ($data['pcategorys'] as $pcategory) {
+        foreach ($data['doctorvisits'] as $doctorvisit) {
 
             if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') {
                 //   $options1 = '<a type="button" class="btn editbutton" title="Edit" data-toggle="modal" data-id="463"><i class="fa fa-edit"> </i> Edit</a>';
-                $options1 = ' <a type="button" class="btn editbutton" title="' . lang('edit') . '" data-toggle = "modal" data-id="' . $pcategory->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
+                $options1 = ' <a type="button" class="btn editbutton" title="' . lang('edit') . '" data-toggle = "modal" data-id="' . $doctorvisit->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
             }
 
             if ($this->ion_auth->in_group(array('admin')) || $permis_1 == 'ok') {
-                $options5 = '<a class="btn delete_button" title="' . lang('delete') . '" href="pcategory/delete?id=' . $pcategory->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"></i> ' . lang('delete') . '</a>';
+                $options5 = '<a class="btn delete_button" title="' . lang('delete') . '" href="doctor/doctorvisit/delete?id=' . $doctorvisit->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"></i> ' . lang('delete') . '</a>';
             }
 
             $status = '';
-            if ($pcategory->status == 'active') {
+            if ($doctorvisit->status == 'active') {
                 $status = lang('active');
             } else {
                 $status = lang('in_active');
             }
-
-
+            $doctor = $this->doctor_model->getDoctorById($doctorvisit->doctor_id);
+            if (empty($doctor)) {
+                $doctor_name = $doctorvisit->doctor_name;
+            } else {
+                $doctor_name = $doctor->name;
+            }
+            $settings = $this->settings_model->getSettings();
             if ($this->ion_auth->in_group(array('admin')) || in_array('Patient-Category', $this->pers)) {
                 $info[] = array(
                     $i,
-                    $pcategory->name,
-                    $pcategory->description,
-                    $pcategory->discount,
+                    $doctor_name,
+                    $doctorvisit->visit_description,
+                    $settings->currency . ' ' . $doctorvisit->visit_charges,
                     $status,
                     $options1 . ' ' . $options5,
                         //  $options2
@@ -221,7 +229,7 @@ class Pcategory extends MX_Controller {
             }
         }
 
-        if (!empty($data['pcategorys'])) {
+        if (!empty($data['doctorvisits'])) {
             $output = array(
                 "draw" => intval($requestData['draw']),
                 "recordsTotal" => $this->db->get('patient_category')->num_rows(),
@@ -242,5 +250,5 @@ class Pcategory extends MX_Controller {
 
 }
 
-/* End of file pcategory.php */
-/* Location: ./application/modules/pcategory/controllers/pcategory.php */
+/* End of file doctorvisit.php */
+/* Location: ./application/modules/doctorvisit/controllers/doctorvisit.php */

@@ -8,6 +8,7 @@ class Sslcommerzpayment extends MX_Controller {
         parent::__construct();
 
         $this->load->model('finance/finance_model');
+        $this->load->model('appointment/appointment_model');
     }
 
     public function index() {
@@ -228,6 +229,46 @@ class Sslcommerzpayment extends MX_Controller {
     public function deposit($post_data) {
         $sesdata = $this->session->userdata('tarndata');
         $date = time();
+        if ($post_data->value_d == '10' || $post_data->value_d == 'my_today' || $post_data->value_d == 'upcoming' || $post_data->value_d == 'med_his') {
+
+            $data1 = array(
+                'date' => $date,
+                'patient' => $post_data->value_b,
+                'deposited_amount' => $post_data->amount,
+                'payment_id' => $post_data->value_a,
+                'amount_received_id' => $post_data->value_a . '.' . 'gp',
+                'deposit_type' => 'Card',
+                'gateway' => 'SSLCOMMERZ',
+                'user' => $post_data->value_c,
+                'payment_from' => 'appointment'
+            );
+
+            $this->finance_model->insertDeposit($data1);
+
+            $data_payment = array('amount_received' => $post_data->amount, 'deposit_type' => 'Card', 'status' => 'paid', 'date' => time(), 'date_string' => date('d-m-y', time()));
+            $this->finance_model->updatePayment($post_data->value_a, $data_payment);
+            $appointment_id = $this->finance_model->getPaymentById($post_data->value_a)->appointment_id;
+            $appointment_details = $this->appointment_model->getAppointmentById($appointment_id);
+            if ($appointment_details->status == 'Requested') {
+                $data_appointment_status = array('status' => 'Confirmed', 'payment_status' => 'paid');
+            } else {
+                $data_appointment_status = array('payment_status' => 'paid');
+            }
+            $this->appointment_model->updateAppointment($appointment_id, $data_appointment_status);
+            if ($post_data->value_d == '10') {
+                redirect("appointment");
+            } elseif ($post_data->value_d == 'my_today') {
+                redirect("appointment/todays");
+            } elseif ($post_data->value_d == 'frontend') {
+                redirect("frontend");
+            } elseif ($post_data->value_d == 'upcoming') {
+                redirect("appointment/upcoming");
+            } elseif ($post_data->value_d == 'request') {
+                redirect("appointment/request");
+            } elseif ($post_data->value_d == 'med_his') {
+                redirect("patient/medicalHistory?id=" . $post_data->value_b);
+            }
+        }
         if ($post_data->value_d == '1') {
 
             $data1 = array(
@@ -238,7 +279,8 @@ class Sslcommerzpayment extends MX_Controller {
                 'amount_received_id' => $post_data->value_a . '.' . 'gp',
                 'deposit_type' => 'Card',
                 'gateway' => 'SSLCOMMERZ',
-                'user' => $post_data->value_c
+                'user' => $post_data->value_c,
+                'payment_from' => 'payment'
             );
 
             $this->finance_model->insertDeposit($data1);
@@ -257,7 +299,8 @@ class Sslcommerzpayment extends MX_Controller {
                 'payment_id' => $post_data->value_a,
                 'gateway' => 'SSLCOMMERZ',
                 'deposit_type' => 'Card',
-                'user' => $post_data->value_c
+                'user' => $post_data->value_c,
+                'payment_from' => 'payment'
             );
 
             $this->finance_model->insertDeposit($data1);
@@ -269,11 +312,27 @@ class Sslcommerzpayment extends MX_Controller {
 
     public function redirectlink($patient) {
         $sesdata = $this->session->userdata('tarndata');
-        if ($this->ion_auth->in_group(array('Patient'))) {
-            redirect("patient/myPaymentHistory");
+        if ($redirect == '10' || $redirect == 'my_today' || $redirect == 'upcoming' || $redirect == 'med_his' || $redirect == 'request' || $redirect == 'frontend') {
+            if ($redirect == '10') {
+                redirect("appointment");
+            } elseif ($redirect == 'my_today') {
+                redirect("appointment/todays");
+            } elseif ($redirect == 'upcoming') {
+                redirect("appointment/upcoming");
+            } elseif ($redirect == 'med_his') {
+                redirect("patient/medicalHistory?id=" . $patient);
+            } elseif ($redirect == 'frontend') {
+                redirect("frontend");
+            } elseif ($redirect == 'request') {
+                redirect("appointment/request");
+            }
         } else {
-            $sesdata = $this->session->userdata('tarndata');
-            redirect('finance/patientPaymentHistory?patient=' . $patient);
+            if ($this->ion_auth->in_group(array('Patient'))) {
+                redirect("patient/myPaymentHistory");
+            } else {
+                $sesdata = $this->session->userdata('tarndata');
+                redirect('finance/patientPaymentHistory?patient=' . $patient);
+            }
         }
     }
 
@@ -282,7 +341,10 @@ class Sslcommerzpayment extends MX_Controller {
         $sesdata = $this->session->userdata('tarndata');
 
         $this->session->set_flashdata('feedback', '"Transaction Failed"');
-
+        if ($_POST['value_d'] == '10' || $_POST['value_d'] == 'my_today' || $_POST['value_d'] == 'upcoming' || $_POST['value_d'] == 'frontend' || $_POST['value_d'] == 'med_his' || $_POST['value_d'] == 'request') {
+            $sesdata = $this->session->userdata('tarndata');
+            $this->redirectlink($_POST['value_b'], $_POST['value_d']);
+        }
         if ($_POST['value_d'] == '0') {
             $sesdata = $this->session->userdata('tarndata');
             $this->redirectlink($_POST['value_b']);
@@ -297,7 +359,10 @@ class Sslcommerzpayment extends MX_Controller {
         $sesdata = $this->session->userdata('tarndata');
 
         $this->session->set_flashdata('feedback', '"Transaction Failed"');
-
+        if ($_POST['value_d'] == '10' || $_POST['value_d'] == 'my_today' || $_POST['value_d'] == 'upcoming' || $_POST['value_d'] == 'frontend' || $_POST['value_d'] == 'med_his' || $_POST['value_d'] == 'request') {
+            $sesdata = $this->session->userdata('tarndata');
+            $this->redirectlink($_POST['value_b'], $_POST['value_d']);
+        }
         if ($_POST['value_d'] == '0') {
             $sesdata = $this->session->userdata('tarndata');
             $this->redirectlink($_POST['value_b']);

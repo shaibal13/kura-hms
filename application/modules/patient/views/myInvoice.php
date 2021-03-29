@@ -38,7 +38,17 @@
 
                         <div class="col-md-12">
                             <h4 class="text-center" style="font-weight: bold; margin-top: 20px; text-transform: uppercase;">
-                                <?php echo lang('payment') ?> <?php echo lang('invoice') ?>
+                                <?php
+                                if (!empty($payment->payment_from == 'payment')) {
+                                    echo lang('payment')
+                                    ?> <?php
+                                    echo lang('invoice');
+                                } else {
+                                    echo lang('appointment')
+                                    ?> <?php
+                                    echo lang('invoice');
+                                }
+                                ?>
                             </h4>
                         </div>
 
@@ -173,34 +183,58 @@
 
                         <thead class="theadd">
                             <tr>
-                                <th>#</th>
-                                <th><?php echo lang('description'); ?></th>
-                                <th><?php echo lang('unit_price'); ?></th>
-                                <th><?php echo lang('qty'); ?></th>
-                                <th><?php echo lang('amount'); ?></th>
+                                <?php if ($payment->payment_from == 'appointment') { ?>
+                                    <th>#</th>
+                                    <th><?php echo lang('description'); ?></th>
+                                    <th><?php echo lang('date_time'); ?></th>
+                                    <th><?php echo lang('doctor'); ?></th>
+                                    <th><?php echo lang('amount'); ?></th>
+
+                                <?php } else { ?>
+                                    <th>#</th>
+                                    <th><?php echo lang('description'); ?></th>
+                                    <th><?php echo lang('unit_price'); ?></th>
+                                    <th><?php echo lang('qty'); ?></th>
+                                    <th><?php echo lang('amount'); ?></th> 
+                                <?php } ?>
                             </tr>
                         </thead>
 
                         <tbody>
                             <?php
-                            if (!empty($payment->category_name)) {
-                                $category_name = $payment->category_name;
-                                $category_name1 = explode(',', $category_name);
-                                $i = 0;
-                                foreach ($category_name1 as $category_name2) {
-                                    $i = $i + 1;
-                                    $category_name3 = explode('*', $category_name2);
-                                    if ($category_name3[3] > 0) {
-                                        ?>  
+                            if ($payment->payment_from == 'appointment') {
+                                if (!empty($payment->category_name)) {
+                                    $appointment_details = $this->db->get_where('appointment', array('id' => $payment->appointment_id))->row();
+                                    ?>
+                                    <tr>
+                                        <td><?php echo '1'; ?> </td>
+                                        <td><?php echo $payment->category_name; ?> </td>
+                                        <td class=""><?php echo date('d-m-Y', $appointment_details->date); ?> <br ><?php echo $appointment_details->time_slot; ?> </td>
+                                        <td class=""> <?php echo $appointment_details->doctorname; ?> </td>
+                                        <td class=""><?php echo $settings->currency; ?> <?php echo $payment->gross_total; ?> </td>
+                                    </tr> 
+                                    <?php
+                                }
+                            } else {
+                                if (!empty($payment->category_name)) {
+                                    $category_name = $payment->category_name;
+                                    $category_name1 = explode(',', $category_name);
+                                    $i = 0;
+                                    foreach ($category_name1 as $category_name2) {
+                                        $i = $i + 1;
+                                        $category_name3 = explode('*', $category_name2);
+                                        if ($category_name3[3] > 0) {
+                                            ?>  
 
-                                        <tr>
-                                            <td><?php echo $i; ?> </td>
-                                            <td><?php echo $this->finance_model->getPaymentcategoryById($category_name3[0])->category; ?> </td>
-                                            <td class=""><?php echo $settings->currency; ?> <?php echo $category_name3[1]; ?> </td>
-                                            <td class=""> <?php echo $category_name3[3]; ?> </td>
-                                            <td class=""><?php echo $settings->currency; ?> <?php echo $category_name3[1] * $category_name3[3]; ?> </td>
-                                        </tr> 
-                                        <?php
+                                            <tr>
+                                                <td><?php echo $i; ?> </td>
+                                                <td><?php echo $this->finance_model->getPaymentcategoryById($category_name3[0])->category; ?> </td>
+                                                <td class=""><?php echo $settings->currency; ?> <?php echo $category_name3[1]; ?> </td>
+                                                <td class=""> <?php echo $category_name3[3]; ?> </td>
+                                                <td class=""><?php echo $settings->currency; ?> <?php echo $category_name3[1] * $category_name3[3]; ?> </td>
+                                            </tr> 
+                                            <?php
+                                        }
                                     }
                                 }
                             }
@@ -215,7 +249,15 @@
 
                     <div class="">
                         <div class="col-lg-4 invoice-block pull-left">
-                            <h4></h4>
+                            <?php
+                            if (!empty($payment->payment_from)) {
+                                if ($payment->payment_from == 'appointment') {
+                                    ?> 
+                                    <h6><?php echo lang('remarks'); ?>: <?php echo $appointment_details->remarks; ?></h6>
+                                <?php } else { ?>
+                                    <h6><?php echo lang('notes'); ?>: <?php echo $payment->notes; ?></h6>
+    <?php }
+} ?>
                         </div>
                     </div>
 
@@ -223,7 +265,7 @@
                         <div class="col-lg-4 invoice-block pull-right">
                             <ul class="unstyled amounts">
                                 <li><strong><?php echo lang('sub_total'); ?> : </strong><?php echo $settings->currency; ?> <?php echo $payment->amount; ?></li>
-                                <?php if (!empty($payment->discount)) { ?>
+                                    <?php if (!empty($payment->discount)) { ?>
                                     <li><strong><?php echo lang('discount'); ?></strong> <?php
                                         if ($discount_type == 'percentage') {
                                             echo '(%) : ';
@@ -247,7 +289,7 @@
                                             echo '0';
                                         }
                                         ?> % = <?php echo $settings->currency . ' ' . $payment->flat_vat; ?></li>
-                                <?php } ?>
+<?php } ?>
                                 <li><strong><?php echo lang('grand_total'); ?> : </strong><?php echo $settings->currency; ?> <?php echo $g = $payment->gross_total; ?></li>
                                 <li><strong><?php echo lang('amount_received'); ?> : </strong><?php echo $settings->currency; ?> <?php echo $r = $this->finance_model->getDepositAmountByPaymentId($payment->id); ?></li>
                                 <li><strong><?php echo lang('amount_to_be_paid'); ?> : </strong><?php echo $settings->currency; ?> <?php echo $g - $r; ?></li>
@@ -263,20 +305,20 @@
 
                     <div class="col-md-12 invoice_footer">
                         <div class="col-md-4 row pull-left" style="">
-                            
-                                <?php echo lang('user'); ?> : <?php echo $this->ion_auth->user($payment->user)->row()->username; ?>
-                            
-                        <div class="col-md-4 row pull-right" style="">
-                           
-                               
-                            
+
+<?php echo lang('user'); ?> : <?php echo $this->ion_auth->user($payment->user)->row()->username; ?>
+
+                            <div class="col-md-4 row pull-right" style="">
+
+
+
+                            </div>
                         </div>
+
                     </div>
 
+
                 </div>
-
-
-            </div>
 
 
 
@@ -293,9 +335,18 @@
 
                 <div class="text-center invoice-btn col-md-12 row">
                     <a class="btn btn-info btn-lg invoice_button pull-left" onclick="javascript:window.print();"><i class="fa fa-print"></i> Print </a>
-                    <?php if ($this->ion_auth->in_group(array('admin', 'Accountant'))) { ?>
-                        <a href="finance/editPayment?id=<?php echo $payment->id; ?>" class="btn btn-info btn-lg invoice_button pull-left"><i class="fa fa-edit"></i> Edit Invoice </a>
-                    <?php } ?>
+                    <?php
+                    if ($this->ion_auth->in_group(array('admin', 'Accountant'))) {
+                        if ($payment->payment_from == 'appointment') {
+                            ?>
+                            <a href="appointment/editAppointment?id=<?php echo $payment->appointment_id; ?>" class="btn btn-info btn-sm editbutton pull-left"><i class="fa fa-edit"></i> <?php echo lang('edit'); ?> <?php echo lang('appointment'); ?> </a>       
+
+                        <?php } else { ?>
+                            <a href="finance/editPayment?id=<?php echo $payment->id; ?>" class="btn btn-info btn-sm editbutton pull-left"><i class="fa fa-edit"></i> <?php echo lang('edit'); ?> <?php echo lang('invoice'); ?> </a>
+                            <?php
+                        }
+                    }
+                    ?>
 
                 </div>
 

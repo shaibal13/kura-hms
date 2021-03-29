@@ -21,6 +21,7 @@ class Patient extends MX_Controller {
         require APPPATH . 'third_party/stripe/stripe-php/init.php';
         $this->load->model('medicine/medicine_model');
         $this->load->model('doctor/doctor_model');
+        $this->load->model('pgateway/pgateway_model');
         $this->load->module('paypal');
 
         $group_permission = $this->ion_auth->get_users_groups()->row();
@@ -920,7 +921,8 @@ class Patient extends MX_Controller {
         $data['beds'] = $this->bed_model->getBedAllotmentsByPatientId($id);
         $data['medical_histories'] = $this->patient_model->getMedicalHistoryByPatientId($id);
         $data['patient_materials'] = $this->patient_model->getPatientMaterialByPatientId($id);
-
+        $data['settings'] = $this->settings_model->getSettings();
+        $data['gateway'] = $this->pgateway_model->getPaymentGatewaySettingsByName($data['settings']->payment_gateway);
 
 
         foreach ($data['appointments'] as $appointment) {
