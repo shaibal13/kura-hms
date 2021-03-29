@@ -816,7 +816,6 @@ $lang['all_roles'] = 'All Roles';
 $lang['add_role'] = 'Add Role';
 $lang['role'] = 'Role';
 $lang['permissions'] = 'Permissions';
-//
 $lang['patient_category'] = 'Patient Category';
 $lang['add_patient_category'] = 'Add Patient Category';
 $lang['edit_patient_category'] = 'Edit Patient Category';
@@ -826,3 +825,4 @@ $lang['edit_doctor_visit'] = 'Edit Doctor Visit';
 $lang['visit'] = 'Visit';
 $lang['charges'] = 'Charges';
 $lang['pay_now'] = 'Pay Now';
+$lang['date_time'] = 'Date-Time';
