@@ -65,31 +65,17 @@
 
                             <div class="form-group">
                                 <label for="exampleInputEmail1"><?php echo lang('type'); ?></label>
-                                <select class="form-control m-bot15" name="type" value=''>    
-                                    <option value="diagnostic" <?php
-                                    if (!empty($setval)) {
-                                        if (set_value('type') == 'diagnostic') {
+                                <select class="form-control m-bot15" name="type" value=''>  
+                                    <?php foreach ($types as $type) { ?>
+                                        <option value="<?php echo $type->id; ?>" <?php
+                                        if ($type->id == $category->type) {
+                                            echo 'selected';
+                                        } if (set_value('type') == $type->id) {
                                             echo 'selected';
                                         }
-                                    }
-                                    if (!empty($category->type)) {
-                                        if ($category->type == 'diagnostic') {
-                                            echo 'selected';
-                                        }
-                                    }
-                                    ?> > <?php echo lang('diagnostic_test'); ?> </option>  
-                                    <option value="others" <?php
-                                    if (!empty($setval)) {
-                                        if (set_value('type') == 'others') {
-                                            echo 'selected';
-                                        }
-                                    }
-                                    if (!empty($category->type)) {
-                                        if ($category->type == 'others') {
-                                            echo 'selected';
-                                        }
-                                    }
-                                    ?> > <?php echo lang('others'); ?> </option>  
+                                        ?> ><?php echo $type->name; ?></option>
+<?php } ?>
+
                                 </select>
                             </div>
 
@@ -102,7 +88,7 @@
                             <div class="form-group col-md-12">
                                 <button type="submit" name="submit" class="btn btn-info pull-right"><?php echo lang('submit'); ?></button>
                             </div>
-                            
+
                         </form>
                     </div>
                 </div>

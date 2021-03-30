@@ -14,6 +14,7 @@ class Finance extends MX_Controller {
         $this->load->model('finance/pharmacy_model');
         $this->load->model('accountant/accountant_model');
         $this->load->model('receptionist/receptionist_model');
+        $this->load->model('category/category_model');
         $this->load->module('sms');
 
         require APPPATH . 'third_party/stripe/stripe-php/init.php';
@@ -1007,6 +1008,7 @@ class Finance extends MX_Controller {
             redirect('auth/login', 'refresh');
         }
         $data['categories'] = $this->finance_model->getPaymentCategory();
+        $data['types'] = $this->category_model->getCategory();
         $data['settings'] = $this->settings_model->getSettings();
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('payment_category', $data);
@@ -1056,10 +1058,12 @@ class Finance extends MX_Controller {
                 $this->load->view('home/footer'); // just the header file
             }
         } else {
+            $type_name= $this->category_model->getCategoryById($type)->name;
             $data = array();
             $data = array('category' => $category,
                 'description' => $description,
                 'type' => $type,
+                'type_name'=>$type_name,
                 'c_price' => $c_price,
                 'd_commission' => $d_commission
             );
@@ -1078,6 +1082,7 @@ class Finance extends MX_Controller {
         $data = array();
         $id = $this->input->get('id');
         $data['category'] = $this->finance_model->getPaymentCategoryById($id);
+          $data['types'] = $this->category_model->getCategory();
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('add_payment_category', $data);
         $this->load->view('home/footer'); // just the footer file

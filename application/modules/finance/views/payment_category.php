@@ -89,11 +89,12 @@ Payment<!--sidebar end-->
                                 <td> <?php echo $category->description; ?></td>
                                 <td> <?php echo $category->c_price; ?></td>
                                 <td> <?php echo $category->d_commission; ?> %</td>
-                                <td> <?php
-                                    if ($category->type == 'diagnostic') {
-                                        echo lang('diagnostic_test');
-                                    } else {
-                                        echo lang('others');
+                                <td> 
+                                    <?php $type= $this->db->get_where('category',array('id'=>$category->type))->row();
+                                    if(empty($type)){
+                                        echo $category->type_name;
+                                    }else{
+                                        echo $type->name;
                                     }
                                     ?>
                                 </td>
