@@ -438,8 +438,9 @@ foreach ($daily_progress as $daily) {
                                                     <button style="display: block;" type="submit" name="submit" class="btn btn-xs btn-info pull-right" ><i class="fa fa-save"></i></button>
 
                                                 </div>
-                                        </form>
+                                      
                                     </div>
+                                              </form>
                                 </div>
 <?php } ?>
                         </div>

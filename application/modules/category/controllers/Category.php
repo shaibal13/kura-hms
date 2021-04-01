@@ -23,7 +23,7 @@ class Category extends MX_Controller {
             $permission_access_group = $query->permission_access;
             $this->permission_access_group_explode = explode('***', $permission_access_group);
         }
-        if ($this->ion_auth->in_group(array('Pharmacist', 'Patient'))) {
+        if ($this->ion_auth->in_group(array('Pharmacist', 'Patient', 'Accountant', 'Nurse'))) {
             redirect('home/permission');
         }
     }
@@ -31,7 +31,7 @@ class Category extends MX_Controller {
     public function index() {
 
         $this->load->view('home/dashboard'); // just the header file
-        $this->load->view('category', $data);
+        $this->load->view('category');
         $this->load->view('home/footer'); // just the header file  
     }
 
@@ -82,7 +82,7 @@ class Category extends MX_Controller {
                 'code' => $code,
                 'name' => $name,
                 'description' => $description,
-                'status'=>$status
+                'status' => $status
             );
             if (empty($id)) {
                 $this->category_model->insertCategory($data);
@@ -130,14 +130,32 @@ class Category extends MX_Controller {
 
         //  $data['patients'] = $this->patient_model->getVisitor();
         $i = 0;
+        $permis = '';
+        $permis_1 = '';
+        foreach ($this->permission_access_group_explode as $perm) {
+            $perm_explode = array();
 
+            $perm_explode = explode(",", $perm);
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Medical-Data') {
+                $permis = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Medical-Data') {
+                $permis_1 = 'ok';
+                //  break;
+            }
+        }
         foreach ($data['categorys'] as $category) {
             $i = $i + 1;
-
-            $option1 = '<button category="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $category->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</button>';
-
-            $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="category/delete?id=' . $category->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i> ' . lang('delete') . '</a>';
-              $status = '';
+            $option1 = '';
+            $option2 = '';
+            if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') {
+                $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $category->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</button>';
+            }
+            if ($this->ion_auth->in_group(array('admin')) || $permis_1 == 'ok') {
+                $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="category/delete?id=' . $category->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i> ' . lang('delete') . '</a>';
+            }
+            $status = '';
             if ($category->status == 'active') {
                 $status = lang('active');
             } else {
@@ -175,4 +193,5 @@ class Category extends MX_Controller {
 }
 
 /* End of file bed.php */
-/* Location: ./application/modules/bed/controllers/bed.php */
+    /* Location: ./application/modules/bed/controllers/bed.php */
+    
