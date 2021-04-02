@@ -120,7 +120,8 @@ class Packages extends MX_Controller {
                 'name' => $name,
                 'single_price' => $single_price,
                 'price_cat' => $price_cat,
-                'total_price' => $total
+                'total_price' => $total,
+                'status'=> $this->input->post('status')
             );
             if (empty($id)) {
                 $this->packages_model->insertPackages($data);
@@ -199,12 +200,19 @@ class Packages extends MX_Controller {
             if ($this->ion_auth->in_group(array('admin')) || $permis_1 == 'ok') {
                 $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="category/delete?id=' . $packages->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i> ' . lang('delete') . '</a>';
             }
+              $status = '';
+            if ($packages->status == 'active') {
+                $status = lang('active');
+            } if ($packages->status == 'disable') {
+                $status = lang('in_active');
+            }
             $info[] = array(
                 $i,
                 $packages->code,
                 $packages->name,
                 $packages->total_price,
                 $packages->single_price,
+                $status,
                 $option1 . ' ' . $option2
             );
         }

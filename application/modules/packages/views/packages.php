@@ -65,6 +65,7 @@
                                 <th><?php echo lang('name'); ?></th>
                                 <th><?php echo lang('total_value'); ?></th>
                                 <th><?php echo lang('packages'); ?> <?php echo lang('price'); ?></th>
+                                  <th><?php echo lang('status'); ?></th>
                                 <?php if ($this->ion_auth->in_group(array('admin')) || $permis_1 == 'ok' || $permis_2 == 'ok') { ?>
                                     <th class="no-print"><?php echo lang('options'); ?></th>
                                 <?php } ?>

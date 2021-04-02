@@ -78,6 +78,26 @@
                                 }
                                 ?>' placeholder="" required="">
                             </div>
+                            <div class="form-group col-md-12">
+                                <label for="exampleInputEmail1"><?php echo lang('status'); ?></label>
+                                <select class="js-example-basic-single" name="status">
+                                    <option value="active" <?php
+                                    if (!empty($package->id)) {
+                                        if ($package->status == 'active') {
+                                            echo 'selected';
+                                        }
+                                    }
+                                    ?>><?php echo lang('active'); ?></option>
+                                    <option value="disable" <?php
+                                    if (!empty($package->id)) {
+                                        if ($package->status == 'disable') {
+                                            echo 'selected';
+                                        }
+                                    }
+                                    ?>><?php echo lang('in_active'); ?></option>
+                                </select>
+
+                            </div>
                             <div class="adv-table editable-table ">
                                 <table style="width: 100% !important;" class="table table-striped table-hover table-bordered" id="editable-table2">
                                     <thead>
@@ -113,7 +133,7 @@
                                                         <button class="btn btn-info btn-xs btn_width delete_button" id="td-<?php echo $individual[1] ?>"><i class="fa fa-trash"> </i></button>
                                                     </td>
                                                 </tr>
-                                            <?php
+                                                <?php
                                             }
                                         }
                                         ?>
@@ -147,7 +167,7 @@
                                 </div>
                                 <div class="col-md-5">
 
-                                    <select style="display: block;" class="form-control m-bot15 js-example-basic-single" id="payment_proccedure" name="payment_proccedure" value='' required=""> 
+                                    <select style="display: block;" class="form-control m-bot15 js-example-basic-single" id="payment_proccedure" name="payment_proccedure" value='' <?php if (empty($package->id)) { ?>required=""<?php } ?>> 
 
                                     </select>
                                 </div>
@@ -239,7 +259,7 @@
             var values = $("input[name^='price[]']").map(function (idx, ele) {
                 return $(ele).val();
             }).get();
-          //  alert(values);
+            //  alert(values);
             var sum = 0;
             $.each(values, function (index, value) {
                 // alert(index + ": " + value);
