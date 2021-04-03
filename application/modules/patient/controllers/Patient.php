@@ -12,6 +12,7 @@ class Patient extends MX_Controller {
         $this->load->model('appointment/appointment_model');
         $this->load->model('bed/bed_model');
         $this->load->model('lab/lab_model');
+        $this->load->model('packages/packages_model');
         $this->load->model('pcategory/pcategory_model');
         $this->load->model('finance/finance_model');
         $this->load->model('finance/pharmacy_model');
@@ -114,7 +115,7 @@ class Patient extends MX_Controller {
         }
 
         $category = $this->input->post('category');
-        if ($category !='0') {
+        if ($category != '0') {
             $category_name = $this->pcategory_model->getPcategoryById($category)->description;
         } else {
             $category_name = "";
@@ -812,14 +813,20 @@ class Patient extends MX_Controller {
         $date = $this->input->post('date');
 
         $title = $this->input->post('title');
-
+        $status = $this->input->post('status');
         if (!empty($date)) {
             $date = strtotime($date);
         } else {
             $date = time();
         }
-
-        $description = $this->input->post('description');
+        $from = $this->input->post('from[]');
+        $length = count($from);
+        $date_to_done = $this->input->post('date_to_done[]');
+        $done = $this->input->post('done[]');
+        $price = $this->input->post('price[]');
+        $type_id = $this->input->post('type_id[]');
+        $type = $this->input->post('type[]');
+        // $description = $this->input->post('description');
         $this->load->library('form_validation');
         $this->form_validation->set_error_delimiters('<div class="error">', '</div>');
 
@@ -835,17 +842,21 @@ class Patient extends MX_Controller {
         $this->form_validation->set_rules('title', 'Title', 'trim|min_length[1]|max_length[100]|xss_clean');
 
         // Validating Password Field
-
-        $this->form_validation->set_rules('description', 'Description', 'trim|min_length[5]|max_length[10000]|xss_clean');
+        // $this->form_validation->set_rules('description', 'Description', 'trim|min_length[5]|max_length[10000]|xss_clean');
 
 
         if ($this->form_validation->run() == FALSE) {
             if (!empty($id)) {
                 redirect("patient/editMedicalHistory?id=$id");
             } else {
+                $data['settings'] = $this->settings_model->getSettings();
+                $data['patients'] = $this->patient_model->getPatient();
+                $data['packages'] = $this->packages_model->getPackages();
+                $data['payment_category'] = $this->finance_model->getPaymentCategory();
+                //   $data['medical_histories'] = $this->patient_model->getMedicalHistory();
                 $this->load->view('home/dashboard'); // just the header file
-                $this->load->view('add_new');
-                $this->load->view('home/footer'); // just the header file
+                $this->load->view('add_case_list', $data);
+                $this->load->view('home/footer'); // just the footer file
             }
         } else {
 
@@ -861,12 +872,21 @@ class Patient extends MX_Controller {
             }
 
             //$error = array('error' => $this->upload->display_errors());
+            $array_price_cat = array();
+            for ($i = 0; $i < $length; $i++) {
+                // $payment_category = $this->finance_model->getPaymentCategoryById($type_id[$i]);
+                // $cat = $this->category_model->getCategoryById($payment_category->type);
+                $array_price_cat[] = $from[$i] . '**' . $type[$i] . '**' . $type_id[$i] . '**' . $price[$i] . '**' . $date_to_done[$i] . '**' . $done[$i];
+            }
+            $total = array_sum($price);
+            $price_cat = implode("##", $array_price_cat);
             $data = array();
             $data = array(
                 'patient_id' => $patient_id,
                 'date' => $date,
                 'title' => $title,
-                'description' => $description,
+                'description' => $price_cat,
+                'status'=>$status,
                 'patient_name' => $patient_name,
                 'patient_phone' => $patient_phone,
                 'patient_address' => $patient_address,
@@ -2365,6 +2385,42 @@ class Patient extends MX_Controller {
         $response = $this->patient_model->getPatientinfoWithAddNewOption($searchTerm);
 
         echo json_encode($response);
+    }
+
+    function addcaseListView() {
+        $data['settings'] = $this->settings_model->getSettings();
+        $data['patients'] = $this->patient_model->getPatient();
+        $data['packages'] = $this->packages_model->getPackages();
+        $data['payment_category'] = $this->finance_model->getPaymentCategory();
+        //   $data['medical_histories'] = $this->patient_model->getMedicalHistory();
+        $this->load->view('home/dashboard'); // just the header file
+        $this->load->view('add_case_list', $data);
+        $this->load->view('home/footer'); // just the footer file
+    }
+
+    public function getTableTrValue() {
+        $medical_analysis = $this->input->get('medical_analysis');
+        $package = $this->input->get('package');
+        $medical_analysis_details = $this->finance_model->getPaymentCategoryById($medical_analysis);
+        $packages = $this->packages_model->getPackagesById($package);
+        //$category = $this->category_model->getCategoryById($medical_analysis_details->type);
+        $option4 = '<select class="form-control js-example-basic-single" name="done[]"><option value="done">Done</option><option value="undone">Undone</option></select>';
+        $option3 = '<input type="text" class="form-control  default-date-picker" name="date_to_done[]"  readonly>';
+        if (!empty($medical_analysis_details)) {
+            $option2 = '<button class="btn btn-info btn-xs btn_width delete_button" id="td-med-' . $medical_analysis_details->id . '"><i class="fa fa-trash"> </i></button>';
+        }
+        if (!empty($packages)) {
+            $option5 = '<button class="btn btn-info btn-xs btn_width delete_button" id="td-pack-' . $packages->id . '"><i class="fa fa-trash"> </i></button>';
+        }
+        $option = '';
+        if (!empty($medical_analysis_details)) {
+            $option .= '<tr class="proccedure" id="tr-med-' . $medical_analysis_details->id . '"><td><input type="hidden" name="type_id[]" id="input_id-med-' . $medical_analysis_details->id . '" value="' . $medical_analysis_details->id . '" readonly><input type="text" class="input-category" name="type[]" id="input-med-' . $medical_analysis_details->id . '" value="' . $medical_analysis_details->category . '"readonly></td><td>' . lang('medical_analysis') . ' <input type="hidden" name="from[]" class="from_where" value="' . lang('medical_analysis') . '"></td><td><input class="price-indivudual" type="text" name="price[]" style="width:100px;" id="price-' . $medical_analysis_details->id . '" value="' . $medical_analysis_details->c_price . '" ></td><td>' . $option3 . '</td><td>' . $option4 . '</td><td>' . $option2 . '</td></tr>';
+        }
+        if (!empty($packages)) {
+            $option .= '<tr class="proccedure" id="tr-pack-' . $packages->id . '"><td><input type="hidden" name="type_id[]" id="input_id-pack-' . $packages->id . '" value="' . $packages->id . '" readonly><input type="text" class="input-category" name="type[]" id="input-pack-' . $packages->id . '" value="' . $packages->name . '"readonly></td><td>' . lang('package') . '<input type="hidden" class="from_where" name="from[]" value="' . lang('package') . '"></td><td><input class="price-indivudual" type="text" name="price[]" style="width:100px;" id="price-' . $packages->id . '" value="' . $packages->single_price . '" ></td><td>' . $option3 . '</td><td>' . $option4 . '</td><td>' . $option5 . '</td></tr>';
+        }
+        $data['option'] = $option;
+        echo json_encode($data);
     }
 
 }

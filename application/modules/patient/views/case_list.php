@@ -69,12 +69,23 @@
             </section>
 
         <?php } ?>
-        <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Nurse', 'Doctor', 'Laboratorist', 'Receptionist')) || $permis == 'ok') { ?>
-            <section class="col-md-7"><?php } else { ?>
+        <?php// if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Nurse', 'Doctor', 'Laboratorist', 'Receptionist')) || $permis == 'ok') { ?>
+          <!--  <section class="col-md-7">--><?php// } else { ?>
                 <section class="col-md-12">
-                <?php } ?>
+                <?php //} ?>
                 <header class="panel-heading">
                     <?php echo lang('all'); ?> <?php echo lang('case'); ?>
+                     <  <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Nurse', 'Doctor', 'Laboratorist', 'Receptionist')) || $permis == 'ok') { ?>
+                    <div class="col-md-4 no-print pull-right"> 
+                        <a href="patient/addcaseListView">
+                            <div class="btn-group pull-right">
+                                <button id="" class="btn green btn-xs">
+                                    <i class="fa fa-plus-circle"></i> <?php echo lang('add'); ?> <?php echo lang('case'); ?> <?php echo lang('manager'); ?>
+                                </button>
+                            </div>
+                        </a>
+                    </div>
+                <?php } ?>
                 </header> 
                 <div class="panel-body"> 
 

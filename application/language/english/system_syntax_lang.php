@@ -835,3 +835,7 @@ $lang['total_value'] = 'Total Value';
 $lang['add_package'] = 'Add Package';
 $lang['add_new_package'] = 'Add New Package';
 $lang['edit_package'] = 'Edit Package';
+$lang['date_to_be_done'] = 'Date To Be Done';
+$lang['package'] = 'Package';
+$lang['medical_analysis'] = 'Medical Analysis';
+$lang['add_case'] = 'Add Case';
