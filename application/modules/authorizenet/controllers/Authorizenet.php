@@ -139,7 +139,8 @@ class Authorizenet extends MX_Controller {
                             'gateway' => 'Authorize.Net',
                             'deposit_type' => 'Card',
                             'user' => $this->ion_auth->get_user_id(),
-                            'payment_from' => 'appointment'
+                            'payment_from' => 'appointment',
+                            
                         );
                         $this->finance_model->insertDeposit($data1);
 
@@ -198,7 +199,8 @@ class Authorizenet extends MX_Controller {
                             'deposit_type' => 'Card',
                             'gateway' => 'Authorize.Net',
                             'user' => $this->ion_auth->get_user_id(),
-                            'payment_from' => 'payment'
+                            'payment_from' => 'payment',
+                             'remarks' => $data['remarks']
                         );
                         $this->finance_model->insertDeposit($data1);
                         $this->session->set_flashdata('feedback', lang('payment_successful'));
@@ -213,7 +215,8 @@ class Authorizenet extends MX_Controller {
                             'deposit_type' => 'Card',
                             'gateway' => 'Authorize.Net',
                             'user' => $this->ion_auth->get_user_id(),
-                            'payment_from' => 'payment'
+                            'payment_from' => 'payment',
+                            
                         );
                         $this->finance_model->insertDeposit($data1);
                         $this->session->set_flashdata('feedback', lang('payment_successful'));

@@ -87,7 +87,7 @@ class Paystack extends MX_Controller {
         }
     }
 
-    public function paystack_standard($amount, $ref, $patient, $inserted_id, $user, $redirlink) {
+    public function paystack_standard($amount, $ref, $patient, $inserted_id, $user, $redirlink,$remarls="") {
         //
 
         $paystack = $this->db->get_where('paymentGateway', array('name =' => 'Paystack'))->row();
@@ -191,7 +191,8 @@ class Paystack extends MX_Controller {
                     'gateway' => 'Paystack',
                     'deposit_type' => 'Card',
                     'user' => $user,
-                    'payment_from' => 'payment'
+                    'payment_from' => 'payment',
+                    'remarks'=>$remarks
                 );
             }
             $this->finance_model->insertDeposit($data1);

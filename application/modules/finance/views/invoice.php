@@ -291,22 +291,24 @@
                                                                     </span>
 
                                                                 </div>
-                                                                <div class="paragraphprint">
+                                                                <?php if ($payment->payment_from != 'case') { ?>
+                                                                    <div class="paragraphprint">
 
-                                                                    <label class="control-label"><?php echo lang('doctor'); ?>  </label>
-                                                                    <span style="text-transform: uppercase;"> : 
-                                                                        <?php
-                                                                        if (!empty($payment->doctor)) {
-                                                                            $doc_details = $this->doctor_model->getDoctorById($payment->doctor);
-                                                                            if (!empty($doc_details)) {
-                                                                                echo $doc_details->name . ' <br>';
-                                                                            } else {
-                                                                                echo $payment->doctor_name . ' <br>';
+                                                                        <label class="control-label"><?php echo lang('doctor'); ?>  </label>
+                                                                        <span style="text-transform: uppercase;"> : 
+                                                                            <?php
+                                                                            if (!empty($payment->doctor)) {
+                                                                                $doc_details = $this->doctor_model->getDoctorById($payment->doctor);
+                                                                                if (!empty($doc_details)) {
+                                                                                    echo $doc_details->name . ' <br>';
+                                                                                } else {
+                                                                                    echo $payment->doctor_name . ' <br>';
+                                                                                }
                                                                             }
-                                                                        }
-                                                                        ?>
-                                                                    </span>
-                                                                </div>
+                                                                            ?>
+                                                                        </span>
+                                                                    </div>
+                                                                <?php } ?>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -398,25 +400,25 @@
                                                     </span>
                                                 </p>
                                             </div>
-
-                                            <div class="col-md-12 row details">
-                                                <p>
-                                                    <label class="control-label"><?php echo lang('doctor'); ?>  </label>
-                                                    <span style="text-transform: uppercase;"> : 
-                                                        <?php
-                                                        if (!empty($payment->doctor)) {
-                                                            $doc_details = $this->doctor_model->getDoctorById($payment->doctor);
-                                                            if (!empty($doc_details)) {
-                                                                echo $doc_details->name . ' <br>';
-                                                            } else {
-                                                                echo $payment->doctor_name . ' <br>';
+                                            <?php if ($payment->payment_from != 'case') { ?>
+                                                <div class="col-md-12 row details">
+                                                    <p>
+                                                        <label class="control-label"><?php echo lang('doctor'); ?>  </label>
+                                                        <span style="text-transform: uppercase;"> : 
+                                                            <?php
+                                                            if (!empty($payment->doctor)) {
+                                                                $doc_details = $this->doctor_model->getDoctorById($payment->doctor);
+                                                                if (!empty($doc_details)) {
+                                                                    echo $doc_details->name . ' <br>';
+                                                                } else {
+                                                                    echo $payment->doctor_name . ' <br>';
+                                                                }
                                                             }
-                                                        }
-                                                        ?>
-                                                    </span>
-                                                </p>
-                                            </div>
-
+                                                            ?>
+                                                        </span>
+                                                    </p>
+                                                </div>
+                                            <?php } ?>
 
 
                                         </div>
@@ -441,23 +443,40 @@
                                 <?php } else { ?>
                                     <table class="table table-striped table-hover detailssale" id="customers"> 
                                     <?php } ?>          
-                                    <thead class="theadd">
+                                    <tr class="theadd">
 
                                         <?php if ($payment->payment_from == 'appointment') { ?>
-                                        <th>#</th>
-                                        <th><?php echo lang('description'); ?></th>
-                                        <th><?php echo lang('date_time'); ?></th>
-                                        <th><?php echo lang('doctor'); ?></th>
-                                        <th><?php echo lang('amount'); ?></th>
-
-                                    <?php } else { ?>
-                                        <th>#</th>
-                                        <th><?php echo lang('description'); ?></th>
-                                        <th><?php echo lang('unit_price'); ?></th>
-                                        <th><?php echo lang('qty'); ?></th>
-                                        <th><?php echo lang('amount'); ?></th> 
-                                    <?php } ?>
-                                    </thead>
+                                            <th>#</th>
+                                            <th><?php echo lang('description'); ?></th>
+                                            <th><?php echo lang('date_time'); ?></th>
+                                            <th><?php echo lang('doctor'); ?></th>
+                                            <th><?php echo lang('amount'); ?></th>
+                                        <?php } elseif ($payment->payment_from == 'case') { ?>
+                                            <th>#</th>
+                                            <th><?php echo lang('items'); ?></th>
+                                            <th><?php echo lang('type'); ?></th>
+                                            <th><?php echo lang('date_to_be_done'); ?></th>
+                                            <th><?php echo lang('amount'); ?></th>
+                                        <?php } elseif ($payment->payment_from == 'bed') { ?>
+                                            <th>#</th>
+                                            <th><?php echo lang('medicine'); ?> <?php echo lang('name'); ?></th>
+                                            <th><?php echo lang('unit'); ?> <?php echo lang('price') ?></th>
+                                            <th><?php echo lang('quantity'); ?></th>
+                                            <th><?php echo lang('amount'); ?></th>
+                                        <?php } elseif ($payment->payment_from == 'bed_service') { ?>
+                                            <th>#</th>
+                                            <th><?php echo lang('service'); ?> <?php echo lang('name'); ?></th>
+                                            <th><?php echo lang('unit'); ?> <?php echo lang('price') ?></th>
+                                            <th><?php echo lang('quantity'); ?></th>
+                                            <th><?php echo lang('amount'); ?></th>
+                                        <?php } else { ?>
+                                            <th>#</th>
+                                            <th><?php echo lang('description'); ?></th>
+                                            <th><?php echo lang('unit_price'); ?></th>
+                                            <th><?php echo lang('qty'); ?></th>
+                                            <th><?php echo lang('amount'); ?></th> 
+                                        <?php } ?>
+                                    </tr>
 
                                     <tbody>
                                         <?php
@@ -474,7 +493,74 @@
                                                 </tr> 
                                                 <?php
                                             }
+                                        } elseif ($payment->payment_from == 'case') {
+                                            if (!empty($payment->category_name)) {
+                                                $case_setails = $this->db->get_where('medical_history', array('id' => $payment->case_id))->row();
+                                                $category = explode('##', $payment->category_name);
+                                                $i = 0;
+                                                foreach ($category as $cat) {
+                                                    $i = $i + 1;
+                                                    $cat_new = array();
+                                                    $cat_new = explode("**", $cat);
+                                                    ?>
+                                                    <tr>
+                                                        <td><?php echo $i; ?> </td>
+                                                        <td><?php echo $cat_new[1]; ?> </td>
+                                                        <td class=""><?php echo $cat_new[0]; ?> </td>
+                                                        <td class=""> <?php echo $cat_new[4]; ?> </td>
+                                                        <td class=""><?php echo $settings->currency; ?> <?php echo $cat_new[3]; ?> </td>
+                                                    </tr> 
+                                                    <?php
+                                                }
+                                            }
+                                        } elseif ($payment->payment_from == 'bed') {
+                                            if (!empty($payment->category_name)) {
+                                                // $case_setails = $this->db->get_where('medical_history', array('id' => $payment->case_id))->row();
+                                                $category = explode('#', $payment->category_name);
+                                                //  print_r($category);
+                                                //die();
+                                                $i = 0;
+                                                foreach ($category as $cat) {
+                                                    $i = $i + 1;
+                                                    $cat_new = array();
+                                                    $cat_new = explode('*', $cat);
+                                                    ?>
+                                                    <tr>
+                                                        <td><?php echo $i; ?> </td>
+                                                        <td><?php echo $cat_new[1]; ?> </td>
+                                                        <td class=""><?php echo $settings->currency; ?> <?php echo $cat_new[2]; ?> </td>
+                                                        <td class=""> <?php echo $cat_new[3]; ?> </td>
+                                                        <td class=""><?php echo $settings->currency; ?> <?php echo $cat_new[4]; ?> </td>
+                                                    </tr> 
+                                                      <?php
+                                                }
+                                            }
+                                        } elseif ($payment->payment_from == 'bed_service') {
+                                            if (!empty($payment->category_name)) {
+                                                // $case_setails = $this->db->get_where('medical_history', array('id' => $payment->case_id))->row();
+                                                $category = explode('#', $payment->category_name);
+                                                //  print_r($category);
+                                                //die();
+                                                $i = 0;
+                                                foreach ($category as $cat) {
+                                                    $i = $i + 1;
+                                                    $cat_new = array();
+                                                    $cat_new = explode('*', $cat);
+                                                    $service=$this->db->get_where('pservice',array('id'=>$cat_new[0]))->row();
+                                                    ?>
+                                                    <tr>
+                                                        <td><?php echo $i; ?> </td>
+                                                        <td>  <?php echo $service->name; ?> </td>
+                                                        <td class=""><?php echo $settings->currency; ?> <?php echo $cat_new[1]; ?> </td>
+                                                        <td class=""> <?php echo '1'; ?> </td>
+                                                        <td class=""><?php echo $settings->currency; ?> <?php echo $cat_new[1]; ?> </td>
+                                                    </tr> 
+                                                    <?php
+                                                }
+                                            }
                                         } else {
+
+
                                             if (!empty($payment->category_name)) {
                                                 $category_name = $payment->category_name;
                                                 $category_name1 = explode(',', $category_name);
@@ -594,6 +680,8 @@
                                             if ($payment->payment_from == 'appointment') {
                                                 ?> 
                                                 <h6><?php echo lang('remarks'); ?>: <?php echo $appointment_details->remarks; ?></h6>
+                                            <?php } elseif ($payment->payment_from == 'case') { ?>
+                                                <h6><?php echo lang('remarks'); ?>: <?php echo $case_setails->remarks; ?></h6>
                                             <?php } else { ?>
                                                 <h6><?php echo lang('remarks'); ?>: <?php echo $payment->remarks; ?></h6>
                                             <?php }
@@ -607,12 +695,12 @@
                                                 <li><strong><?php echo lang('sub_total'); ?> : </strong><?php echo $settings->currency; ?> <?php echo $payment->amount; ?></li>
                                                 <?php if (!empty($payment->discount)) { ?>
                                                     <li><strong><?php echo lang('discount'); ?></strong> <?php
-                                            if ($discount_type == 'percentage') {
-                                                echo '(%) : ';
-                                            } else {
-                                                echo ': ' . $settings->currency;
-                                            }
-                                                    ?> <?php
+                                                        if ($discount_type == 'percentage') {
+                                                            echo '(%) : ';
+                                                        } else {
+                                                            echo ': ' . $settings->currency;
+                                                        }
+                                                        ?> <?php
                                                         $discount = explode('*', $payment->discount);
                                                         if (!empty($discount[1])) {
                                                             echo $discount[0] . ' %  =  ' . $settings->currency . ' ' . $discount[1];
@@ -620,16 +708,16 @@
                                                             echo $discount[0];
                                                         }
                                                         ?></li>
-                                                        <?php } ?>
+                                                    <?php } ?>
                                                     <?php if (!empty($payment->vat)) { ?>
                                                     <li><strong>VAT :</strong>   <?php
-                                                if (!empty($payment->vat)) {
-                                                    echo $payment->vat;
-                                                } else {
-                                                    echo '0';
-                                                }
+                                                        if (!empty($payment->vat)) {
+                                                            echo $payment->vat;
+                                                        } else {
+                                                            echo '0';
+                                                        }
                                                         ?> % = <?php echo $settings->currency . ' ' . $payment->flat_vat; ?></li>
-                                                    <?php } ?>
+                                                <?php } ?>
                                                 <li><strong><?php echo lang('grand_total'); ?> : </strong><?php echo $settings->currency; ?> <?php echo $g = $payment->gross_total; ?></li>
                                                 <li><strong><?php echo lang('amount_received'); ?> : </strong><?php echo $settings->currency; ?> <?php echo $r = $this->finance_model->getDepositAmountByPaymentId($payment->id); ?></li>
                                                 <li><strong><?php echo lang('amount_to_be_paid'); ?> : </strong><?php echo $settings->currency; ?> <?php echo $g - $r; ?></li>
@@ -659,7 +747,9 @@
                                 ?>
                                 <a href="appointment" class="btn btn-info btn-sm info pull-left"><i class="fa fa-arrow-circle-left"></i>  <?php echo lang('back_to_appointment_modules'); ?> </a>
 
-                            <?php } else { ?>
+                            <?php } elseif ($payment->payment_from == 'case') { ?>
+                                <a href="patient/caseList" class="btn btn-info btn-sm info pull-left"><i class="fa fa-arrow-circle-left"></i>  <?php echo lang('back_to_case_manager_modules'); ?> </a>
+                            <?php } elseif ($payment->payment_from == 'payment') { ?>
                                 <a href="finance/payment" class="btn btn-info btn-sm info pull-left"><i class="fa fa-arrow-circle-left"></i>  <?php echo lang('back_to_payment_modules'); ?> </a>
                                 <?php
                             }
@@ -672,7 +762,9 @@
                                         ?>
                                         <a href="appointment/editAppointment?id=<?php echo $payment->appointment_id; ?>" class="btn btn-info btn-sm editbutton pull-left"><i class="fa fa-edit"></i> <?php echo lang('edit'); ?> <?php echo lang('appointment'); ?> </a>       
 
-                                    <?php } else { ?>
+                                    <?php } elseif ($payment->payment_from == 'case') { ?>
+                                        <a href="patient/editCaseHistory?id=<?php echo $payment->case_id; ?>" class="btn btn-info btn-sm editbutton pull-left"><i class="fa fa-edit"></i> <?php echo lang('edit'); ?> <?php echo lang('case'); ?> <?php echo lang('manager'); ?> </a>       
+                                    <?php } elseif ($payment->payment_from == 'payment') { ?>
                                         <a href="finance/editPayment?id=<?php echo $payment->id; ?>" class="btn btn-info btn-sm editbutton pull-left"><i class="fa fa-edit"></i> <?php echo lang('edit'); ?> <?php echo lang('invoice'); ?> </a>
                                     <?php }
                                     ?>
@@ -683,14 +775,15 @@
                             </div>
 
                             <div class="no-print">
-                                <a href="finance/addPaymentView" class="pull-left">
-                                    <div class="btn-group">
-                                        <button id="" class="btn btn-info green btn-sm">
-                                            <i class="fa fa-plus-circle"></i> <?php echo lang('add_another_payment'); ?>
-                                        </button>
-                                    </div>
-                                </a>
-                                <?php if ($this->ion_auth->in_group(array('admin', 'Accountant'))) { ?>
+                                <?php if ($payment->payment_from == 'payment') { ?>
+                                    <a href="finance/addPaymentView" class="pull-left">
+                                        <div class="btn-group">
+                                            <button id="" class="btn btn-info green btn-sm">
+                                                <i class="fa fa-plus-circle"></i> <?php echo lang('add_another_payment'); ?>
+                                            </button>
+                                        </div>
+                                    </a>
+                                <?php } if ($this->ion_auth->in_group(array('admin', 'Accountant'))) { ?>
                                     <a href="finance/sendInvoice?id=<?php echo $payment->id; ?>" class="btn  btn-sm pull-left send"> <i class="fa fa-paper-plane"></i> <?php echo lang('send_invoice'); ?>  </a>
                                 <?php } ?>
                             </div>
@@ -1031,9 +1124,9 @@
 
 
     <script>
-                                $(document).ready(function () {
-                                    $(".flashmessage").delay(3000).fadeOut(100);
-                                });
+                                    $(document).ready(function () {
+                                        $(".flashmessage").delay(3000).fadeOut(100);
+                                    });
     </script>
     <?php if ($redirectlink == 'print') { ?>
         <script type="text/javascript">

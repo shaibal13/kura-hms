@@ -121,6 +121,7 @@
                                 <th class=""><?php echo lang('bill_amount'); ?></th>
                                 <th class=""><?php echo lang('deposit'); ?></th>
                                 <th class=""><?php echo lang('deposit_type'); ?></th>
+                                <th class=""><?php echo lang('from'); ?></th>
                                 <th class="no-print"><?php echo lang('options'); ?></th>
                             </tr>
                         </thead>
@@ -176,7 +177,20 @@
                                         </td>
 
                                         <td> <?php echo $payment->deposit_type; ?></td>
-
+                                        <td> 
+                                                        <?php
+                                                        if ($payment->payment_from == 'appointment') {
+                                                            echo lang('appointment');
+                                                        } elseif ($payment->payment_from == 'bed') {
+                                                            echo lang('allotment_medicine');
+                                                        } elseif ($payment->payment_from == 'case') {
+                                                            echo lang('case');
+                                                        } elseif ($payment->payment_from == 'bed_service') {
+                                                            echo lang('allotment_service');
+                                                        } elseif ($payment->payment_from == 'payment') {
+                                                            echo lang('payment');
+                                                        }
+                                                        ?></td>
 
 
                                         <td  class="no-print"> 
@@ -186,7 +200,11 @@
                                                     ?>
 
                                                     <a class="btn-xs btn-info" title="<?php echo lang('edit'); ?>" style="width: 25%;" href="finance/editPayment?id=<?php echo $payment->id; ?>"><i class="fa fa-edit"> </i></a>
-                                                <?php } else { ?> 
+                <?php } elseif ($payment->payment_from == 'case') {
+                    ?>
+
+                                                    <a class="btn-xs btn-info" title="<?php echo lang('edit'); ?>" style="width: 25%;" href="patient/editCaseHistory?id=<?php echo $payment->case_id; ?>"><i class="fa fa-edit"> </i></a>
+                                                <?php } elseif ($payment->payment_from == 'appointment') { ?> 
                                                     <a class="btn-xs btn-info" title="<?php echo lang('edit'); ?>" style="width: 25%;" href="appointment/editAppointment?id=<?php echo $payment->appointment_id; ?>"><i class="fa fa-edit"> </i></a>
                                                     <?php
                                                 }
@@ -194,16 +212,33 @@
                                             ?>
                                             <?php if ($payment->payment_from == 'payment') { ?>
                                                 <a class="btn-xs invoicebutton" title="<?php echo lang('invoice'); ?>" style="color: #fff; width: 25%;" href="finance/invoice?id=<?php echo $payment->id; ?>"><i class="fa fa-file-invoice"></i> </a>
-                                            <?php } else {
+                                            <?php } elseif ($payment->payment_from == 'bed_service') { ?>
+                                                <a class="btn-xs invoicebutton" title="<?php echo lang('invoice'); ?>" style="color: #fff; width: 25%;" href="finance/invoice?id=<?php echo $payment->id; ?>"><i class="fa fa-file-invoice"></i> </a>  
+ <?php } elseif ($payment->payment_from == 'bed') { ?>
+                                                <a class="btn-xs invoicebutton" title="<?php echo lang('invoice'); ?>" style="color: #fff; width: 25%;" href="finance/invoice?id=<?php echo $payment->id; ?>"><i class="fa fa-file-invoice"></i> </a>
+  <?php
+                                            } elseif ($payment->payment_from == 'case') {
+                                                $caselist = $this->db->get_where('medical_history', array('id' => $payment->case_id))->row();
+                                                if ($payment->case_status == 'Confirmed') {
+                                                    ?>
+
+                                                    <a class="btn-xs invoicebutton" title="<?php echo lang('invoice'); ?>" style="color: #fff; width: 25%;" href="finance/invoice?id=<?php echo $payment->id; ?>"><i class="fa fa-file-invoice"></i> </a>
+                                                    <?php
+                                                }
+                                            } elseif ($payment->payment_from == 'appointment') {
                                                 $appointment = $this->db->get_where('appointment', array('payment_id' => $payment->id))->row();
                                                 if ($appointment->status == 'Confirmed') {
                                                     ?>  
                                                     <a class="btn-xs invoicebutton" title="<?php echo lang('invoice'); ?>" style="color: #fff; width: 25%;" href="finance/invoice?id=<?php echo $payment->id; ?>"><i class="fa fa-file-invoice"></i> </a>
-                <?php }
-            } ?>
-            <?php if ($this->ion_auth->in_group(array('admin', 'Accountant')) || $permis_2 == 'ok') { ?> 
-                                                <a class="btn-xs btn-info delete_button" title="<?php echo lang('delete'); ?>" style="width: 25%;"  href="finance/delete?id=<?php echo $payment->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> </a>
-                                    <?php } ?>
+                                                    <?php
+                                                }
+                                            }
+                                            ?>
+                                            <?php if ($this->ion_auth->in_group(array('admin', 'Accountant')) || $permis_2 == 'ok') { ?> 
+                                                <?php if ($payment->payment_from == 'payment') { ?>
+                                                    <a class="btn-xs btn-info delete_button" title="<?php echo lang('delete'); ?>" style="width: 25%;"  href="finance/delete?id=<?php echo $payment->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> </a>
+                <?php } ?> 
+            <?php } ?>
                                             </button>
                                         </td>
                                     </tr>
@@ -214,11 +249,11 @@
                             ?>
 
 
-    <?php
-    foreach ($deposits as $deposit) {
-        if ($deposit->date == $value) {
-            if (!empty($deposit->deposited_amount) && empty($deposit->amount_received_id)) {
-                ?>
+                            <?php
+                            foreach ($deposits as $deposit) {
+                                if ($deposit->date == $value) {
+                                    if (!empty($deposit->deposited_amount) && empty($deposit->amount_received_id)) {
+                                        ?>
 
                                         <tr class="">
                                             <td><?php echo date('d-m-y', $deposit->date); ?></td>
@@ -226,11 +261,13 @@
                                             <td></td>
                                             <td><?php echo $settings->currency; ?> <?php echo $deposit->deposited_amount; ?></td>
                                             <td> <?php echo $deposit->deposit_type; ?></td>  
+                                            <td></td>
                                             <td  class="no-print"> 
+                                              
                                                 <?php if ($this->ion_auth->in_group(array('admin', 'Accountant')) || $permis == 'ok') { ?>
-                                                    <button type="button" class="btn-xs btn-info editbutton" title="<?php echo lang('edit'); ?>" style="width: 25%;" data-toggle="modal" data-id="<?php echo $deposit->id; ?>"><i class="fa fa-edit"></i> </button> 
-                                        <?php } ?>
-                                        <?php if ($this->ion_auth->in_group(array('admin', 'Accountant')) || $permis_2 == 'ok') { ?> 
+                                                    <button type="button" class="btn btn-info btn-xs btn-width editbutton" title="<?php echo lang('edit'); ?>" style="width: 25%;" data-toggle="modal" data-id="<?php echo $deposit->id; ?>"><i class="fa fa-edit"></i> </button> 
+                                                <?php } ?>
+                                                <?php if ($this->ion_auth->in_group(array('admin', 'Accountant')) || $permis_2 == 'ok') { ?> 
                                                     <a class="btn-xs btn-info delete_button" title="<?php echo lang('delete'); ?>" style="width: 25%;" href="finance/deleteDeposit?id=<?php echo $deposit->id; ?>&patient=<?php echo $patient->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i></a>
                                         <?php } ?>
                                             </td>
@@ -310,7 +347,7 @@
                             <div class="row">
                                 <div class="col-xs-4">
                                     <i class="fa fa-money"></i>
-                                        <?php echo lang('total_bill_amount'); ?>
+<?php echo lang('total_bill_amount'); ?>
                                 </div>
                                 <div class="col-xs-8">
                                     <div class="degree">
@@ -329,7 +366,7 @@
                             <div class="row">
                                 <div class="col-xs-4">
                                     <i class="fa fa-money"></i>
-                                        <?php echo lang('total_deposit_amount'); ?>
+<?php echo lang('total_deposit_amount'); ?>
                                 </div>
                                 <div class="col-xs-8">
                                     <div class="degree">
@@ -354,14 +391,14 @@
                             <div class="row">
                                 <div class="col-xs-4">
                                     <i class="fa fa-money"></i>
-                                        <?php echo lang('due_amount'); ?>
+<?php echo lang('due_amount'); ?>
                                 </div>
                                 <div class="col-xs-8">
                                     <div class="degree">
-<?php echo $settings->currency; ?>
-<?php
-echo $total_payable_bill - array_sum($total_deposit);
-?>
+                                        <?php echo $settings->currency; ?>
+                                        <?php
+                                        echo $total_payable_bill - array_sum($total_deposit);
+                                        ?>
                                     </div>
                                 </div>
                             </div>
@@ -406,14 +443,18 @@ echo $total_payable_bill - array_sum($total_deposit);
                             <option value="">Select .....</option>
                             <?php foreach ($payments as $payment) { ?>
                                 <option value="<?php echo $payment->id; ?>" <?php
-                                        if (!empty($deposit->payment_id)) {
-                                            if ($deposit->payment_id == $payment->id) {
-                                                echo 'selected';
-                                            }
-                                        }
-                                        ?> ><?php echo $payment->id; ?> </option>
+                                if (!empty($deposit->payment_id)) {
+                                    if ($deposit->payment_id == $payment->id) {
+                                        echo 'selected';
+                                    }
+                                }
+                                ?> ><?php echo $payment->id; ?> </option>
 <?php } ?>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1"><?php echo lang('remarks'); ?></label>
+                        <input type="text" class="form-control" name="remarks" id="exampleInputEmail1" value='' placeholder="">
                     </div>
                     <div class="form-group">
                         <label for="exampleInputEmail1"><?php echo lang('deposit_amount'); ?></label>
@@ -428,17 +469,17 @@ echo $total_payable_bill - array_sum($total_deposit);
                         </div>
                         <div class=""> 
                             <select class="form-control m-bot15 js-example-basic-single selecttype" id="selecttype" name="deposit_type" value=''> 
-<?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist'))) { ?>
+                                <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist'))) { ?>
                                     <option value="Cash"> <?php echo lang('cash'); ?> </option>
                                     <option value="Card"> <?php echo lang('card'); ?> </option>
-                        <?php } ?>
+<?php } ?>
 
                             </select>
                         </div>
 
-<?php
-$payment_gateway = $settings->payment_gateway;
-?>
+                        <?php
+                        $payment_gateway = $settings->payment_gateway;
+                        ?>
 
 
 
@@ -451,9 +492,9 @@ $payment_gateway = $settings->payment_gateway;
                                     <img src="uploads/card.png" width="100%">
                                 </div> 
                             </div>
-<?php
-if ($payment_gateway == 'PayPal') {
-    ?>
+                            <?php
+                            if ($payment_gateway == 'PayPal') {
+                                ?>
 
                                 <div class="col-md-12 payment pad_bot">
                                     <label for="exampleInputEmail1"> <?php echo lang('card'); ?> <?php echo lang('type'); ?></label>
@@ -464,9 +505,9 @@ if ($payment_gateway == 'PayPal') {
                                         <option value="American Express" > <?php echo lang('american_express'); ?> </option>
                                     </select>
                                 </div>
-<?php } ?>
-                            <?php if ($payment_gateway == '2Checkout' || $payment_gateway == 'PayPal') {
-                                ?>
+                            <?php } ?>
+<?php if ($payment_gateway == '2Checkout' || $payment_gateway == 'PayPal') {
+    ?>
                                 <div class="col-md-12 payment pad_bot">
                                     <label for="exampleInputEmail1"> <?php echo lang('cardholder'); ?> <?php echo lang('name'); ?></label>
                                     <input type="text"  id="cardholder" class="form-control pay_in" name="cardholder" value='' placeholder="">
@@ -491,9 +532,9 @@ if ($payment_gateway == 'PayPal') {
 
                             </div>
 
-    <?php
-}
-?>
+                            <?php
+                        }
+                        ?>
 
                     </div> 
 
@@ -534,12 +575,12 @@ if ($payment_gateway == 'PayPal') {
                             <option value="">Select .....</option>
                             <?php foreach ($payments as $payment) { ?>
                                 <option value="<?php echo $payment->id; ?>" <?php
-                                        if (!empty($deposit->payment_id)) {
-                                            if ($deposit->payment_id == $payment->id) {
-                                                echo 'selected';
-                                            }
-                                        }
-                                        ?> ><?php echo $payment->id; ?> </option>
+                                if (!empty($deposit->payment_id)) {
+                                    if ($deposit->payment_id == $payment->id) {
+                                        echo 'selected';
+                                    }
+                                }
+                                ?> ><?php echo $payment->id; ?> </option>
 <?php } ?>
                         </select>
                     </div>
@@ -547,7 +588,10 @@ if ($payment_gateway == 'PayPal') {
                         <label for="exampleInputEmail1"><?php echo lang('deposit_amount'); ?></label>
                         <input type="text" class="form-control" name="deposited_amount" id="exampleInputEmail1" value='' placeholder="">
                     </div>
-
+                    <div class="form-group">
+                        <label for="exampleInputEmail1"><?php echo lang('remarks'); ?></label>
+                        <input type="text" class="form-control" name="remarks" id="exampleInputEmail1" value='' placeholder="">
+                    </div>
 
                     <div class="form-group">
                         <div class=""> 
@@ -555,17 +599,17 @@ if ($payment_gateway == 'PayPal') {
                         </div>
                         <div class=""> 
                             <select class="form-control m-bot15 js-example-basic-single selecttype" id="selecttype" name="deposit_type" value=''> 
-<?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist'))) { ?>
+                                <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist'))) { ?>
                                     <option value="Cash"> <?php echo lang('cash'); ?> </option>
                                     <option value="Card"> <?php echo lang('card'); ?> </option>
-                        <?php } ?>
+<?php } ?>
 
                             </select>
                         </div>
 
-<?php
-$payment_gateway = $settings->payment_gateway;
-?>
+                        <?php
+                        $payment_gateway = $settings->payment_gateway;
+                        ?>
 
 
 
@@ -579,9 +623,9 @@ $payment_gateway = $settings->payment_gateway;
                                 </div> 
                             </div>
 
-<?php
-if ($payment_gateway == 'PayPal') {
-    ?>
+                            <?php
+                            if ($payment_gateway == 'PayPal') {
+                                ?>
                                 <div class="col-md-12 payment pad_bot">
                                     <label for="exampleInputEmail1"> <?php echo lang('card'); ?> <?php echo lang('type'); ?></label>
                                     <select class="form-control m-bot15" name="card_type" value=''>
@@ -591,22 +635,22 @@ if ($payment_gateway == 'PayPal') {
                                         <option value="American Express" > <?php echo lang('american_express'); ?> </option>
                                     </select>
                                 </div>
-<?php } ?>
-                            <?php if ($payment_gateway == '2Checkout' || $payment_gateway == 'PayPal') {
-                                ?>
+                            <?php } ?>
+<?php if ($payment_gateway == '2Checkout' || $payment_gateway == 'PayPal') {
+    ?>
                                 <div class="col-md-12 payment pad_bot">
                                     <label for="exampleInputEmail1"> <?php echo lang('cardholder'); ?> <?php echo lang('name'); ?></label>
                                     <input type="text"  id="cardholder" class="form-control pay_in" name="cardholder" value='' placeholder="">
                                 </div>
-                                <?php } ?>
-                                <?php if ($payment_gateway != 'Pay U Money' && $payment_gateway != 'Paystack' && $payment_gateway != 'SSLCOMMERZ' && $payment_gateway != 'Paytm') { ?>
+<?php } ?>
+<?php if ($payment_gateway != 'Pay U Money' && $payment_gateway != 'Paystack' && $payment_gateway != 'SSLCOMMERZ' && $payment_gateway != 'Paytm') { ?>
                                 <div class="col-md-12 payment pad_bot">
                                     <label for="exampleInputEmail1"> <?php echo lang('card'); ?> <?php echo lang('number'); ?></label>
                                     <input type="text" class="form-control pay_in" id="card1" name="card_number" value='<?php
-                                       if (!empty($payment->p_email)) {
-                                           echo $payment->p_email;
-                                       }
-                                       ?>' placeholder="">
+                                    if (!empty($payment->p_email)) {
+                                        echo $payment->p_email;
+                                    }
+                                    ?>' placeholder="">
                                 </div>
 
 
@@ -614,25 +658,25 @@ if ($payment_gateway == 'PayPal') {
                                 <div class="col-md-8 payment pad_bot">
                                     <label for="exampleInputEmail1"> <?php echo lang('expire'); ?> <?php echo lang('date'); ?></label>
                                     <input type="text" class="form-control pay_in" data-date="" id="expire1" data-date-format="MM YY" placeholder="Expiry (MM/YY)" name="expire_date" maxlength="7" aria-describedby="basic-addon1" value='<?php
-                                       if (!empty($payment->p_phone)) {
-                                           echo $payment->p_phone;
-                                       }
+                                    if (!empty($payment->p_phone)) {
+                                        echo $payment->p_phone;
+                                    }
                                     ?>' placeholder="">
                                 </div>
                                 <div class="col-md-4 payment pad_bot">
                                     <label for="exampleInputEmail1"> <?php echo lang('cvv'); ?> </label>
                                     <input type="text" class="form-control pay_in" id="cvv1" maxlength="3" name="cvv_number" value='<?php
-                                       if (!empty($payment->p_age)) {
-                                           echo $payment->p_age;
-                                       }
+                                    if (!empty($payment->p_age)) {
+                                        echo $payment->p_age;
+                                    }
                                     ?>' placeholder="">
                                 </div> 
 
                             </div>
 
-    <?php
-}
-?>
+                            <?php
+                        }
+                        ?>
 
                     </div> 
 
@@ -645,8 +689,8 @@ if ($payment_gateway == 'PayPal') {
                     </div>
                     <div class="form-group cardsubmit  right-six col-md-12 hidden">
                         <button type="submit" name="pay_now" id="submit-btn1" class="btn btn-info row pull-right" <?php if ($settings->payment_gateway == 'Stripe') {
-                                    ?>onClick="stripePay1(event);"<?php }
-?>> <?php echo lang('submit'); ?></button>
+                            ?>onClick="stripePay1(event);"<?php }
+                        ?>> <?php echo lang('submit'); ?></button>
                     </div>
                 </form>
             </div>
@@ -716,7 +760,7 @@ if ($payment_gateway == 'PayPal') {
                             <div class="text-center corporate-id top_title">
                                 <img alt="" src="<?php echo $this->settings_model->getSettings()->logo; ?>" width="200" height="100">
                                 <h3>
-<?php echo $settings->title ?>
+                                    <?php echo $settings->title ?>
                                 </h3>
                                 <h4>
 <?php echo $settings->address ?>
@@ -728,12 +772,12 @@ if ($payment_gateway == 'PayPal') {
                             <div class="col-lg-4 col-sm-4" style="float: left;">
                                 <h4><?php echo lang('payment_to'); ?>:</h4>
                                 <p>
-                            <?php echo $settings->title; ?> <br>
+<?php echo $settings->title; ?> <br>
 <?php echo $settings->address; ?><br>
                                     Tel:  <?php echo $settings->phone; ?>
                                 </p>
                             </div>
-                                    <?php if (!empty($payment->patient)) { ?>
+<?php if (!empty($payment->patient)) { ?>
                                 <div class="col-lg-4 col-sm-4" style="float: left;">
                                     <h4><?php echo lang('bill_to'); ?>:</h4>
                                     <p>
@@ -803,31 +847,31 @@ if ($payment_gateway == 'PayPal') {
                             $total_p = array();
                             ?>
 
-<?php
-foreach ($dattt as $key => $value) {
-    foreach ($payments as $payment) {
-        if ($payment->date == $value) {
-            ?>
+                            <?php
+                            foreach ($dattt as $key => $value) {
+                                foreach ($payments as $payment) {
+                                    if ($payment->date == $value) {
+                                        ?>
                                         <tr class="">
                                             <td><?php echo date('d/m/y', $payment->date); ?></td>
                                             <td> <?php echo $payment->id; ?></td>
                                             <td><?php echo $settings->currency; ?> <?php echo $payment->gross_total; ?></td>
                                             <td><?php
-                                    if (!empty($payment->amount_received)) {
-                                        echo $settings->currency;
-                                    }
-            ?> <?php echo $payment->amount_received; ?>
+                                                if (!empty($payment->amount_received)) {
+                                                    echo $settings->currency;
+                                                }
+                                                ?> <?php echo $payment->amount_received; ?>
                                             </td>
                                         </tr>
                                         <?php
                                     }
                                 }
                                 ?>
-    <?php
-    foreach ($deposits as $deposit) {
-        if ($deposit->date == $value) {
-            if (!empty($deposit->deposited_amount) && empty($deposit->amount_received_id)) {
-                ?>
+                                <?php
+                                foreach ($deposits as $deposit) {
+                                    if ($deposit->date == $value) {
+                                        if (!empty($deposit->deposited_amount) && empty($deposit->amount_received_id)) {
+                                            ?>
 
                                             <tr class="">
                                                 <td><?php echo date('d-m-y', $deposit->date); ?></td>
@@ -913,7 +957,7 @@ foreach ($dattt as $key => $value) {
                                         if (response.deposit.deposit_type != 'Card') {
                                             $('#editDepositform').find('[name="id"]').val(response.deposit.id).end()
                                             $('#editDepositform').find('[name="patient"]').val(response.deposit.patient).end()
-                                            $('#editDepositform').find('[name="payment_id"]').val(response.deposit.payment_id).end()
+                                            $('#editDepositform').find('[name="payment_id"]').val(response.deposit.payment_id).trigger('change');
                                             $('#editDepositform').find('[name="date"]').val(response.deposit.date).end()
                                             $('#editDepositform').find('[name="deposited_amount"]').val(response.deposit.deposited_amount).end()
 
@@ -1153,65 +1197,65 @@ foreach ($dattt as $key => $value) {
 
     //   $(document).ready(function () {
     // Called when token created successfully.
-        var successCallback = function (data) {
-            var myForm = document.getElementById('editPaymentForm');
-            // Set the token as the value for the token input
-            // alert(data.response.token.token);
-            $("#editPaymentForm").append("<input type='hidden' name='token' value='" + data.response.token.token + "' />");
-            //    myForm.token.value = data.response.token.token;
-            // IMPORTANT: Here we call `submit()` on the form element directly instead of using jQuery to prevent and infinite token request loop.
-            myForm.submit();
-        };
+    var successCallback = function (data) {
+        var myForm = document.getElementById('editPaymentForm');
+        // Set the token as the value for the token input
+        // alert(data.response.token.token);
+        $("#editPaymentForm").append("<input type='hidden' name='token' value='" + data.response.token.token + "' />");
+        //    myForm.token.value = data.response.token.token;
+        // IMPORTANT: Here we call `submit()` on the form element directly instead of using jQuery to prevent and infinite token request loop.
+        myForm.submit();
+    };
     // Called when token creation fails.
-        var errorCallback = function (data) {
-            if (data.errorCode === 200) {
-                tokenRequest();
-            } else {
-                alert(data.errorMsg);
-            }
-        };
-        var tokenRequest = function () {
-    <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
-            // Setup token request arguments  
-            var expire = $("#expire").val();
-            var expiresep = expire.split("/");
-            var dateformat = moment(expiresep[1], "YY");
-            var year = dateformat.format("YYYY");
-            var args = {
-                sellerId: "<?php echo $twocheckout->merchantcode; ?>",
-                publishableKey: "<?php echo $twocheckout->publishablekey; ?>",
-                ccNo: $("#card").val(),
-                cvv: $("#cvv").val(),
-                expMonth: expiresep[0],
-                expYear: year
-            };
-            console.log($("#card").val() + '-' + $("#cvv").val() + expiresep[0] + year + "<?php echo $twocheckout->merchantcode; ?>");
-            // Make the token request
-
-            TCO.requestToken(successCallback, errorCallback, args);
-        };
-    //   });
-        function twoCheckoutPay(e) {
-            e.preventDefault();
-
-            // try {
-            // Pull in the public encryption key for our environment
-            // TCO.loadPubKey('production');
-            TCO.loadPubKey('sandbox', function () {  // for sandbox environment
-                publishableKey = "<?php echo $twocheckout->publishablekey; ?>"//your public key
-                tokenRequest();
-            });
-            //  $("#editPaymentForm").submit(function (e) {
-            // Call our token request function
-
-
-            // Prevent form from submitting
-            return false;
-            // });
-            // } catch (e) {
-            //     alert(e.toSource());
-            //  }
+    var errorCallback = function (data) {
+        if (data.errorCode === 200) {
+            tokenRequest();
+        } else {
+            alert(data.errorMsg);
         }
+    };
+    var tokenRequest = function () {
+    <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
+        // Setup token request arguments  
+        var expire = $("#expire").val();
+        var expiresep = expire.split("/");
+        var dateformat = moment(expiresep[1], "YY");
+        var year = dateformat.format("YYYY");
+        var args = {
+            sellerId: "<?php echo $twocheckout->merchantcode; ?>",
+            publishableKey: "<?php echo $twocheckout->publishablekey; ?>",
+            ccNo: $("#card").val(),
+            cvv: $("#cvv").val(),
+            expMonth: expiresep[0],
+            expYear: year
+        };
+        console.log($("#card").val() + '-' + $("#cvv").val() + expiresep[0] + year + "<?php echo $twocheckout->merchantcode; ?>");
+        // Make the token request
+
+        TCO.requestToken(successCallback, errorCallback, args);
+    };
+    //   });
+    function twoCheckoutPay(e) {
+        e.preventDefault();
+
+        // try {
+        // Pull in the public encryption key for our environment
+        // TCO.loadPubKey('production');
+        TCO.loadPubKey('sandbox', function () {  // for sandbox environment
+            publishableKey = "<?php echo $twocheckout->publishablekey; ?>"//your public key
+            tokenRequest();
+        });
+        //  $("#editPaymentForm").submit(function (e) {
+        // Call our token request function
+
+
+        // Prevent form from submitting
+        return false;
+        // });
+        // } catch (e) {
+        //     alert(e.toSource());
+        //  }
+    }
     // Pull in the public encryption key for our environment
 
     //});

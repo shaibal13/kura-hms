@@ -254,6 +254,10 @@ class Bed_model extends CI_model {
                       
                         ->get('bed_medicine')->row();
     }
+     function updateMedicineAlloted($id, $data) {
+        $this->db->where('id', $id);
+        $this->db->update('bed_medicine', $data);
+    }
     function getMedicineAllotedByBedId($id) {
         return $this->db->where('alloted_bed_id', $id)
                        
@@ -325,5 +329,10 @@ class Bed_model extends CI_model {
         $this->db->where('id', $id);
         $query = $this->db->get('alloted_bed');
         return $query->row();
+    }
+    function getServicedByIdByDate($id) {
+        return $this->db->where('alloted_bed_id', $id)
+                       ->where('date',date('d-m-Y'))
+                        ->get('bed_service')->row();
     }
 }

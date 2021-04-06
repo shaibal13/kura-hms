@@ -232,7 +232,8 @@ class Paytm extends MX_Controller {
                         'gateway' => 'Paytm',
                         'deposit_type' => 'Card',
                         'user' => $this->ion_auth->get_user_id(),
-                        'payment_from' => 'payment'
+                        'payment_from' => 'payment',
+                       
                     );
                     $this->finance_model->insertDeposit($data1);
                     if ($this->ion_auth->in_group(array('Patient'))) {

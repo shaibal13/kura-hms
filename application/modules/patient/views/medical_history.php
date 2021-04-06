@@ -93,7 +93,37 @@
             </header> 
 
 
+            <style>
+                .separator {
+                    display: flex;
+                    align-items: center;
+                    text-align: center;
+                }
 
+                .separator::before,
+                .separator::after {
+                    content: '';
+                    flex: 1;
+                    border-bottom: 1px solid #000;
+                }
+
+                .separator:not(:empty)::before {
+                    margin-right: .25em;
+                }
+
+                .separator:not(:empty)::after {
+                    margin-left: .25em;
+                }
+                .input-category{
+                    border: none !important;
+                }
+                .price-indivudual{
+                    border: none !important;
+                }
+                .from_where{
+                    border: none !important;
+                }
+            </style>
 
             <aside class="profile-nav">
                 <section class="">
@@ -277,6 +307,7 @@
                                                 <th><?php echo lang('date'); ?></th>
                                                 <th><?php echo lang('title'); ?></th>
                                                 <th><?php echo lang('description'); ?></th>
+                                                <th style=""><?php echo lang('status'); ?> </th>
                                                 <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 == 'ok' || $permis_p_3 == 'ok') { ?>
                                                     <th class="no-print"><?php echo lang('options'); ?></th>
                                                 <?php } ?>
@@ -288,15 +319,41 @@
 
                                                     <td><?php echo date('d-m-Y', $medical_history->date); ?></td>
                                                     <td><?php echo $medical_history->title; ?></td>
-                                                    <td><?php echo $medical_history->description; ?></td>
+                                                    <td><?php
+                                                        $description = array();
+                                                        $option_description = '';
+                                                        $descriptions = explode('##', $medical_history->description);
+                                                        foreach ($descriptions as $description) {
+                                                            $description_single = array();
+                                                            $description_single = explode('**', $description);
+                                                            if ($description_single[0] == 'Package') {
+                                                                $option_description .= '<ul><li>' . $description_single[0] . '-' . $description_single[1] . '</li></ul>';
+                                                            } else {
+                                                                $option_description .= '<ul><li>' . $description_single[1] . '</li></ul>';
+                                                            }
+                                                        }
+                                                        echo $option_description;
+                                                        ?></td>
+                                                    <td><?php
+                                                        if ($medical_history->status == 'Pending Confirmation') {
+                                                            $status = lang('pending_confirmation');
+                                                        } if ($medical_history->status == 'Confirmed') {
+                                                            $status = lang('confirmed');
+                                                        }
+                                                        echo $status;
+                                                        ?></td>
                                                     <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 == 'ok' || $permis_p_3 == 'ok') { ?>
                                                         <td class="no-print">
                                                             <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 == 'ok') { ?>
-                                                                <button type="button" class="btn btn-info btn-xs btn_width editbutton" title="<?php echo lang('edit'); ?>" data-toggle="modal" data-id="<?php echo $medical_history->id; ?>"><i class="fa fa-edit"></i> </button>   
+                                                                <a class="btn btn-info btn-xs btn_width" title="<?php echo lang('edit'); ?>" href="patient/editCaseHistory?id=<?php echo $medical_history->id; ?>"><i class="fa fa-edit"></i> </a>
+                                                                 <!--  <button type="button" class="btn btn-info btn-xs btn_width editbutton" title="<?php echo lang('edit'); ?>" data-toggle="modal" data-id="<?php echo $medical_history->id; ?>"><i class="fa fa-edit"></i> </button>   -->
                                                             <?php } ?>   
                                                             <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_3 == 'ok') { ?>
                                                                 <a class="btn btn-info btn-xs btn_width delete_button" title="<?php echo lang('delete'); ?>" href="patient/deleteCaseHistory?id=<?php echo $medical_history->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> </a>
                                                             <?php } ?>
+                                                                <?php  if ($medical_history->status == 'Confirmed') { ?>
+                                                                 <a class="btn btn-success btn-xs btn_width" title="<?php echo lang('invoice'); ?>" href="finance/invoice?id=<?php echo $medical_history->payment_id; ?>"><i class="fa fa-file-invoice"></i> </a>
+                                                                <?php } ?>
                                                         </td>
                                                     <?php } ?>
                                                 </tr>
@@ -314,7 +371,7 @@
                                                                                 <div class="">
                                                                                     <textarea class="ckeditor form-control" name="description" id="description" value="" rows="100" cols="50">      
                                     <?php foreach ($medical_histories as $medical_history) { ?>         
-                                                                                                                                                                                                                                                    <td><?php echo $medical_history->description; ?></td>
+                                                                                                                                                                                                                                                                                <td><?php echo $medical_history->description; ?></td>
                                     <?php } ?>
                                                                                     </textarea>
                                                                                 </div>
@@ -513,7 +570,7 @@
                                                     <?php }
                                                     ?>
 
-                                                    <!--  <img src="<?php echo $patient_material->url; ?>" height="100" width="100">-->
+                                                                                <!--  <img src="<?php echo $patient_material->url; ?>" height="100" width="100">-->
                                                 </div>
                                                 <div class="post-info" style="text-align:center !important;">
                                                     <?php
@@ -701,15 +758,81 @@
                         <label for="exampleInputEmail1"><?php echo lang('title'); ?></label>
                         <input type="text" class="form-control form-control-inline input-medium" name="title" id="exampleInputEmail1" value='' placeholder="">
                     </div>
-                    <div class="form-group col-md-12">
-                        <label class=""><?php echo lang('description'); ?></label>
-                        <div class="">
-                            <textarea class="ckeditor form-control" name="description" value="" rows="10"></textarea>
-                        </div>
-                    </div>
+                     <div class="form-group col-md-12">
+                        <label for="exampleInputEmail1">  <?php echo lang('status'); ?></label> 
+                        <select class="form-control m-bot15" name="status" value=''> 
+                            <option value="Pending Confirmation"> <?php echo lang('pending_confirmation'); ?> </option>
+                            <option value="Confirmed"> <?php echo lang('confirmed'); ?> </option>
 
+                        </select>
+                    </div>
                     <input type="hidden" name="patient_id" value='<?php echo $patient->id; ?>'>
                     <input type="hidden" name="id" value=''>
+                     <input type="hidden" name="redirect" value='case_list_history'>
+                    <div class="adv-table editable-table ">
+                        <table style="width: 100% !important;" class="table table-striped table-hover table-bordered" id="editable-table2">
+                            <thead>
+                                <tr>
+                                    <th style=""><?php echo lang('items'); ?></th>
+                                    <th style=""><?php echo lang('type'); ?></th>
+                                    <th style=""><?php echo lang('price'); ?></th>
+                                    <th style=""><?php echo lang('date_to_be_done'); ?></th>
+                                    <th style=""><?php echo lang('status'); ?></th>
+                                    <th style="" class="no-print"><?php echo lang('options'); ?></th>
+
+                                </tr>
+                            </thead>
+                            <tbody id="package_proccedure">
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="exampleInputEmail1"><?php echo lang('total_value'); ?></label>
+                        <input type="text" class="form-control" name="total_value" id="total_value" value='<?php
+                        if (!empty($setval)) {
+                            echo set_value('total_value');
+                        }
+                        if (!empty($case->total_price)) {
+                            echo $case->total_price;
+                        }
+                        ?>' placeholder="" readonly="">
+                    </div>
+                    <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
+                        <div class="separator col-md-12"><?php echo lang('select'); ?></div>
+                        <br>  <br>
+                        <div class="col-md-12" style="margin-top:20px;">
+                            <div class="col-md-5">
+
+                                <select style=" display: block;"class="form-control m-bot15 js-example-basic-single" id="package" name="package" value='' required=""> 
+                                    <option><?php echo lang('select'); ?> <?php echo lang('packages'); ?></option>
+                                    <?php foreach ($packages as $package) { ?>
+                                        <option value="<?php echo $package->id;
+                                        ?>"><?php echo $package->name; ?></option>
+                                            <?php } ?>
+                                </select>
+                            </div>
+                            <div class="col-md-5">
+
+                                <select style=" display: block;"class="form-control m-bot15 js-example-basic-single" id="medical_analysis" name="medical_analysis" value='' required=""> 
+                                    <option><?php echo lang('select'); ?> <?php echo lang('medical_analysis'); ?></option>
+                                    <?php foreach ($payment_category as $category) { ?>
+                                        <option value="<?php echo $category->id;
+                                        ?>"><?php echo $category->category; ?></option>
+                                            <?php } ?>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-info" id="add_type"><i class="fa fa-save"></i></button>     
+                            </div>
+
+
+
+                        </div>
+                    <?php } ?>
+
+                   <!-- <input type="hidden" name="patient_id" value='<?php echo $patient->id; ?>'>
+                    <input type="hidden" name="id" value=''>-->
                     <div class="form-group col-md-12">
                         <button type="submit" name="submit" class="btn btn-info submit_button pull-right">Submit</button>
                     </div>
@@ -735,18 +858,11 @@
                         <label for="exampleInputEmail1"><?php echo lang('date'); ?></label>
                         <input type="text" class="form-control form-control-inline input-medium default-date-picker" name="date" id="exampleInputEmail1" value='' placeholder="" readonly="">
                     </div>
-                    <div class="form-group col-md-12">
+                    <div class="form-group col-md-6">
                         <label for="exampleInputEmail1"><?php echo lang('title'); ?></label>
                         <input type="text" class="form-control form-control-inline input-medium" name="title" id="exampleInputEmail1" value='' placeholder="">
                     </div>
-                    <div class="form-group col-md-12">
-                        <label class=""><?php echo lang('description'); ?></label>
-                        <div class="">
-                            <textarea class="ckeditor form-control editor" id="editor" name="description" value="" rows="10"></textarea>
-                        </div>
-                    </div>
-                    <input type="hidden" name="patient_id" value='<?php echo $patient->id; ?>'>
-                    <input type="hidden" name="id" value=''>
+                  
                     <div class="form-group col-md-12">
                         <button type="submit" name="submit" class="btn btn-info submit_button pull-right">Submit</button>
                     </div>
@@ -820,8 +936,7 @@ if ($this->ion_auth->in_group('Doctor')) {
                     <div class="col-md-6 panel">
                         <label for="exampleInputEmail1"> <?php echo lang('category'); ?> </label> 
                         <select class="form-control m-bot15" name="category_appointment" value=''> 
-                            <option value="Bed Allotment" <?php
-                            ?> > <?php echo lang('bed_allotment'); ?> </option>
+                            <option value="Bed Allotment" <?php ?> > <?php echo lang('bed_allotment'); ?> </option>
                             <option value="Ambulator" <?php ?> > <?php echo lang('ambulator'); ?> </option>
 
                         </select>
@@ -1034,8 +1149,7 @@ if ($this->ion_auth->in_group('Doctor')) {
                             <?php if (!$this->ion_auth->in_group('Patient')) { ?>
                                 <option value="Pending Confirmation" <?php ?> > <?php echo lang('pending_confirmation'); ?> </option>
                                 <option value="Confirmed" <?php ?> > <?php echo lang('confirmed'); ?> </option>
-                                <option value="Treated" <?php
-                                ?> > <?php echo lang('treated'); ?> </option>
+                                <option value="Treated" <?php ?> > <?php echo lang('treated'); ?> </option>
                                 <option value="Cancelled" <?php ?> > <?php echo lang('cancelled'); ?> </option>
                             <?php } else { ?>
                                 <option value="Requested" <?php ?> > <?php echo lang('requested'); ?> </option> 
@@ -1047,8 +1161,7 @@ if ($this->ion_auth->in_group('Doctor')) {
                         <select class="form-control m-bot15" name="category_appointment" value=''> 
                             <option value="Bed Allotment" <?php
                             ?> > <?php echo lang('bed_allotment'); ?> </option>
-                            <option value="Ambulator" <?php
-                            ?> > <?php echo lang('ambulator'); ?> </option>
+                            <option value="Ambulator" <?php ?> > <?php echo lang('ambulator'); ?> </option>
 
                         </select>
                     </div>
@@ -1589,8 +1702,8 @@ if ($this->ion_auth->in_group('Doctor')) {
                 // Populate the form fields with the data returned from server
                 //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
             });
-              $('#visit_description').html(" ");
-                 $('#visit_charges').val(" ");
+            $('#visit_description').html(" ");
+            $('#visit_charges').val(" ");
             $.ajax({
                 url: 'doctor/getDoctorVisit?id=' + doctorr,
                 method: 'GET',
@@ -1721,8 +1834,8 @@ if ($this->ion_auth->in_group('Doctor')) {
                 // Populate the form fields with the data returned from server
                 //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
             });
-              $('#visit_description1').html(" ");
-                 $('#visit_charges1').val(" ");
+            $('#visit_description1').html(" ");
+            $('#visit_charges1').val(" ");
             $.ajax({
                 url: 'doctor/getDoctorVisit?id=' + doctorr,
                 method: 'GET',
@@ -2206,65 +2319,65 @@ if ($this->ion_auth->in_group('Doctor')) {
 
     //   $(document).ready(function () {
     // Called when token created successfully.
-        var successCallback = function (data) {
-            var myForm = document.getElementById('addAppointmentForm');
-            // Set the token as the value for the token input
-            // alert(data.response.token.token);
-            $("#addAppointmentForm").append("<input type='hidden' name='token' value='" + data.response.token.token + "' />");
-            //    myForm.token.value = data.response.token.token;
-            // IMPORTANT: Here we call `submit()` on the form element directly instead of using jQuery to prevent and infinite token request loop.
-            myForm.submit();
-        };
+    var successCallback = function (data) {
+        var myForm = document.getElementById('addAppointmentForm');
+        // Set the token as the value for the token input
+        // alert(data.response.token.token);
+        $("#addAppointmentForm").append("<input type='hidden' name='token' value='" + data.response.token.token + "' />");
+        //    myForm.token.value = data.response.token.token;
+        // IMPORTANT: Here we call `submit()` on the form element directly instead of using jQuery to prevent and infinite token request loop.
+        myForm.submit();
+    };
     // Called when token creation fails.
-        var errorCallback = function (data) {
-            if (data.errorCode === 200) {
-                tokenRequest();
-            } else {
-                alert(data.errorMsg);
-            }
-        };
-        var tokenRequest = function () {
-    <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
-            // Setup token request arguments  
-            var expire = $("#expire").val();
-            var expiresep = expire.split("/");
-            var dateformat = moment(expiresep[1], "YY");
-            var year = dateformat.format("YYYY");
-            var args = {
-                sellerId: "<?php echo $twocheckout->merchantcode; ?>",
-                publishableKey: "<?php echo $twocheckout->publishablekey; ?>",
-                ccNo: $("#card").val(),
-                cvv: $("#cvv").val(),
-                expMonth: expiresep[0],
-                expYear: year
-            };
-            console.log($("#card").val() + '-' + $("#cvv").val() + expiresep[0] + year + "<?php echo $twocheckout->merchantcode; ?>");
-            // Make the token request
-
-            TCO.requestToken(successCallback, errorCallback, args);
-        };
-    //   });
-        function twoCheckoutPay(e) {
-            e.preventDefault();
-
-            // try {
-            // Pull in the public encryption key for our environment
-            // TCO.loadPubKey('production');
-            TCO.loadPubKey('sandbox', function () {  // for sandbox environment
-                publishableKey = "<?php echo $twocheckout->publishablekey; ?>"//your public key
-                tokenRequest();
-            });
-            //  $("#editPaymentForm").submit(function (e) {
-            // Call our token request function
-
-
-            // Prevent form from submitting
-            return false;
-            // });
-            // } catch (e) {
-            //     alert(e.toSource());
-            //  }
+    var errorCallback = function (data) {
+        if (data.errorCode === 200) {
+            tokenRequest();
+        } else {
+            alert(data.errorMsg);
         }
+    };
+    var tokenRequest = function () {
+    <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
+        // Setup token request arguments  
+        var expire = $("#expire").val();
+        var expiresep = expire.split("/");
+        var dateformat = moment(expiresep[1], "YY");
+        var year = dateformat.format("YYYY");
+        var args = {
+            sellerId: "<?php echo $twocheckout->merchantcode; ?>",
+            publishableKey: "<?php echo $twocheckout->publishablekey; ?>",
+            ccNo: $("#card").val(),
+            cvv: $("#cvv").val(),
+            expMonth: expiresep[0],
+            expYear: year
+        };
+        console.log($("#card").val() + '-' + $("#cvv").val() + expiresep[0] + year + "<?php echo $twocheckout->merchantcode; ?>");
+        // Make the token request
+
+        TCO.requestToken(successCallback, errorCallback, args);
+    };
+    //   });
+    function twoCheckoutPay(e) {
+        e.preventDefault();
+
+        // try {
+        // Pull in the public encryption key for our environment
+        // TCO.loadPubKey('production');
+        TCO.loadPubKey('sandbox', function () {  // for sandbox environment
+            publishableKey = "<?php echo $twocheckout->publishablekey; ?>"//your public key
+            tokenRequest();
+        });
+        //  $("#editPaymentForm").submit(function (e) {
+        // Call our token request function
+
+
+        // Prevent form from submitting
+        return false;
+        // });
+        // } catch (e) {
+        //     alert(e.toSource());
+        //  }
+    }
     // Pull in the public encryption key for our environment
 
     //});
@@ -2339,14 +2452,127 @@ if ($this->ion_auth->in_group('Doctor')) {
         //});
     </script>
 <?php } ?>
+
+<script>
+    $(document).ready(function () {
+        $('#add_type').click(function (e) {
+            var medical_analysis = $('#medical_analysis').val();
+            var package = $('#package').val();
+
+            if ($('table#editable-table2').find('#tr-med-' + medical_analysis).length > 0 && $('table#editable-table2').find('#tr-pack-' + package).length > 0) {
+                alert('Already in the List');
+            } else if (package === 'Select Packages' && medical_analysis === 'Select Medical Analysis') {
+                alert('Please Select a package or Medical Analysis');
+            } else if ($('table#editable-table2').find('#tr-med-' + medical_analysis).length > 0 && $('table#editable-table2').find('#tr-pack-' + package).length <= 0) {
+                $.ajax({
+                    url: 'patient/getTableTrValue?package=' + package,
+                    method: 'GET',
+                    data: '',
+                    dataType: 'json',
+                }).success(function (response) {
+                    $('#package_proccedure').after(response.option);
+                    var values = $("input[name^='price[]']").map(function (idx, ele) {
+                        return $(ele).val();
+                    }).get();
+                    var sum = 0;
+                    $.each(values, function (index, value) {
+                        // alert(index + ": " + value);
+                        var number = parseInt(value, 10);
+                        sum += number;
+                    });
+                    $('#total_value').val(sum);
+                })
+            } else if ($('table#editable-table2').find('#tr-med-' + medical_analysis).length <= 0 && $('table#editable-table2').find('#tr-pack-' + package).length > 0) {
+                $.ajax({
+                    url: 'patient/getTableTrValue?medical_analysis=' + medical_analysis,
+                    method: 'GET',
+                    data: '',
+                    dataType: 'json',
+                }).success(function (response) {
+                    $('#package_proccedure').after(response.option);
+                    var values = $("input[name^='price[]']").map(function (idx, ele) {
+                        return $(ele).val();
+                    }).get();
+                    var sum = 0;
+                    $.each(values, function (index, value) {
+                        // alert(index + ": " + value);
+                        var number = parseInt(value, 10);
+                        sum += number;
+                    });
+                    $('#total_value').val(sum);
+                })
+            } else {
+                if (package === 'Select Packages') {
+                    var url = 'patient/getTableTrValue?medical_analysis=' + medical_analysis;
+                } else if (medical_analysis === 'Select Medical Analysis') {
+                    var url = 'patient/getTableTrValue?package=' + package;
+                } else {
+                    var url = 'patient/getTableTrValue?medical_analysis=' + medical_analysis + '&package=' + package;
+                }
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    data: '',
+                    dataType: 'json',
+                }).success(function (response) {
+                    $('#package_proccedure').after(response.option);
+                    var values = $("input[name^='price[]']").map(function (idx, ele) {
+                        return $(ele).val();
+                    }).get();
+                    var sum = 0;
+                    $.each(values, function (index, value) {
+                        // alert(index + ": " + value);
+                        var number = parseInt(value, 10);
+                        sum += number;
+                    });
+                    $('#total_value').val(sum);
+                })
+            }
+            e.preventDefault();
+        })
+
+    })
+</script>
+<script>
+    $(document).ready(function () {
+        $('#editable-table2').on('click', '.delete_button', function () {
+            //  $('.delete_button').click(function () {
+            // alert('sadas');
+            var id = $(this).attr('id');
+            var id_split = id.split("-");
+            // if(id_split[1]=='med'){
+            $('#tr-' + id_split[1] + '-' + id_split[2]).remove();
+            //}
+
+            var values = $("input[name^='price[]']").map(function (idx, ele) {
+                return $(ele).val();
+            }).get();
+            //  alert(values);
+            var sum = 0;
+            $.each(values, function (index, value) {
+                // alert(index + ": " + value);
+                var number = parseInt(value, 10);
+                sum += number;
+            });
+            $('#total_value').val(sum);
+        });
+
+
+    })
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        $('body').on('focus', ".default-date-picker", function () {
+            $(this).datepicker();
+        });
+    });
+</script>
+
 <script>
     $(document).ready(function () {
         $(".flashmessage").delay(3000).fadeOut(100);
     });
 </script>
-
-
-
-
-
 

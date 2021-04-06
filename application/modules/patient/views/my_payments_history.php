@@ -78,6 +78,7 @@
                                 <th class=""><?php echo lang('bill_amount'); ?></th>
                                 <th class=""><?php echo lang('deposit'); ?></th>
                                 <th class=""><?php echo lang('deposit_type'); ?></th>
+                                <th class=""><?php echo lang('from'); ?></th>
                                 <th class="no-print"><?php echo lang('options'); ?></th>
                             </tr>
                         </thead>
@@ -133,20 +134,47 @@
                                         </td>
 
                                         <td> <?php echo $payment->deposit_type; ?></td>
-
+                                        <td> 
+                                            <?php
+                                            if ($payment->payment_from == 'appointment') {
+                                                echo lang('appointment');
+                                            } elseif ($payment->payment_from == 'bed') {
+                                                echo lang('allotment_medicine');
+                                            } elseif ($payment->payment_from == 'case') {
+                                                echo lang('case');
+                                            } elseif ($payment->payment_from == 'bed_service') {
+                                                echo lang('allotment_service');
+                                            } elseif ($payment->payment_from == 'payment') {
+                                                echo lang('payment');
+                                            }
+                                            ?></td>
 
 
                                         <td  class="no-print">
-                                            <?php if($payment->payment_from == 'payment'){ ?>
-                                            <a class="btn-xs invoicebutton" title="<?php echo lang('invoice'); ?>" style="color: #fff; width: 23px;" href="patient/myInvoice?id=<?php echo $payment->id; ?>"><i class="fas fa-file-invoice"></i> </a>
-                                <?php } else { 
-                                    $appointment=$this->db->get_where('appointment',array('payment_id'=>$payment->id))->row(); 
-                                       if($appointment->status=='Confirmed'){ ?> 
-                                            <a class="btn-xs invoicebutton" title="<?php echo lang('invoice'); ?>" style="color: #fff; width: 23px;" href="patient/myInvoice?id=<?php echo $payment->id; ?>"><i class="fas fa-file-invoice"></i> </a>
-                                      <?php } ?>
-                              
-                                           
-                                <?php } ?>
+                                            <?php if ($payment->payment_from == 'payment') { ?>
+                                                <a class="btn-xs invoicebutton" title="<?php echo lang('invoice'); ?>" style="color: #fff; width: 23px;" href="patient/myInvoice?id=<?php echo $payment->id; ?>"><i class="fas fa-file-invoice"></i> </a>
+                                            <?php } elseif ($payment->payment_from == 'bed_service') { ?>
+                                                <a class="btn-xs invoicebutton" title="<?php echo lang('invoice'); ?>" style="color: #fff; width: 25%;" href="patient/myInvoice?id=<?php echo $payment->id; ?>"><i class="fa fa-file-invoice"></i> </a>  
+                                            <?php } elseif ($payment->payment_from == 'bed') { ?>
+                                                <a class="btn-xs invoicebutton" title="<?php echo lang('invoice'); ?>" style="color: #fff; width: 25%;" href="patient/myInvoice?id=<?php echo $payment->id; ?>"><i class="fa fa-file-invoice"></i> </a>    
+                                                <?php
+                                            } elseif ($payment->payment_from == 'case') {
+                                                $caselist = $this->db->get_where('medical_history', array('id' => $payment->case_id))->row();
+                                                if ($payment->case_status == 'Confirmed') {
+                                                    ?>
+
+                                                    <a class="btn-xs invoicebutton" title="<?php echo lang('invoice'); ?>" style="color: #fff; width: 25%;" href="patient/myInvoice?id=<?php echo $payment->id; ?>"><i class="fa fa-file-invoice"></i> </a>
+                                                    <?php
+                                                }
+                                            }  elseif ($payment->payment_from == 'appointment') {
+                                                $appointment = $this->db->get_where('appointment', array('payment_id' => $payment->id))->row();
+                                                if ($appointment->status == 'Confirmed') {
+                                                    ?> 
+                                                    <a class="btn-xs invoicebutton" title="<?php echo lang('invoice'); ?>" style="color: #fff; width: 23px;" href="patient/myInvoice?id=<?php echo $payment->id; ?>"><i class="fas fa-file-invoice"></i> </a>
+                                                <?php } ?>
+
+
+                                            <?php } ?>
                                         </td>
                                     </tr>
 
@@ -168,6 +196,7 @@
                                             <td></td>
                                             <td><?php echo $settings->currency; ?> <?php echo $deposit->deposited_amount; ?></td>
                                             <td> <?php echo $deposit->deposit_type; ?></td>  
+                                            <td></td>
                                             <td  class="no-print"> 
                                             </td>
                                         </tr>

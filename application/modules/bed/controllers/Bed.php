@@ -13,6 +13,7 @@ class Bed extends MX_Controller {
         $this->load->model('nurse/nurse_model');
         $this->load->model('medicine/medicine_model');
         $this->load->model('pservice/pservice_model');
+        $this->load->model('finance/finance_model');
         $group_permission = $this->ion_auth->get_users_groups()->row();
 
         if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
@@ -391,7 +392,7 @@ class Bed extends MX_Controller {
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
             //$permis='';
-           // $permis_1='';
+            // $permis_1='';
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Bed') {
                 $permis = 'ok';
@@ -404,7 +405,8 @@ class Bed extends MX_Controller {
         }
         foreach ($data['beds'] as $bed) {
             $i = $i + 1;
-             $option1=''; $option2='';
+            $option1 = '';
+            $option2 = '';
             if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Accountant')) || $permis == 'ok') {
                 $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $bed->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</button>';
             }
@@ -496,11 +498,11 @@ class Bed extends MX_Controller {
 
         //  $data['patients'] = $this->patient_model->getVisitor();
         $i = 0;
-        $permis='';
-            $permis_1='';
+        $permis = '';
+        $permis_1 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
-            
+
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Bed') {
                 $permis = 'ok';
@@ -513,7 +515,8 @@ class Bed extends MX_Controller {
         }
         foreach ($data['beds'] as $bed) {
             $i = $i + 1;
-            $option1=''; $option2='';
+            $option1 = '';
+            $option2 = '';
             if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Accountant')) || $permis == 'ok') {
                 $option1 = '<a class="btn btn-info btn-xs btn_width editbutton" href="bed/bedAllotmentDetails?id=' . $bed->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
             }
@@ -829,6 +832,7 @@ class Bed extends MX_Controller {
         //  $inserted_id=$this->db->inserted_id('daily_progress');
         $arr['info'] = $this->bed_model->getMedicineAllotedPatientById($insert_id);
         $arr['medicine'] = $this->medicine_model->getMedicineById($arr['info']->medicine_id);
+        // $arr['insert']=$insert_id;
         $arr['message'] = array('message' => lang('added'), 'title' => lang('added'));
         // $arr['added'] = array('redir' => 'added');
         echo json_encode($arr);
@@ -836,6 +840,36 @@ class Bed extends MX_Controller {
 
     function deleteMedicine() {
         $id = $this->input->get('id');
+        $bed_details = $this->bed_model->getMedicineAllotedPatientById($id);
+        $payments = $this->finance_model->getPaymentById($bed_details->payment_id);
+        if (!empty($payments->category_name)) {
+            $category = explode("#", $payments->category_name);
+            foreach ($category as $cat) {
+                $individual = explode('*', $cat);
+                if ($individual[5] != $bed_details->id) {
+                    $price[] = $individual[4];
+                    $cat_new[] = $cat;
+                }
+            }
+
+            if (empty($cat_new)) {
+                $this->finance_model->deletePayment($bed_details->payment_id);
+                $data_bed = array('payment_id' => '');
+                $this->bed_model->updateMedicineAlloted($bed_details->id, $data_bed);
+            } else {
+                $cat_new_update = implode("#", $cat_new);
+                $total = array_sum($price);
+                $data = array(
+                    'category_name' => $cat_new_update,
+                    'amount' => $total,
+                    'gross_total' => $total,
+                    'hospital_amount' => $total,
+                );
+                $data_bed = array('payment_id' => '');
+                $this->bed_model->updateMedicineAlloted($bed_details->id, $data_bed);
+                $this->finance_model->updatePayment($bed_details->payment_id, $data);
+            }
+        }
         $this->bed_model->deleteMedicine($id);
         $arr['message'] = array('message' => lang('delete'), 'title' => lang('delete'));
         echo json_encode($arr);
@@ -864,21 +898,45 @@ class Bed extends MX_Controller {
         $date_exist = $this->bed_model->getServicesByDate($date);
         if (!empty($date_exist)) {
             if (empty($pservice)) {
+                $payment_ids = explode(",", $date_exist->payment_id);
+                if (!empty($payment_ids)) {
+                    for ($i = 0; $i < count($payment_ids); $i++) {
+                        $this->finance_model->deletePayment($payment_ids[$i]);
+                    }
+                }
                 $this->bed_model->deleteServices($date_exist->id);
                 $arr['message'] = array('message' => lang('updated'), 'title' => lang('updated'));
             } else {
                 $this->bed_model->updateServices($date_exist->id, $data);
+                $inserted_id = $date_exist->id;
                 $arr['message'] = array('message' => lang('updated'), 'title' => lang('updated'));
             }
         } else {
             $this->bed_model->insertServices($data);
+            $inserted_id = $this->db->insert_id('bed_service');
             $arr['message'] = array('message' => lang('added'), 'title' => lang('added'));
         }
         $daily_service = $this->bed_model->getServiceAllotedByBedId($this->input->post('alloted'));
 
         $settings = $this->settings_model->getSettings();
 
+
         foreach ($daily_service as $service) {
+            $pay_service = array();
+            $pay_service_new = array();
+            if (!empty($service->payment_id)) {
+                $payment_explode = explode(",", $service->payment_id);
+                for ($i = 0; $i < count($payment_explode); $i++) {
+                    $payment_details = array();
+                    $payment_details = $this->finance_model->getPaymentById($payment_explode[$i]);
+                    $payment_d = array();
+                    $payment_d = explode("#", $payment_details->category_name);
+                    foreach ($payment_d as $key => $value) {
+                        $pay_service = explode("*", $value);
+                        $pay_service_new[] = $pay_service[0];
+                    }
+                }
+            }
             $price = explode("**", $service->price);
 
             $service_update = explode("**", $service->service);
@@ -890,23 +948,59 @@ class Bed extends MX_Controller {
             if ($length == $length1) {
                 $i = 0;
                 for ($i = 0; $i < $length; $i++) {
-                    $servicename = $this->db->get_where('pservice', array('id' => $service_update[$i]))->row()->name;
+                    $servicename = $this->db->get_where('pservice', array('id' => $service_update[$i]))->row();
 
                     if (!empty($service->nurse)) {
                         $nursename = $this->db->get_where('nurse', array('id' => $service->nurse))->row()->name;
                     } else {
                         $nursename = " ";
                     }
-
-                    $option .= '<tr id="' . $service->date . '-' . $service_update[$i] . '">
-                                                        <td>' . $servicename . '</td>
+                    $date_explode = explode("-", $service->date);
+                    if ($this->ion_auth->in_group(array('admin'))) {
+                        $option .= '<tr id="' . $service->date . '-' . $service_update[$i] . '">
+                                                        <td>' . $servicename->name . '</td>
                                                         <td>' . $service->date . '</td>
                                                         <td>' . $nursename . '</td>
                                                         <td>' . $settings->currency . ' ' . $price[$i] . '</td>
                                                         <td> 1 </td>
                                                         <td>' . $settings->currency . ' ' . $price[$i] . '</td>
-                                                        <td class="no-print"><button type="button" class="btn btn-danger btn-xs btn_width delete_service" title=' . lang('delete') . ' data-toggle=" "data-id="' . $service->id . "**" . $service_update[$i] . '"><i class="fa fa-trash"></i></button></td>
+                                                        <td class="no-print" id="delete-service-' . $date_explode[0] . '-' . $servicename->id . '"><button type="button" class="btn btn-danger btn-xs btn_width delete_service" title=' . lang('delete') . ' data-toggle=" "data-id="' . $service->id . "**" . $service_update[$i] . '"><i class="fa fa-trash"></i></button></td>
                                                     </tr>';
+                    } else {
+                        if (empty($service->payment_id)) {
+                            $option .= '<tr id="' . $service->date . '-' . $service_update[$i] . '">
+                                                        <td>' . $servicename->name . '</td>
+                                                        <td>' . $service->date . '</td>
+                                                        <td>' . $nursename . '</td>
+                                                        <td>' . $settings->currency . ' ' . $price[$i] . '</td>
+                                                        <td> 1 </td>
+                                                        <td>' . $settings->currency . ' ' . $price[$i] . '</td>
+                                                        <td class="no-print" id="delete-service-' . $date_explode[0] . '-' . $servicename->id . '"><button type="button" class="btn btn-danger btn-xs btn_width delete_service" title=' . lang('delete') . ' data-toggle=" "data-id="' . $service->id . "**" . $service_update[$i] . '"><i class="fa fa-trash"></i></button></td>
+                                                    </tr>';
+                        } else {
+                            if (in_array($servicename->id, $pay_service_new)) {
+                                $option .= '<tr id="' . $service->date . '-' . $service_update[$i] . '">
+                                                        <td>' . $servicename->name . '</td>
+                                                        <td>' . $service->date . '</td>
+                                                        <td>' . $nursename . '</td>
+                                                        <td>' . $settings->currency . ' ' . $price[$i] . '</td>
+                                                        <td> 1 </td>
+                                                        <td>' . $settings->currency . ' ' . $price[$i] . '</td>
+                                                        <td></td>
+                                                    </tr>';
+                            } else {
+                                $option .= '<tr id="' . $service->date . '-' . $service_update[$i] . '">
+                                                        <td>' . $servicename->name . '</td>
+                                                        <td>' . $service->date . '</td>
+                                                        <td>' . $nursename . '</td>
+                                                        <td>' . $settings->currency . ' ' . $price[$i] . '</td>
+                                                        <td> 1 </td>
+                                                        <td>' . $settings->currency . ' ' . $price[$i] . '</td>
+                                                        <td class="no-print" id="delete-service-' . $date_explode[0] . '-' . $servicename->id . '"><button type="button" class="btn btn-danger btn-xs btn_width delete_service" title=' . lang('delete') . ' data-toggle=" "data-id="' . $service->id . "**" . $service_update[$i] . '"><i class="fa fa-trash"></i></button></td>
+                                                    </tr>';
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -924,6 +1018,43 @@ class Bed extends MX_Controller {
         $service_details = $this->bed_model->getServicedById($service[0]);
         $services_database = explode("**", $service_details->service);
         $prices_database = explode("**", $service_details->price);
+        if (!empty($service_details->payment_id)) {
+            $payment_explode = explode(",", $service_details->payment_id);
+            for ($i = 0; $i < count($payment_explode); $i++) {
+                $payment_details = array();
+                $payment_details = $this->finance_model->getPaymentById($payment_explode[$i]);
+                $payment_d = array();
+                $price_update = array();
+                $price_up = array();
+                $payment_d = explode("#", $payment_details->category_name);
+                foreach ($payment_d as $key => $value) {
+                    $pay_service = array();
+                    $pay_service = explode("*", $value);
+                    if ($service[1] == $pay_service[0]) {
+                        continue;
+                    } else {
+                        $price_update[] = $pay_service[0] .'*'. $$pay_service[1];
+                        $price_up[] = $pay_service[1];
+                    }
+                }
+                if (!empty($price_update)) {
+                    $pay_update = implode("#", $pay_update);
+                    $total = array_sum($price_up);
+                    $data_payment = array();
+                    $data_payment = array(
+                        'category_name' => $cat_new_update,
+                        'amount' => $total,
+                        'gross_total' => $total,
+                        'hospital_amount' => $total
+                    );
+                    $this->finance_model->updatePayment($payment_explode[$i], $data_payment);
+                    $payment_id[]=$payment_explode[$i];
+                } else {
+                    $this->finance_model->deletePayment($payment_explode[$i]);
+                    
+                }
+            }
+        }
         for ($i = 0; $i < sizeof($services_database); $i++) {
             if ($service[1] != $services_database[$i]) {
                 $service_new[] = $services_database[$i];
@@ -932,7 +1063,8 @@ class Bed extends MX_Controller {
         }
         $data = array(
             'price' => implode("**", $price_new),
-            'service' => implode("**", $service_new)
+            'service' => implode("**", $service_new),
+            'payment_id'=> implode(",", $payment_id),
         );
         if (empty($price_new)) {
             $this->bed_model->deleteServices($id);
@@ -996,6 +1128,141 @@ class Bed extends MX_Controller {
         $response = $this->nurse_model->getNurseInfo($searchTerm);
 
         echo json_encode($response);
+    }
+
+    public function createMedicineInvoice() {
+        $id = $this->input->get('id');
+        $medicine_list = $this->bed_model->getMedicineAllotedByBedId($id);
+        foreach ($medicine_list as $medicine) {
+            if (empty($medicine->payment_id)) {
+                $medicine_con[] = $medicine->medicine_id . '*' . $medicine->medicine_name . '*' . $medicine->s_price . '*' . $medicine->quantity . '*' . $medicine->total . '*' . $medicine->id;
+                $price[] = $medicine->total;
+                // $quantity[] = $medicine->quantity;
+                $medicine_id[] = $medicine->medicine_id;
+                // $medicine_name[] = $medicine->medicine_name;
+                //  $sale_price[] = $medicine->s_price;
+                $ids[] = $medicine->id;
+            }
+        }
+        if (!empty($medicine_id)) {
+            // $length = count($medicine_id);
+            $total = array_sum($price);
+            $arr['ids'] = implode(",", $ids);
+            /* for ($i = 0; $i < $length; $i++) {
+              $medicine_con[] = $medicine_id[$i] . '*' . $medicine_name[$i] . '*' . $sale_price[$i] . '*' . $quantity[$i] . '*' . $price[$i].'*'.$ids[$i];
+              } */
+            $medicine_include = implode("#", $medicine_con);
+
+            $data = array();
+            $bed_alloted = $this->bed_model->getAllotmentById($id);
+            $patient = $this->patient_model->getPatientById($bed_alloted->patient);
+            $doctor = $this->doctor_model->getDoctorById($bed_alloted->doctor);
+            $date = time();
+            $date_string = date('d-m-Y');
+            $data = array(
+                'category_name' => $medicine_include,
+                'patient' => $patient->id,
+                'date' => $date,
+                'amount' => $total,
+                'doctor' => $bed_alloted->doctor,
+                'gross_total' => $total,
+                'status' => 'unpaid',
+                'hospital_amount' => $total,
+                'doctor_amount' => '0',
+                'user' => $this->ion_auth->get_user_id(),
+                'patient_name' => $patient->name,
+                'patient_phone' => $patient->phone,
+                'patient_address' => $patient->address,
+                'doctor_name' => $doctor->name,
+                'date_string' => $date_string,
+                'payment_from' => 'bed'
+            );
+            $this->finance_model->insertPayment($data);
+            $inserted_id = $this->db->insert_id('payment');
+            $data_update_medicine = array('payment_id' => $inserted_id);
+            foreach ($ids as $id_bed_medicine) {
+                $this->bed_model->updateMedicineAlloted($id_bed_medicine, $data_update_medicine);
+            }
+            $arr['message'] = array('message' => lang('invoice') . ' ' . lang('generated'), 'title' => lang('invoice') . ' ' . lang('generated'));
+        } else {
+            $arr['message'] = array('message' => lang('no_new_medicine_add'), 'title' => lang('no_new_medicine_add'));
+        }
+        echo json_encode($arr);
+    }
+
+    public function createServiceInvoice() {
+        $id = $this->input->get('id');
+        $service_list = $this->bed_model->getServicedByIdByDate($id);
+        $previous_payment_ids = $service_list->payment_id;
+        if (!empty($service_list)) {
+            $price = explode("**", $service_list->price);
+            $services = explode("**", $service_list->service);
+            $i = 0;
+            if (!empty($service_list->payment_id)) {
+                $paymentid = explode(",", $service_list->payment_id);
+                foreach ($paymentid as $payment) {
+                    $payment_details = $this->finance_model->getPaymentById($payment);
+                    $payment_cat = explode("#", $payment->category_name);
+                    foreach ($payment_cat as $pay) {
+                        $cat_name = explode("*", $pay);
+                        $previous_invoice_service[] = $cat_name[0];
+                    }
+                }
+            } else {
+                $previous_invoice_service = [];
+            }
+            for ($i = 0; $i < count($services); $i++) {
+                if (!in_array($services[$i], $previous_invoice_service)) {
+                    $service_new[] = $services[$i] . '*' . $price[$i];
+                    $arr['ids'] = $services[$i];
+                }
+                //$i++;
+            }
+            if (!empty($service_new)) {
+                $service_implode = implode("#", $service_new);
+                $total = array_sum($price);
+                $bed_alloted = $this->bed_model->getAllotmentById($id);
+                $patient = $this->patient_model->getPatientById($bed_alloted->patient);
+                $doctor = $this->doctor_model->getDoctorById($bed_alloted->doctor);
+                $date = time();
+                $date_string = date('d-m-Y');
+                $data = array(
+                    'category_name' => $service_implode,
+                    'patient' => $patient->id,
+                    'date' => $date,
+                    'amount' => $total,
+                    'doctor' => $bed_alloted->doctor,
+                    'gross_total' => $total,
+                    'status' => 'unpaid',
+                    'hospital_amount' => $total,
+                    'doctor_amount' => '0',
+                    'user' => $this->ion_auth->get_user_id(),
+                    'patient_name' => $patient->name,
+                    'patient_phone' => $patient->phone,
+                    'patient_address' => $patient->address,
+                    'doctor_name' => $doctor->name,
+                    'date_string' => $date_string,
+                    'payment_from' => 'bed_service'
+                );
+                $this->finance_model->insertPayment($data);
+                $inserted_id = $this->db->insert_id('payment');
+                if (!empty($previous_payment_ids)) {
+                    $new_payment_id = $previous_payment_ids . ',' . $inserted_id;
+                } else {
+                    $new_payment_id = $inserted_id;
+                }
+                $data = array('payment_id' => $new_payment_id);
+                $this->bed_model->updateServices($service_list->id, $data);
+                $arr['date'] = date('d');
+                $arr['message'] = array('message' => lang('invoice') . ' ' . lang('generated'), 'title' => lang('invoice') . ' ' . lang('generated'));
+            } else {
+                $arr['message'] = array('message' => lang('no_new_service_add'), 'title' => lang('no_new_service_add'));
+            }
+        } else {
+            $arr['message'] = array('message' => lang('no_new_service_add'), 'title' => lang('no_new_service_add'));
+        }
+
+        echo json_encode($arr);
     }
 
 }

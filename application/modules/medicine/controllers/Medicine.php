@@ -22,7 +22,7 @@ class Medicine extends MX_Controller {
             $permission_access_group = $query->permission_access;
             $this->permission_access_group_explode = explode('***', $permission_access_group);
         }
-         if ($this->ion_auth->in_group(array( 'Accountant', 'Receptionist', 'Nurse', 'Laboratorist', 'Patient'))) {
+         if ($this->ion_auth->in_group(array( 'Accountant', 'Receptionist', 'Laboratorist', 'Patient'))) {
             
             redirect('home/permission');
         }

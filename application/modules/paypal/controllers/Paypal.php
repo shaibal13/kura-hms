@@ -44,8 +44,8 @@ class Paypal extends MX_Controller {
                         'currency' => $currency,
                         'card' => $formData
                     ])->send();
-            
-        
+
+
             // Process response
             if ($response->isSuccessful()) {
 
@@ -69,6 +69,32 @@ class Paypal extends MX_Controller {
 
                     $this->session->set_flashdata('feedback', lang('payment_successful'));
                     redirect("finance/invoice?id=" . $data['payment_id']);
+                } elseif ($data['from'] == 'case_list' || $data['from'] == 'case_list_history') {
+                    $data1 = array(
+                        'date' => $date,
+                        'patient' => $data['patient'],
+                        'deposited_amount' => $data['deposited_amount'],
+                        'payment_id' => $data['payment_id'],
+                        'amount_received_id' => $data['payment_id'] . '.' . 'gp',
+                        'gateway' => 'PayPal',
+                        'deposit_type' => 'Card',
+                        'user' => $this->ion_auth->get_user_id(),
+                        'payment_from' => 'case'
+                    );
+                    $this->finance_model->insertDeposit($data1);
+
+                    $data_payment = array('status' => 'paid', 'amount_received' => $data['deposited_amount'], 'deposit_type' => 'Card');
+                    $this->finance_model->updatePayment($data['payment_id'], $data_payment);
+                    $caselist = $this->finance_model->getPaymentById($data['payment_id']);
+                    $data_case_status = array('payment_status' => 'paid');
+                    $this->patient_model->updateMedicalHistory($caselist->case_id, $data_case_status);
+                    $this->session->set_flashdata('feedback', lang('payment_successful'));
+                    if ($data['from'] == 'case_list') {
+                        redirect('patient/caseList');
+                    } else {
+                        redirect('patient/medicalHistory?id=' . $data['patient']);
+                    }
+                    
                 } elseif ($data['from'] == '10' || $data['from'] == 'my_today' || $data['from'] == 'upcoming' || $data['from'] == 'med_his' || $data['from'] == 'request' || $data['from'] == 'frontend') {
 
                     $data1 = array(
@@ -84,7 +110,7 @@ class Paypal extends MX_Controller {
                     );
                     $this->finance_model->insertDeposit($data1);
 
-                    $data_payment = array('amount_received' => $data['deposited_amount'], 'deposit_type' => 'Card','date'=> time(),'date_string'=>date('d-m-y',time()));
+                    $data_payment = array('amount_received' => $data['deposited_amount'], 'deposit_type' => 'Card', 'date' => time(), 'date_string' => date('d-m-y', time()));
                     $this->finance_model->updatePayment($data['payment_id'], $data_payment);
                     $appointment_id = $this->finance_model->getPaymentById($data['payment_id'])->appointment_id;
                     $appointment_details = $this->appointment_model->getAppointmentById($appointment_id);
@@ -108,7 +134,7 @@ class Paypal extends MX_Controller {
                     } else {
                         redirect("appointment");
                     }
-                }else {
+                } else {
                     $date = time();
                     $data1 = array('patient' => $data['patient'],
                         'date' => $date,
@@ -117,7 +143,8 @@ class Paypal extends MX_Controller {
                         'deposit_type' => 'Card',
                         'gateway' => 'PayPal',
                         'user' => $this->ion_auth->get_user_id(),
-                        'payment_from' => 'payment'
+                        'payment_from' => 'payment',
+                         'remarks' => $data['remarks']
                     );
                     $this->finance_model->insertDeposit($data1);
                     $this->session->set_flashdata('feedback', lang('payment_successful'));
@@ -135,8 +162,29 @@ class Paypal extends MX_Controller {
                 if ($data['from'] == 'pos') {
                     $this->session->set_flashdata('feedback', lang('transaction_failed'));
                     redirect("finance/invoice?id=" . $data['payment_id']);
+                } elseif ($data['from'] == 'case_list' || $data['from'] == 'case_list_history') {
+                    if ($data['from'] == 'case_list') {
+                        redirect('patient/caseList');
+                    } elseif ($data['from'] == 'case_list_history') {
+                        redirect('patient/medicalHistory?id=' . $data['patient']);
+                    }
+                } elseif ($data['from'] == '10' || $data['from'] == 'my_today' || $data['from'] == 'upcoming' || $data['from'] == 'med_his' || $data['from'] == 'request' || $data['from'] == 'frontend') {
+                    if ($data['from'] == 'my_today') {
+                        redirect('appointment/todays');
+                    } elseif ($data['from'] == 'upcoming') {
+                        redirect('appointment/upcoming');
+                    } elseif ($data['from'] == 'med_his') {
+                        redirect("patient/medicalHistory?id=" . $data['patient']);
+                    } elseif ($data['from'] == 'request') {
+                        redirect("appointment/request");
+                    } elseif ($data['from'] == 'frontend') {
+                        redirect("frontend");
+                    } else {
+                        redirect("appointment");
+                    }
                 } else {
                     $this->session->set_flashdata('feedback', lang('transaction_failed'));
+
                     if ($this->ion_auth->in_group(array('Patient'))) {
                         redirect('patient/myPaymentHistory');
                     } else {

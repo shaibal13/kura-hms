@@ -151,10 +151,10 @@
 
                                         <label for="exampleInputEmail1" style="margin-right: 20px;"><?php echo lang('transferred_from'); ?>:</label>
                                         <textarea name="transferred_from" class='form-control'<?php
-                                                      if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
-                                                          echo 'readonly';
-                                                      }
-                                                      ?>> <?php
+                                        if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
+                                            echo 'readonly';
+                                        }
+                                        ?>> <?php
                                                       if (!empty($allotment->transferred_from)) {
                                                           echo $allotment->transferred_from;
                                                       }
@@ -165,10 +165,10 @@
 
                                         <label for="exampleInputEmail1"><?php echo lang('diagnoza_a_shtrimit'); ?>:</label>
                                         <textarea name="diagnoza_a_shtrimit" class='form-control'<?php
-                                                      if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
-                                                          echo 'readonly';
-                                                      }
-                                                      ?>><?php
+                                        if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
+                                            echo 'readonly';
+                                        }
+                                        ?>><?php
                                                       if (!empty($allotment->diagnoza_a_shtrimit)) {
                                                           echo $allotment->diagnoza_a_shtrimit;
                                                       }
@@ -185,10 +185,10 @@
 
                                         <label for="exampleInputEmail1"><?php echo lang('diagnosis'); ?>:</label>
                                         <textarea name="diagnosis" class='form-control'<?php
-                                                      if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
-                                                          echo 'readonly';
-                                                      }
-                                                      ?>><?php
+                                        if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
+                                            echo 'readonly';
+                                        }
+                                        ?>><?php
                                                       if (!empty($allotment->diagnosis)) {
                                                           echo $allotment->diagnosis;
                                                       }
@@ -199,42 +199,42 @@
 
                                         <label for="exampleInputEmail1"><?php echo lang('other_illnesses'); ?>:</label>
                                         <textarea name="other_illnesses" class='form-control'<?php
-                                                  if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
-                                                      echo 'readonly';
-                                                  }
-                                                      ?>><?php
-                                        if (!empty($allotment->other_illnesses)) {
-                                            echo $allotment->other_illnesses;
+                                        if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
+                                            echo 'readonly';
                                         }
-                                        ?>  </textarea>
+                                        ?>><?php
+                                                      if (!empty($allotment->other_illnesses)) {
+                                                          echo $allotment->other_illnesses;
+                                                      }
+                                                      ?>  </textarea>
 
                                     </div>
                                     <div class="form-group col-md-12">
 
                                         <label for="exampleInputEmail1"><?php echo lang('anamneza'); ?>:</label>
                                         <textarea name="anamneza" class='form-control'<?php
-                                                      if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
-                                                          echo 'readonly';
-                                                      }
+                                        if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
+                                            echo 'readonly';
+                                        }
                                         ?>><?php
-                                            if (!empty($allotment->anamneza)) {
-                                                echo $allotment->anamneza;
-                                            }
-                                        ?> </textarea>
+                                                      if (!empty($allotment->anamneza)) {
+                                                          echo $allotment->anamneza;
+                                                      }
+                                                      ?> </textarea>
 
                                     </div>
                                     <div class="form-group col-md-12">
                                         <label for="exampleInputEmail1"><?php echo lang('blood_group'); ?></label>
                                         <select class="form-control m-bot15" id="blood_group" name="blood_group" value=''> 
-<?php foreach ($blood_group as $blood_group) {
-    ?>
+                                            <?php foreach ($blood_group as $blood_group) {
+                                                ?>
 
                                                 <option value="<?php echo $blood_group->id; ?>" <?php
-    if ($blood_group->id == $allotment->blood_group) {
-        echo 'selected';
-    }
-    ?>><?php echo $blood_group->group; ?> </option>
-                                    <?php } ?>
+                                                if ($blood_group->id == $allotment->blood_group) {
+                                                    echo 'selected';
+                                                }
+                                                ?>><?php echo $blood_group->group; ?> </option>
+                                                    <?php } ?>
                                         </select>
                                     </div>
                                     <div class="form-group col-md-12">
@@ -253,13 +253,13 @@
                                         <div class="col-md-6">
 
                                         </div>
-<?php if (empty($allotment->d_time) || $this->ion_auth->in_group(array('admin'))) { ?> 
+                                        <?php if (empty($allotment->d_time) || $this->ion_auth->in_group(array('admin'))) { ?> 
                                             <div class="col-md-6">
                                                 <button style="background: #7a2828;" type="submit" name="submit" class="btn btn-info pull-right" onclick="history.back()"><?php echo lang('exit'); ?></button>
                                                 <button style="margin-right: 7px;" type="submit" name="submit2" class="btn btn-info pull-right" ><?php echo lang('submit'); ?></button>
 
                                             </div>
-<?php } ?> 
+                                        <?php } ?> 
                                     </div>
 
                                 </form>
@@ -287,10 +287,10 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-<?php
-$i = 0;
-foreach ($daily_progress as $daily) {
-    ?>
+                                            <?php
+                                            $i = 0;
+                                            foreach ($daily_progress as $daily) {
+                                                ?>
                                                 <tr id="<?php echo $daily->id; ?>">
 
 
@@ -305,7 +305,7 @@ foreach ($daily_progress as $daily) {
                                                     </td>
 
                                                 </tr>
-<?php } ?>
+                                            <?php } ?>
                                         </tbody>
                                     </table>
 
@@ -342,27 +342,33 @@ foreach ($daily_progress as $daily) {
 
                                             <label for="exampleInputEmail1" style="margin-right: 20px;"><?php echo lang('description'); ?>:</label>
                                             <textarea name="description" class='form-control'<?php
-                                        if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
-                                            echo 'readonly';
-                                        }
-                                        ?>> </textarea>
+                                            if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
+                                                echo 'readonly';
+                                            }
+                                            ?>> </textarea>
 
                                         </div>
                                         <input type="hidden" name="alloted_bed_id" value="<?php echo $allotment->id; ?>">
                                         <div id="daily_id"> <input type="hidden" name="daily_progress_id" value=""></div>
-<?php if (empty($allotment->d_time) || $this->ion_auth->in_group(array('admin'))) { ?> 
+                                        <?php if (empty($allotment->d_time) || $this->ion_auth->in_group(array('admin'))) { ?> 
                                             <div class="form-group col-md-12">
                                                 <button style="margin-right: 7px;" type="submit" name="submit" class="btn btn-info pull-right" ><?php echo lang('save'); ?></button>
                                             </div>
-<?php } ?>
+                                        <?php } ?>
                                     </form>
                                 </div>
 
                             </div>
                         </div>
+
                         <div id="medicines" class="tab-pane"> 
                             <div class="">
+                                <div class="col-md-12 pull-right">
 
+                                    <button style="display: block;" id="save_button" type="submit" name="submit" class="btn btn-xs btn-info pull-right" ><i class="fa fa-save"></i> <?php echo lang('save'); ?></button>
+
+                                </div>
+                                <br>
                                 <div class="adv-table editable-table ">
                                     <table style="width: 100% !important;" class="table table-striped table-hover table-bordered" id="editable-table1" >
                                         <thead>
@@ -374,7 +380,7 @@ foreach ($daily_progress as $daily) {
                                                 <th><?php echo lang('sales'); ?> <?php lang('price'); ?></th>
                                                 <th><?php echo lang('quantity'); ?></th>
                                                 <th><?php echo lang('total'); ?></th>
-<?php if (empty($allotment->d_time) || $this->ion_auth->in_group(array('admin'))) { ?>
+                                                <?php if (empty($allotment->d_time) || $this->ion_auth->in_group(array('admin'))) { ?>
                                                     <th class="no-print"><?php echo lang('options'); ?></th>
                                                 <?php } ?>
                                             </tr>
@@ -388,15 +394,15 @@ foreach ($daily_progress as $daily) {
                                                     <td><?php echo $settings->currency . $medicine->s_price; ?></td>
                                                     <td><?php echo $medicine->quantity; ?></td>
                                                     <td><?php echo $settings->currency . $medicine->total; ?></td>
-    <?php if (empty($allotment->d_time) || $this->ion_auth->in_group(array('admin'))) { ?>
-                                                        <td class="no-print"><button type='button' class='btn btn-danger btn-xs btn_width delete_medicine' title='<?php echo lang('delete'); ?>' data-toggle='' data-id="<?php echo $medicine->id; ?>"><i class='fa fa-trash'></i></button></td>
-    <?php } ?>
+                                                    <?php if ((empty($allotment->d_time)  && empty($medicine->payment_id))|| $this->ion_auth->in_group(array('admin'))) { ?>
+                                                    <td class="no-print" id="delete-<?php echo $medicine->id; ?>"><button type='button' class='btn btn-danger btn-xs btn_width delete_medicine' title='<?php echo lang('delete'); ?>' data-toggle='' data-id="<?php echo $medicine->id; ?>"><i class='fa fa-trash'></i></button></td>
+                                                    <?php } ?>
                                                 </tr>
-<?php } ?>
+                                            <?php } ?>
                                         </tbody>
                                     </table>
                                 </div>
-<?php if (empty($allotment->d_time) || $this->ion_auth->in_group(array('admin'))) { ?> 
+                                <?php if (empty($allotment->d_time) || $this->ion_auth->in_group(array('admin'))) { ?> 
                                     <div>
                                         <label>---------------------------------------------------------------------------------------<?php echo "Select Medicine" ?>-----------------------------------------------------------------------</label>
                                         <form role="form" action="" id="editMedicine"class="clearfix" method="post" enctype="multipart/form-data">                             
@@ -429,274 +435,284 @@ foreach ($daily_progress as $daily) {
                                                            width: 283%;border: 1px solid;" class="input-md" type="text" id="total" name="total" value="" placeholder="<?php echo lang('total'); ?>" readonly="">
                                                 </div>
                                                 <input type="hidden" id="alloted" name="alloted_bed_id" value="<?php
-                                if (!empty($allotment->id)) {
-                                    echo $allotment->id;
-                                }
-                                ?>">
+                                                if (!empty($allotment->id)) {
+                                                    echo $allotment->id;
+                                                }
+                                                ?>">
                                                 <div class="col-md-2">
 
                                                     <button style="display: block;" type="submit" name="submit" class="btn btn-xs btn-info pull-right" ><i class="fa fa-save"></i></button>
 
                                                 </div>
-                                      
+
+                                            </div>
+                                        </form>
                                     </div>
-                                              </form>
-                                </div>
-<?php } ?>
+                                <?php } ?>
+                            </div>
                         </div>
-                    </div>
-                    <div id="services" class="tab-pane" > 
-                        <div class="">
-                            <div class="adv-table editable-table ">
-                                <table style="width: 100% !important;" class="table table-striped table-hover table-bordered" id="editable-table2">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 20%;"><?php echo lang('service'); ?></th>
-                                            <th style="width: 20%;"><?php echo lang('date'); ?></th>
-                                            <th style="width: 20%;"><?php echo lang('nurse'); ?></th>
-                                            <th style="width: 10%;"><?php echo lang('price'); ?></th>
-                                            <th style="width: 10%;"><?php echo lang('quantity'); ?></th>
-                                            <th style="width: 10%;"><?php echo lang('total'); ?></th>
-                                        <?php if (empty($allotment->d_time) || $this->ion_auth->in_group(array('admin'))) { ?>
-                                                <th style="width: 10%;" class="no-print"><?php echo lang('options'); ?></th>
-                                        <?php } ?>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="paservice_table">
-                                        <?php
-                                        if(!empty($daily_service)) {
-                                        foreach ($daily_service as $service) {
-                                            $price = explode("**", $service->price);
+                        <div id="services" class="tab-pane" > 
+                            <div class="">
+                                <div class="col-md-12 pull-right">
 
-                                            $service_update = explode("**", $service->service);
-                                            //  print_r($price);
-                                            // die();
-                                            $array = array_combine($service, $price);
-                                            $length = sizeof($price);
-                                            $length1 = sizeof($service_update);
-                                            if ($length == $length1) {
-                                                $i = 0;
-                                                for ($i = 0; $i < $length; $i++) {
-                                                    $servicename = $this->db->get_where('pservice', array('id' => $service_update[$i]))->row()->name;
+                                    <button style="display: block;" id="save_button_service" type="submit" name="submit" class="btn btn-xs btn-info pull-right" ><i class="fa fa-save"></i> <?php echo lang('save'); ?></button>
 
-                                                    if (!empty($service->nurse)) {
-                                                        $nursename = $this->db->get_where('nurse', array('id' => $service->nurse))->row()->name;
-                                                    } else {
-                                                        $nursename = " ";
+                                </div> 
+                                <div class="adv-table editable-table ">
+                                    <table style="width: 100% !important;" class="table table-striped table-hover table-bordered" id="editable-table2">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 20%;"><?php echo lang('service'); ?></th>
+                                                <th style="width: 20%;"><?php echo lang('date'); ?></th>
+                                                <th style="width: 20%;"><?php echo lang('nurse'); ?></th>
+                                                <th style="width: 10%;"><?php echo lang('price'); ?></th>
+                                                <th style="width: 10%;"><?php echo lang('quantity'); ?></th>
+                                                <th style="width: 10%;"><?php echo lang('total'); ?></th>
+                                                <?php if (empty($allotment->d_time) || $this->ion_auth->in_group(array('admin'))) { ?>
+                                                    <th style="width: 10%;" class="no-print"><?php echo lang('options'); ?></th>
+                                                <?php } ?>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="paservice_table">
+                                            <?php
+                                            if (!empty($daily_service)) {
+                                                foreach ($daily_service as $service) {
+                                                    $price = explode("**", $service->price);
+
+                                                    $service_update = explode("**", $service->service);
+                                                    //  print_r($price);
+                                                    // die();
+                                                    
+                                                    $array = array_combine($service, $price);
+                                                    $length = sizeof($price);
+                                                    $length1 = sizeof($service_update);
+                                                    if ($length == $length1) {
+                                                        $i = 0;
+                                                        for ($i = 0; $i < $length; $i++) {
+                                                            $servicename = $this->db->get_where('pservice', array('id' => $service_update[$i]))->row();
+
+                                                            if (!empty($service->nurse)) {
+                                                                $nursename = $this->db->get_where('nurse', array('id' => $service->nurse))->row()->name;
+                                                            } else {
+                                                                $nursename = " ";
+                                                            }
+                                                            ?>
+                                                            <tr id="<?php echo $service->date; ?>-<?php echo $service_update[$i]; ?>">
+                                                                <td><?php echo $servicename->name; ?></td>
+                                                                <td><?php echo $service->date; ?></td>
+                                                                <td><?php echo $nursename; ?></td>
+                                                                <td><?php echo $settings->currency; ?><?php echo $price[$i]; ?></td>
+                                                                <td><?php echo "1" ?></td>
+                                                                <td><?php echo $settings->currency; ?><?php echo $price[$i] * 1; ?></td>
+                                                                <?php if (empty($allotment->d_time) || $this->ion_auth->in_group(array('admin'))) { ?>
+
+
+                                                                <td class="no-print" id="delete-service-<?php echo date('d').'-'.$servicename->id;?>"><button type='button' class='btn btn-danger btn-xs btn_width delete_service' title='<?php echo lang('delete'); ?>' data-toggle='' data-id="<?php echo $service->id . "**" . $service_update[$i]; ?>"><i class='fa fa-trash'></i></button></td>
+                                                                <?php } ?>
+                                                            </tr>
+
+                                                            <?php
+                                                        }
                                                     }
                                                     ?>
-                                                    <tr id="<?php echo $service->date; ?>-<?php echo $service_update[$i]; ?>">
-                                                        <td><?php echo $servicename; ?></td>
-                                                        <td><?php echo $service->date; ?></td>
-                                                        <td><?php echo $nursename; ?></td>
-                                                        <td><?php echo $settings->currency; ?><?php echo $price[$i]; ?></td>
-                                                        <td><?php echo "1" ?></td>
-                                                        <td><?php echo $settings->currency; ?><?php echo $price[$i] * 1; ?></td>
-                                                    <?php if (empty($allotment->d_time) || $this->ion_auth->in_group(array('admin'))) { ?>
 
 
-                                                            <td class="no-print"><button type='button' class='btn btn-danger btn-xs btn_width delete_service' title='<?php echo lang('delete'); ?>' data-toggle='' data-id="<?php echo $service->id . "**" . $service_update[$i]; ?>"><i class='fa fa-trash'></i></button></td>
-                                        <?php } ?>
-                                                    </tr>
+                                                    <?php
+                                                }
+                                            }
+                                            ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <?php if (empty($allotment->d_time) || $this->ion_auth->in_group(array('admin'))) { ?>
+                                    <div>
+                                        <label>--------------------------------------------------------------------------------------- <?php echo "Services" ?> -----------------------------------------------------------------------</label>
+                                        <form role="form" action="" id="editService"class="clearfix" method="post" enctype="multipart/form-data">                             
+                                            <div class="form-group col-md-12">
 
-            <?php
-        }
-    }
-    ?>
+                                                <div class="col-md-12" id="nurses_select">
+                                                    <label><?php echo lang('nurse'); ?></label>
+                                                    
+                                                    <select style=" display: block;"class="form-control m-bot15" id="nurse_service" name="nurse_service" value=''> 
 
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-12">
 
-<?php } } ?>
-                                    </tbody>
-                                </table>
+                                                    <u>  <h4><?php echo lang('services'); ?></h4></u> <br>
+                                                    <?php foreach ($pservice as $patient_service) { ?>
+                                                        <div class="col-md-4" >
+                                                            <input type="checkbox" class="pservice" id="pservice-<?php echo $patient_service->id; ?>" name="pservice[]" value="<?php echo $patient_service->id; ?>" <?php
+                                                            if (!empty($checked)) {
+                                                                if (in_array($patient_service->id, $checked)) {
+                                                                    echo 'checked';
+                                                                }
+                                                            }
+                                                            ?>>
+                                                            <label><?php echo $patient_service->name; ?></label>
+                                                        </div>
+                                                    <?php } ?>
+                                                </div>
+
+                                                <input type="hidden" id="alloted_service" name="alloted_bed_id" value="<?php
+                                                if (!empty($allotment->id)) {
+                                                    echo $allotment->id;
+                                                }
+                                                ?>">
+
+                                                </form>
+                                            </div>
+                                    </div>
+                                <?php } ?>
                             </div>
-<?php if (empty($allotment->d_time) || $this->ion_auth->in_group(array('admin'))) { ?>
-                                <div>
-                                    <label>--------------------------------------------------------------------------------------- <?php echo "Services" ?> -----------------------------------------------------------------------</label>
-                                    <form role="form" action="" id="editService"class="clearfix" method="post" enctype="multipart/form-data">                             
-                                        <div class="form-group col-md-12">
+                        </div>
 
-                                            <div class="col-md-12" id="nurses_select">
-                                                <label><?php echo lang('nurse'); ?></label>
-                                                <select style=" display: block;"class="form-control m-bot15" id="nurse_service" name="nurse_service" value=''> 
 
+
+                        <div id="checkout" class="tab-pane"> <div class="">
+
+                                <div class="adv-table editable-table ">
+                                    <div class="">
+                                        <form role="form" action="" id="editCheckout"class="clearfix" method="post" enctype="multipart/form-data">                             
+                                            <div class="form-group col-md-12">
+                                                <label for="exampleInputEmail1"><?php echo lang('checkout'); ?> <?php echo lang('date'); ?> <?php echo lang('time'); ?></label>
+                                                <div data-date="" class="input-group date form_datetime-meridian">
+                                                    <div class="input-group-btn"> 
+                                                        <button type="button" class="btn btn-info date-set"><i class="fa fa-calendar"></i></button>
+                                                        <button type="button" class="btn btn-danger date-reset"><i class="fa fa-times"></i></button>
+                                                    </div>
+                                                    <input type="text" class="form-control" readonly="" name="d_time" id="exampleInputEmail1" value='<?php
+                                                    if (!empty($bed_checkout->date)) {
+                                                        echo $bed_checkout->date;
+                                                    }
+                                                    ?>' placeholder="" required=""<?php
+                                                           if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
+                                                               echo 'readonly';
+                                                           }
+                                                           ?>>
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-md-12">
+
+                                                <label for="exampleInputEmail1" style="margin-right: 20px;"><?php echo lang('final_diagnosis'); ?>:</label>
+                                                <textarea name="final_diagnosis" class='form-control'<?php
+                                                if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
+                                                    echo 'readonly';
+                                                }
+                                                ?>><?php
+                                                              if (!empty($bed_checkout->final_diagnosis)) {
+                                                                  echo $bed_checkout->final_diagnosis;
+                                                              }
+                                                              ?> </textarea>
+
+                                            </div>
+                                            <div class="form-group col-md-12">
+
+                                                <label for="exampleInputEmail1" style="margin-right: 20px;"><?php echo lang('anatomopatologic_diagnosis'); ?>:</label>
+                                                <textarea name="anatomopatologic_diagnosis" class='form-control'<?php
+                                                if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
+                                                    echo 'readonly';
+                                                }
+                                                ?>><?php
+                                                              if (!empty($bed_checkout->anatomopatologic_diagnosis)) {
+                                                                  echo $bed_checkout->anatomopatologic_diagnosis;
+                                                              }
+                                                              ?> </textarea>
+
+                                            </div>
+                                            <div class="form-group col-md-12">
+
+                                                <label for="exampleInputEmail1" style="margin-right: 20px;"><?php echo lang('dikordance'); ?>:</label>
+                                                <textarea name="dikordance" class='form-control'<?php
+                                                if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
+                                                    echo 'readonly';
+                                                }
+                                                ?>><?php
+                                                              if (!empty($bed_checkout->dikordance)) {
+                                                                  echo $bed_checkout->dikordance;
+                                                              }
+                                                              ?> </textarea>
+
+                                            </div>
+                                            <div class="form-group col-md-12">
+
+                                                <label for="exampleInputEmail1" style="margin-right: 20px;"><?php echo lang('checkout_diagnosis'); ?>:</label>
+                                                <textarea name="checkout_diagnosis" class='form-control'<?php
+                                                if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
+                                                    echo 'readonly';
+                                                }
+                                                ?>><?php
+                                                              if (!empty($bed_checkout->checkout_diagnosis)) {
+                                                                  echo $bed_checkout->checkout_diagnosis;
+                                                              }
+                                                              ?> </textarea>
+
+                                            </div>
+                                            <div class="form-group col-md-12">
+
+                                                <label for="exampleInputEmail1" style="margin-right: 20px;"><?php echo lang('checkout_state'); ?>:</label>
+                                                <textarea name="checkout_state" class='form-control'<?php
+                                                if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
+                                                    echo 'readonly';
+                                                }
+                                                ?>><?php
+                                                              if (!empty($bed_checkout->checkout_state)) {
+                                                                  echo $bed_checkout->checkout_state;
+                                                              }
+                                                              ?> </textarea>
+
+                                            </div>
+                                            <div class="form-group col-md-12">
+
+                                                <label for="exampleInputEmail1" style="margin-right: 20px;"><?php echo lang('epicrisis'); ?>:</label>
+                                                <textarea name="epicrisis" class='form-control' <?php
+                                                if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
+                                                    echo 'readonly';
+                                                }
+                                                ?>><?php
+                                                              if (!empty($bed_checkout->epicrisis)) {
+                                                                  echo $bed_checkout->epicrisis;
+                                                              }
+                                                              ?> </textarea>
+
+                                            </div>
+                                            <div class="form-group col-md-12">
+                                                <label for="exampleInputEmail1"><?php echo lang('doctor'); ?></label>
+                                                <select class="form-control m-bot15" id="doctors_checkout" name="doctors_checkout" value=''> 
+                                                    <?php $doctor1 = $this->db->get_where('doctor', array('id' => $bed_checkout->doctor))->row();
+                                                    ?>
+                                                    <option value="<?php echo $bed_checkout->doctor; ?>"  <?php
+                                                    if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
+                                                        echo 'selected';
+                                                        echo 'disabled';
+                                                    }
+                                                    ?>><?php echo $doctor1->name . '(Id:' . $doctor1->id . ')'; ?></option>
                                                 </select>
                                             </div>
-                                            <div class="col-md-12">
-
-                                                <u>  <h4><?php echo lang('services'); ?></h4></u> <br>
-    <?php foreach ($pservice as $patient_service) { ?>
-                                                <div class="col-md-4" >
-                                                        <input type="checkbox" class="pservice" id="pservice-<?php echo $patient_service->id; ?>" name="pservice[]" value="<?php echo $patient_service->id; ?>" <?php
-                                                if (!empty($checked)) {
-                                                    if (in_array($patient_service->id, $checked)) {
-                                                        echo 'checked';
-                                                    }
-                                                }
-                                                ?>>
-                                                        <label><?php echo $patient_service->name; ?></label>
-                                                    </div>
-                                <?php } ?>
-                                            </div>
-
+                                            <input type="hidden" name="id" value="<?php
+                                            if (!empty($bed_checkout->id)) {
+                                                echo $bed_checkout->id;
+                                            }
+                                            ?>">
                                             <input type="hidden" name="alloted_bed_id" value="<?php
-                            if (!empty($allotment->id)) {
-                                echo $allotment->id;
-                            }
-                            ?>">
+                                            if (!empty($allotment->id)) {
+                                                echo $allotment->id;
+                                            }
+                                            ?>">
+                                                   <?php if (empty($allotment->d_time) || $this->ion_auth->in_group(array('admin'))) { ?>
+                                                <div class="col-md-12">
 
-                                            </form>
-                                        </div>
-                                </div>
-<?php } ?>
-                        </div>
-                    </div>
+                                                    <button style="display: block;" id="checkout_submit" type="submit" name="submit" class="btn btn-xs btn-info pull-right" ><?php echo lang('save'); ?></button>
 
-
-
-                    <div id="checkout" class="tab-pane"> <div class="">
-
-                            <div class="adv-table editable-table ">
-                                <div class="">
-                                    <form role="form" action="" id="editCheckout"class="clearfix" method="post" enctype="multipart/form-data">                             
-                                        <div class="form-group col-md-12">
-                                            <label for="exampleInputEmail1"><?php echo lang('checkout'); ?> <?php echo lang('date'); ?> <?php echo lang('time'); ?></label>
-                                            <div data-date="" class="input-group date form_datetime-meridian">
-                                                <div class="input-group-btn"> 
-                                                    <button type="button" class="btn btn-info date-set"><i class="fa fa-calendar"></i></button>
-                                                    <button type="button" class="btn btn-danger date-reset"><i class="fa fa-times"></i></button>
                                                 </div>
-                                                <input type="text" class="form-control" readonly="" name="d_time" id="exampleInputEmail1" value='<?php
-                                                       if (!empty($bed_checkout->date)) {
-                                                           echo $bed_checkout->date;
-                                                       }
-?>' placeholder="" required=""<?php
-                                            if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
-                                                echo 'readonly';
-                                            }
-                                            ?>>
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-md-12">
-
-                                            <label for="exampleInputEmail1" style="margin-right: 20px;"><?php echo lang('final_diagnosis'); ?>:</label>
-                                            <textarea name="final_diagnosis" class='form-control'<?php
-                                                          if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
-                                                              echo 'readonly';
-                                                          }
-                                            ?>><?php
-                                            if (!empty($bed_checkout->final_diagnosis)) {
-                                                echo $bed_checkout->final_diagnosis;
-                                            }
-                                            ?> </textarea>
-
-                                        </div>
-                                        <div class="form-group col-md-12">
-
-                                            <label for="exampleInputEmail1" style="margin-right: 20px;"><?php echo lang('anatomopatologic_diagnosis'); ?>:</label>
-                                            <textarea name="anatomopatologic_diagnosis" class='form-control'<?php
-                                                          if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
-                                                              echo 'readonly';
-                                                          }
-                                            ?>><?php
-                                            if (!empty($bed_checkout->anatomopatologic_diagnosis)) {
-                                                echo $bed_checkout->anatomopatologic_diagnosis;
-                                            }
-                                            ?> </textarea>
-
-                                        </div>
-                                        <div class="form-group col-md-12">
-
-                                            <label for="exampleInputEmail1" style="margin-right: 20px;"><?php echo lang('dikordance'); ?>:</label>
-                                            <textarea name="dikordance" class='form-control'<?php
-                                                          if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
-                                                              echo 'readonly';
-                                                          }
-                                            ?>><?php
-                                            if (!empty($bed_checkout->dikordance)) {
-                                                echo $bed_checkout->dikordance;
-                                            }
-                                            ?> </textarea>
-
-                                        </div>
-                                        <div class="form-group col-md-12">
-
-                                            <label for="exampleInputEmail1" style="margin-right: 20px;"><?php echo lang('checkout_diagnosis'); ?>:</label>
-                                            <textarea name="checkout_diagnosis" class='form-control'<?php
-                                                          if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
-                                                              echo 'readonly';
-                                                          }
-                                            ?>><?php
-                                            if (!empty($bed_checkout->checkout_diagnosis)) {
-                                                echo $bed_checkout->checkout_diagnosis;
-                                            }
-                                            ?> </textarea>
-
-                                        </div>
-                                        <div class="form-group col-md-12">
-
-                                            <label for="exampleInputEmail1" style="margin-right: 20px;"><?php echo lang('checkout_state'); ?>:</label>
-                                            <textarea name="checkout_state" class='form-control'<?php
-                                                          if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
-                                                              echo 'readonly';
-                                                          }
-                                            ?>><?php
-                                            if (!empty($bed_checkout->checkout_state)) {
-                                                echo $bed_checkout->checkout_state;
-                                            }
-                                            ?> </textarea>
-
-                                        </div>
-                                        <div class="form-group col-md-12">
-
-                                            <label for="exampleInputEmail1" style="margin-right: 20px;"><?php echo lang('epicrisis'); ?>:</label>
-                                            <textarea name="epicrisis" class='form-control' <?php
-                                                          if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
-                                                              echo 'readonly';
-                                                          }
-                                            ?>><?php
-                                                if (!empty($bed_checkout->epicrisis)) {
-                                                    echo $bed_checkout->epicrisis;
-                                                }
-                                                ?> </textarea>
-
-                                        </div>
-                                        <div class="form-group col-md-12">
-                                            <label for="exampleInputEmail1"><?php echo lang('doctor'); ?></label>
-                                            <select class="form-control m-bot15" id="doctors_checkout" name="doctors_checkout" value=''> 
-                                        <?php $doctor1 = $this->db->get_where('doctor', array('id' => $bed_checkout->doctor))->row();
-                                        ?>
-                                                <option value="<?php echo $bed_checkout->doctor; ?>"  <?php
-                                               if (!empty($allotment->d_time) && !$this->ion_auth->in_group(array('admin'))) {
-                                                   echo 'selected';
-                                                   echo 'disabled';
-                                               }
-                                        ?>><?php echo $doctor1->name . '(Id:' . $doctor1->id . ')'; ?></option>
-                                            </select>
-                                        </div>
-                                        <input type="hidden" name="id" value="<?php
-                                               if (!empty($bed_checkout->id)) {
-                                                   echo $bed_checkout->id;
-                                               }
-                                        ?>">
-                                        <input type="hidden" name="alloted_bed_id" value="<?php
-                                        if (!empty($allotment->id)) {
-                                            echo $allotment->id;
-                                        }
-                                        ?>">
-<?php if (empty($allotment->d_time) || $this->ion_auth->in_group(array('admin'))) { ?>
-                                            <div class="col-md-12">
-
-                                                <button style="display: block;" id="checkout_submit" type="submit" name="submit" class="btn btn-xs btn-info pull-right" ><?php echo lang('save'); ?></button>
-
-                                            </div>
-<?php } ?>
-                                    </form>
+                                            <?php } ?>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                </div>
+                    </div>
                 </div>
             </section>
 
@@ -1085,8 +1101,8 @@ if ($this->ion_auth->in_group('Doctor')) {
                                                                 var data = jQuery.parseJSON(response);
                                                                 toastr.success(data.message.message);
                                                                 var row_data = "";
-                                                                row_data += "<tr class=''id='" + data.info.id + "'><td>" + data.info.date + "</td><td>" + data.info.generic_name + "</td><td>" + data.info.medicine_name + "</td><td>" + data.info.s_price + "</td><td>" + data.info.quantity + "</td><td>" + data.info.total + "</td><td class='no-print'> <button type='button' class='btn btn-danger btn-xs btn_width delete_medicine' title='<?php echo lang('delete'); ?>' data-toggle='' data-id=" + data.info.id + "><i class='fa fa-trash'></i></button></td></tr>";
-                                                                $("#medicine_table").append(row_data);
+                                                                row_data += "<tr class=''id='" + data.info.id + "'><td>" + data.info.date + "</td><td>" + data.info.generic_name + "</td><td>" + data.info.medicine_name + "</td><td>" + data.info.s_price + "</td><td>" + data.info.quantity + "</td><td>" + data.info.total + "</td><td class='no-print' id='delete-" + data.info.id + "'> <button type='button' class='btn btn-danger btn-xs btn_width delete_medicine' title='<?php echo lang('delete'); ?>' data-toggle='' data-id=" + data.info.id + "><i class='fa fa-trash'></i></button></td></tr>";
+                                                                $("#medicine_table").after(row_data);
                                                                 $(':input', '#editMedicine')
                                                                         .not(':button, :submit, :reset, :hidden')
                                                                         .val('')
@@ -1142,47 +1158,47 @@ if ($this->ion_auth->in_group('Doctor')) {
 
 
     $(document).ready(function () {
-        $('#editable-table1').DataTable({
-            responsive: true,
-            //   dom: 'lfrBtip',
-            "bAutoWidth": true,
-            "processing": false,
-            "serverSide": false,
-            "searchable": false,
-            scroller: {
-                loadingIndicator: true
-            },
-            dom: "<'row'<'col-md-3'l><'col-sm-5 text-center'><'col-sm-4'>>" +
-                    "<'row'<'col-md-12'tr>>" +
-                    "<'row'<'col-sm-5'><'col-sm-7'p>>",
-            buttons: [
-                {extend: 'copyHtml5', exportOptions: {columns: [0, 1, 2,3,4,5,6], }},
-                {extend: 'excelHtml5', exportOptions: {columns: [0, 1, 2,3,4,5,6], }},
-                {extend: 'csvHtml5', exportOptions: {columns: [0, 1, 2,3,4,5,6], }},
-                {extend: 'pdfHtml5', exportOptions: {columns: [0, 1, 2,3,4,5,6], }},
-                {extend: 'print', exportOptions: {columns: [0, 1, 2,3,4,5,6], }},
-            ],
-            "columns": [
-                {"width": "20%"},
-                {"width": "20%"},
-                {"width": "20%"},
-                {"width": "20%"},
-                {"width": "20%"},
-                {"width": "20%"},
-                {"width": "20%"},
-            ],
-            aLengthMenu: [
-                [10, -1],
-                [10, "All"]
-            ],
-            iDisplayLength: 10,
-            "order": [[0, "desc"]],
-            "language": {
-                "lengthMenu": "_MENU_",
-                search: "_INPUT_",
-                "url": "common/assets/DataTables/languages/<?php echo $this->language; ?>.json"
-            }
-        });
+        /*  $('#editable-table1').DataTable({
+         responsive: true,
+         //   dom: 'lfrBtip',
+         "bAutoWidth": true,
+         "processing": false,
+         "serverSide": false,
+         "searchable": false,
+         scroller: {
+         loadingIndicator: true
+         },
+         dom: "<'row'<'col-md-3'l><'col-sm-5 text-center'><'col-sm-4'>>" +
+         "<'row'<'col-md-12'tr>>" +
+         "<'row'<'col-sm-5'><'col-sm-7'p>>",
+         buttons: [
+         {extend: 'copyHtml5', exportOptions: {columns: [0, 1, 2,3,4,5,6], }},
+         {extend: 'excelHtml5', exportOptions: {columns: [0, 1, 2,3,4,5,6], }},
+         {extend: 'csvHtml5', exportOptions: {columns: [0, 1, 2,3,4,5,6], }},
+         {extend: 'pdfHtml5', exportOptions: {columns: [0, 1, 2,3,4,5,6], }},
+         {extend: 'print', exportOptions: {columns: [0, 1, 2,3,4,5,6], }},
+         ],
+         "columns": [
+         {"width": "20%"},
+         {"width": "20%"},
+         {"width": "20%"},
+         {"width": "20%"},
+         {"width": "20%"},
+         {"width": "20%"},
+         {"width": "20%"},
+         ],
+         aLengthMenu: [
+         [10, -1],
+         [10, "All"]
+         ],
+         iDisplayLength: 10,
+         "order": [[0, "desc"]],
+         "language": {
+         "lengthMenu": "_MENU_",
+         search: "_INPUT_",
+         "url": "common/assets/DataTables/languages/<?php //echo $this->language;       ?>.json"
+         }
+         });*/
         $('#editable-table2').DataTable({
             responsive: true,
             //   dom: 'lfrBtip',
@@ -1247,5 +1263,55 @@ if ($this->ion_auth->in_group('Doctor')) {
     }
     );
 </script>
+<script>
+    $(document).ready(function () {
+        $('#save_button').click(function () {
+            var id = $('#alloted').val();
+            $.ajax({
+                type: "GET",
+                url: "bed/createMedicineInvoice?id=" + id,
+                data: '',
+                dataType: 'json',
+                success: function (response) {
+                    //  var data = jQuery.parseJSON(response);
+                    var ids=response.ids;
+                    var ids_split=ids.split(",");
+                    toastr.success(response.message.message);
+<?php if (!$this->ion_auth->in_group(array('admin'))) { ?>
+                        $.each(ids_split, function (index, value) {
+                          
+                            $('#delete-'+value).remove();;
+                        });
+<?php } ?>
+                }
+            }) 
+        })
+    })
+</script>
 
+<script>
+    $(document).ready(function () {
+        $('#save_button_service').click(function () {
+            var id = $('#alloted_service').val();
+            $.ajax({
+                type: "GET",
+                url: "bed/createServiceInvoice?id=" + id,
+                data: '',
+                dataType: 'json',
+                success: function (response) {
+                    //  var data = jQuery.parseJSON(response);
+                    var ids=response.ids;
+                    var ids_split=ids.split(",");
+                    toastr.success(response.message.message);
+<?php if (!$this->ion_auth->in_group(array('admin'))) { ?>
+                        $.each(ids_split, function (index, value) {
+                          
+                            $('#delete-service-'+response.date+'-'+value).remove();;
+                        });
+<?php } ?>
+                }
+            }) 
+        })
+    })
+</script>
 

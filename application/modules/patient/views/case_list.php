@@ -33,49 +33,11 @@
             }
         }
         ?>
-        <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Nurse', 'Doctor', 'Laboratorist', 'Receptionist')) || $permis == 'ok') { ?>
-            <section class="col-md-5">
-                <header class="panel-heading">
-                    <?php echo lang('add'); ?> <?php echo lang('case'); ?> 
-                </header> 
-
-                <div class=""> 
-                    <form role="form" action="patient/addMedicalHistory" class="clearfix" method="post" enctype="multipart/form-data">
-                        <div class="form-group col-md-6">
-                            <label for="exampleInputEmail1"><?php echo lang('date'); ?></label>
-                            <input type="text" class="form-control form-control-inline input-medium default-date-picker" name="date" id="exampleInputEmail1" value='' placeholder="" readonly="" required="">
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="exampleInputEmail1"><?php echo lang('patient'); ?></label>
-                            <select class="form-control m-bot15" id="patientchoose" name="patient_id" value=''>
-
-                            </select>
-                        </div>
-                        <div class="form-group col-md-12">
-                            <label for="exampleInputEmail1"><?php echo lang('title'); ?></label>
-                            <input type="text" class="form-control form-control-inline input-medium" name="title" id="exampleInputEmail1" value='' placeholder="">
-                        </div>
-                        <div class="form-group col-md-12">
-                            <label class=""><?php echo lang('case'); ?></label>
-                            <textarea class="form-control ckeditor" name="description" value="" rows="70" cols="70"></textarea>
-                        </div>
-                        <input type="hidden" name="redirect" value='patient/caseList'>
-                        <section class="col-md-12">
-                            <button type="submit" name="submit" class="btn btn-info submit_button pull-right"><?php echo lang('submit'); ?></button>
-                        </section>
-                    </form>
-                </div>
-
-            </section>
-
-        <?php } ?>
-        <?php// if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Nurse', 'Doctor', 'Laboratorist', 'Receptionist')) || $permis == 'ok') { ?>
-          <!--  <section class="col-md-7">--><?php// } else { ?>
                 <section class="col-md-12">
-                <?php //} ?>
+                
                 <header class="panel-heading">
                     <?php echo lang('all'); ?> <?php echo lang('case'); ?>
-                     <  <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Nurse', 'Doctor', 'Laboratorist', 'Receptionist')) || $permis == 'ok') { ?>
+                      <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Nurse', 'Doctor', 'Laboratorist', 'Receptionist')) || $permis == 'ok') { ?>
                     <div class="col-md-4 no-print pull-right"> 
                         <a href="patient/addcaseListView">
                             <div class="btn-group pull-right">
@@ -96,6 +58,8 @@
                                     <th style="width: 10%"><?php echo lang('date'); ?></th>
                                     <th style="width: 15%"><?php echo lang('patient'); ?></th>
                                     <th style="width: 15%"><?php echo lang('case'); ?> <?php echo lang('title'); ?></th>
+                                     <th style="width: 15%"><?php echo lang('description'); ?> </th>
+                                      <th style="width: 15%"><?php echo lang('status'); ?> </th>
                                     <th style="width: 10%;" class="no-print"><?php echo lang('options'); ?></th>
                                 </tr>
                             </thead>
