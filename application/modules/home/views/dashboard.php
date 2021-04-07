@@ -741,7 +741,7 @@
                                         <li><a  href="finance/addPaymentView"><i class="fa fa-plus-circle"></i><?php echo lang('add_payment'); ?></a></li>
 
                                     <?php } ?>
-                                    <li><a  href="finance/paymentCategory"><i class="fa fa-edit"></i><?php echo lang('payment_procedures'); ?></a></li>
+                                   
                                     <li><a  href="finance/expense"><i class="fa fa-money-check"></i><?php echo lang('expense'); ?></a></li>
                                     <?php if ($this->ion_auth->in_group('admin') || $permis == 'ok') { ?>
 
