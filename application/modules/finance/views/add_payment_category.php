@@ -28,6 +28,32 @@
                                 }
                                 ?>' placeholder="">    
                             </div> 
+                            <div class="form-group"> 
+                                <label for="exampleInputEmail1"><?php echo lang('code'); ?></label>
+                                <input type="text" class="form-control" name="code" id="exampleInputEmail1" value='<?php
+                                if (!empty($setval)) {
+                                    echo set_value('code');
+                                }
+                                if (!empty($category->code)) {
+                                    echo $category->code;
+                                }
+                                ?>' placeholder="">    
+                            </div> 
+                             <div class="form-group">
+                                <label for="exampleInputEmail1"><?php echo lang('department'); ?></label>
+                                <select class="form-control m-bot15 js-example-basic-single" name="department" value=''>  
+                                    <?php foreach ($departments as $department) { ?>
+                                        <option value="<?php echo $department->id; ?>" <?php
+                                        if ($department->id == $category->department) {
+                                            echo 'selected';
+                                        } if (set_value('department') == $department->id) {
+                                            echo 'selected';
+                                        }
+                                        ?> ><?php echo $department->name; ?></option>
+                                            <?php } ?>
+
+                                </select>
+                            </div>
 
                             <div class="form-group">
                                 <label for="exampleInputEmail1"><?php echo lang('description'); ?></label>
@@ -74,7 +100,7 @@
                                             echo 'selected';
                                         }
                                         ?> ><?php echo $type->name; ?></option>
-<?php } ?>
+                                            <?php } ?>
 
                                 </select>
                             </div>

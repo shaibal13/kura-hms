@@ -71,7 +71,11 @@ class Category_model extends CI_model {
         $this->db->where('id', $id);
         $this->db->delete('category');
     }
-
+ function getCategoryByStatus() {
+     $this->db->where('status','active');
+        $query = $this->db->get('category');
+        return $query->result();
+    }
 
 
 

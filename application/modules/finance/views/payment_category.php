@@ -60,6 +60,8 @@ Payment<!--sidebar end-->
                         <thead>
                             <tr>
                                 <th><?php echo lang('category'); ?> <?php echo lang('name'); ?></th>
+                                <th><?php echo lang('code'); ?></th>
+                                <th><?php echo lang('department'); ?></th>
                                 <th><?php echo lang('description'); ?></th>
                                 <th><?php echo lang('category'); ?> <?php echo lang('price'); ?> ( <?php echo $settings->currency; ?> )</th>
                                 <th><?php echo lang('doctors_commission'); ?></th>
@@ -86,30 +88,40 @@ Payment<!--sidebar end-->
                         <?php foreach ($categories as $category) { ?>
                             <tr class="">
                                 <td><?php echo $category->category; ?></td>   
+                                <td><?php echo $category->code; ?></td> 
+                                <td><?php
+                                    $department = $this->db->get_where('department', array('id' => $category->department))->row();
+                                    if (empty($department)) {
+                                        echo $category->department_name;
+                                    } else {
+                                        echo $department->name;
+                                    }
+                                    ?></td>   
                                 <td> <?php echo $category->description; ?></td>
                                 <td> <?php echo $category->c_price; ?></td>
                                 <td> <?php echo $category->d_commission; ?> %</td>
                                 <td> 
-                                    <?php $type= $this->db->get_where('category',array('id'=>$category->type))->row();
-                                    if(empty($type)){
+                                    <?php
+                                    $type = $this->db->get_where('category', array('id' => $category->type))->row();
+                                    if (empty($type)) {
                                         echo $category->type_name;
-                                    }else{
+                                    } else {
                                         echo $type->name;
                                     }
                                     ?>
                                 </td>
-                                <?php if ($this->ion_auth->in_group(array('admin', 'Accountant')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
+                                    <?php if ($this->ion_auth->in_group(array('admin', 'Accountant')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
                                     <td class="no-print">
                                         <?php if ($this->ion_auth->in_group(array('admin', 'Accountant')) || $permis == 'ok') { ?>
                                             <a class="btn btn-info btn-xs editbutton" title="<?php echo lang('edit'); ?>" href="finance/editPaymentCategory?id=<?php echo $category->id; ?>"><i class="fa fa-edit"> </i></a>
                                         <?php } ?>
                                         <?php if ($this->ion_auth->in_group(array('admin', 'Accountant')) || $permis_2 == 'ok') { ?>
                                             <a class="btn btn-info btn-xs delete_button" title="<?php echo lang('delete'); ?>" href="finance/deletePaymentCategory?id=<?php echo $category->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> </a>
-                                        <?php } ?>
+                                    <?php } ?>
                                     </td>
-                                <?php } ?>
+                            <?php } ?>
                             </tr>
-                        <?php } ?>
+<?php } ?>
                         </tbody>
                     </table>
                 </div>
@@ -130,37 +142,37 @@ Payment<!--sidebar end-->
 
 <script src="common/js/codearistos.min.js"></script>
 <script>
-                                            $(document).ready(function () {
-                                                var table = $('#editable-sample').DataTable({
-                                                    responsive: true,
+                                    $(document).ready(function () {
+                                        var table = $('#editable-sample').DataTable({
+                                            responsive: true,
 
-                                                    dom: "<'row'<'col-sm-3'l><'col-sm-5 text-center'B><'col-sm-4'f>>" +
-                                                            "<'row'<'col-sm-12'tr>>" +
-                                                            "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                                            dom: "<'row'<'col-sm-3'l><'col-sm-5 text-center'B><'col-sm-4'f>>" +
+                                                    "<'row'<'col-sm-12'tr>>" +
+                                                    "<'row'<'col-sm-5'i><'col-sm-7'p>>",
 
-                                                    buttons: [
-                                                        {extend: 'copyHtml5', exportOptions: {columns: [0, 1, 2, 3, 4], }},
-                                                        {extend: 'excelHtml5', exportOptions: {columns: [0, 1, 2, 3, 4], }},
-                                                        {extend: 'csvHtml5', exportOptions: {columns: [0, 1, 2, 3, 4], }},
-                                                        {extend: 'pdfHtml5', exportOptions: {columns: [0, 1, 2, 3, 4], }},
-                                                        {extend: 'print', exportOptions: {columns: [0, 1, 2, 3, 4], }},
-                                                    ],
-                                                    aLengthMenu: [
-                                                        [10, 25, 50, 100, -1],
-                                                        [10, 25, 50, 100, "All"]
-                                                    ],
-                                                    iDisplayLength: -1,
-                                                    "order": [[0, "desc"]],
+                                            buttons: [
+                                                {extend: 'copyHtml5', exportOptions: {columns: [0, 1, 2, 3, 4], }},
+                                                {extend: 'excelHtml5', exportOptions: {columns: [0, 1, 2, 3, 4], }},
+                                                {extend: 'csvHtml5', exportOptions: {columns: [0, 1, 2, 3, 4], }},
+                                                {extend: 'pdfHtml5', exportOptions: {columns: [0, 1, 2, 3, 4], }},
+                                                {extend: 'print', exportOptions: {columns: [0, 1, 2, 3, 4], }},
+                                            ],
+                                            aLengthMenu: [
+                                                [10, 25, 50, 100, -1],
+                                                [10, 25, 50, 100, "All"]
+                                            ],
+                                            iDisplayLength: -1,
+                                            "order": [[0, "desc"]],
 
-                                                    "language": {
-                                                        "lengthMenu": "_MENU_",
-                                                        search: "_INPUT_",
-                                                        "url": "common/assets/DataTables/languages/<?php echo $this->language; ?>.json"
-                                                    },
+                                            "language": {
+                                                "lengthMenu": "_MENU_",
+                                                search: "_INPUT_",
+                                                "url": "common/assets/DataTables/languages/<?php echo $this->language; ?>.json"
+                                            },
 
-                                                });
+                                        });
 
-                                                table.buttons().container()
-                                                        .appendTo('.custom_buttons');
-                                            });
+                                        table.buttons().container()
+                                                .appendTo('.custom_buttons');
+                                    });
 </script>

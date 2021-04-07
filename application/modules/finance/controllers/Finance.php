@@ -15,6 +15,7 @@ class Finance extends MX_Controller {
         $this->load->model('accountant/accountant_model');
         $this->load->model('receptionist/receptionist_model');
         $this->load->model('category/category_model');
+          $this->load->model('department/department_model');
         $this->load->module('sms');
 
         require APPPATH . 'third_party/stripe/stripe-php/init.php';
@@ -1015,9 +1016,10 @@ class Finance extends MX_Controller {
     }
 
     public function addPaymentCategoryView() {
-          $data['types'] = $this->category_model->getCategory();
+        $data['types'] = $this->category_model->getCategoryByStatus();
+        $data['departments']= $this->department_model->getDepartment();
         $this->load->view('home/dashboard'); // just the header file
-        $this->load->view('add_payment_category');
+        $this->load->view('add_payment_category',$data);
         $this->load->view('home/footer'); // just the header file
     }
 
@@ -1028,6 +1030,9 @@ class Finance extends MX_Controller {
         $description = $this->input->post('description');
         $c_price = $this->input->post('c_price');
         $d_commission = $this->input->post('d_commission');
+        $code = $this->input->post('code');
+        $department = $this->input->post('department');
+        $department_name= $this->department_model->getDepartmentById($department);
         if (empty($c_price)) {
             $c_price = 0;
         }
@@ -1065,8 +1070,12 @@ class Finance extends MX_Controller {
                 'type' => $type,
                 'type_name' => $type_name,
                 'c_price' => $c_price,
-                'd_commission' => $d_commission
+                'd_commission' => $d_commission,
+                'code'=>$code,
+                'department'=>$department,
+                'department_name'=>$department_name->name
             );
+           
             if (empty($id)) {
                 $this->finance_model->insertPaymentCategory($data);
                 $this->session->set_flashdata('feedback', lang('added'));
@@ -1082,6 +1091,7 @@ class Finance extends MX_Controller {
         $data = array();
         $id = $this->input->get('id');
         $data['category'] = $this->finance_model->getPaymentCategoryById($id);
+          $data['departments']= $this->department_model->getDepartment();
         $data['types'] = $this->category_model->getCategory();
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('add_payment_category', $data);
