@@ -1015,6 +1015,7 @@ class Finance extends MX_Controller {
     }
 
     public function addPaymentCategoryView() {
+          $data['types'] = $this->category_model->getCategory();
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('add_payment_category');
         $this->load->view('home/footer'); // just the header file
