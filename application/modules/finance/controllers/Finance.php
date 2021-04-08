@@ -1988,7 +1988,7 @@ class Finance extends MX_Controller {
             if (!empty($search)) {
                 $data['payments'] = $this->finance_model->getPaymentBysearch($search, $order, $dir);
             } else {
-                $data['payments'] = $this->finance_model->getPaymentWitoutSearch($order, $dir);
+                $data['payments'] = $this->finance_model->getPaymentWithoutSearch($order, $dir);
             }
         } else {
             if (!empty($search)) {
