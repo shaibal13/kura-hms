@@ -219,19 +219,19 @@
   <?php
                                             } elseif ($payment->payment_from == 'case') {
                                                 $caselist = $this->db->get_where('medical_history', array('id' => $payment->case_id))->row();
-                                                if ($payment->case_status == 'Confirmed') {
+                                              //  if ($payment->case_status == 'Confirmed') {
                                                     ?>
 
                                                     <a class="btn-xs invoicebutton" title="<?php echo lang('invoice'); ?>" style="color: #fff; width: 25%;" href="finance/invoice?id=<?php echo $payment->id; ?>"><i class="fa fa-file-invoice"></i> </a>
                                                     <?php
-                                                }
+                                               // }
                                             } elseif ($payment->payment_from == 'appointment') {
                                                 $appointment = $this->db->get_where('appointment', array('payment_id' => $payment->id))->row();
-                                                if ($appointment->status == 'Confirmed') {
+                                               // if ($appointment->status == 'Confirmed') {
                                                     ?>  
                                                     <a class="btn-xs invoicebutton" title="<?php echo lang('invoice'); ?>" style="color: #fff; width: 25%;" href="finance/invoice?id=<?php echo $payment->id; ?>"><i class="fa fa-file-invoice"></i> </a>
                                                     <?php
-                                                }
+                                               // }
                                             }
                                             ?>
                                             <?php if ($this->ion_auth->in_group(array('admin', 'Accountant')) || $permis_2 == 'ok') { ?> 
@@ -598,7 +598,7 @@
                             <label for="exampleInputEmail1"><?php echo lang('deposit_type'); ?></label>
                         </div>
                         <div class=""> 
-                            <select class="form-control m-bot15 js-example-basic-single selecttype" id="selecttype" name="deposit_type" value=''> 
+                            <select class="form-control m-bot15 js-example-basic-single selecttype1" id="selecttype1" name="deposit_type" value=''> 
                                 <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist'))) { ?>
                                     <option value="Cash"> <?php echo lang('cash'); ?> </option>
                                     <option value="Card"> <?php echo lang('card'); ?> </option>
@@ -613,7 +613,7 @@
 
 
 
-                        <div class = "card">
+                        <div class = "card1">
 
                             <hr>
                             <div class="col-md-12 payment pad_bot">
@@ -684,10 +684,10 @@
 
                     <input type="hidden" name="id" value=''>
                     <input type="hidden" name="patient" value='<?php echo $patient->id; ?>'>
-                    <div class="form-group cashsubmit payment  right-six col-md-12">
+                    <div class="form-group cashsubmit1 payment  right-six col-md-12">
                         <button type="submit" name="submit2" id="submit1" class="btn btn-info row pull-right"> <?php echo lang('submit'); ?></button>
                     </div>
-                    <div class="form-group cardsubmit  right-six col-md-12 hidden">
+                    <div class="form-group cardsubmit1  right-six col-md-12 hidden">
                         <button type="submit" name="pay_now" id="submit-btn1" class="btn btn-info row pull-right" <?php if ($settings->payment_gateway == 'Stripe') {
                             ?>onClick="stripePay1(event);"<?php }
                         ?>> <?php echo lang('submit'); ?></button>
@@ -989,11 +989,11 @@
 
 
     $(document).ready(function () {
-        var v = $("#selecttype option:selected").val()
+        var v = $("#selecttype1 option:selected").val()
         if (v == 'payu') {
-            $("#deposit-form").attr("action", 'payu/check');
+            $("#editDepositform").attr("action", 'payu/check');
         } else {
-            $("#deposit-form").attr("action", 'finance/deposit');
+            $("#editDepositform").attr("action", 'finance/deposit');
         }
     });
 
@@ -1022,7 +1022,27 @@
 
 
 </script>
+<script>
+    $(document).ready(function () {
+        $('.card1').hide();
+        $(document.body).on('change', '#selecttype1', function () {
 
+            var v = $("select.selecttype option:selected").val()
+            if (v == 'Card') {
+                $('.card1').show();
+                $('.cardsubmit1').removeClass('hidden');
+                $('.cashsubmit1').addClass('hidden');
+            } else {
+                $('.card').hide();
+                $('.cashsubmit1').removeClass('hidden');
+                $('.cardsubmit1').addClass('hidden');
+            }
+        });
+
+    });
+
+
+</script>
 
 
 <script>
@@ -1135,7 +1155,7 @@
     Stripe.setPublishableKey("<?php echo $gateway->publish; ?>");
 
 //callback to handle the response from stripe
-    function stripeResponseHandler(status, response) {
+    function stripeResponseHandler1(status, response) {
         if (response.error) {
             //enable the submit button
             $("#submit-btn1").show();
@@ -1168,7 +1188,7 @@
                 cvc: $('#cvv1').val(),
                 exp_month: arr[0],
                 exp_year: arr[1]
-            }, stripeResponseHandler);
+            }, stripeResponseHandler1);
 
             //submit from callback
             return false;

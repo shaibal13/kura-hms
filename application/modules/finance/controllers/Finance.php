@@ -15,7 +15,7 @@ class Finance extends MX_Controller {
         $this->load->model('accountant/accountant_model');
         $this->load->model('receptionist/receptionist_model');
         $this->load->model('category/category_model');
-          $this->load->model('department/department_model');
+        $this->load->model('department/department_model');
         $this->load->module('sms');
 
         require APPPATH . 'third_party/stripe/stripe-php/init.php';
@@ -1017,9 +1017,9 @@ class Finance extends MX_Controller {
 
     public function addPaymentCategoryView() {
         $data['types'] = $this->category_model->getCategoryByStatus();
-        $data['departments']= $this->department_model->getDepartment();
+        $data['departments'] = $this->department_model->getDepartment();
         $this->load->view('home/dashboard'); // just the header file
-        $this->load->view('add_payment_category',$data);
+        $this->load->view('add_payment_category', $data);
         $this->load->view('home/footer'); // just the header file
     }
 
@@ -1032,7 +1032,7 @@ class Finance extends MX_Controller {
         $d_commission = $this->input->post('d_commission');
         $code = $this->input->post('code');
         $department = $this->input->post('department');
-        $department_name= $this->department_model->getDepartmentById($department);
+        $department_name = $this->department_model->getDepartmentById($department);
         if (empty($c_price)) {
             $c_price = 0;
         }
@@ -1071,11 +1071,11 @@ class Finance extends MX_Controller {
                 'type_name' => $type_name,
                 'c_price' => $c_price,
                 'd_commission' => $d_commission,
-                'code'=>$code,
-                'department'=>$department,
-                'department_name'=>$department_name->name
+                'code' => $code,
+                'department' => $department,
+                'department_name' => $department_name->name
             );
-           
+
             if (empty($id)) {
                 $this->finance_model->insertPaymentCategory($data);
                 $this->session->set_flashdata('feedback', lang('added'));
@@ -1091,7 +1091,7 @@ class Finance extends MX_Controller {
         $data = array();
         $id = $this->input->get('id');
         $data['category'] = $this->finance_model->getPaymentCategoryById($id);
-          $data['departments']= $this->department_model->getDepartment();
+        $data['departments'] = $this->department_model->getDepartment();
         $data['types'] = $this->category_model->getCategory();
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('add_payment_category', $data);
@@ -1381,15 +1381,15 @@ class Finance extends MX_Controller {
 
         $deposited_amount = $this->input->post('deposited_amount');
         $remarks = $this->input->post('remarks');
-        
-        $payment_details= $this->finance_model->getPaymentById($payment_id);
-        if($payment_details->payment_from =='bed' || $payment_details->payment_from =='bed_service'){
-            if(empty($payment_details->remarks)){
-            $data_payment=array('remarks'=>$remarks);
-            $this->finance_model->updatePayment($payment_id,$data_payment);
+
+        $payment_details = $this->finance_model->getPaymentById($payment_id);
+        if ($payment_details->payment_from == 'bed' || $payment_details->payment_from == 'bed_service') {
+            if (empty($payment_details->remarks)) {
+                $data_payment = array('remarks' => $remarks);
+                $this->finance_model->updatePayment($payment_id, $data_payment);
             }
         }
-        
+
         $deposit_type = $this->input->post('deposit_type');
 
         if (empty($deposit_type)) {
@@ -1430,27 +1430,27 @@ class Finance extends MX_Controller {
                         $cvv = $this->input->post('cvv');
                         $cardHoldername = $this->input->post('cardholder');
                         $all_details = array(
-                        'patient' => $payment_details->patient,
-                        'date' => $payment_details->date,
-                        'amount' => $payment_details->amount,
-                        'doctor' => $payment_details->doctor_name,
-                        'discount' => $payment_details->discount,
-                        'flat_discount' => $payment_details->flat_discount,
-                        'gross_total' => $payment_details->gross_total,
-                        'status' => 'unpaid',
-                        'patient_name' => $payment_details->patient_name,
-                        'patient_phone' => $payment_details->patient_phone,
-                        'patient_address' => $payment_details->patient_address,
-                        'deposited_amount' => $deposited_amount,
-                        'payment_id' => $payment_details->id,
-                        'card_type' => $card_type,
-                        'card_number' => $card_number,
-                        'expire_date' => $expire_date,
-                        'cvv' => $cvv,
-                        'from' => 'patient_payment_details',
-                        'user' => $user,
-                        'cardholdername' => $cardHoldername,
-                        'remarks' => $remarks
+                            'patient' => $payment_details->patient,
+                            'date' => $payment_details->date,
+                            'amount' => $payment_details->amount,
+                            'doctor' => $payment_details->doctor_name,
+                            'discount' => $payment_details->discount,
+                            'flat_discount' => $payment_details->flat_discount,
+                            'gross_total' => $payment_details->gross_total,
+                            'status' => 'unpaid',
+                            'patient_name' => $payment_details->patient_name,
+                            'patient_phone' => $payment_details->patient_phone,
+                            'patient_address' => $payment_details->patient_address,
+                            'deposited_amount' => $deposited_amount,
+                            'payment_id' => $payment_details->id,
+                            'card_type' => $card_type,
+                            'card_number' => $card_number,
+                            'expire_date' => $expire_date,
+                            'cvv' => $cvv,
+                            'from' => 'patient_payment_details',
+                            'user' => $user,
+                            'cardholdername' => $cardHoldername,
+                            'remarks' => $remarks
                         );
 
                         $this->paypal->paymentPaypal($all_details);
@@ -1475,7 +1475,7 @@ class Finance extends MX_Controller {
                             'card_number' => $card_number,
                             'expire_date' => $expire_date,
                             'cvv' => $cvv,
-                             'remarks' => $remarks
+                            'remarks' => $remarks
                                 //  'email'=>$patient_email
                         );
 
@@ -1506,7 +1506,7 @@ class Finance extends MX_Controller {
                                 'gateway' => 'Stripe',
                                 'deposit_type' => 'Card',
                                 'user' => $user,
-                                 'remarks' => $remarks
+                                'remarks' => $remarks
                             );
                             $this->finance_model->insertDeposit($data1);
                             $this->session->set_flashdata('feedback', 'Added');
@@ -1560,7 +1560,7 @@ class Finance extends MX_Controller {
                                 'gateway' => '2Checkout',
                                 'deposit_type' => $deposit_type,
                                 'user' => $user,
-                                 'remarks' => $remarks
+                                'remarks' => $remarks
                             );
                             $this->finance_model->insertDeposit($data1);
                             $this->session->set_flashdata('feedback', lang('added'));
@@ -1584,7 +1584,7 @@ class Finance extends MX_Controller {
                             'insertid' => $payment_id,
                             'channel_id' => 'WEB',
                             'industry_type' => 'Retail',
-                             'remarks' => $remarks
+                            'remarks' => $remarks
                                 //  'email'=>$patient_email
                         );
                         //  $this->load->module('paytm/pgRedirects');
@@ -1598,7 +1598,7 @@ class Finance extends MX_Controller {
                         $ref = date('Y') . '-' . rand() . date('d') . '-' . date('m');
                         $amount_in_kobo = $deposited_amount;
                         $this->load->module('paystack');
-                        $this->paystack->paystack_standard($amount_in_kobo, $ref, $patient, $payment_id, $user, '1',$remarks);
+                        $this->paystack->paystack_standard($amount_in_kobo, $ref, $patient, $payment_id, $user, '1', $remarks);
                     } else {
                         $this->session->set_flashdata('feedback', lang('payment_failed_no_gateway_selected'));
                         redirect('finance/patientPaymentHistory?patient=' . $patient);
@@ -1988,7 +1988,7 @@ class Finance extends MX_Controller {
             if (!empty($search)) {
                 $data['payments'] = $this->finance_model->getPaymentBysearch($search, $order, $dir);
             } else {
-                $data['payments'] = $this->finance_model->getPaymentWithoutSearch($order, $dir);
+                $data['payments'] = $this->finance_model->getPaymentWithoutSearchUpdate($order, $dir);
             }
         } else {
             if (!empty($search)) {
@@ -2032,14 +2032,22 @@ class Finance extends MX_Controller {
             }
 
             if ($this->ion_auth->in_group(array('admin', 'Accountant')) || $permis_1 == 'ok') {
-                $options1 = ' <a class="btn btn-info btn-xs editbutton" title="' . lang('edit') . '" href="finance/editPayment?id=' . $payment->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
+                if ($payment->payment_from == 'payment') {
+                    $options1 = ' <a class="btn btn-info btn-xs editbutton" title="' . lang('edit') . '" href="finance/editPayment?id=' . $payment->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
+                } elseif ($payment->payment_from == 'appointment') {
+                    $options1 = ' <a class="btn btn-info btn-xs " title="' . lang('edit') . '" href="appointment/editAppointment?id=' . $payment->appointment_id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
+                } elseif ($payment->payment_from == 'case') {
+                    $options1 = ' <a class="btn btn-info btn-xs " title="' . lang('edit') . '" href="patient/editCaseHistory?id=' . $payment->case_id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
+                }
             }
             if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Nurse', 'Laboratorist', 'Doctor')) || $permis == 'ok') {
                 $options2 = '<a class="btn btn-info btn-xs invoicebutton" title="' . lang('invoice') . '" style="color: #fff;" href="finance/invoice?id=' . $payment->id . '"><i class="fa fa-file-invoice"></i> ' . lang('invoice') . '</a>';
                 $options4 = '<a class="btn btn-info btn-xs invoicebutton" title="' . lang('print') . '" style="color: #fff;" href="finance/printInvoice?id=' . $payment->id . '"target="_blank"> <i class="fa fa-print"></i> ' . lang('print') . '</a>';
             }
             if ($this->ion_auth->in_group(array('admin', 'Accountant')) || $permis_2 == 'ok') {
-                $options3 = '<a class="btn btn-info btn-xs delete_button" title="' . lang('delete') . '" href="finance/delete?id=' . $payment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"></i> ' . lang('delete') . '</a>';
+                if ($payment->payment_from == 'payment') {
+                    $options3 = '<a class="btn btn-info btn-xs delete_button" title="' . lang('delete') . '" href="finance/delete?id=' . $payment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"></i> ' . lang('delete') . '</a>';
+                }
             }
 
             if (empty($options1)) {
@@ -2049,7 +2057,18 @@ class Finance extends MX_Controller {
             if (empty($options3)) {
                 $options3 = '';
             }
-
+             $from=""; 
+            if ($payment->payment_from == 'appointment') {
+                $from= lang('appointment');
+            } elseif ($payment->payment_from == 'bed') {
+                 $from= lang('allotment_medicine');
+            } elseif ($payment->payment_from == 'case') {
+                 $from= lang('case');
+            } elseif ($payment->payment_from == 'bed_service') {
+                 $from= lang('allotment_service');
+            } elseif ($payment->payment_from == 'payment') {
+                 $from= lang('payment');
+            }
             $doctor_details = $this->doctor_model->getDoctorById($payment->doctor);
 
             if (!empty($doctor_details)) {
@@ -2074,6 +2093,7 @@ class Finance extends MX_Controller {
                 $patient_details,
                 $doctor,
                 $date,
+                $from,
                 $settings->currency . '' . $payment->amount,
                 $settings->currency . '' . $discount,
                 $settings->currency . '' . $payment->gross_total,

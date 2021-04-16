@@ -1891,12 +1891,12 @@ class Patient extends MX_Controller {
         $options1 = $options2 = $options3 = '';
         foreach ($data['cases'] as $case) {
 
-            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor')) || $permis_1 == 'ok') {
+            if ($this->ion_auth->in_group(array('admin')) || $permis_1 == 'ok') {
 //   $options1 = '<a type="button" class="btn editbutton" title="Edit" data-toggle="modal" data-id="463"><i class="fa fa-edit"> </i> Edit</a>';
 // $options1 = ' <a type="button" class="btn btn-info btn-xs btn_width editbutton" title="' . lang('edit') . '" data-toggle = "modal" data-id="' . $case->id . '"><i class="fa fa-edit"> </i> </a>';
                 $options1 = '<a class="btn btn-info btn-xs btn_width" title="' . lang('edit') . '" href="patient/editCaseHistory?id=' . $case->id . '&redirect=case" ><i class="fa fa-edit"></i></a>';
             }
-            if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist', 'Nurse', 'Doctor')) || $permis_2 == 'ok') {
+            if ($this->ion_auth->in_group(array('admin')) || $permis_2 == 'ok') {
                 $options2 = '<a class="btn btn-info btn-xs btn_width delete_button" title="' . lang('delete') . '" href="patient/deleteCaseHistory?id=' . $case->id . '&redirect=case" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"></i></a>';
             }
             if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Laboratorist')) || in_array('Patient', $this->pers)) {
@@ -2744,17 +2744,18 @@ class Patient extends MX_Controller {
         $package = $this->input->get('package');
         $medical_analysis_details = $this->finance_model->getPaymentCategoryById($medical_analysis);
         $packages = $this->packages_model->getPackagesById($package);
+        $option2=$option5=" ";
 //$category = $this->category_model->getCategoryById($medical_analysis_details->type);
         $option4 = '<select class="form-control js-example-basic-single" name="done[]"><option value="done">Done</option><option value="undone">Undone</option></select>';
         $option3 = '<input type="text" class="form-control  default-date-picker" name="date_to_done[]"  readonly>';
-        if (!empty($medical_analysis_details)) {
+        if (!empty($medical_analysis_details) && $this->ion_auth->in_group(array('admin'))) {
             $option2 = '<button class="btn btn-info btn-xs btn_width delete_button" id="td-med-' . $medical_analysis_details->id . '"><i class="fa fa-trash"> </i></button>';
         }
-        if (!empty($packages)) {
+        if (!empty($packages)&& $this->ion_auth->in_group(array('admin'))) {
             $option5 = '<button class="btn btn-info btn-xs btn_width delete_button" id="td-pack-' . $packages->id . '"><i class="fa fa-trash"> </i></button>';
         }
         $option = '';
-        if (!empty($medical_analysis_details)) {
+        if (!empty($medical_analysis_details) ) {
             $option .= '<tr class="proccedure" id="tr-med-' . $medical_analysis_details->id . '"><td><input type="hidden" name="type_id[]" id="input_id-med-' . $medical_analysis_details->id . '" value="' . $medical_analysis_details->id . '" readonly><input type="text" class="input-category" name="type[]" id="input-med-' . $medical_analysis_details->id . '" value="' . $medical_analysis_details->category . '"readonly></td><td>' . lang('medical_analysis') . ' <input type="hidden" name="from[]" class="from_where" value="Medical Analysis"></td><td><input class="price-indivudual" type="text" name="price[]" style="width:100px;" id="price-' . $medical_analysis_details->id . '" value="' . $medical_analysis_details->c_price . '" ></td><td>' . $option3 . '</td><td>' . $option4 . '</td><td>' . $option2 . '</td></tr>';
         }
         if (!empty($packages)) {

@@ -588,10 +588,10 @@
                                     <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Doctor', 'Receptionist')) || in_array('Patient', $pers)) { ?>
                                         <li><a href="patient/patientPayments"><i class="fa fa-money-check"></i><?php echo lang('payments'); ?></a></li>
                                     <?php } ?>
-                                    <?php if (!$this->ion_auth->in_group(array('Accountant', 'Receptionist')) || in_array('Patient', $pers)) { ?>
-                                         <li><a href="patient/caseList"><i class="fa fa-book"></i><?php echo lang('case'); ?> <?php echo lang('manager'); ?></a></li>
-                                       
-                                       
+                                    <?php if (!$this->ion_auth->in_group(array('Accountant')) || in_array('Patient', $pers)) { ?>
+                                        <li><a href="patient/caseList"><i class="fa fa-book"></i><?php echo lang('case'); ?> <?php echo lang('manager'); ?></a></li>
+
+                                    <?php } if (!$this->ion_auth->in_group(array('Accountant', 'Receptionist')) || in_array('Patient', $pers)) { ?>
                                         <li><a href="patient/documents"><i class="fa fa-file"></i><?php echo lang('documents'); ?></a></li>
                                     <?php } ?>
                                 </ul>
@@ -741,7 +741,7 @@
                                         <li><a  href="finance/addPaymentView"><i class="fa fa-plus-circle"></i><?php echo lang('add_payment'); ?></a></li>
 
                                     <?php } ?>
-                                   
+
                                     <li><a  href="finance/expense"><i class="fa fa-money-check"></i><?php echo lang('expense'); ?></a></li>
                                     <?php if ($this->ion_auth->in_group('admin') || $permis == 'ok') { ?>
 
@@ -1061,7 +1061,7 @@
                                     <?php } ?>
                                     <?php if ($this->ion_auth->in_group(array('admin')) || in_array('Patient-Service', $pers)) { ?>
                                         <li><a  href="pservice"><i class="fa fa-smile"></i><?php echo lang('patient'); ?> <?php echo lang('service'); ?></a></li>
-                                    <?php
+                                        <?php
                                     }
                                     if ($this->ion_auth->in_group(array('admin')) || in_array('Bed', $pers)) {
                                         ?>
@@ -1069,7 +1069,7 @@
                                         <li><a  href="bed/bedAllotment"><i class="fas fa-bed"></i><?php echo lang('bed_allotments'); ?></a></li>
                                     <?php } if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
                                         <li><a  href="bed/addAllotmentView"><i class="fa fa-plus-circle"></i><?php echo lang('add_allotment'); ?></a></li>
-    <?php } ?>
+                                    <?php } ?>
                                 </ul>
                             </li>
                         <?php } ?>
@@ -1096,12 +1096,12 @@
                                     <span><?php echo lang('report'); ?></span>
                                 </a>
                                 <ul class="sub">
-    <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
+                                    <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
                                         <li><a  href="finance/financialReport"><i class="fa fa-book"></i><?php echo lang('financial_report'); ?></a></li>
                                         <li> <a href="finance/AllUserActivityReport">  <i class="fa fa-home"></i>   <span><?php echo lang('user_activity_report'); ?></span> </a></li>
                                     <?php } ?>
 
-    <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
+                                    <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
                                         <li><a  href="finance/doctorsCommission"><i class="fa fa-edit"></i><?php echo lang('doctors_commission'); ?> </a></li>
                                         <li><a  href="finance/monthly"><i class="fa fa-chart-bar"></i> <?php echo lang('monthly_sales'); ?> </a></li>
                                         <li><a  href="finance/daily"><i class="fa fa-chart-bar"></i> <?php echo lang('daily_sales'); ?> </a></li>
@@ -1111,15 +1111,15 @@
 
 
                                     <?php } ?>
-    <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Laboratorist', 'Doctor')) || in_array("Report", $pers)) { ?>
+                                    <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Laboratorist', 'Doctor')) || in_array("Report", $pers)) { ?>
 
                                         <li><a  href="report/birth"><i class="fas fa-file-medical"></i><?php echo lang('birth_report'); ?></a></li>
                                         <li><a  href="report/operation"><i class="fa fa-wheelchair"></i><?php echo lang('operation_report'); ?></a></li>
                                         <li><a  href="report/expire"><i class="fas fa-file-medical"></i><?php echo lang('expire_report'); ?></a></li>
-    <?php } ?>
+                                    <?php } ?>
                                 </ul>
                             </li>
-<?php } ?>
+                        <?php } ?>
 
 
                         <?php
@@ -1144,7 +1144,7 @@
                                     <li><a  href="notice"><i class="fa fa-bells"></i><?php echo lang('notice'); ?></a></li>
                                     <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
                                         <li><a  href="notice/addNewView"><i class="fa fa-list-alt"></i><?php echo lang('add_new'); ?></a></li>
-    <?php } ?>
+                                    <?php } ?>
                                 </ul>
                             </li> 
                         <?php } ?>
@@ -1182,13 +1182,13 @@
 
                                     <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
                                         <li><a  href="email/sendView"><i class="fa fa-location-arrow"></i><?php echo lang('new'); ?></a></li>
-    <?php } ?>
+                                    <?php } ?>
 
                                     <li><a  href="email/sent"><i class="fa fa-list-alt"></i><?php echo lang('sent'); ?></a></li>
 
                                     <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
                                         <li><a  href="email/emailSettings"><i class="fa fa-cogs"></i><?php echo lang('settings'); ?></a></li>
-    <?php } ?>
+                                    <?php } ?>
                                 </ul>
                             </li> 
                         <?php } ?>
@@ -1228,7 +1228,7 @@
                                     <li><a  href="sms/sent"><i class="fa fa-list-alt"></i><?php echo lang('sent_messages'); ?></a></li>
                                     <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
                                         <li><a  href="sms"><i class="fa fa-cogs"></i><?php echo lang('sms_settings'); ?></a></li>
-    <?php } ?>
+                                    <?php } ?>
                                 </ul>
                             </li> 
                         <?php } ?>
@@ -1264,7 +1264,7 @@
                                     <li><a href="frontend" target="_blank" ><i class="fa fa-globe"></i><?php echo lang('visit_site'); ?></a></li>
                                     <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
                                         <li><a href="frontend/settings"><i class="fa fa-cog"></i><?php echo lang('website_settings'); ?></a></li>
-    <?php } ?>
+                                    <?php } ?>
                                     <li><a href="review"><i class="fa fa-cog"></i><?php echo lang('reviews'); ?></a></li>
                                     <li><a href="gridsection"><i class="fa fa-cog"></i><?php echo lang('gridsections'); ?></a></li>
                                     <li><a href="gallery"><i class="fa fa-cog"></i><?php echo lang('gallery'); ?></a></li>
@@ -1302,13 +1302,13 @@
                                     <?php if ($this->ion_auth->in_group(array('admin')) || in_array('Settings', $pers)) { ?>
                                         <li><a href="settings/language"><i class="fa fa-language"></i><?php echo lang('language'); ?></a></li>
                                     <?php } ?>
-    <?php if ($this->ion_auth->in_group(array('admin')) || in_array('Bulk Import', $pers)) { ?>
+                                    <?php if ($this->ion_auth->in_group(array('admin')) || in_array('Bulk Import', $pers)) { ?>
 
                                         <li><a href="import"><i class="fa fa-arrow-right"></i><?php echo lang('bulk'); ?> <?php echo lang('import'); ?></a></li>
                                     <?php } ?>
                                     <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
                                         <li><a href="settings/backups"><i class="fa fa-database"></i><?php echo lang('backup_database'); ?></a></li>
-    <?php } ?>
+                                    <?php } ?>
                                 </ul>
                             </li>
 
@@ -1316,12 +1316,12 @@
 
 
 
-<?php } ?>
+                        <?php } ?>
 
                         <!--
                         <?php if ($this->ion_auth->in_group('Doctor')) { ?>
-                                                                                                                                <li><a href="meeting/settings"><i class="fa fa-headphones"></i><?php echo lang('zoom'); ?> <?php echo lang('settings'); ?></a></li>
-<?php } ?>
+                                                                                                                                    <li><a href="meeting/settings"><i class="fa fa-headphones"></i><?php echo lang('zoom'); ?> <?php echo lang('settings'); ?></a></li>
+                        <?php } ?>
                         -->
 
 
@@ -1330,7 +1330,7 @@
 
 
 
-<?php if ($this->ion_auth->in_group('Accountant')) { ?>
+                        <?php if ($this->ion_auth->in_group('Accountant')) { ?>
 
                             <li class="sub-menu">
                                 <a href="javascript:;" >
@@ -1390,7 +1390,7 @@
                             </li>
                         <?php } ?>
 
-<?php if ($this->ion_auth->in_group('Pharmacist')) { ?>
+                        <?php if ($this->ion_auth->in_group('Pharmacist')) { ?>
                             <li>
                                 <a href="medicine" >
                                     <i class="fa fa-medkit"></i>
@@ -1416,7 +1416,7 @@
                                 </a>
                             </li>
                         <?php } ?>
-<?php if ($this->ion_auth->in_group('Nurse')) { ?>
+                        <?php if ($this->ion_auth->in_group('Nurse')) { ?>
                             <li>
                                 <a href="bed" >
                                     <i class="fa fa-procedures"></i>
@@ -1449,7 +1449,7 @@
                             </li>
                         <?php } ?>
 
-<?php if ($this->ion_auth->in_group('Patient')) { ?>
+                        <?php if ($this->ion_auth->in_group('Patient')) { ?>
 
                             <li>
                                 <a href="lab/myLab" >
@@ -1508,7 +1508,7 @@
 
                         <?php } ?>
 
-<?php if ($this->ion_auth->in_group('im')) { ?>
+                        <?php if ($this->ion_auth->in_group('im')) { ?>
                             <li>
                                 <a href="patient/addNewView" >
                                     <i class="fa fa-user"></i>
@@ -1521,10 +1521,10 @@
                                     <span> <?php echo lang('add_payment'); ?>  </span>
                                 </a>
                             </li>
-<?php } ?>
+                        <?php } ?>
 
 
-<?php if (!$this->ion_auth->in_group(array('admin', 'Patient')) && !in_array('Email', $pers)) { ?>
+                        <?php if (!$this->ion_auth->in_group(array('admin', 'Patient')) && !in_array('Email', $pers)) { ?>
                             <li class="sub-menu">
                                 <a href="javascript:;" >
                                     <i class="fa fa-mail-bulk"></i>
@@ -1534,7 +1534,7 @@
                                     <li><a  href="email/sendView"><i class="fa fa-location-arrow"></i><?php echo lang('new'); ?></a></li>
                                 </ul>
                             </li> 
-<?php } ?> 
+                        <?php } ?> 
 
 
 

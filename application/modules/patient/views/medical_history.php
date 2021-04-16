@@ -189,6 +189,9 @@
                         <li class="">
                             <a data-toggle="tab" href="#contact"><?php echo lang('bed'); ?></a>
                         </li>
+                         <li class="">
+                            <a data-toggle="tab" href="#surgery"><?php echo lang('surgery'); ?></a>
+                        </li>
                         <li class="">
                             <a data-toggle="tab" href="#timeline"><?php echo lang('timeline'); ?></a> 
                         </li>

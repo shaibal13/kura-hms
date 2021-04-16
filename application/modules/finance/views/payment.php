@@ -66,6 +66,7 @@
                                 <th><?php echo lang('patient'); ?></th>
                                 <th><?php echo lang('doctor'); ?></th>
                                 <th><?php echo lang('date'); ?></th>
+                                       <th><?php echo lang('from'); ?></th>
                                 <th><?php echo lang('sub_total'); ?></t>
                                 <th><?php echo lang('discount'); ?></th>
                                 <th><?php echo lang('grand_total'); ?></th>

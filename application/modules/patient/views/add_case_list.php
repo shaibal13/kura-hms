@@ -189,7 +189,9 @@
                                                             </select>
                                                         </td>
                                                         <td>
+                                                            <?php   if ($this->ion_auth->in_group(array('admin'))) { ?>
                                                             <button class="btn btn-info btn-xs btn_width delete_button" id="td-pack-<?php echo $individual[2] ?>"><i class="fa fa-trash"> </i></button>
+                                                            <?php } ?>
                                                         </td>
                                                     </tr>
                                                     <?php
@@ -231,7 +233,9 @@
                                                             </select>
                                                         </td>
                                                         <td>
+                                                              <?php   if ($this->ion_auth->in_group(array('admin'))) { ?>
                                                             <button class="btn btn-info btn-xs btn_width delete_button" id="td-med-<?php echo $individual[1] ?>"><i class="fa fa-trash"> </i></button>
+                                                              <?php } ?>
                                                         </td>
                                                     </tr>
                                                     <?php
@@ -259,7 +263,7 @@
                                 }
                                 ?>' placeholder="" readonly="">
                             </div>
-                            <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
+                           <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Nurse', 'Doctor', 'Laboratorist', 'Receptionist')) || $permis == 'ok') { ?>
                                 <div class="separator col-md-12"><?php echo lang('select'); ?></div>
                                 <br>  <br>
                                 <div class="col-md-12" style="margin-top:20px;">

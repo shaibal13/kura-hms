@@ -31,7 +31,16 @@ class Finance_model extends CI_model {
         $query = $this->db->get('payment');
         return $query->result();
     }
-
+     function getPaymentWithoutSearchUpdate($order, $dir) {
+        if ($order != null) {
+            $this->db->order_by($order, $dir);
+        } else {
+            $this->db->order_by('id', 'desc');
+        }
+      // $this->db->where('payment_from','payment');
+        $query = $this->db->get('payment');
+        return $query->result();
+    }
     function getPaymentBySearch($search, $order, $dir) {
         if ($order != null) {
             $this->db->order_by($order, $dir);
@@ -39,7 +48,7 @@ class Finance_model extends CI_model {
             $this->db->order_by('id', 'desc');
         }
         $this->db->like('id', $search);
-         $this->db->where('payment_from','payment');
+         //$this->db->where('payment_from','payment');
          $this->db->where("(id LIKE '%" . $search . "%' OR amount LIKE '%" . $search . "%' OR gross_total LIKE '%" . $search . "%' OR patient_name LIKE '%" . $search . "%'OR patient_phone LIKE '%" . $search . "%'OR patient_address LIKE '%" . $search . "%' OR remarks LIKE '%" . $search . "%' OR doctor_name LIKE '%" . $search . "%' OR flat_discount LIKE '%" . $search . "%' OR date_string LIKE '%" . $search . "%')", NULL, FALSE);
         $query = $this->db->get('payment');
         return $query->result();
@@ -52,7 +61,7 @@ class Finance_model extends CI_model {
             $this->db->order_by('id', 'desc');
         }
         $this->db->limit($limit, $start);
-      $this->db->where('payment_from','payment');
+   //   $this->db->where('payment_from','payment');
         $query = $this->db->get('payment');
         return $query->result();
     }
@@ -72,7 +81,7 @@ class Finance_model extends CI_model {
         }
 
         $this->db->like('id', $search);
-         $this->db->where('payment_from','payment');
+      //   $this->db->where('payment_from','payment');
           $this->db->where("(id LIKE '%" . $search . "%' OR amount LIKE '%" . $search . "%' OR gross_total LIKE '%" . $search . "%' OR patient_name LIKE '%" . $search . "%'OR patient_phone LIKE '%" . $search . "%'OR patient_address LIKE '%" . $search . "%' OR remarks LIKE '%" . $search . "%' OR doctor_name LIKE '%" . $search . "%' OR flat_discount LIKE '%" . $search . "%' OR date_string LIKE '%" . $search . "%')", NULL, FALSE);
         $this->db->limit($limit, $start);
         $query = $this->db->get('payment');

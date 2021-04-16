@@ -160,18 +160,18 @@
                                                 <?php
                                             } elseif ($payment->payment_from == 'case') {
                                                 $caselist = $this->db->get_where('medical_history', array('id' => $payment->case_id))->row();
-                                                if ($payment->case_status == 'Confirmed') {
+                                               // if ($payment->case_status == 'Confirmed') {
                                                     ?>
 
                                                     <a class="btn-xs invoicebutton" title="<?php echo lang('invoice'); ?>" style="color: #fff; width: 25%;" href="patient/myInvoice?id=<?php echo $payment->id; ?>"><i class="fa fa-file-invoice"></i> </a>
                                                     <?php
-                                                }
+                                               // }
                                             }  elseif ($payment->payment_from == 'appointment') {
                                                 $appointment = $this->db->get_where('appointment', array('payment_id' => $payment->id))->row();
-                                                if ($appointment->status == 'Confirmed') {
+                                              //  if ($appointment->status == 'Confirmed') {
                                                     ?> 
                                                     <a class="btn-xs invoicebutton" title="<?php echo lang('invoice'); ?>" style="color: #fff; width: 23px;" href="patient/myInvoice?id=<?php echo $payment->id; ?>"><i class="fas fa-file-invoice"></i> </a>
-                                                <?php } ?>
+                                                <?php //} ?>
 
 
                                             <?php } ?>
