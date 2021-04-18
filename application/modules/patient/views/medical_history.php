@@ -673,7 +673,9 @@
                                                     <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_s_2 == 'ok' || $permis_s_3 == 'ok') { ?>
                                                      <td> <a class="btn btn-info btn-xs btn_width" href="surgery/surgeryDetails?id=<?php echo $surgery->id; ?>"> <?php echo lang('more'); ?></a>
                                                         <a class="btn btn-success btn-xs btn_width" href="surgery/editSurgery?id=<?php echo $surgery->id; ?>"> <?php echo lang('edit'); ?></a>
+                                                         <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) ||  $permis_s_3 == 'ok') { ?>
                                                        <a class="btn btn-danger btn-xs btn_width" title="<?php echo lang('delete'); ?>" href="surgery/deleteSurgery?id=<?php echo $surgery->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> </a>
+                                                         <?php } ?>
                                                      </td>
                                                     <?php } ?>
                                             </tr>
@@ -683,107 +685,49 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="home" class="tab-pane">
+                     <div id="contact" class="tab-pane"> 
                             <div class="">
-
-                                <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 == 'ok') { ?>
+                                <?php if ($this->ion_auth->in_group(array('Doctor')) || $permis_b_2 == 'ok') { ?>
                                     <div class=" no-print">
-                                        <a class="btn btn-info btn_width btn-xs" data-toggle="modal" href="#myModal">
+                                        <a class="btn btn-info btn_width btn-xs" data-toggle="modal" href="#myModa3">
                                             <i class="fa fa-plus-circle"> </i> <?php echo lang('add_new'); ?> 
                                         </a>
                                     </div>
                                 <?php } ?>
-
                                 <div class="adv-table editable-table ">
-
-
                                     <table class="table table-striped table-hover table-bordered" id="">
                                         <thead>
                                             <tr>
-                                                <th><?php echo lang('date'); ?></th>
-                                                <th><?php echo lang('title'); ?></th>
-                                                <th><?php echo lang('description'); ?></th>
-                                                <th style=""><?php echo lang('status'); ?> </th>
-                                                <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 == 'ok' || $permis_p_3 == 'ok') { ?>
-                                                    <th class="no-print"><?php echo lang('options'); ?></th>
-                                                <?php } ?>
+                                                <th><?php echo lang('bed_id'); ?></th>
+                                                <th><?php echo lang('alloted_time'); ?></th>
+                                                <th><?php echo lang('discharge_time'); ?></th>
+                                                <th><?php echo lang('view_more'); ?></th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php foreach ($medical_histories as $medical_history) { ?>
-                                                <tr class="">
 
-                                                    <td><?php echo date('d-m-Y', $medical_history->date); ?></td>
-                                                    <td><?php echo $medical_history->title; ?></td>
-                                                    <td><?php
-                                                        $description = array();
-                                                        $option_description = '';
-                                                        $descriptions = explode('##', $medical_history->description);
-                                                        foreach ($descriptions as $description) {
-                                                            $description_single = array();
-                                                            $description_single = explode('**', $description);
-                                                            if ($description_single[0] == 'Package') {
-                                                                $option_description .= '<ul><li>' . $description_single[0] . '-' . $description_single[1] . '</li></ul>';
-                                                            } else {
-                                                                $option_description .= '<ul><li>' . $description_single[1] . '</li></ul>';
-                                                            }
-                                                        }
-                                                        echo $option_description;
-                                                        ?></td>
-                                                    <td><?php
-                                                        if ($medical_history->status == 'Pending Confirmation') {
-                                                            $status = lang('pending_confirmation');
-                                                        } if ($medical_history->status == 'Confirmed') {
-                                                            $status = lang('confirmed');
-                                                        }
-                                                        echo $status;
-                                                        ?></td>
-                                                    <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 == 'ok' || $permis_p_3 == 'ok') { ?>
-                                                        <td class="no-print">
-                                                            <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 == 'ok') { ?>
-                                                                <a class="btn btn-info btn-xs btn_width" title="<?php echo lang('edit'); ?>" href="patient/editCaseHistory?id=<?php echo $medical_history->id; ?>"><i class="fa fa-edit"></i> </a>
-                                                                 <!--  <button type="button" class="btn btn-info btn-xs btn_width editbutton" title="<?php echo lang('edit'); ?>" data-toggle="modal" data-id="<?php echo $medical_history->id; ?>"><i class="fa fa-edit"></i> </button>   -->
-                                                            <?php } ?>   
-                                                            <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_3 == 'ok') { ?>
-                                                                <a class="btn btn-info btn-xs btn_width delete_button" title="<?php echo lang('delete'); ?>" href="patient/deleteCaseHistory?id=<?php echo $medical_history->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> </a>
-                                                            <?php } ?>
-                                                            <?php if ($medical_history->status == 'Confirmed') { ?>
-                                                                <a class="btn btn-success btn-xs btn_width" title="<?php echo lang('invoice'); ?>" href="finance/invoice?id=<?php echo $medical_history->payment_id; ?>"><i class="fa fa-file-invoice"></i> </a>
-                                                            <?php } ?>
-                                                        </td>
-                                                    <?php } ?>
-                                                </tr>
-                                            <?php } ?>
+                                        <style>
+
+                                            .img_url{
+                                                height:20px;
+                                                width:20px;
+                                                background-size: contain; 
+                                                max-height:20px;
+                                                border-radius: 100px;
+                                            }
+
+                                        </style>
+
+                                        <?php foreach ($beds as $bed) { ?>
+                                            <tr class="">
+                                                <td><?php echo $bed->bed_id; ?></td>            
+                                                <td><?php echo $bed->a_time; ?></td>
+                                                <td><?php echo $bed->d_time; ?></td>
+                                                <td> <a class="btn btn-info btn-xs btn_width" href="bed/bedAllotmentDetails?id=<?php echo $bed->id; ?>"> <?php echo lang('more'); ?></a></td>
+                                            </tr>
+                                        <?php } ?>
                                         </tbody>
                                     </table>
-
-
-
-
-                                    <!--
-                                                                        <form role="form" action="patient/addMedicalHistory" class="clearfix" method="post" enctype="multipart/form-data">
-                                                                            <div class="form-group col-md-12">
-                                                                                <label class=""> <?php echo lang('case'); ?> <?php echo lang('history'); ?></label>
-                                                                                <div class="">
-                                                                                    <textarea class="ckeditor form-control" name="description" id="description" value="" rows="100" cols="50">      
-                                    <?php foreach ($medical_histories as $medical_history) { ?>         
-                                                                                                                                                                                                                                                                                    <td><?php echo $medical_history->description; ?></td>
-                                    <?php } ?>
-                                                                                    </textarea>
-                                                                                </div>
-                                                                            </div>
-                                    
-                                                                            <input type="hidden" name="patient_id" value='<?php echo $patient->id; ?>'>
-                                                                            <input type="hidden" name="id" value='<?php echo $medical_history->id ?>'>
-                                                                            <div class="form-group col-md-12">
-                                                                                <button type="submit" name="submit" class="btn btn-info submit_button pull-right"><?php echo lang('save'); ?></button>
-                                                                            </div>
-                                                                        </form>
-                                    
-                                    -->
-
-
-
                                 </div>
                             </div>
                         </div>

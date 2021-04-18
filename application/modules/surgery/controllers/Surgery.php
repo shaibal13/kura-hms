@@ -10,6 +10,7 @@ class Surgery extends MX_Controller {
         $this->load->model('finance/finance_model');
         $this->load->model('patient/patient_model');
         $this->load->model('category/category_model');
+        $this->load->model('bed/bed_model');
         $this->load->model('surgery_model');
         $group_permission = $this->ion_auth->get_users_groups()->row();
 
@@ -264,5 +265,125 @@ class Surgery extends MX_Controller {
         $this->session->set_flashdata('feedback', lang('deleted'));
         redirect('patient/medicalHistory?id=' . $user_data);
     }
-    
+
+    function surgeryDetails() {
+        $id = $this->input->get('id');
+        $data['surgeries'] = $this->surgery_model->getSurgeryById($id);
+        $data['checkin'] = $this->surgery_model->getSurgeryCheckinById($data['surgeries']->id);
+         $data['bed_id'] = $this->bed_model->getBedByCategory($data['checkin']->category);
+         foreach ($data['bed_id'] as $bed) {
+            if ($bed->id == $data['checkin']->bed_id) {
+                $option .= '<option value="' . $bed->id . '" selected>' . $bed->number . '</option>';
+            } else {
+                $option .= '<option value="' . $bed->id . '">' . $bed->number . '</option>';
+            }
+        }
+        $data['option'] = $option;
+         $data['patients']  = $this->patient_model->getPatientById($data['checkin']->patient);
+        $data['room_no'] = $this->bed_model->getBedCategory();
+       
+        $this->load->view('home/dashboard'); // just the header file
+        $this->load->view('view_more', $data);
+        $this->load->view('home/footer'); // just the footer file
+    }
+
+    function updateCheckin() {
+        $id = $this->input->post('id');
+        $category_status = $this->input->post('category_status');
+
+        $category_status_update = implode(',', $category_status); //done
+
+        $covid_19 = $this->input->post('covid_19'); //done
+        $reaksione = $this->input->post('reaksione'); //done
+        $transferred_from = $this->input->post('transferred_from'); //done
+        $diagnoza_klinike = $this->input->post('diagnoza_klinike'); //done
+        // $doctor = $this->input->post('doctor');
+        $actual_illness = $this->input->post('actual_illness'); //done
+        $addtional_illness = $this->input->post('addtional_illness'); //done
+        $other_risk_factor = $this->input->post('other_risk_factor'); //done
+        $diagnoza_pranimit = $this->input->post('diagnoza_pranimit'); //done
+        $surgery_id = $this->input->post('surgery_id');
+        $category = $this->input->post('category'); //done
+        $patient = $this->input->post('patient'); //done
+        $a_time = $this->input->post('a_time'); //done
+        $diagnoza_imazherike = $this->input->post('diagnoza_imazherike'); //done
+        $diagnoza_perfundimtare = $this->input->post('diagnoza_perfundimtare'); //done
+        $bed_id = $this->input->post('bed_id'); //done
+
+        $this->load->library('form_validation');
+        $this->form_validation->set_error_delimiters('<div class="error">', '</div>');
+        // Validating Category Field
+        $this->form_validation->set_rules('bed_id', 'Bed', 'trim|required|min_length[1]|max_length[100]|xss_clean');
+        // Validating Patient Field
+        $this->form_validation->set_rules('patient', 'Patient', 'trim|required|min_length[1]|max_length[100]|xss_clean');
+        // Validating Alloted Time Field
+        $this->form_validation->set_rules('a_time', 'Alloted Time', 'trim|required|min_length[1]|max_length[100]|xss_clean');
+        // Validating Discharge Time Field
+        // $this->form_validation->set_rules('d_time', 'Discharge Time', 'trim|min_length[1]|max_length[100]|xss_clean');
+        // Validating Status Field
+        //$this->form_validation->set_rules('status', 'Status', 'trim|min_length[1]|max_length[100]|xss_clean');
+        if ($this->form_validation->run() == FALSE) {
+            $id = $this->input->get('id');
+            $data['surgeries'] = $this->surgery_model->getSurgeryById($id);
+            $data['checkin'] = $this->surgery_model->getSurgeryCheckinById($data['surgeries']->id);
+              $data['bed_id'] = $this->bed_model->getBedByCategory($data['checkin']->category);
+              $option='';
+         foreach ($data['bed_id'] as $bed) {
+            if ($bed->id == $data['checkin']->bed_id) {
+                $option .= '<option value="' . $bed->id . '" selected>' . $bed->number . '</option>';
+            } else {
+                $option .= '<option value="' . $bed->id . '">' . $bed->number . '</option>';
+            }
+        }
+        $data['option'] = $option;
+            $data['room_no'] = $this->bed_model->getBedCategory();
+           
+            $this->load->view('home/dashboard'); // just the header file
+            $this->load->view('view_more', $data);
+            $this->load->view('home/footer'); // just the footer file
+        } else {
+            $data = array();
+            $patientname = $this->patient_model->getPatientById($patient)->name;
+            $data = array(
+                'bed_id' => $bed_id,
+                'patient' => $patient,
+                'a_time' => $a_time,
+                'category' => $category,
+                'category_status' => $category_status_update,
+                'reaksione' => $reaksione,
+                'covid_19' => $covid_19,
+                'transferred_from' => $transferred_from,
+                'diagnoza_klinike' => $diagnoza_klinike,
+                'actual_illness' => $actual_illness,
+                'addtional_illness' => $addtional_illness,
+                'other_risk_factor' => $other_risk_factor,
+                'diagnoza_pranimit' => $diagnoza_pranimit,
+                'diagnoza_imazherike' => $diagnoza_imazherike,
+                'diagnoza_perfundimtare' => $diagnoza_perfundimtare,
+                'patientname' => $patientname,
+                'surgery_id'=>$surgery_id
+            );
+            $data1 = array(
+                'last_a_time' => $a_time,
+                    // 'last_d_time' => $d_time,
+            );
+
+            if (empty($id)) {
+               // print_r($data);
+                $this->surgery_model->insertSurgeryCheckin($data);
+                $insert= $this->db->insert_id('surgery_checkin');
+              
+                $this->bed_model->updateBedByBedId($bed_id, $data1);
+               $arr = array('message' => lang('added'), 'title' => lang('added'),'inserted'=> $insert);
+                echo json_encode($arr);
+            } else {
+                $this->surgery_model->updateSurgeryCheckin($id, $data);
+                $this->bed_model->updateBedByBedId($bed_id, $data1);
+               // $arr['inserted']= $this->db->insert_id('surgery_checkin');
+                $arr = array('message' => lang('updated'), 'title' => lang('updated'),'inserted'=>$id);
+                echo json_encode($arr);
+            }
+        }
+    }
+
 }

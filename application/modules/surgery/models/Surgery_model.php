@@ -31,4 +31,17 @@ class Surgery_model extends CI_model {
         $this->db->where('id', $id);
         $this->db->delete('surgery');
     }
+    function insertSurgeryCheckin($data) {
+
+        $this->db->insert('surgery_checkin', $data);
+    }
+    function getSurgeryCheckinById($surgery){
+        $this->db->where('surgery_id', $surgery);
+        $query = $this->db->get('surgery_checkin');
+        return $query->row();
+    }
+    function updateSurgeryCheckin($id, $data) {
+        $this->db->where('id', $id);
+        $this->db->update('surgery_checkin', $data);
+    }
 }
