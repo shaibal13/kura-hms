@@ -264,5 +264,5 @@ class Surgery extends MX_Controller {
         $this->session->set_flashdata('feedback', lang('deleted'));
         redirect('patient/medicalHistory?id=' . $user_data);
     }
-
+    
 }

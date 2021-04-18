@@ -133,7 +133,7 @@
                             </div>
 
                             <div class="adv-table editable-table ">
-                                <table style="width: 100% !important;" class="table table-striped table-hover table-bordered" id="editable-table2">
+                                <table style="width: 100% !important;" class="table table-striped table-hover table-bordered" id="editable-tablesurgery">
                                     <thead>
                                         <tr>
                                             <th style=""><?php echo lang('items'); ?></th>
@@ -161,7 +161,7 @@
                                                         <input type="text" class="input-category" name="type_surgery[]" id="input-med-surgery-<?php echo $individual[1]; ?>" value="<?php echo $individual[1]; ?>"> 
                                                     </td>
                                                     <td>
-        <?php echo lang('surgery'); ?>
+                                                        <?php echo lang('surgery'); ?>
                                                         <input type="hidden" name="from_surgery[]" class="from_where" value="Surgery">
                                                     </td>
                                                     <td>
@@ -169,43 +169,43 @@
                                                     </td>
                                                     <td>
                                                         <input type="text" class="form-control  default-date-picker" name="date_to_done_surgery[]" value="<?php
-        if (!empty($surgeries->id)) {
-            echo $individual[4];
-        }
-        ?>" readonly>
+                                                        if (!empty($surgeries->id)) {
+                                                            echo $individual[4];
+                                                        }
+                                                        ?>" readonly>
                                                     </td>
                                                     <td>
                                                         <select class="form-control js-example-basic-single" name="done_surgery[]">
                                                             <option value="done" <?php
-                                                if ($individual[5] == 'done') {
-                                                    echo 'selected';
-                                                }
-        ?>>Done</option>
+                                                            if ($individual[5] == 'done') {
+                                                                echo 'selected';
+                                                            }
+                                                            ?>>Done</option>
                                                             <option value="undone" <?php
-                                                                    if ($individual[5] == 'undone') {
-                                                                        echo 'selected';
-                                                                    }
-                                                                    ?>>Undone</option>
+                                                            if ($individual[5] == 'undone') {
+                                                                echo 'selected';
+                                                            }
+                                                            ?>>Undone</option>
                                                         </select>
                                                     </td>
                                                     <td>
 
-                                                        <button class="btn btn-info btn-xs btn_width delete_button" id="td-med-<?php echo $individual[1] ?>"><i class="fa fa-trash"> </i></button>
+                                                        <button class="btn btn-info btn-xs btn_width delete_button" id="td-med-surgery-<?php echo $individual[2] ?>"><i class="fa fa-trash"> </i></button>
 
                                                     </td>
                                                 </tr>
-        <?php
-    }
-}
-?>
+                                                <?php
+                                            }
+                                        }
+                                        ?>
                                     </tbody>
                                 </table>
                             </div>
                             <input type="hidden" name="id" value='<?php
-                                        if (!empty($surgeries->id)) {
-                                            echo $surgeries->id;
-                                        }
-?>'>
+                            if (!empty($surgeries->id)) {
+                                echo $surgeries->id;
+                            }
+                            ?>'>
                             <input type="hidden" name="redirect" value='<?php
                             if (empty($surgeries->id)) {
                                 echo 'surgery_add';
@@ -216,13 +216,13 @@
                             <div class="form-group col-md-12">
                                 <label for="exampleInputEmail1"><?php echo lang('total_value'); ?></label>
                                 <input type="text" class="form-control" name="total_value_surgery" id="total_value_surgery" value='<?php
-                            if (!empty($setval)) {
-                                echo set_value('total_value_surgery');
-                            }
-                            if (!empty($surgeries->total_price)) {
-                                echo $surgeries->total_price;
-                            }
-                            ?>' placeholder="" readonly="">
+                                if (!empty($setval)) {
+                                    echo set_value('total_value_surgery');
+                                }
+                                if (!empty($surgeries->total_price)) {
+                                    echo $surgeries->total_price;
+                                }
+                                ?>' placeholder="" readonly="">
                             </div>
 
                             <div class="separator col-md-12"><?php echo lang('select'); ?></div>
@@ -233,10 +233,10 @@
 
                                     <select style=" display: block;"class="form-control m-bot15 js-example-basic-single" id="surgery_type" name="medical_analysis" value='' required=""> 
                                         <option><?php echo lang('select'); ?></option>
-<?php foreach ($surgery_category as $surgery) { ?>
+                                        <?php foreach ($surgery_category as $surgery) { ?>
                                             <option value="<?php echo $surgery->id;
-    ?>"><?php echo $surgery->category; ?></option>
-                                        <?php } ?>
+                                            ?>"><?php echo $surgery->category; ?></option>
+                                                <?php } ?>
                                     </select>
                                 </div>
                                 <div class="col-md-2">
@@ -249,7 +249,13 @@
 
 
                             <div class="form-group col-md-12" style="margin-top:20px;">
-                                <button type="submit" id="submit" name="submit" class="btn btn-info pull-right"><?php echo lang('add_case'); ?></button>
+                                <button type="submit" id="submit" name="submit" class="btn btn-info pull-right"><?php
+                                    if (empty($surgeries->id)) {
+                                        echo lang('add_surgery');
+                                    } else {
+                                        echo lang('edit_surgery');
+                                    }
+                                    ?></button>
                             </div>
                         </form>
                     </div>

@@ -673,7 +673,7 @@
                                                     <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_s_2 == 'ok' || $permis_s_3 == 'ok') { ?>
                                                      <td> <a class="btn btn-info btn-xs btn_width" href="surgery/surgeryDetails?id=<?php echo $surgery->id; ?>"> <?php echo lang('more'); ?></a>
                                                         <a class="btn btn-success btn-xs btn_width" href="surgery/editSurgery?id=<?php echo $surgery->id; ?>"> <?php echo lang('edit'); ?></a>
-                                                       <a class="btn btn-info btn-xs btn_width" title="<?php echo lang('delete'); ?>" href="surgery/deleteSurgery?id=<?php echo $surgery->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> </a>
+                                                       <a class="btn btn-danger btn-xs btn_width" title="<?php echo lang('delete'); ?>" href="surgery/deleteSurgery?id=<?php echo $surgery->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> </a>
                                                      </td>
                                                     <?php } ?>
                                             </tr>
@@ -1679,14 +1679,7 @@ if ($this->ion_auth->in_group('Doctor')) {
                     </div>
                     <div class="form-group col-md-12">
                         <label for="exampleInputEmail1"><?php echo lang('total_value'); ?></label>
-                        <input type="text" class="form-control" name="total_value_surgery" id="total_value_surgery" value='<?php
-                        if (!empty($setval)) {
-                            echo set_value('total_value_surgery');
-                        }
-                        if (!empty($surgery->total_price)) {
-                            echo $surgery->total_price;
-                        }
-                        ?>' placeholder="" readonly="">
+                        <input type="text" class="form-control" name="total_value_surgery" id="total_value_surgery" value='' placeholder="" readonly="">
                     </div>
                    
                         <div class="separator col-md-12"><?php echo lang('select'); ?></div>
