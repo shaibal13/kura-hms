@@ -14,6 +14,7 @@ class Patient extends MX_Controller {
         $this->load->model('lab/lab_model');
         $this->load->model('packages/packages_model');
         $this->load->model('pcategory/pcategory_model');
+           $this->load->model('category/category_model');
         $this->load->model('finance/finance_model');
         $this->load->model('finance/pharmacy_model');
         $this->load->model('sms/sms_model');
@@ -22,6 +23,7 @@ class Patient extends MX_Controller {
         require APPPATH . 'third_party/stripe/stripe-php/init.php';
         $this->load->model('medicine/medicine_model');
         $this->load->model('doctor/doctor_model');
+            $this->load->model('surgery/surgery_model');
         $this->load->model('pgateway/pgateway_model');
         $this->load->module('paypal');
 
@@ -1408,6 +1410,18 @@ class Patient extends MX_Controller {
         }
         $data['packages'] = $this->packages_model->getPackages();
         $data['payment_category'] = $this->finance_model->getPaymentCategory();
+        $data['categories_pay']= $this->category_model->getCategory();
+        $cat_update='';
+        foreach ( $data['categories_pay'] as $cat){
+            $cat_name= strtolower($cat->name);
+            if($cat_name=='surgery'){
+                $cat_update=$cat->name;
+            }
+        }
+        if(!empty($cat_update)){
+         $data['surgery_category'] = $this->finance_model->getPaymentCategoryBySurgery($cat_update);
+        }
+        $data['surgeries'] = $this->surgery_model->getSurgery();
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('medical_history', $data);
         $this->load->view('home/footer'); // just the footer file

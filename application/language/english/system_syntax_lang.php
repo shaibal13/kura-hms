@@ -849,3 +849,6 @@ $lang['back_to_appointment_modules'] = 'Back To Appointment Module';
 $lang['allotment_medicine'] = 'Bed Medicine';
 $lang['allotment_service'] = 'Bed  Service';
 $lang['surgery'] = 'Surgery';
+$lang['add_surgery'] = 'Add Surgery';
+$lang['time_to_be_done'] = 'Time To Be Done';
+$lang['edit_surgery'] = 'Edit Surgery';
