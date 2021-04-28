@@ -676,6 +676,7 @@
                                                          <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) ||  $permis_s_3 == 'ok') { ?>
                                                        <a class="btn btn-danger btn-xs btn_width" title="<?php echo lang('delete'); ?>" href="surgery/deleteSurgery?id=<?php echo $surgery->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> </a>
                                                          <?php } ?>
+                                                         <a class="btn btn-info btn-xs" title="<?php echo lang('invoice'); ?>" style="color: #fff;margin-bottom: 20px;" href="finance/invoice?id=<?php echo $surgery->payment_id; ?>"target="_blank"> <i class="fa fa-file-invoice"></i> <?php echo lang('invoice'); ?></a>
                                                      </td>
                                                     <?php } ?>
                                             </tr>
@@ -1599,7 +1600,10 @@ if ($this->ion_auth->in_group('Doctor')) {
 
                         </select>
                     </div>
-                      
+                       <div class="form-group col-md-12">
+                        <label for="exampleInputEmail1"><?php echo lang('remarks'); ?></label>
+                        <input type="text" class="form-control form-control-inline input-medium" name="remarks" id="exampleInputEmail1" value='' placeholder="">
+                    </div>
                     <input type="hidden" name="patient_id" value='<?php echo $patient->id; ?>'>
                     <input type="hidden" name="id" value=''>
                     <input type="hidden" name="redirect" value='surgery'>
@@ -1717,6 +1721,7 @@ if ($this->ion_auth->in_group('Doctor')) {
                                                     $('#medical_historyEditForm').find('[name="id"]').val(response.medical_history.id).end()
                                                     $('#medical_historyEditForm').find('[name="date"]').val(de).end()
                                                     $('#medical_historyEditForm').find('[name="title"]').val(response.medical_history.title).end()
+                                                    
                                                     CKEDITOR.instances['editor'].setData(response.medical_history.description)
                                                 });
                                             });

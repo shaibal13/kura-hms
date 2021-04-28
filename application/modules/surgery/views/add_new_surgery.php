@@ -131,7 +131,17 @@
 
                                 </select>
                             </div>
-
+                            <div class="form-group col-md-12">
+                                <label for="exampleInputEmail1"><?php echo lang('remarks'); ?></label>
+                                <input type="text" class="form-control" name="remarks" id="exampleInputEmail1" value='<?php
+                                if (!empty($setval)) {
+                                    echo set_value('remarks');
+                                }
+                                if (!empty($surgeries->remarks)) {
+                                    echo $surgeries->remarks;
+                                }
+                                ?>' placeholder="">
+                            </div>
                             <div class="adv-table editable-table ">
                                 <table style="width: 100% !important;" class="table table-striped table-hover table-bordered" id="editable-tablesurgery">
                                     <thead>

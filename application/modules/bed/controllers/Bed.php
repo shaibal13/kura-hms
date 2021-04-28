@@ -1200,10 +1200,10 @@ class Bed extends MX_Controller {
             $i = 0;
             if (!empty($service_list->payment_id)) {
                 $paymentid = explode(",", $service_list->payment_id);
-                foreach ($paymentid as $payment) {
+                foreach ($paymentid as $key=>$payment) {
                     $payment_details = $this->finance_model->getPaymentById($payment);
-                    $payment_cat = explode("#", $payment->category_name);
-                    foreach ($payment_cat as $pay) {
+                    $payment_cat = explode("#", $payment_details->category_name);
+                    foreach ($payment_cat as $key=>$pay) {
                         $cat_name = explode("*", $pay);
                         $previous_invoice_service[] = $cat_name[0];
                     }
@@ -1256,9 +1256,11 @@ class Bed extends MX_Controller {
                 $arr['date'] = date('d');
                 $arr['message'] = array('message' => lang('invoice') . ' ' . lang('generated'), 'title' => lang('invoice') . ' ' . lang('generated'));
             } else {
+                  $arr['ids'] ='1';
                 $arr['message'] = array('message' => lang('no_new_service_add'), 'title' => lang('no_new_service_add'));
             }
         } else {
+              $arr['ids'] ='1';
             $arr['message'] = array('message' => lang('no_new_service_add'), 'title' => lang('no_new_service_add'));
         }
 

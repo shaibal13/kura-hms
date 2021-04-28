@@ -1300,15 +1300,18 @@ if ($this->ion_auth->in_group('Doctor')) {
                 dataType: 'json',
                 success: function (response) {
                     //  var data = jQuery.parseJSON(response);
+                     toastr.success(response.message.message);
+                     if(response.ids !== '1'){
                     var ids=response.ids;
                     var ids_split=ids.split(",");
-                    toastr.success(response.message.message);
+                  //  toastr.success(response.message.message);
 <?php if (!$this->ion_auth->in_group(array('admin'))) { ?>
                         $.each(ids_split, function (index, value) {
                           
                             $('#delete-service-'+response.date+'-'+value).remove();;
                         });
 <?php } ?>
+    }
                 }
             }) 
         })
