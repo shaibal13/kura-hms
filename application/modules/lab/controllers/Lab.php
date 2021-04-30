@@ -11,7 +11,11 @@ class Lab extends MX_Controller {
         $this->load->model('doctor/doctor_model');
         $this->load->model('patient/patient_model');
         $this->load->model('accountant/accountant_model');
+        $this->load->model('finance/finance_model');
+        $this->load->model('surgery/surgery_model');
         $this->load->model('receptionist/receptionist_model');
+        $this->load->model('packages/packages_model');
+        $this->load->model('laboratorist/laboratorist_model');
         $group_permission = $this->ion_auth->get_users_groups()->row();
 
         if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
@@ -29,7 +33,6 @@ class Lab extends MX_Controller {
         if ($this->ion_auth->in_group(array('pharmacist'))) {
             redirect('home/permission');
         }
-        
     }
 
     public function index() {
@@ -154,7 +157,7 @@ class Lab extends MX_Controller {
         $report = $this->input->post('report');
 
         $patient = $this->input->post('patient');
-
+        $laboratorist = $this->input->post('laboratorist');
         $redirect = $this->input->post('redirect');
 
         $p_name = $this->input->post('p_name');
@@ -296,12 +299,14 @@ class Lab extends MX_Controller {
                     'patient' => $patient,
                     'date' => $date,
                     'doctor' => $doctor,
+                    'laboratorist' => $laboratorist,
                     'user' => $user,
                     'patient_name' => $patient_name,
                     'patient_phone' => $patient_phone,
                     'patient_address' => $patient_address,
                     'doctor_name' => $doctor_name,
-                    'date_string' => $date_string
+                    'date_string' => $date_string,
+                    'to_be_id' => $this->input->post('id_from_to_be')
                 );
 
 
@@ -321,6 +326,8 @@ class Lab extends MX_Controller {
                     'patient_phone' => $patient_details->phone,
                     'patient_address' => $patient_details->address,
                     'doctor_name' => $doctor_details->name,
+                    'laboratorist' => $laboratorist,
+                    'to_be_id' => $this->input->post('id_from_to_be')
                 );
                 $this->lab_model->updateLab($id, $data);
                 $this->session->set_flashdata('feedback', lang('updated'));
@@ -427,20 +434,19 @@ class Lab extends MX_Controller {
     }
 
     function editTemplate() {
-          $permis = '';
-      //  $permis_1 = '';
+        $permis = '';
+        //  $permis_1 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
             //$permis='';
-           // $permis_1='';
+            // $permis_1='';
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Lab') {
                 $permis = 'ok';
                 //  break;
             }
-        
         }
-        if ($this->ion_auth->in_group(array('admin', 'Doctor', 'Laboratorist', 'Nurse', 'Patient')) || $permis=='ok') {
+        if ($this->ion_auth->in_group(array('admin', 'Doctor', 'Laboratorist', 'Nurse', 'Patient')) || $permis == 'ok') {
             $data = array();
             $data['settings'] = $this->settings_model->getSettings();
             $id = $this->input->get('id');
@@ -631,7 +637,7 @@ class Lab extends MX_Controller {
         $values = $this->settings_model->getColumnOrder($order, $columns_valid);
         $dir = $values[0];
         $order = $values[1];
-        
+
         if ($limit == -1) {
             if (!empty($search)) {
                 $data['labs'] = $this->lab_model->getLabBysearch($search, $order, $dir);
@@ -646,12 +652,12 @@ class Lab extends MX_Controller {
             }
         }
         //  $data['labs'] = $this->lab_model->getLab();
-       $permis = '';
+        $permis = '';
         $permis_1 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
             //$permis='';
-           // $permis_1='';
+            // $permis_1='';
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Lab') {
                 $permis = 'ok';
@@ -672,7 +678,7 @@ class Lab extends MX_Controller {
 
             $options2 = '<a class="btn btn-xs invoicebutton" title="' . lang('lab') . '" style="color: #fff;" href="lab/invoice?id=' . $lab->id . '"><i class="fa fa-file"></i> ' . lang('') . '</a>';
 
-            if ($this->ion_auth->in_group(array('admin', 'Doctor', 'Laboratorist'))|| $permis_1 == 'ok') {
+            if ($this->ion_auth->in_group(array('admin', 'Doctor', 'Laboratorist')) || $permis_1 == 'ok') {
                 $options3 = '<a class="btn btn-info btn-xs delete_button" title="' . lang('delete') . '" href="lab/delete?id=' . $lab->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"></i>' . lang('') . '</a>';
             } else {
                 $options3 = '';
@@ -835,6 +841,155 @@ class Lab extends MX_Controller {
 
 
         echo json_encode($output);
+    }
+
+    function toBeDone() {
+        $data['cases_manager'] = $this->patient_model->getMedicalHistoryByStatus('Confirmed');
+        $data['pre_medical_surgery'] = $this->surgery_model->getPreSurgeryMedicalAnalysisByStatus('Confirmed');
+        $data['on_medical_surgery'] = $this->surgery_model->getOnSurgeryMedicalAnalysisByStatus('Confirmed');
+        $data['post_medical_surgery'] = $this->surgery_model->getPostSurgeryMedicalAnalysisByStatus('Confirmed');
+        $this->load->view('home/dashboard'); // just the header file
+        $this->load->view('to_be_done', $data);
+        $this->load->view('home/footer'); // just the header file
+    }
+
+    function getLabTestFromCases() {
+        $id = $this->input->get('id');
+        $id_split = explode("-", $id);
+        $option = $option1 = '';
+        if ($id_split[0] == 'case') {
+            $cases = $this->patient_model->getMedicalHistoryById($id_split[1]);
+        }
+        if ($id_split[0] == 'precase') {
+            $cases = $this->surgery_model->getPreSurgeryMedicalAnalysisById($id_split[1]);
+        }
+        if ($id_split[0] == 'oncase') {
+            $cases = $this->surgery_model->getOnSurgeryMedicalAnalysisById($id_split[1]);
+        }
+        if ($id_split[0] == 'postcase') {
+            $cases = $this->surgery_model->getPostSurgeryMedicalAnalysisById($id_split[1]);
+        }
+        $cases_payments = explode("##", $cases->description);
+        $patient_name = $this->patient_model->getPatientById($cases->patient_id)->name;
+        foreach ($cases_payments as $key => $payments) {
+            $payments_invidual = explode("**", $payments);
+            if ($payments_invidual[0] == 'Package' || $payments_invidual[0] == 'Package_pre_surgery_medical' || $payments_invidual[0] == 'Package_on_surgery_medical'|| $payments_invidual[0] == 'Package_post_surgery_medical') {
+                $packages = $this->packages_model->getPackagesById($payments_invidual[2]);
+                $package_explode = explode("##", $packages->price_cat);
+                foreach ($package_explode as $key => $package) {
+                    $package_individual = explode("**", $package);
+                    if ($id_split[0] == 'case') {
+                        $text = 'case-package-' . $id_split[1] . '-' . $package_individual[1];
+                        $edit = '<a class="btn btn-info btn-xs btn_width editbutton_edit" href="lab/addLabReport?id=case-package-' . $id_split[1] . '-' . $package_individual[1] . '" ><i class="fa fa-edit"> </i></a>';
+                    }
+                    if ($id_split[0] == 'precase') {
+                        $text = 'precase-package-' . $id_split[1] . '-' . $package_individual[1];
+                        $edit = '<a class="btn btn-info btn-xs btn_width editbutton_edit" href="lab/addLabReport?id=precase-package-' . $id_split[1] . '-' . $package_individual[1] . '" ><i class="fa fa-edit"> </i></a>';
+                    }
+                      if ($id_split[0] == 'oncase') {
+                        $text = 'oncase-package-' . $id_split[1] . '-' . $package_individual[1];
+                        $edit = '<a class="btn btn-info btn-xs btn_width editbutton_edit" href="lab/addLabReport?id=oncase-package-' . $id_split[1] . '-' . $package_individual[1] . '" ><i class="fa fa-edit"> </i></a>';
+                    }
+                      if ($id_split[0] == 'postcase') {
+                        $text = 'postcase-package-' . $id_split[1] . '-' . $package_individual[1];
+                        $edit = '<a class="btn btn-info btn-xs btn_width editbutton_edit" href="lab/addLabReport?id=postcase-package-' . $id_split[1] . '-' . $package_individual[1] . '" ><i class="fa fa-edit"> </i></a>';
+                    }
+
+                    $exist_lab_report = $this->lab_model->getLabByToBeId($text);
+                    if (!empty($exist_lab_report)) {
+                        $lang = lang('done');
+                        $laboratorist_name = $this->laboratorist_model->getLaboratoristById($exist_lab_report->laboratorist)->name;
+                        $report = '<a class="btn btn-success btn-xs btn_width" href="lab/invoice?id=' . $exist_lab_report->id . '" target="_blank"><i class="fa fa-file-invoice"> </i></a>';
+                    } else {
+                        $laboratorist_name = '';
+                        $lang = lang('undone');
+                        $report = ' ';
+                    }
+                    //  $edit = '<button type="button" class="btn btn-info btn-xs btn_width editbutton_edit" data-toggle="modal" data-id="case-package-' .$id_split[1].'-'. $package_individual[1] . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+                    $payment_proccedures = $this->finance_model->getPaymentCategoryById($package_individual[1]);
+                    $option1 .= '<tr><td>' . $patient_name . '</td><td>' . $payment_proccedures->department_name . '</td><td>' . $payment_proccedures->type_name . '</td><td>' . $payment_proccedures->category . '</td><td>' . $payments_invidual[4] . '</td><td>' . $laboratorist_name . '</td><td>' . $lang . '</td><td>' . $edit . ' ' . $report . ' </td></tr>';
+                }
+            } else {
+                if ($id_split[0] == 'case') {
+                    $text = 'case-medical-' . $id_split[1] . '-' . $payments_invidual[2];
+                    $edit = '<a class="btn btn-info btn-xs btn_width editbutton_edit" href="lab/addLabReport?id=case-medical-' . $id_split[1] . '-' . $payments_invidual[2] . '" ><i class="fa fa-edit"> </i></a>';
+                }
+                if ($id_split[0] == 'precase') {
+                    $text = 'precase-medical-' . $id_split[1] . '-' . $payments_invidual[2];
+                    $edit = '<a class="btn btn-info btn-xs btn_width editbutton_edit" href="lab/addLabReport?id=precase-medical-' . $id_split[1] . '-' . $payments_invidual[2] . '" ><i class="fa fa-edit"> </i></a>';
+                }
+                 if ($id_split[0] == 'oncase') {
+                    $text = 'oncase-medical-' . $id_split[1] . '-' . $payments_invidual[2];
+                    $edit = '<a class="btn btn-info btn-xs btn_width editbutton_edit" href="lab/addLabReport?id=oncase-medical-' . $id_split[1] . '-' . $payments_invidual[2] . '" ><i class="fa fa-edit"> </i></a>';
+                }
+                  if ($id_split[0] == 'postcase') {
+                    $text = 'postcase-medical-' . $id_split[1] . '-' . $payments_invidual[2];
+                    $edit = '<a class="btn btn-info btn-xs btn_width editbutton_edit" href="lab/addLabReport?id=postcase-medical-' . $id_split[1] . '-' . $payments_invidual[2] . '" ><i class="fa fa-edit"> </i></a>';
+                }
+                $exist_lab_report = $this->lab_model->getLabByToBeId($text);
+                if (!empty($exist_lab_report)) {
+                    $lang = lang('done');
+                    $laboratorist_name = $this->laboratorist_model->getLaboratoristById($exist_lab_report->laboratorist)->name;
+                    $report = '<a class="btn btn-success btn-xs btn_width" href="lab/invoice?id=' . $exist_lab_report->id . '" target="_blank"><i class="fa fa-file-invoice"> </i></a>';
+                } else {
+                    $laboratorist_name = '';
+                    $lang = lang('undone');
+                    $report = ' ';
+                }
+
+// $edit = '<button type="button" class="btn btn-info btn-xs btn_width editbutton_edit" data-toggle="modal" data-id="case-medical-' .$id_split[1].'-'. $payments_invidual[2] . '"><i class="fa fa-edit"> ' . lang('edit') . '</i></button>';
+                $payment_proccedures = $this->finance_model->getPaymentCategoryById($payments_invidual[2]);
+                $option .= '<tr><td>' . $patient_name . '</td><td>' . $payment_proccedures->department_name . '</td><td>' . $payment_proccedures->type_name . '</td><td>' . $payment_proccedures->category . '</td><td>' . $payments_invidual[4] . '</td><td>' . $laboratorist_name . '</td><td>' . $lang . '</td><td>' . $edit . ' ' . $report . '</td></tr>';
+            }
+        }
+        $data['option'] = $option;
+        $data['option1'] = $option1;
+        echo json_encode($data);
+    }
+
+    function addLabReport() {
+        $id = $this->input->get('id');
+        $exist_lab_report = $this->lab_model->getLabByToBeId($id);
+        $data = array();
+        if (!empty($exist_lab_report)) {
+            $data['lab'] = $this->lab_model->getLabById($exist_lab_report->id);
+            $data['laboratorist'] = $this->laboratorist_model->getLaboratoristById($data['lab']->laboratorist);
+            $data['doctors'] = $this->doctor_model->getDoctorById($data['lab']->doctor);
+        }
+        $id_split = explode("-", $id);
+        if ($id_split[0] == 'case') {
+            $cases = $this->patient_model->getMedicalHistoryById($id_split[2]);
+        }
+        if ($id_split[0] == 'precase') {
+            $cases = $this->surgery_model->getPreSurgeryMedicalAnalysisById($id_split[2]);
+        }
+          if ($id_split[0] == 'oncase') {
+            $cases = $this->surgery_model->getOnSurgeryMedicalAnalysisById($id_split[2]);
+        }
+          if ($id_split[0] == 'postcase') {
+            $cases = $this->surgery_model->getPostSurgeryMedicalAnalysisById($id_split[2]);
+        }
+
+        $data['patients'] = $this->patient_model->getPatientById($cases->patient_id);
+        $data['templates'] = $this->lab_model->getTemplate();
+        $data['settings'] = $this->settings_model->getSettings();
+        $data['categories'] = $this->lab_model->getLabCategory();
+        $data['id_from_to_be'] = $id;
+        // $data['patients'] = $this->patient_model->getPatient();
+        // $data['doctors'] = $this->doctor_model->getDoctor();
+        $this->load->view('home/dashboard'); // just the header file
+        $this->load->view('add_lab_view', $data);
+        $this->load->view('home/footer'); // just the header file
+    }
+
+    public function getLaboratoristinfo() {
+// Search term
+        $searchTerm = $this->input->post('searchTerm');
+
+// Get users
+        $response = $this->laboratorist_model->getLaboratoristInfo($searchTerm);
+
+        echo json_encode($response);
     }
 
 }

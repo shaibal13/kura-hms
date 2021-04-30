@@ -57,6 +57,11 @@ class Surgery_model extends CI_model {
         $this->db->insert('pre_surgery_medical_analysis', $data);
     }
 
+    function getPreSurgeryMedicalAnalysisByStatus($status) {
+        return $this->db->where('status', $status)
+                        ->get('pre_surgery_medical_analysis')->result();
+    }
+
     function updatePreSurgeryMedicalAnalysis($id, $data) {
         $this->db->where('id', $id);
         $this->db->update('pre_surgery_medical_analysis', $data);
@@ -101,6 +106,11 @@ class Surgery_model extends CI_model {
         return $query->row();
     }
 
+    function getOnSurgeryMedicalAnalysisByStatus($status) {
+        return $this->db->where('status', $status)
+                        ->get('on_surgery_medical_analysis')->result();
+    }
+
     function getOnSurgeryMedicalAnalysisById($id) {
         $this->db->where('id', $id);
         $query = $this->db->get('on_surgery_medical_analysis');
@@ -126,6 +136,11 @@ class Surgery_model extends CI_model {
     function updatePostSurgeryMedicalAnalysis($id, $data) {
         $this->db->where('id', $id);
         $this->db->update('post_surgery_medical_analysis', $data);
+    }
+
+    function getPostSurgeryMedicalAnalysisByStatus($status) {
+        return $this->db->where('status', $status)
+                        ->get('post_surgery_medical_analysis')->result();
     }
 
     function getPostSurgeryMedicalAnalysisBySurgeryId($surgery) {
@@ -228,119 +243,137 @@ class Surgery_model extends CI_model {
         $this->db->where('id', $id);
         $this->db->delete('post_surgery_medicine');
     }
-      function getPreServiceBySurgeryId($id) {
+
+    function getPreServiceBySurgeryId($id) {
         return $this->db->where('surgery_id', $id)
-                       
                         ->get('pre_service')->result();
     }
-      function deletePreServices($id) {
+
+    function deletePreServices($id) {
         $this->db->where('id', $id);
         $this->db->delete('pre_service');
     }
-     function getPreServicesByDate($date){
-        return $this->db->where('date',$date)       
-                ->get('pre_service')->row();
+
+    function getPreServicesByDate($date) {
+        return $this->db->where('date', $date)
+                        ->get('pre_service')->row();
     }
-       function updatePreServices($id, $data) {
+
+    function updatePreServices($id, $data) {
         $this->db->where('id', $id);
         $this->db->update('pre_service', $data);
     }
-        function insertPreServices($data) {
-      
+
+    function insertPreServices($data) {
+
         //$data2 = array_merge($data, $data1);
         $this->db->insert('pre_service', $data);
     }
+
     function getPreServiceById($id) {
         return $this->db->where('id', $id)
-                       
                         ->get('pre_service')->row();
     }
+
     function getPreServicedByIdByDate($id) {
         return $this->db->where('surgery_id', $id)
-                       ->where('date',date('d-m-Y'))
+                        ->where('date', date('d-m-Y'))
                         ->get('pre_service')->row();
     }
-       function getOnServiceBySurgeryId($id) {
+
+    function getOnServiceBySurgeryId($id) {
         return $this->db->where('surgery_id', $id)
-                       
                         ->get('on_service')->result();
     }
-      function deleteOnServices($id) {
+
+    function deleteOnServices($id) {
         $this->db->where('id', $id);
         $this->db->delete('on_service');
     }
-     function getOnServicesByDate($date){
-        return $this->db->where('date',$date)       
-                ->get('on_service')->row();
+
+    function getOnServicesByDate($date) {
+        return $this->db->where('date', $date)
+                        ->get('on_service')->row();
     }
-       function updateOnServices($id, $data) {
+
+    function updateOnServices($id, $data) {
         $this->db->where('id', $id);
         $this->db->update('on_service', $data);
     }
-        function insertOnServices($data) {
-      
+
+    function insertOnServices($data) {
+
         //$data2 = array_merge($data, $data1);
         $this->db->insert('on_service', $data);
     }
+
     function getOnServiceById($id) {
         return $this->db->where('id', $id)
-                       
                         ->get('on_service')->row();
     }
+
     function getOnServicedByIdByDate($id) {
         return $this->db->where('surgery_id', $id)
-                       ->where('date',date('d-m-Y'))
+                        ->where('date', date('d-m-Y'))
                         ->get('on_service')->row();
     }
-        function getPostServiceBySurgeryId($id) {
+
+    function getPostServiceBySurgeryId($id) {
         return $this->db->where('surgery_id', $id)
-                       
                         ->get('post_service')->result();
     }
-      function deletePostServices($id) {
+
+    function deletePostServices($id) {
         $this->db->where('id', $id);
         $this->db->delete('post_service');
     }
-     function getPostServicesByDate($date){
-        return $this->db->where('date',$date)       
-                ->get('post_service')->row();
+
+    function getPostServicesByDate($date) {
+        return $this->db->where('date', $date)
+                        ->get('post_service')->row();
     }
-       function updatePostServices($id, $data) {
+
+    function updatePostServices($id, $data) {
         $this->db->where('id', $id);
         $this->db->update('post_service', $data);
     }
-        function insertPostServices($data) {
-      
+
+    function insertPostServices($data) {
+
         //$data2 = array_merge($data, $data1);
         $this->db->insert('post_service', $data);
     }
+
     function getPostServiceById($id) {
         return $this->db->where('id', $id)
-                       
                         ->get('post_service')->row();
     }
+
     function getPostServicedByIdByDate($id) {
         return $this->db->where('surgery_id', $id)
-                       ->where('date',date('d-m-Y'))
+                        ->where('date', date('d-m-Y'))
                         ->get('post_service')->row();
     }
-     function updateCheckout($id, $data) {
+
+    function updateCheckout($id, $data) {
         $this->db->where('id', $id);
         $this->db->update('surgery_checkout', $data);
     }
-      function insertCheckout($data) {
-       
-      //  $data2 = array_merge($data, $data1);
+
+    function insertCheckout($data) {
+
+        //  $data2 = array_merge($data, $data1);
         $this->db->insert('surgery_checkout', $data);
     }
-     function getCheckoutdById($id) {
+
+    function getCheckoutdById($id) {
         return $this->db->where('id', $id)
-                       
                         ->get('surgery_checkout')->row();
     }
-      function getCheckoutBySurgeryId($id) {
+
+    function getCheckoutBySurgeryId($id) {
         return $this->db->where('surgery_id', $id)
-                       
                         ->get('surgery_checkout')->row();
     }
+
 }

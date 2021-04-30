@@ -216,5 +216,9 @@ class Lab_model extends CI_model {
         $this->db->where('id', $id);
         $this->db->delete('template');
     }
-
+  function getLabByToBeId($id) {
+        $this->db->where('to_be_id', $id);
+        $query = $this->db->get('lab');
+        return $query->row();
+    }
 }

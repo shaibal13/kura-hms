@@ -382,5 +382,8 @@ class Patient_model extends CI_model {
         }
         return $data;
     }
-
+   function getMedicalHistoryByStatus($status){
+       return $this->db->where('status',$status)
+               ->get('medical_history')->result();
+   }
 }

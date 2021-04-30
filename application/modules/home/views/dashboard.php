@@ -878,6 +878,7 @@
                                     <span><?php echo lang('labs'); ?></span>
                                 </a>
                                 <ul class="sub">
+                                     <li><a  href="lab/toBeDone"><i class="fa fa-check"></i><?php echo lang('to_be_done'); ?></a></li>
                                     <li><a  href="lab"><i class="fa fa-file-medical"></i><?php echo lang('lab_reports'); ?></a></li>
                                     <?php if ($this->ion_auth->in_group(array('admin', 'Doctor', 'Laboratorist')) || $permis == 'ok') { ?>
                                         <li><a  href="lab/addLabView"><i class="fa fa-plus-circle"></i><?php echo lang('add_lab_report'); ?></a></li>

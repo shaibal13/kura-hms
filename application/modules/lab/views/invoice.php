@@ -357,6 +357,21 @@
                                         </span>
                                     </p>
                                 </div>
+                                      <div class="col-md-12 row details">
+                                    <p>
+                                        <label class="control-label"><?php echo lang('laboratorist'); ?>  </label>
+                                        <span style="text-transform: uppercase;"> : 
+                                            <?php
+                                            if (!empty($lab->laboratorist)) {
+                                                $laboratorist = $this->laboratorist_model->getLaboratoristById($lab->laboratorist);
+                                                if (!empty($laboratorist)) {
+                                                    echo $laboratorist->name. '<br>';
+                                                }
+                                            }
+                                            ?>
+                                        </span>
+                                    </p>
+                                </div>
                             </div>
                         </div>
                         <br>

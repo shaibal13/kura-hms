@@ -294,13 +294,13 @@
                                         <div class="col-md-6">
 
                                         </div>
-
+<?php if (empty($bed_checkout->date) || $this->ion_auth->in_group(array('admin'))) { ?>
                                         <div class="col-md-6">
                                             <button style="background: #7a2828;" type="submit" name="submit" class="btn btn-info pull-right" onclick="history.back()"><?php echo lang('exit'); ?></button>
                                             <button style="margin-right: 7px;" type="submit" name="submit2" class="btn btn-info pull-right" ><?php echo lang('submit'); ?></button>
 
                                         </div>
-
+<?php } ?>
                                     </div>
 
                                 </form>
@@ -325,6 +325,7 @@
                                     <div id="pre_medical_analysis" class="tab-pane active">
                                         <div class="panel-body">
                                             <div class="adv-table editable-table ">
+                                                <?php if (empty($bed_checkout->date) || $this->ion_auth->in_group(array('admin'))) { ?>
                                                 <div class="clearfix no-print col-md-8 pull-right">
                                                     <a data-toggle="modal" href="#pre_surgery_medical_modal">
                                                         <div class="btn-group pull-right">
@@ -334,6 +335,7 @@
                                                         </div>
                                                     </a>
                                                 </div>
+                                                <?php } ?>
                                                 <div class="adv-table editable-table">
 
                                                     <table class="table table-striped table-hover table-bordered" id="editable-sample_pre_medical">
@@ -379,9 +381,12 @@
 
                                                                     <td><?php echo $pre_medical->grand_total; ?></td>
                                                                     <td>
+                                                                        <?php if (empty($bed_checkout->date) || $this->ion_auth->in_group(array('admin'))) { ?>
                                                                         <button type="button" class="btn btn-info btn-xs btn_width editbutton_pre_medical_surgery" data-toggle="modal" data-id="<?php echo $pre_medical->id; ?>"><i class="fa fa-edit"></i></button>
-                                                                        <a class="btn btn-success btn-xs btn_width" title="<?php echo lang('invoice'); ?>" href="finance/invoice?id=<?php echo $pre_medical->payment_id; ?>" target="_blank"><i class="fa fa-file-invoice"></i></a>
+                                                                      
                                                                         <button class="btn btn-danger btn-xs btn_width delete_button_medical_pre" id="delete-pre-surgery-medical-<?php echo $pre_medical->id; ?>"><i class="fa fa-trash"> </i></button>
+                                                                        <?php } ?>
+                                                                          <a class="btn btn-success btn-xs btn_width" title="<?php echo lang('invoice'); ?>" href="finance/invoice?id=<?php echo $pre_medical->payment_id; ?>" target="_blank"><i class="fa fa-file-invoice"></i></a>
                                                                     </td>
                                                                 </tr>
                                                             <?php } ?>
@@ -394,11 +399,13 @@
                                     </div>
                                     <div id="pre_medicines" class="tab-pane">
                                         <div class="">
+                                             <?php if (empty($bed_checkout->date) || $this->ion_auth->in_group(array('admin'))) { ?>
                                             <div class="col-md-12 pull-right">
 
                                                 <button style="display: block;" id="save_button_pre" type="submit" name="submit" class="btn btn-xs btn-info pull-right" ><i class="fa fa-save"></i> <?php echo lang('save'); ?></button>
 
                                             </div>
+                                             <?php } ?>
                                             <br>
                                             <div class="adv-table editable-table ">
                                                 <table style="width: 100% !important;" class="table table-striped table-hover table-bordered" id="editable-table_pre_medicine" >
@@ -439,7 +446,7 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <?php if ($this->ion_auth->in_group(array('admin'))) { ?> 
+                                           <?php if (empty($bed_checkout->date) || $this->ion_auth->in_group(array('admin'))) { ?>
                                                 <div>
                                                     <label>---------------------------------------------------------------------------------------<?php echo "Select Medicine" ?>-----------------------------------------------------------------------</label>
                                                     <form role="form" action="" id="editMedicine_pre"class="clearfix" method="post" enctype="multipart/form-data">                             
@@ -490,11 +497,13 @@
                                     </div>
                                     <div id="pre_services" class="tab-pane">
                                         <div class="">
+                                             <?php if (empty($bed_checkout->date) || $this->ion_auth->in_group(array('admin'))) { ?>
                                             <div class="col-md-12 pull-right">
 
                                                 <button style="display: block;" id="save_button_service_pre" type="submit" name="submit" class="btn btn-xs btn-info pull-right" ><i class="fa fa-save"></i> <?php echo lang('save'); ?></button>
 
                                             </div> 
+                                             <?php } ?>
                                             <div class="adv-table editable-table ">
                                                 <table style="width: 100% !important;" class="table table-striped table-hover table-bordered" id="editable-table_pre_services">
                                                     <thead>
@@ -550,9 +559,12 @@
                                                                                 } else {
                                                                                     $dis = '0';
                                                                                 } echo $dis;
-                                                                                ?>"class="discount-price-pre-services" id="pre-service-discount-<?php echo $servicename->id; ?>-<?php echo $service->date; ?>"></td>
+                                                                                ?>"class="discount-price-pre-services" id="pre-service-discount-<?php echo $servicename->id; ?>-<?php echo $service->date; ?>" 
+                                                                                    <?php if (!empty($bed_checkout->date) && !$this->ion_auth->in_group(array('admin'))) { ?>
+                                                                                readonly=""
+                                                                                <?php } ?>></td>
                                                                             <td id="discount-pre-<?php echo $service->date; ?>-<?php echo $servicename->id; ?>"><?php echo $price[$i] - $dis; ?></td>
-                                                                            <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
+                                                                           <?php if (empty($bed_checkout->date) || $this->ion_auth->in_group(array('admin'))) { ?>
 
 
                                                                                 <td class="no-print" id="delete-service-<?php echo date('d') . '-' . $servicename->id; ?>"><button type='button' class='btn btn-danger btn-xs btn_width delete_service' title='<?php echo lang('delete'); ?>' data-toggle='' data-id="<?php echo $service->id . "**" . $service_update[$i]; ?>"><i class='fa fa-trash'></i></button></td>
@@ -611,7 +623,7 @@
                                                     ?>' placeholder="" readonly="">
                                                 </div>
                                             </div>
-                                            <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
+                                   <?php if (empty($bed_checkout->date) || $this->ion_auth->in_group(array('admin'))) { ?>
                                                 <div>
                                                     <label>--------------------------------------------------------------------------------------- <?php echo "Services" ?> -----------------------------------------------------------------------</label>
                                                     <form role="form" action="" id="editService_pre"class="clearfix" method="post" enctype="multipart/form-data">                             
@@ -675,6 +687,7 @@
                                     <div id="on_medical_analysis" class="tab-pane active">
                                         <div class="panel-body">
                                             <div class="adv-table editable-table ">
+                                                   <?php if (empty($bed_checkout->date) || $this->ion_auth->in_group(array('admin'))) { ?>
                                                 <div class="clearfix no-print col-md-8 pull-right">
                                                     <a data-toggle="modal" href="#on_surgery_medical_modal">
                                                         <div class="btn-group pull-right">
@@ -684,6 +697,7 @@
                                                         </div>
                                                     </a>
                                                 </div>
+                                                   <?php } ?>
                                                 <div class="adv-table editable-table">
 
                                                     <table class="table table-striped table-hover table-bordered" id="editable-sample_on_medical">
@@ -696,6 +710,7 @@
                                                                 <th style="width: 15%"><?php echo lang('status'); ?> </th>
 
                                                                 <th style="width: 15%"><?php echo lang('grand_total'); ?> </th>
+                                                                
                                                                 <th style="width: 10%;" class="no-print"><?php echo lang('options'); ?></th>
                                                             </tr>
                                                         </thead>
@@ -729,9 +744,11 @@
 
                                                                     <td><?php echo $on_medical->grand_total; ?></td>
                                                                     <td>
+                                                                           <?php if (empty($bed_checkout->date) || $this->ion_auth->in_group(array('admin'))) { ?>
                                                                         <button type="button" class="btn btn-info btn-xs btn_width editbutton_on_medical_surgery" data-toggle="modal" data-id="<?php echo $on_medical->id; ?>"><i class="fa fa-edit"></i></button>
                                                                        <!-- <a class="btn btn-success btn-xs btn_width" title="<?php echo lang('invoice'); ?>" href="finance/invoice?id=<?php echo $on_medical->payment_id; ?>" target="_blank"><i class="fa fa-file-invoice"></i></a>-->
                                                                         <button class="btn btn-danger btn-xs btn_width delete_button_medical_on" id="delete-on-surgery-medical-<?php echo $on_medical->id; ?>"><i class="fa fa-trash"> </i></button>
+                                                                           <?php } ?>
                                                                     </td>
                                                                 </tr>
                                                             <?php } ?>
@@ -789,7 +806,7 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <?php if ($this->ion_auth->in_group(array('admin'))) { ?> 
+                                            <?php if (empty($bed_checkout->date) || $this->ion_auth->in_group(array('admin'))) { ?> 
                                                 <div>
                                                     <label>---------------------------------------------------------------------------------------<?php echo "Select Medicine" ?>-----------------------------------------------------------------------</label>
                                                     <form role="form" action="" id="editMedicine_on"class="clearfix" method="post" enctype="multipart/form-data">                             
@@ -900,7 +917,7 @@
                                                                                 } else {
                                                                                     $dis = '0';
                                                                                 } echo $dis;
-                                                                                ?>"class="discount-price-on-services" id="on-service-discount-<?php echo $servicename->id; ?>-<?php echo $service->date; ?>"></td>
+                                                                                ?>"class="discount-price-on-services" id="on-service-discount-<?php echo $servicename->id; ?>-<?php echo $service->date; ?>"  <?php if (!empty($bed_checkout->date) && !$this->ion_auth->in_group(array('admin'))) { ?> readonly="" <?php } ?>></td>
                                                                             <td id="discount-on-<?php echo $service->date; ?>-<?php echo $servicename->id; ?>"><?php echo $price[$i] - $dis; ?></td>
                                                                             <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
 
@@ -964,7 +981,7 @@
                                                     ?>' placeholder="" readonly="">
                                                 </div>
                                             </div>
-                                            <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
+                                            <?php if (empty($bed_checkout->date) || $this->ion_auth->in_group(array('admin'))) { ?>
                                                 <div>
                                                     <label>--------------------------------------------------------------------------------------- <?php echo "Services" ?> -----------------------------------------------------------------------</label>
                                                     <form role="form" action="" id="editService_on"class="clearfix" method="post" enctype="multipart/form-data">                             
@@ -1029,6 +1046,7 @@
                                     <div id="post_medical_analysis" class="tab-pane active">
                                         <div class="panel-body">
                                             <div class="adv-table editable-table ">
+                                                 <?php if (empty($bed_checkout->date) || $this->ion_auth->in_group(array('admin'))) { ?>
                                                 <div class="clearfix no-print col-md-8 pull-right">
                                                     <a data-toggle="modal" href="#post_surgery_medical_modal">
                                                         <div class="btn-group pull-right">
@@ -1038,6 +1056,7 @@
                                                         </div>
                                                     </a>
                                                 </div>
+                                                 <?php } ?>
                                                 <div class="adv-table editable-table">
 
                                                     <table class="table table-striped table-hover table-bordered" id="editable-sample_post_medical">
@@ -1083,9 +1102,13 @@
 
                                                                     <td><?php echo $post_medical->grand_total; ?></td>
                                                                     <td>
+                                                                         <?php if (empty($bed_checkout->date) || $this->ion_auth->in_group(array('admin'))) { ?>
                                                                         <button type="button" class="btn btn-info btn-xs btn_width editbutton_post_medical_surgery" data-toggle="modal" data-id="<?php echo $post_medical->id; ?>"><i class="fa fa-edit"></i></button>
-                                                                        <a class="btn btn-success btn-xs btn_width" title="<?php echo lang('invoice'); ?>" href="finance/invoice?id=<?php echo $post_medical->payment_id; ?>" target="_blank"><i class="fa fa-file-invoice"></i></a>
+                                                                        
                                                                         <button class="btn btn-danger btn-xs btn_width delete_button_medical_post" id="delete-post-surgery-medical-<?php echo $post_medical->id; ?>"><i class="fa fa-trash"> </i></button>
+                                                                   
+                                                                         <?php } ?>
+                                                                        <a class="btn btn-success btn-xs btn_width" title="<?php echo lang('invoice'); ?>" href="finance/invoice?id=<?php echo $post_medical->payment_id; ?>" target="_blank"><i class="fa fa-file-invoice"></i></a>
                                                                     </td>
                                                                 </tr>
                                                             <?php } ?>
@@ -1143,7 +1166,7 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <?php if ($this->ion_auth->in_group(array('admin'))) { ?> 
+                                             <?php if (empty($bed_checkout->date) || $this->ion_auth->in_group(array('admin'))) { ?>
                                                 <div>
                                                     <label>---------------------------------------------------------------------------------------<?php echo "Select Medicine" ?>-----------------------------------------------------------------------</label>
                                                     <form role="form" action="" id="editMedicine_post"class="clearfix" method="post" enctype="multipart/form-data">                             
@@ -1254,7 +1277,7 @@
                                                                                 } else {
                                                                                     $dis = '0';
                                                                                 } echo $dis;
-                                                                                ?>"class="discount-price-post-services" id="post-service-discount-<?php echo $servicename->id; ?>-<?php echo $service->date; ?>"></td>
+                                                                                ?>"class="discount-price-post-services" id="post-service-discount-<?php echo $servicename->id; ?>-<?php echo $service->date; ?>"  <?php if (!empty($bed_checkout->date) && !$this->ion_auth->in_group(array('admin'))) { ?> readonly=""<?php } ?>></td>
                                                                             <td id="discount-post-<?php echo $service->date; ?>-<?php echo $servicename->id; ?>"><?php echo $price[$i] - $dis; ?></td>
                                                                             <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
 
@@ -1315,7 +1338,7 @@
                                                     ?>' placeholder="" readonly="">
                                                 </div>
                                             </div>
-                                            <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
+                                             <?php if (empty($bed_checkout->date) || $this->ion_auth->in_group(array('admin'))) { ?>
                                                 <div>
                                                     <label>--------------------------------------------------------------------------------------- <?php echo "Services" ?> -----------------------------------------------------------------------</label>
                                                     <form role="form" action="" id="editService_post"class="clearfix" method="post" enctype="multipart/form-data">                             

@@ -45,5 +45,27 @@ class Laboratorist_model extends CI_model {
         $this->db->where('id', $ion_user_id);
         $this->db->update('users', $uptade_ion_user);
     }
+function getLaboratoristInfo($searchTerm) {
+        if (!empty($searchTerm)) {
+            $this->db->select('*');
+            $this->db->where("name like '%" . $searchTerm . "%' ");
+            $this->db->or_where("id like '%" . $searchTerm . "%' ");
+            $fetched_records = $this->db->get('laboratorist');
+            $users = $fetched_records->result_array();
+        } else {
+            $this->db->select('*');
+            // $this->db->where("name like '%".$searchTerm."%' ");
+            //  $this->db->or_where("id like '%".$searchTerm."%' ");
+            $this->db->limit(10);
+            $fetched_records = $this->db->get('laboratorist');
+            $users = $fetched_records->result_array();
+        }
+        // Initialize Array with fetched data
+        $data = array();
+        foreach ($users as $user) {
+            $data[] = array("id" => $user['id'], "text" => $user['name'] . ' (' . lang('id') . ': ' . $user['id'] . ')');
+        }
+        return $data;
+    }
 
 }
