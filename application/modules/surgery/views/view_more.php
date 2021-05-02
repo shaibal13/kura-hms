@@ -3032,9 +3032,11 @@ if ($this->ion_auth->in_group('Doctor')) {
                 dataType: 'json',
                 success: function (response) {
                     //  var data = jQuery.parseJSON(response);
+                     toastr.success(response.message.message);
                     var ids = response.ids;
+                    if(ids !== '1'){
                     var ids_split = ids.split(",");
-                    toastr.success(response.message.message);
+                   
 <?php if (!$this->ion_auth->in_group(array('admin'))) { ?>
                         $.each(ids_split, function (index, value) {
 
@@ -3042,6 +3044,7 @@ if ($this->ion_auth->in_group('Doctor')) {
                             ;
                         });
 <?php } ?>
+    }
                 }
             })
         })
@@ -3301,9 +3304,12 @@ if ($this->ion_auth->in_group('Doctor')) {
                 dataType: 'json',
                 success: function (response) {
                     //  var data = jQuery.parseJSON(response);
+                     toastr.success(response.message.message);
+                     
                     var ids = response.ids;
+                    if(ids !== '1'){
                     var ids_split = ids.split(",");
-                    toastr.success(response.message.message);
+                   
 <?php if (!$this->ion_auth->in_group(array('admin'))) { ?>
                         $.each(ids_split, function (index, value) {
 
@@ -3311,6 +3317,7 @@ if ($this->ion_auth->in_group('Doctor')) {
                             ;
                         });
 <?php } ?>
+    }
                 }
             })
         })

@@ -146,6 +146,20 @@
                                                 echo lang('allotment_service');
                                             } elseif ($payment->payment_from == 'payment') {
                                                 echo lang('payment');
+                                            }elseif ($payment->payment_from == 'pre_service') {
+                                                echo lang('pre_surgery') . ' ' . lang('service');
+                                            } elseif ($payment->payment_from == 'post_service') {
+                                                echo lang('post_surgery') . ' ' . lang('service');
+                                            } elseif ($payment->payment_from == 'surgery') {
+                                                echo lang('surgery');
+                                            } elseif ($payment->payment_from == 'pre_surgery_medical_analysis') {
+                                                echo lang('pre_surgery') . ' ' . lang('medical_analysis');
+                                            } elseif ($payment->payment_from == 'post_surgery_medical_analysis') {
+                                                echo lang('post_surgery') . ' ' . lang('medical_analysis');
+                                            } elseif ($payment->payment_from == 'pre_surgery_medicine') {
+                                                echo lang('pre_surgery') . ' ' . lang('medicine');
+                                            } elseif ($payment->payment_from == 'post_surgery_medicine') {
+                                                echo lang('post_surgery') . ' ' . lang('medicine');
                                             }
                                             ?></td>
 
@@ -174,7 +188,10 @@
                                                 <?php //} ?>
 
 
-                                            <?php } ?>
+                                            <?php } else{ ?>
+                                                <a class="btn-xs invoicebutton" title="<?php echo lang('invoice'); ?>" style="color: #fff; width: 25%;" href="patient/myInvoice?id=<?php echo $payment->id; ?>"><i class="fa fa-file-invoice"></i> </a>
+                                            <?php } 
+                                            ?>
                                         </td>
                                     </tr>
 

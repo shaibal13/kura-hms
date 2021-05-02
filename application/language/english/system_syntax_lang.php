@@ -893,3 +893,7 @@ $lang['attending_doctor'] = 'Attending Doctor';
 $lang['case_nr'] = 'Case Nr';
 $lang['select_laboratorist'] = 'Select Laboratorist';
 $lang['undone'] = 'Undone';
+$lang['faturime'] = 'Faturime';
+$lang['not_fully_paid'] = 'Not Fully Paid';
+$lang['payment_proccedure'] = 'Payment Proccedure';
+$lang['filter_by'] = 'Filter By';

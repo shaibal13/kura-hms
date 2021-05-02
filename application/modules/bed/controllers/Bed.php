@@ -1147,7 +1147,7 @@ class Bed extends MX_Controller {
         if (!empty($medicine_id)) {
             // $length = count($medicine_id);
             $total = array_sum($price);
-            $arr['ids'] = implode(",", $ids);
+               $arr['ids'] = implode(",", $ids);
             /* for ($i = 0; $i < $length; $i++) {
               $medicine_con[] = $medicine_id[$i] . '*' . $medicine_name[$i] . '*' . $sale_price[$i] . '*' . $quantity[$i] . '*' . $price[$i].'*'.$ids[$i];
               } */

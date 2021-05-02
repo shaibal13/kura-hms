@@ -1098,6 +1098,7 @@
                                 </a>
                                 <ul class="sub">
                                     <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
+                                     <li><a  href="finance/faturime"><i class="fa fa-book"></i><?php echo lang('faturime'); ?></a></li>
                                         <li><a  href="finance/financialReport"><i class="fa fa-book"></i><?php echo lang('financial_report'); ?></a></li>
                                         <li> <a href="finance/AllUserActivityReport">  <i class="fa fa-home"></i>   <span><?php echo lang('user_activity_report'); ?></span> </a></li>
                                     <?php } ?>

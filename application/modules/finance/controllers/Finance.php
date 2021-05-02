@@ -16,6 +16,7 @@ class Finance extends MX_Controller {
         $this->load->model('receptionist/receptionist_model');
         $this->load->model('category/category_model');
         $this->load->model('department/department_model');
+        $this->load->model('laboratorist/laboratorist_model');
         $this->load->module('sms');
 
         require APPPATH . 'third_party/stripe/stripe-php/init.php';
@@ -2057,17 +2058,31 @@ class Finance extends MX_Controller {
             if (empty($options3)) {
                 $options3 = '';
             }
-             $from=""; 
+            $from = "";
             if ($payment->payment_from == 'appointment') {
-                $from= lang('appointment');
+                $from = lang('appointment');
             } elseif ($payment->payment_from == 'bed') {
-                 $from= lang('allotment_medicine');
+                $from = lang('allotment_medicine');
             } elseif ($payment->payment_from == 'case') {
-                 $from= lang('case');
+                $from = lang('case');
             } elseif ($payment->payment_from == 'bed_service') {
-                 $from= lang('allotment_service');
+                $from = lang('allotment_service');
             } elseif ($payment->payment_from == 'payment') {
-                 $from= lang('payment');
+                $from = lang('payment');
+            } elseif ($payment->payment_from == 'pre_service') {
+                $from = lang('pre_surgery') . ' ' . lang('service');
+            } elseif ($payment->payment_from == 'post_service') {
+                $from = lang('post_surgery') . ' ' . lang('service');
+            } elseif ($payment->payment_from == 'surgery') {
+                $from = lang('surgery');
+            } elseif ($payment->payment_from == 'pre_surgery_medical_analysis') {
+                $from = lang('pre_surgery') . ' ' . lang('medical_analysis');
+            } elseif ($payment->payment_from == 'post_surgery_medical_analysis') {
+                $from = lang('post_surgery') . ' ' . lang('medical_analysis');
+            } elseif ($payment->payment_from == 'pre_surgery_medicine') {
+                $from = lang('pre_surgery') . ' ' . lang('medicine');
+            } elseif ($payment->payment_from == 'post_surgery_medicine') {
+                $from = lang('post_surgery') . ' ' . lang('medicine');
             }
             $doctor_details = $this->doctor_model->getDoctorById($payment->doctor);
 
@@ -2510,6 +2525,38 @@ class Finance extends MX_Controller {
         //  $this->load->view('home/footer'); // just the footer fi
     }
 
+    public function faturime() {      
+        $filter_by= $this->input->post('filter_by');
+       
+      
+        $date_from = strtotime($this->input->post('date_from'));
+        $date_to = strtotime($this->input->post('date_to'));
+        if (!empty($date_to)) {
+            $date_to = $date_to + 86399;
+        }
+        $data = array();
+        if (empty($date_from) && empty($date_to)) {
+            $data['payments'] = $this->finance_model->getPaymentBySelectiveFrom();
+        } else {
+            $data['payments'] = $this->finance_model->getPaymentBySelectiveFromDateTO($date_from, $date_to);
+        }
+        $data['settings'] = $this->settings_model->getSettings();
+       $data['from']=$this->input->post('date_from');
+        $data['to']=$this->input->post('date_to');
+        $data['status']= $this->input->post('status');
+        $data['types'] = $this->category_model->getCategory();
+        $data['filter_by']=$filter_by;
+        $data['departments'] = $this->department_model->getDepartment();
+        $data['laboratorists'] = $this->laboratorist_model->getLaboratorist();
+         $data['department_choose']=$this->input->post('department_choose');
+         
+         $data['type_choose']=$this->input->post('type');
+          $data['laboratorist_choose']=$this->input->post('laboratorist_choose');
+        $this->load->view('home/dashboard'); // just the header file
+        $this->load->view('faturime', $data);
+        $this->load->view('home/footer'); // just the footer fida
+    }
+  
 }
 
 /* End of file finance.php */

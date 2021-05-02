@@ -1039,4 +1039,36 @@ class Finance_model extends CI_model {
         return $query->result();
     }
 
+    function getPaymentBySelectiveFrom() {
+        return $this->db->where('date_string', date('d-m-Y', time()))
+                        ->group_start()
+                        ->where('payment_from', 'case')
+                        ->or_where('payment_from', 'surgery')
+                        ->or_where('payment_from', 'pre_surgery_medical_analysis')
+                        ->or_where('payment_from', 'pre_surgery_medicine')
+                        ->or_where('payment_from', 'post_surgery_medical_analysis')
+                        ->or_where('payment_from', 'pre_service')
+                        ->or_where('payment_from', 'post_service')
+                        ->or_where('payment_from', 'post_surgery_medicine')
+                        ->group_end()
+                        ->get('payment')->result();
+    }
+
+    function getPaymentBySelectiveFromDateTO($date_from, $date_to) {
+        
+        return $this->db->where('date >=', $date_from)
+                        ->where('date <=', $date_to)
+                        ->group_start()
+                        ->where('payment_from', 'case')
+                        ->or_where('payment_from', 'surgery')
+                        ->or_where('payment_from', 'pre_surgery_medical_analysis')
+                        ->or_where('payment_from', 'pre_surgery_medicine')
+                        ->or_where('payment_from', 'post_surgery_medical_analysis')
+                        ->or_where('payment_from', 'pre_service')
+                        ->or_where('payment_from', 'post_service')
+                        ->or_where('payment_from', 'post_surgery_medicine')
+                        ->group_end()
+                        ->get('payment')->result();
+    }
+
 }

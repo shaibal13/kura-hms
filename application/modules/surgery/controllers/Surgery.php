@@ -180,7 +180,7 @@ class Surgery extends MX_Controller {
                 //  $data_case['case_status'] = $status;
                 $data_surgery['date'] = time();
 
-
+             $data_surgery['date_string'] = date('d-m-Y',time());
                 $this->surgery_model->insertSurgery($data);
                 $inserted_id_medical = $this->db->insert_id('surgery');
                 $data_surgery['surgery_id'] = $inserted_id_medical;
@@ -1206,7 +1206,7 @@ class Surgery extends MX_Controller {
             $medicine_include = implode("#", $medicine_con);
 
             $data = array();
-            $bed_alloted = $this->surgery_model->getSurgeryById($medicine_list->surgery_id);
+            $bed_alloted = $this->surgery_model->getSurgeryById($id);
             $patient = $this->patient_model->getPatientById($bed_alloted->patient_id);
             // $doctor = $this->doctor_model->getDoctorById($bed_alloted->doctor);
             $date = time();
@@ -1237,6 +1237,7 @@ class Surgery extends MX_Controller {
             }
             $arr['message'] = array('message' => lang('invoice') . ' ' . lang('generated'), 'title' => lang('invoice') . ' ' . lang('generated'));
         } else {
+              $arr['ids'] ='1';
             $arr['message'] = array('message' => lang('no_new_medicine_add'), 'title' => lang('no_new_medicine_add'));
         }
         echo json_encode($arr);
@@ -1487,7 +1488,7 @@ class Surgery extends MX_Controller {
             $medicine_include = implode("#", $medicine_con);
 
             $data = array();
-            $bed_alloted = $this->surgery_model->getSurgeryById($medicine_list->surgery_id);
+            $bed_alloted = $this->surgery_model->getSurgeryById($id);
             $patient = $this->patient_model->getPatientById($bed_alloted->patient_id);
             // $doctor = $this->doctor_model->getDoctorById($bed_alloted->doctor);
             $date = time();
@@ -1518,6 +1519,7 @@ class Surgery extends MX_Controller {
             }
             $arr['message'] = array('message' => lang('invoice') . ' ' . lang('generated'), 'title' => lang('invoice') . ' ' . lang('generated'));
         } else {
+             $arr['ids'] ='1';
             $arr['message'] = array('message' => lang('no_new_medicine_add'), 'title' => lang('no_new_medicine_add'));
         }
         echo json_encode($arr);
