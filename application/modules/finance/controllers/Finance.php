@@ -15,6 +15,7 @@ class Finance extends MX_Controller {
         $this->load->model('accountant/accountant_model');
         $this->load->model('receptionist/receptionist_model');
         $this->load->model('category/category_model');
+        $this->load->model('surgery/surgery_model');
         $this->load->model('department/department_model');
         $this->load->model('laboratorist/laboratorist_model');
         $this->load->module('sms');
@@ -2039,6 +2040,10 @@ class Finance extends MX_Controller {
                     $options1 = ' <a class="btn btn-info btn-xs " title="' . lang('edit') . '" href="appointment/editAppointment?id=' . $payment->appointment_id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
                 } elseif ($payment->payment_from == 'case') {
                     $options1 = ' <a class="btn btn-info btn-xs " title="' . lang('edit') . '" href="patient/editCaseHistory?id=' . $payment->case_id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
+                } elseif ($payment->payment_from == 'post_surgery_medical_analysis' || $payment->payment_from == 'pre_surgery_medical_analysis') {
+                    $options1 = ' <a class="btn btn-info btn-xs editbutton" title="' . lang('edit') . '" href="finance/editInvoice?id=' . $payment->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
+                } elseif ($payment->payment_from == 'pre_service' || $payment->payment_from == 'post_service') {
+                    $options1 = ' <a class="btn btn-info btn-xs editbutton" title="' . lang('edit') . '" href="finance/editInvoice?id=' . $payment->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
                 }
             }
             if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Nurse', 'Laboratorist', 'Doctor')) || $permis == 'ok') {
@@ -2525,10 +2530,10 @@ class Finance extends MX_Controller {
         //  $this->load->view('home/footer'); // just the footer fi
     }
 
-    public function faturime() {      
-        $filter_by= $this->input->post('filter_by');
-       
-      
+    public function faturime() {
+        $filter_by = $this->input->post('filter_by');
+
+
         $date_from = strtotime($this->input->post('date_from'));
         $date_to = strtotime($this->input->post('date_to'));
         if (!empty($date_to)) {
@@ -2541,22 +2546,163 @@ class Finance extends MX_Controller {
             $data['payments'] = $this->finance_model->getPaymentBySelectiveFromDateTO($date_from, $date_to);
         }
         $data['settings'] = $this->settings_model->getSettings();
-       $data['from']=$this->input->post('date_from');
-        $data['to']=$this->input->post('date_to');
-        $data['status']= $this->input->post('status');
+        $data['from'] = $this->input->post('date_from');
+        $data['to'] = $this->input->post('date_to');
+        $data['status'] = $this->input->post('status');
         $data['types'] = $this->category_model->getCategory();
-        $data['filter_by']=$filter_by;
+        $data['filter_by'] = $filter_by;
         $data['departments'] = $this->department_model->getDepartment();
         $data['laboratorists'] = $this->laboratorist_model->getLaboratorist();
-         $data['department_choose']=$this->input->post('department_choose');
-         
-         $data['type_choose']=$this->input->post('type');
-          $data['laboratorist_choose']=$this->input->post('laboratorist_choose');
+        $data['department_choose'] = $this->input->post('department_choose');
+
+        $data['type_choose'] = $this->input->post('type');
+        $data['laboratorist_choose'] = $this->input->post('laboratorist_choose');
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('faturime', $data);
         $this->load->view('home/footer'); // just the footer fida
     }
-  
+
+    function editInvoice() {
+        //$this->load->module('sslcommerzpayment');
+        // $rewrite=$this->sslcommerzpayment->helperFileReWriteAftertransaction();
+        $data['redirect'] = '';
+        $data['redirectlink'] = '';
+        $id = $this->input->get('id');
+        $data['settings'] = $this->settings_model->getSettings();
+        $data['discount_type'] = $this->finance_model->getDiscountType();
+        $data['payment'] = $this->finance_model->getPaymentById($id);
+        $this->load->view('home/dashboard'); // just the header file
+        $this->load->view('edit_invoice', $data);
+        $this->load->view('home/footer'); // just the footer fi
+    }
+
+    function getDiscountUpdateForService() {
+        $id = $this->input->post('id');
+        $discount = $this->input->post('discount');
+        $id_separate = explode("-", $id);
+        $service_id = $id_separate[1];
+        $date = $id_separate[2] . '-' . $id_separate[3] . '-' . $id_separate[4];
+        $new_con = $discount_up = array();
+        $payment = $this->finance_model->getPaymentById($id_separate[5]);
+        $payment_cat = explode("#", $payment->category_name);
+        foreach ($payment_cat as $pay_cat_individual) {
+            $pay_cat_individual_explode = explode("*", $pay_cat_individual);
+            if ($service_id == $pay_cat_individual_explode[0]) {
+                $new_con[] = $pay_cat_individual_explode[0] . '*' . $pay_cat_individual_explode[1] . '*' . $discount;
+                $discount_up[] = $discount;
+                $price=$pay_cat_individual_explode[1];
+            } else {
+                $new_con[] = $pay_cat_individual_explode[0] . '*' . $pay_cat_individual_explode[1] . '*' . $pay_cat_individual_explode[2];
+                $discount_up[] = $pay_cat_individual_explode[2];
+            }
+        }
+        $arr['price']=$price-$discount;
+        $category_name = implode("#", $new_con);
+        $discount_update = array_sum($discount_up);
+        $gross = $payment->amount - $discount_update;
+        $data = array();
+        $data = array(
+            'category_name' => $category_name,
+            'discount' => $discount_update,
+            'gross_total' => $gross,
+            'hospital_amount'=>$gross
+        );
+        $arr['gross']=$gross;
+        $arr['discount']=$discount_update;
+        $this->finance_model->updatePayment($payment->id, $data);
+        if ($payment->payment_from == 'pre_service') {
+            $service = $this->surgery_model->getPreServicesByDate($date);
+        } else {
+            $service = $this->surgery_model->getPostServicesByDate($date);
+        }
+        if (!empty($service)) {
+           // $i = 0;
+            $service_explode = explode("**", $service->service);
+            $discount_explode = explode("**", $service->discount);
+            $discount_up=array();
+            for($i=0;$i<count($service_explode);$i++){
+          //  foreach ($service_explode as $service_up) {
+                if ($service_explode[$i] == $service_id) {
+                    $discount_up[] = $discount;
+                } else {
+                    $discount_up[] = $discount_explode[$i];
+                }
+              
+            }
+            $data_up = array();
+            $data_up = array(
+                'discount' => implode("**", $discount_up)
+            );
+            if ($payment->payment_from == 'pre_service') {
+                $this->surgery_model->updatePreServices($service->id, $data_up);
+            } else {
+                $this->surgery_model->updatePostServices($service->id, $data_up);
+            }
+        }
+        $arr['amount_recived']=$this->finance_model->getDepositAmountByPaymentId($payment->id);
+        $arr['message'] = array('message' => lang('updated'), 'title' => lang('updated'));
+        echo json_encode($arr);
+    }
+     function getDiscountUpdateForMedical() {
+        $id = $this->input->post('id');
+        $discount = $this->input->post('discount');
+        $id_separate = explode("-", $id);
+        $new_con = $discount_up = array();
+        $payment = $this->finance_model->getPaymentById($id_separate[3]);
+        $payment_cat = explode("##", $payment->category_name);
+        foreach ($payment_cat as $pay_cat_individual) {
+            $pay_cat_individual_explode = explode("**", $pay_cat_individual);
+            if ($id_separate[4] == $pay_cat_individual_explode[2]) {
+                $new_con[] = $pay_cat_individual_explode[0] . '**' . $pay_cat_individual_explode[1] . '**' . $pay_cat_individual_explode[2]. '**' . $pay_cat_individual_explode[3]. '**' . $pay_cat_individual_explode[4]. '**' . $pay_cat_individual_explode[5]. '**' . $discount;
+                $discount_up[] = $discount;
+                $price=$pay_cat_individual_explode[3];
+            } else {
+               $new_con[] = $pay_cat_individual_explode[0] . '**' . $pay_cat_individual_explode[1] . '**' . $pay_cat_individual_explode[2]. '**' . $pay_cat_individual_explode[3]. '**' . $pay_cat_individual_explode[4]. '**' . $pay_cat_individual_explode[5]. '**' . $pay_cat_individual_explode[6];
+                $discount_up[] = $pay_cat_individual_explode[6];
+            }
+        }
+        $arr['price']=$price-$discount;
+        $category_name = implode("##", $new_con);
+        $discount_update = array_sum($discount_up);
+        $gross = $payment->amount - $discount_update;
+        $data = array();
+        $data = array(
+            'category_name' => $category_name,
+            'discount' => $discount_update,
+            'gross_total' => $gross,
+            'hospital_amount'=>$gross
+        );
+        $arr['gross']=$gross;
+        $arr['discount']=$discount_update;
+        $this->finance_model->updatePayment($payment->id, $data);
+        if ($payment->payment_from == 'pre_surgery_medical_analysis') {
+            $service = $this->surgery_model->getPreSurgeryMedicalAnalysisByPaymentId($payment->id);
+        } else {
+            $service = $this->surgery_model->getPostSurgeryMedicalAnalysisByPaymentId($payment->id);
+        }
+        
+        if (!empty($service)) {
+           // $i = 0;
+            
+            $data_up = array();
+            $data_up = array(
+                    'description' => $category_name,
+                    'grand_total'=>$gross,
+                    'total_discount'=>$discount_update
+            );          
+            
+            if ($payment->payment_from == 'pre_surgery_medical_analysis') {
+                $this->surgery_model->updatePreSurgeryMedicalAnalysis($service->id, $data_up);
+            } else {
+                $this->surgery_model->updatePostSurgeryMedicalAnalysis($service->id, $data_up);
+            }
+        }
+        $arr['amount_recived']=$this->finance_model->getDepositAmountByPaymentId($payment->id);
+        $arr['message'] = array('message' => lang('updated'), 'title' => lang('updated'));
+        echo json_encode($arr);
+    }
+
+
 }
 
 /* End of file finance.php */

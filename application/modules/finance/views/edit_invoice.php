@@ -1,14 +1,17 @@
 <!--main content start-->
 <section id="main-content">
     <section class="wrapper site-min-height">
+
         <!-- invoice start-->
-        <section class="col-md-6">
+
+        <section class="col-md-7">
+
             <div class="panel panel-primary" id="invoice">
                 <!--<div class="panel-heading navyblue"> INVOICE</div>-->
                 <div class="panel-body" style="font-size: 10px;">
                     <div class="row invoice-list">
 
-                        <div class="col-md-12 invoice_head clearfix">
+                        <div class="col-md-12 invoice_head clearfix logotitle">
 
                             <div class="col-md-6 text-left invoice_head_left">
                                 <h3>
@@ -34,32 +37,26 @@
                         </div>
 
 
-                        <div class="col-md-12">
-                            <h4 class="text-center" style="font-weight: bold; margin-top: 20px; text-transform: uppercase;">
-                                <?php
-                                if (!empty($payment->payment_from == 'payment')) {
-                                    echo lang('payment')
-                                    ?> <?php
-                                    echo lang('invoice');
-                                } else {
-                                    echo lang('appointment')
-                                    ?> <?php
-                                    echo lang('invoice');
-                                }
-                                ?>
+                        <div class="col-md-12 title" >
+                            <h4 class="text-center" style="font-weight: bold; margin-top: 15px; text-transform: uppercase;">
+                                <?php echo lang('payment') ?> <?php echo lang('invoice') ?>
                             </h4>
                         </div>
+
+
+
 
                         <div class="col-md-12 hr_border">
                             <hr>
                         </div>
 
 
+
                         <div class="col-md-12">
                             <div class="col-md-6 pull-left row" style="text-align: left;">
                                 <div class="col-md-12 row details" style="">
                                     <p>
-<?php $patient_info = $this->db->get_where('patient', array('id' => $payment->patient))->row(); ?>
+                                        <?php $patient_info = $this->db->get_where('patient', array('id' => $payment->patient))->row(); ?>
                                         <label class="control-label"><?php echo lang('patient'); ?> <?php echo lang('name'); ?> </label>
                                         <span style="text-transform: uppercase;"> : 
                                             <?php
@@ -139,24 +136,6 @@
                                     </p>
                                 </div>
 
-                                <div class="col-md-12 row details">
-                                    <p>
-                                        <label class="control-label"><?php echo lang('doctor'); ?>  </label>
-                                        <span style="text-transform: uppercase;"> : 
-                                            <?php
-                                            if (!empty($payment->doctor)) {
-                                                $doc_details = $this->doctor_model->getDoctorById($payment->doctor);
-                                                if (!empty($doc_details)) {
-                                                    echo $doc_details->name . ' <br>';
-                                                } else {
-                                                    echo $payment->doctor_name . ' <br>';
-                                                }
-                                            }
-                                            ?>
-                                        </span>
-                                    </p>
-                                </div>
-
 
 
                             </div>
@@ -170,93 +149,117 @@
 
                     </div> 
 
-                    <div class="col-md-12 hr_border">
-                        <hr>
-                    </div>
 
 
 
 
-                    <table class="table table-striped table-hover">
 
-                        <thead class="theadd">
-                            <tr>
- <?php if ($payment->payment_from == 'appointment') { ?>
-                                    <th>#</th>
-                                    <th><?php echo lang('description'); ?></th>
-                                    <th><?php echo lang('date_time'); ?></th>
-                                    <th><?php echo lang('doctor'); ?></th>
-                                    <th><?php echo lang('amount'); ?></th>
+                    <table class="table table-striped table-hover detailssale">
 
-                                <?php } else { ?>
-                                    <th>#</th>
-                                    <th><?php echo lang('description'); ?></th>
-                                    <th><?php echo lang('unit_price'); ?></th>
-                                    <th><?php echo lang('qty'); ?></th>
-                                    <th><?php echo lang('amount'); ?></th> 
-                                <?php } ?>
-                            </tr>
-                        </thead>
+                        <tr class="theadd">
+
+
+                            <?php if ($payment->payment_from == 'pre_surgery_medical_analysis' || $payment->payment_from == 'post_surgery_medical_analysis') { ?>
+                                <th>#</th>
+                                <th><?php echo lang('items'); ?></th>
+                                <th><?php echo lang('type'); ?></th>
+                                <th><?php echo lang('date_to_be_done'); ?></th>
+                                <th><?php echo lang('amount'); ?></th>
+
+                                <th><?php echo lang('discount'); ?></th>
+                                <th><?php echo lang('grand_total'); ?></th>
+                            <?php } elseif ($payment->payment_from == 'pre_service' || $payment->payment_from == 'post_service') { ?>
+                                <th>#</th>
+                                <th><?php echo lang('service'); ?> <?php echo lang('name'); ?></th>
+                                <th><?php echo lang('unit'); ?> <?php echo lang('price') ?></th>
+                                <th><?php echo lang('quantity'); ?></th>
+                                <th><?php echo lang('amount'); ?></th>
+                                <th><?php echo lang('discount'); ?></th>
+                                <th><?php echo lang('grand_total'); ?></th>
+
+                            <?php } ?>
+                        </tr>
 
                         <tbody>
                             <?php
-                            if ($payment->payment_from == 'appointment') {
-                                  if (!empty($payment->category_name)) {
-                                    $appointment_details = $this->db->get_where('appointment', array('id' => $payment->appointment_id))->row();
-                                    ?>
-                                    <tr>
-                                        <td><?php echo '1'; ?> </td>
-                                        <td><?php echo $payment->category_name; ?> </td>
-                                        <td class=""><?php echo date('d-m-Y', $appointment_details->date); ?> <br ><?php echo $appointment_details->time_slot; ?> </td>
-                                        <td class=""> <?php echo $appointment_details->doctorname; ?> </td>
-                                        <td class=""><?php echo $settings->currency; ?> <?php echo $payment->gross_total; ?> </td>
-                                    </tr> 
-                                    <?php
-                                }
-                            } else {
-                                  if (!empty($payment->category_name)) {
-                                    $category_name = $payment->category_name;
-                                    $category_name1 = explode(',', $category_name);
+                            if ($payment->payment_from == 'pre_surgery_medical_analysis' || $payment->payment_from == 'post_surgery_medical_analysis') {
+                                if (!empty($payment->category_name)) {
+                                    if ($payment->payment_from == 'pre_surgery_medical_analysis') {
+                                        $case_setails = $this->db->get_where('pre_surgery_medical_analysis', array('id' => $payment->pre_medical_surgery_id))->row();
+                                    } else {
+                                        $case_setails = $this->db->get_where('post_surgery_medical_analysis', array('id' => $payment->post_medical_surgery_id))->row();
+                                    }
+                                    $category = explode('##', $payment->category_name);
                                     $i = 0;
-                                    foreach ($category_name1 as $category_name2) {
+                                    foreach ($category as $cat) {
                                         $i = $i + 1;
-                                        $category_name3 = explode('*', $category_name2);
-                                        if ($category_name3[3] > 0) {
-                                            ?>  
+                                        $cat_new = array();
+                                        $cat_new = explode("**", $cat);
+                                        ?>
+                                        <tr>
+                                            <td><?php echo $i; ?> </td>
 
-                                            <tr>
-                                                <td><?php echo $i; ?> </td>
-                                                <td><?php echo $this->finance_model->getPaymentcategoryById($category_name3[0])->category; ?> </td>
-                                                <td class=""><?php echo $settings->currency; ?> <?php echo $category_name3[1]; ?> </td>
-                                                <td class=""> <?php echo $category_name3[3]; ?> </td>
-                                                <td class=""><?php echo $settings->currency; ?> <?php echo $category_name3[1] * $category_name3[3]; ?> </td>
-                                            </tr> 
-                                            <?php
-                                        }
+                                            <td><?php echo $cat_new[1]; ?> </td>
+                                            <?php if ($cat_new[0] == 'MedicalAnalysis_pre_surgery' || $cat_new[0] == 'MedicalAnalysis_post_surgery') { ?>
+                                                <td><?php echo lang('medical_analysis'); ?></td>
+                                            <?php } elseif ($cat_new[0] == 'Package_pre_surgery_medical' || $cat_new[0] == 'Package_post_surgery_medical') { ?>
+                                                <td><?php echo lang('package'); ?></td>
+                                            <?php } else { ?>
+                                                <td class=""><?php echo $cat_new[0]; ?> </td>
+                                            <?php } ?>
+
+                                            <td class=""> <?php echo $cat_new[4]; ?> </td>
+                                            <td class=""><?php echo $settings->currency; ?> <?php echo $cat_new[3]; ?> </td>
+
+                                            <td class=""><?php echo $settings->currency; ?><input type="number" min="0" class="discount_medical" id="medical-<?php echo $cat_new[0]?>-<?php echo $cat_new[2]; ?>-<?php echo $payment->id; ?>-<?php echo $cat_new[2];?>" name="discount_pre[]" value="<?php echo $cat_new[6];?>">  </td>
+                                            <td class="" id="medical-<?php echo $cat_new[0]?>-<?php echo $cat_new[2]; ?>-<?php echo $payment->id; ?>-<?php echo $cat_new[2];?>-total"><?php echo $settings->currency; ?> <?php echo $cat_new[3] - $cat_new[6]; ?> </td>
+
+                                        </tr> 
+                                        <?php
                                     }
                                 }
-                            
+                            } elseif ($payment->payment_from == 'pre_service' || $payment->payment_from == 'post_service') {
+                                if (!empty($payment->category_name)) {
+
+                                    $category = explode('#', $payment->category_name);
+
+                                    $i = 0;
+                                    foreach ($category as $cat) {
+                                        $i = $i + 1;
+                                        $cat_new = array();
+                                        $cat_new = explode('*', $cat);
+                                        $service = $this->db->get_where('pservice', array('id' => $cat_new[0]))->row();
+                                        ?>
+                                        <tr>
+                                            <td><?php echo $i; ?> </td>
+                                            <td>  <?php echo $service->name; ?> </td>
+                                            <td class=""><?php echo $settings->currency; ?> <?php echo $cat_new[1]; ?> </td>
+                                            <td class=""> <?php echo '1'; ?> </td>
+                                            <td class=""><?php echo $settings->currency; ?> <?php echo $cat_new[1]; ?> </td>
+                                            <td class="" id=""><?php echo $settings->currency; ?> <input type="number" min="0" class="discount_service" id="service-<?php echo $service->id; ?>-<?php echo $payment->date_string; ?>-<?php echo $payment->id; ?>" name="discount_pre[]" value="<?php echo $cat_new[2];?>"></td>
+                                            <td class="" id="service-<?php echo $service->id; ?>-<?php echo $payment->date_string; ?>-<?php echo $payment->id; ?>-total"><?php echo $settings->currency; ?> <?php echo $cat_new[1] - $cat_new[2]; ?> </td>
+                                        </tr> 
+                                        <?php
+                                    }
+                                }
                             }
                             ?>
 
                         </tbody>
+
+
+
+
                     </table>
 
+                    <?php //if ($redirect != 'download') {  ?>
                     <div class="col-md-12 hr_border">
                         <hr>
                     </div>
 
                     <div class="">
                         <div class="col-lg-4 invoice-block pull-left">
-                             <?php
-                            
-                                if ($payment->payment_from == 'appointment') {
-                                    ?> 
-                                    <h6><?php echo lang('remarks'); ?>: <?php echo $appointment_details->remarks; ?></h6>
-                                <?php } else { ?>
-                                    <h6><?php echo lang('remarks'); ?>: <?php echo $payment->remarks; ?></h6>
-    <?php }
- ?>
+                            <h6><?php echo lang('remarks'); ?>: <?php echo $payment->remarks; ?></h6>
                         </div>
                     </div>
 
@@ -264,8 +267,8 @@
                         <div class="col-lg-4 invoice-block pull-right">
                             <ul class="unstyled amounts">
                                 <li><strong><?php echo lang('sub_total'); ?> : </strong><?php echo $settings->currency; ?> <?php echo $payment->amount; ?></li>
-                                    <?php if (!empty($payment->discount)) { ?>
-                                    <li><strong><?php echo lang('discount'); ?></strong> <?php
+                               
+                                <li <?php if (empty($payment->discount)) { ?> class="hidden" <?php } ?>id="discount_total"><strong><?php echo lang('discount'); ?></strong> <?php
                                         if ($discount_type == 'percentage') {
                                             echo '(%) : ';
                                         } else {
@@ -279,7 +282,7 @@
                                             echo $discount[0];
                                         }
                                         ?></li>
-                                    <?php } ?>
+                                    <?php // } ?>
                                     <?php if (!empty($payment->vat)) { ?>
                                     <li><strong>VAT :</strong>   <?php
                                         if (!empty($payment->vat)) {
@@ -288,10 +291,10 @@
                                             echo '0';
                                         }
                                         ?> % = <?php echo $settings->currency . ' ' . $payment->flat_vat; ?></li>
-<?php } ?>
-                                <li><strong><?php echo lang('grand_total'); ?> : </strong><?php echo $settings->currency; ?> <?php echo $g = $payment->gross_total; ?></li>
-                                <li><strong><?php echo lang('amount_received'); ?> : </strong><?php echo $settings->currency; ?> <?php echo $r = $this->finance_model->getDepositAmountByPaymentId($payment->id); ?></li>
-                                <li><strong><?php echo lang('amount_to_be_paid'); ?> : </strong><?php echo $settings->currency; ?> <?php echo $g - $r; ?></li>
+                                <?php } ?>
+                                <li id="grand_total"><strong><?php echo lang('grand_total'); ?> : </strong><?php echo $settings->currency; ?> <?php echo $g = $payment->gross_total; ?></li>
+                                <li id="amount_received"><strong><?php echo lang('amount_received'); ?> : </strong><?php echo $settings->currency; ?> <?php echo $r = $this->finance_model->getDepositAmountByPaymentId($payment->id); ?></li>
+                                <li id="to_paid"> <strong><?php echo lang('amount_to_be_paid'); ?> : </strong><?php echo $settings->currency; ?> <?php echo $g - $r; ?></li>
                             </ul>
                         </div>
                     </div>
@@ -302,95 +305,35 @@
 
                     <div class="col-md-12 invoice_footer">
                         <div class="col-md-4 row pull-left" style="">
-<?php echo lang('user'); ?> : <?php echo $this->ion_auth->user($payment->user)->row()->username; ?>
+                            <?php echo lang('user'); ?> : <?php echo $this->ion_auth->user($payment->user)->row()->username; ?>
                             <div class="col-md-4 row pull-right" style="">
                             </div>
                         </div>
                     </div>
+                    <?php // }  ?>
                 </div>
         </section>
-
-
-        <section class="col-md-6">
-            <div class="col-md-5 no-print" style="margin-top: 20px;">
-                 <?php     if ($payment->payment_from == 'appointment') {
-                            ?>
-                 <a href="appointment" class="btn btn-info btn-sm info pull-left"><i class="fa fa-arrow-circle-left"></i>  <?php echo lang('back_to_appointment_modules'); ?> </a>
-              
-                <?php } else { ?>
-                   <a href="finance/payment" class="btn btn-info btn-sm info pull-left"><i class="fa fa-arrow-circle-left"></i>  <?php echo lang('back_to_payment_modules'); ?> </a>
-                <?php
-                        }
-                   
-                    ?>
-                <div class="text-center col-md-12 row">
-                    <a class="btn btn-info btn-sm invoice_button pull-left" onclick="javascript:window.print();"><i class="fa fa-print"></i> <?php echo lang('print'); ?> </a>
-                    <?php if ($this->ion_auth->in_group(array('admin', 'Accountant'))) {
-                          if ($payment->payment_from == 'appointment') {
-                            ?>
-                    <a href="appointment/editAppointment?id=<?php echo $payment->appointment_id; ?>" class="btn btn-info btn-sm editbutton pull-left"><i class="fa fa-edit"></i> <?php echo lang('edit'); ?> <?php echo lang('appointment'); ?> </a>       
-                           
-                        <?php } else { ?>
-                             <a href="finance/editPayment?id=<?php echo $payment->id; ?>" class="btn btn-info btn-sm editbutton pull-left"><i class="fa fa-edit"></i> <?php echo lang('edit'); ?> <?php echo lang('invoice'); ?> </a>
-                            <?php
-                        }
-                    }
-                    ?>
-                    <a class="btn btn-info btn-sm detailsbutton pull-left download" id="download"><i class="fa fa-download"></i> <?php echo lang('download'); ?> </a>
-                </div>
-
-                <div class="no-print">
-                 <?php      if ($payment->payment_from == 'appointment') {
-                            ?>
-                      <a href="appointment/addNewView" class="pull-left">
-                        <div class="btn-group">
-                            <button id="" class="btn btn-info green btn-sm">
-                                <i class="fa fa-plus-circle"></i> <?php echo lang('add_another_appointment'); ?>
-                            </button>
-                        </div>
-                    </a>
-                   
- <?php } else { ?>
-                   <a href="finance/addPaymentView" class="pull-left">
-                        <div class="btn-group">
-                            <button id="" class="btn btn-info green btn-sm">
-                                <i class="fa fa-plus-circle"></i> <?php echo lang('add_another_payment'); ?>
-                            </button>
-                        </div>
-                    </a>
-                    <?php
-                        }
-                   
-                    ?>
-                </div>
-
-                <div class="panel_button">
-
-                    <div class="text-center invoice-btn no-print pull-left ">
-                        <a href="finance/previousInvoice?id=<?php echo $payment->id ?>"class="btn btn-info btn-lg green previousone1"><i class="glyphicon glyphicon-chevron-left"></i> </a>
-                        <a href="finance/nextInvoice?id=<?php echo $payment->id ?>"class="btn btn-info btn-lg green nextone1 "><i class="glyphicon glyphicon-chevron-right"></i> </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
         <style>
-
-            th{
-                text-align: center;
+            .discount_service{
+                height: 10px !important;
+                border: none !important;
+                width: 53px;
+            }
+            .discount_medical{
+                height: 10px !important;
+                border: none !important;
+                width: 53px;
+            }
+            .send{
+                background-color: #339FCC !important;
+                color:#FFFFFF;
+            }
+            .detailssale td,.detailssale th{
+                text-align: center !important ;
             }
 
-            td{
-                text-align: center;
-            }
-
-            tr.total{
-                color: green;
+            .detailssale tr.total{
+                color: green !important;
             }
 
 
@@ -629,30 +572,58 @@
 
 
 
-
         <script src="common/js/codearistos.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.0.272/jspdf.debug.js"></script>
 
-        <script>
-
-
-                        $('#download').click(function () {
-                            var pdf = new jsPDF('p', 'pt', 'letter');
-                            pdf.addHTML($('#invoice'), function () {
-                                pdf.save('invoice_id_<?php echo $payment->id; ?>.pdf');
-                            });
-                        });
-
-                        // This code is collected but useful, click below to jsfiddle link.
-        </script>
-
 
 
     </section>
+
     <!-- invoice end-->
+
 </section>
 </section>
+
+<script src="common/js/codearistos.min.js"></script>
+<script src="common/js/bootstrap.min.js"></script>
+<script src="common/toastr/js/toastr.js"></script>
+<link rel="stylesheet" type="text/css" href="common/toastr/css/toastr.css">
+<?php
+$language = $this->db->get('settings')->row()->language;
+
+if ($language == 'english') {
+    $lang = 'en';
+} elseif ($language == 'spanish') {
+    $lang = 'es';
+} elseif ($language == 'french') {
+    $lang = 'fr';
+} elseif ($language == 'portuguese') {
+    $lang = 'pt';
+} elseif ($language == 'arabic') {
+    $lang = 'ar';
+} elseif ($language == 'italian') {
+    $lang = 'it';
+} elseif ($language == 'chinese') {
+    $lang = 'zh-cn';
+} elseif ($language == 'japanese') {
+    $lang = 'ja';
+} elseif ($language == 'russian') {
+    $lang = 'ru';
+} elseif ($language == 'turkish') {
+    $lang = 'tr';
+} elseif ($language == 'indonesian') {
+    $lang = 'id';
+}
+?>
+
+<script src='common/assets/fullcalendar/locale/<?php echo $lang; ?>.js'></script>
+
+
+
+<script src="common/assets/DataTables/DataTables-1.10.16/custom/js/datatable-responsive-cdn-version-2-2-5.js"></script>
+
+
 <!--main content end-->
 <!--footer start-->
 
@@ -660,5 +631,71 @@
 <script>
     $(document).ready(function () {
         $(".flashmessage").delay(3000).fadeOut(100);
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('.discount_service').keyup(function () {
+            var id = $(this).attr('id');
+            var discount_amount = $('#' + id).val();
+            $('#' + id + '-total').html(" ");
+            $('#grand_total').html(" ");
+            $('#amount_received').html(" ");
+            $('#discount_total').html(" ");
+            $.ajax({
+                type: "POST",
+                url: "finance/getDiscountUpdateForService",
+                data: {discount: discount_amount, id: id},
+                success: function (response) {
+                    //$('#discount-post-' + date + '-' + id_split[3]).html(parseInt(price_individual, 10) - parseInt(discount_individual, 10));
+                    var data = jQuery.parseJSON(response);
+                    toastr.success(data.message.message);
+                    $('#' + id + '-total').html(data.price);
+                    var final = '<strong>' + '<?php echo lang('amount_to_be_paid'); ?>' + ': </strong>' + '<?php echo $settings->currency; ?>' + (parseInt(data.gross, 10) - parseInt(data.amount_recived, 10));
+                    $('#to_paid').html(final);
+                    var grand_total = '<strong>' + '<?php echo lang('grand_total'); ?>' + ': </strong>' + '<?php echo $settings->currency; ?>' + data.gross;
+                    $('#grand_total').html(grand_total);
+                    var amount_received = '<strong>' + '<?php echo lang('amount_received'); ?>' + ': </strong>' + '<?php echo $settings->currency; ?>' + data.amount_recived;
+                    $('#amount_received').html(amount_received);
+                    var discount = '<strong>' + '<?php echo lang('discount'); ?>' + ': </strong>' + '<?php echo $settings->currency; ?>' + data.discount;
+     $('#discount_total').removeClass('hidden')          
+    $('#discount_total').html(discount);
+
+                }
+            });
+        })
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('.discount_medical').keyup(function () {
+            var id = $(this).attr('id');
+            var discount_amount = $('#' + id).val();
+            $('#' + id + '-total').html(" ");
+            $('#grand_total').html(" ");
+            $('#amount_received').html(" ");
+            $('#discount_total').html(" ");
+            $.ajax({
+                type: "POST",
+                url: "finance/getDiscountUpdateForMedical",
+                data: {discount: discount_amount, id: id},
+                success: function (response) {
+                    //$('#discount-post-' + date + '-' + id_split[3]).html(parseInt(price_individual, 10) - parseInt(discount_individual, 10));
+                    var data = jQuery.parseJSON(response);
+                    toastr.success(data.message.message);
+                    $('#' + id + '-total').html(data.price);
+                    var final = '<strong>' + '<?php echo lang('amount_to_be_paid'); ?>' + ': </strong>' + '<?php echo $settings->currency; ?>' + (parseInt(data.gross, 10) - parseInt(data.amount_recived, 10));
+                    $('#to_paid').html(final);
+                    var grand_total = '<strong>' + '<?php echo lang('grand_total'); ?>' + ': </strong>' + '<?php echo $settings->currency; ?>' + data.gross;
+                    $('#grand_total').html(grand_total);
+                    var amount_received = '<strong>' + '<?php echo lang('amount_received'); ?>' + ': </strong>' + '<?php echo $settings->currency; ?>' + data.amount_recived;
+                    $('#amount_received').html(amount_received);
+                    var discount = '<strong>' + '<?php echo lang('discount'); ?>' + ': </strong>' + '<?php echo $settings->currency; ?>' + data.discount;
+                   $('#discount_total').removeClass('hidden')          
+                        $('#discount_total').html(discount);
+
+                }
+            });
+        })
     });
 </script>

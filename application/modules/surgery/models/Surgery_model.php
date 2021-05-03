@@ -72,7 +72,11 @@ class Surgery_model extends CI_model {
         $query = $this->db->get('pre_surgery_medical_analysis');
         return $query->row();
     }
-
+function getPreSurgeryMedicalAnalysisByPaymentId($payment) {
+        $this->db->where('payment_id', $payment);
+        $query = $this->db->get('pre_surgery_medical_analysis');
+        return $query->row();
+    }
     function getPreSurgeryMedicalAnalysisById($id) {
         $this->db->where('id', $id);
         $query = $this->db->get('pre_surgery_medical_analysis');
@@ -375,5 +379,9 @@ class Surgery_model extends CI_model {
         return $this->db->where('surgery_id', $id)
                         ->get('surgery_checkout')->row();
     }
-
+function getPostSurgeryMedicalAnalysisByPaymentId($payment) {
+        $this->db->where('payment_id', $payment);
+        $query = $this->db->get('post_surgery_medical_analysis');
+        return $query->row();
+    }
 }
