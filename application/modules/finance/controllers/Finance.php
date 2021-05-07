@@ -730,8 +730,71 @@ class Finance extends MX_Controller {
     function delete() {
         if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist'))) {
             $id = $this->input->get('id');
-            $this->finance_model->deletePayment($id);
-            $this->finance_model->deleteDepositByInvoiceId($id);
+            $payment = $this->finance_model->getPaymentById($id);
+            if ($payment->payment_from == 'payment') {
+                $this->finance_model->deletePayment($id);
+                $this->finance_model->deleteDepositByInvoiceId($id);
+            } elseif ($payment->payment_from == 'pre_service') {
+                $service = $this->surgery_model->getPreServicesByDate($payment->date_string);
+                $payment_id = explode(",", $service->payment_id);
+                foreach ($payment_id as $key => $value) {
+                    if ($value != $payment->id) {
+                        $payment_up[] = $value;
+                    }
+                }
+                $payment_implode = implode(",", $payment_up);
+                $data_up = array('payment_id' => $payment_implode);
+                $this->surgery_model->updatePreServices($service->id, $data_up);
+                $this->finance_model->deletePayment($id);
+                $this->finance_model->deleteDepositByInvoiceId($id);
+            } elseif ($payment->payment_from == 'post_service') {
+                $service = $this->surgery_model->getPostServicesByDate($payment->date_string);
+                $payment_id = explode(",", $service->payment_id);
+                foreach ($payment_id as $key => $value) {
+                    if ($value != $payment->id) {
+                        $payment_up[] = $value;
+                    }
+                }
+                $payment_implode = implode(",", $payment_up);
+                $data_up = array('payment_id' => $payment_implode);
+                $this->surgery_model->updatePostServices($service->id, $data_up);
+                $this->finance_model->deletePayment($id);
+                $this->finance_model->deleteDepositByInvoiceId($id);
+            } elseif ($payment->payment_from == 'pre_surgery_medical_analysis') {
+                $medical = $this->surgery_model->getPreSurgeryMedicalAnalysisById($payment->pre_medical_surgery_id);
+
+                $this->surgery_model->deletePreMedicalSurgery($medical->id);
+                $this->finance_model->deletePayment($id);
+                $this->finance_model->deleteDepositByInvoiceId($id);
+            } elseif ($payment->payment_from == 'post_surgery_medical_analysis') {
+                $medical = $this->surgery_model->getPreSurgeryMedicalAnalysisById($payment->post_medical_surgery_id);
+
+                $this->surgery_model->deletePostMedicalSurgery($medical->id);
+                $this->finance_model->deletePayment($id);
+                $this->finance_model->deleteDepositByInvoiceId($id);
+            }elseif ($payment->payment_from == 'pre_surgery_medicine') {
+                $medicine = $this->surgery_model->getPreSurgeryMedicineByPaymentId($payment->id);
+                foreach ($medicine as $med){
+                    $data=array();
+                    $data=array('payment_id'=>'');
+                    $this->surgery_model->updatePreSurgeryMedicine($med->id,$data);
+                }
+               
+                $this->finance_model->deletePayment($id);
+                $this->finance_model->deleteDepositByInvoiceId($id);
+            }elseif ($payment->payment_from == 'post_surgery_medicine') {
+                $medicine = $this->surgery_model->getPostSurgeryMedicineByPaymentId($payment->id);
+                foreach ($medicine as $med){
+                    $data=array();
+                    $data=array('payment_id'=>'');
+                    $this->surgery_model->updatePostSurgeryMedicine($med->id,$data);
+                }
+               
+                $this->finance_model->deletePayment($id);
+                $this->finance_model->deleteDepositByInvoiceId($id);
+            }
+
+
             $this->session->set_flashdata('feedback', lang('deleted'));
             redirect('finance/payment');
         }
@@ -2040,10 +2103,21 @@ class Finance extends MX_Controller {
                     $options1 = ' <a class="btn btn-info btn-xs " title="' . lang('edit') . '" href="appointment/editAppointment?id=' . $payment->appointment_id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
                 } elseif ($payment->payment_from == 'case') {
                     $options1 = ' <a class="btn btn-info btn-xs " title="' . lang('edit') . '" href="patient/editCaseHistory?id=' . $payment->case_id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
-                } elseif ($payment->payment_from == 'post_surgery_medical_analysis' || $payment->payment_from == 'pre_surgery_medical_analysis') {
-                    $options1 = ' <a class="btn btn-info btn-xs editbutton" title="' . lang('edit') . '" href="finance/editInvoice?id=' . $payment->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
-                } elseif ($payment->payment_from == 'pre_service' || $payment->payment_from == 'post_service') {
-                    $options1 = ' <a class="btn btn-info btn-xs editbutton" title="' . lang('edit') . '" href="finance/editInvoice?id=' . $payment->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
+                } elseif ($payment->payment_from == 'post_surgery_medical_analysis' || $payment->payment_from == 'pre_surgery_medical_analysis' || $payment->payment_from == 'pre_service' || $payment->payment_from == 'post_service') {
+                    if ($this->ion_auth->in_group(array('Accountant')) || $permis_1 == 'ok') {
+                        $options1 = ' <a class="btn btn-info btn-xs editbutton" title="' . lang('edit') . '" href="finance/editInvoice?id=' . $payment->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
+                    } else {
+                        if ($payment->payment_from == 'post_surgery_medical_analysis') {
+                            $surgery_id = $this->db->get_where('post_surgery_medical_analysis', array('payment_id' => $payment->id))->row()->surgery_id;
+                        } if ($payment->payment_from == 'pre_surgery_medical_analysis') {
+                            $surgery_id = $this->db->get_where('pre_surgery_medical_analysis', array('payment_id' => $payment->id))->row()->surgery_id;
+                        }if ($payment->payment_from == 'pre_service') {
+                            $surgery_id = $this->db->get_where('pre_service', array('date' => $payment->date))->row()->surgery_id;
+                        } if ($payment->payment_from == 'post_service') {
+                            $surgery_id = $this->db->get_where('post_service', array('date' => $payment->date))->row()->surgery_id;
+                        }
+                        $options1 = ' <a class="btn btn-info btn-xs editbutton" title="' . lang('edit') . '" href="surgery/surgeryDetails?id=' . $surgery_id->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
+                    }
                 }
             }
             if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist', 'Nurse', 'Laboratorist', 'Doctor')) || $permis == 'ok') {
@@ -2051,7 +2125,7 @@ class Finance extends MX_Controller {
                 $options4 = '<a class="btn btn-info btn-xs invoicebutton" title="' . lang('print') . '" style="color: #fff;" href="finance/printInvoice?id=' . $payment->id . '"target="_blank"> <i class="fa fa-print"></i> ' . lang('print') . '</a>';
             }
             if ($this->ion_auth->in_group(array('admin', 'Accountant')) || $permis_2 == 'ok') {
-                if ($payment->payment_from == 'payment') {
+                if ($payment->payment_from == 'post_surgery_medicine' || $payment->payment_from == 'pre_surgery_medicine' || $payment->payment_from == 'payment' || $payment->payment_from == 'post_surgery_medical_analysis' || $payment->payment_from == 'pre_surgery_medical_analysis' || $payment->payment_from == 'pre_service' || $payment->payment_from == 'post_service') {
                     $options3 = '<a class="btn btn-info btn-xs delete_button" title="' . lang('delete') . '" href="finance/delete?id=' . $payment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"></i> ' . lang('delete') . '</a>';
                 }
             }
@@ -2590,13 +2664,13 @@ class Finance extends MX_Controller {
             if ($service_id == $pay_cat_individual_explode[0]) {
                 $new_con[] = $pay_cat_individual_explode[0] . '*' . $pay_cat_individual_explode[1] . '*' . $discount;
                 $discount_up[] = $discount;
-                $price=$pay_cat_individual_explode[1];
+                $price = $pay_cat_individual_explode[1];
             } else {
                 $new_con[] = $pay_cat_individual_explode[0] . '*' . $pay_cat_individual_explode[1] . '*' . $pay_cat_individual_explode[2];
                 $discount_up[] = $pay_cat_individual_explode[2];
             }
         }
-        $arr['price']=$price-$discount;
+        $arr['price'] = $price - $discount;
         $category_name = implode("#", $new_con);
         $discount_update = array_sum($discount_up);
         $gross = $payment->amount - $discount_update;
@@ -2605,10 +2679,10 @@ class Finance extends MX_Controller {
             'category_name' => $category_name,
             'discount' => $discount_update,
             'gross_total' => $gross,
-            'hospital_amount'=>$gross
+            'hospital_amount' => $gross
         );
-        $arr['gross']=$gross;
-        $arr['discount']=$discount_update;
+        $arr['gross'] = $gross;
+        $arr['discount'] = $discount_update;
         $this->finance_model->updatePayment($payment->id, $data);
         if ($payment->payment_from == 'pre_service') {
             $service = $this->surgery_model->getPreServicesByDate($date);
@@ -2616,18 +2690,17 @@ class Finance extends MX_Controller {
             $service = $this->surgery_model->getPostServicesByDate($date);
         }
         if (!empty($service)) {
-           // $i = 0;
+            // $i = 0;
             $service_explode = explode("**", $service->service);
             $discount_explode = explode("**", $service->discount);
-            $discount_up=array();
-            for($i=0;$i<count($service_explode);$i++){
-          //  foreach ($service_explode as $service_up) {
+            $discount_up = array();
+            for ($i = 0; $i < count($service_explode); $i++) {
+                //  foreach ($service_explode as $service_up) {
                 if ($service_explode[$i] == $service_id) {
                     $discount_up[] = $discount;
                 } else {
                     $discount_up[] = $discount_explode[$i];
                 }
-              
             }
             $data_up = array();
             $data_up = array(
@@ -2639,11 +2712,12 @@ class Finance extends MX_Controller {
                 $this->surgery_model->updatePostServices($service->id, $data_up);
             }
         }
-        $arr['amount_recived']=$this->finance_model->getDepositAmountByPaymentId($payment->id);
+        $arr['amount_recived'] = $this->finance_model->getDepositAmountByPaymentId($payment->id);
         $arr['message'] = array('message' => lang('updated'), 'title' => lang('updated'));
         echo json_encode($arr);
     }
-     function getDiscountUpdateForMedical() {
+
+    function getDiscountUpdateForMedical() {
         $id = $this->input->post('id');
         $discount = $this->input->post('discount');
         $id_separate = explode("-", $id);
@@ -2653,15 +2727,15 @@ class Finance extends MX_Controller {
         foreach ($payment_cat as $pay_cat_individual) {
             $pay_cat_individual_explode = explode("**", $pay_cat_individual);
             if ($id_separate[4] == $pay_cat_individual_explode[2]) {
-                $new_con[] = $pay_cat_individual_explode[0] . '**' . $pay_cat_individual_explode[1] . '**' . $pay_cat_individual_explode[2]. '**' . $pay_cat_individual_explode[3]. '**' . $pay_cat_individual_explode[4]. '**' . $pay_cat_individual_explode[5]. '**' . $discount;
+                $new_con[] = $pay_cat_individual_explode[0] . '**' . $pay_cat_individual_explode[1] . '**' . $pay_cat_individual_explode[2] . '**' . $pay_cat_individual_explode[3] . '**' . $pay_cat_individual_explode[4] . '**' . $pay_cat_individual_explode[5] . '**' . $discount;
                 $discount_up[] = $discount;
-                $price=$pay_cat_individual_explode[3];
+                $price = $pay_cat_individual_explode[3];
             } else {
-               $new_con[] = $pay_cat_individual_explode[0] . '**' . $pay_cat_individual_explode[1] . '**' . $pay_cat_individual_explode[2]. '**' . $pay_cat_individual_explode[3]. '**' . $pay_cat_individual_explode[4]. '**' . $pay_cat_individual_explode[5]. '**' . $pay_cat_individual_explode[6];
+                $new_con[] = $pay_cat_individual_explode[0] . '**' . $pay_cat_individual_explode[1] . '**' . $pay_cat_individual_explode[2] . '**' . $pay_cat_individual_explode[3] . '**' . $pay_cat_individual_explode[4] . '**' . $pay_cat_individual_explode[5] . '**' . $pay_cat_individual_explode[6];
                 $discount_up[] = $pay_cat_individual_explode[6];
             }
         }
-        $arr['price']=$price-$discount;
+        $arr['price'] = $price - $discount;
         $category_name = implode("##", $new_con);
         $discount_update = array_sum($discount_up);
         $gross = $payment->amount - $discount_update;
@@ -2670,38 +2744,37 @@ class Finance extends MX_Controller {
             'category_name' => $category_name,
             'discount' => $discount_update,
             'gross_total' => $gross,
-            'hospital_amount'=>$gross
+            'hospital_amount' => $gross
         );
-        $arr['gross']=$gross;
-        $arr['discount']=$discount_update;
+        $arr['gross'] = $gross;
+        $arr['discount'] = $discount_update;
         $this->finance_model->updatePayment($payment->id, $data);
         if ($payment->payment_from == 'pre_surgery_medical_analysis') {
             $service = $this->surgery_model->getPreSurgeryMedicalAnalysisByPaymentId($payment->id);
         } else {
             $service = $this->surgery_model->getPostSurgeryMedicalAnalysisByPaymentId($payment->id);
         }
-        
+
         if (!empty($service)) {
-           // $i = 0;
-            
+            // $i = 0;
+
             $data_up = array();
             $data_up = array(
-                    'description' => $category_name,
-                    'grand_total'=>$gross,
-                    'total_discount'=>$discount_update
-            );          
-            
+                'description' => $category_name,
+                'grand_total' => $gross,
+                'total_discount' => $discount_update
+            );
+
             if ($payment->payment_from == 'pre_surgery_medical_analysis') {
                 $this->surgery_model->updatePreSurgeryMedicalAnalysis($service->id, $data_up);
             } else {
                 $this->surgery_model->updatePostSurgeryMedicalAnalysis($service->id, $data_up);
             }
         }
-        $arr['amount_recived']=$this->finance_model->getDepositAmountByPaymentId($payment->id);
+        $arr['amount_recived'] = $this->finance_model->getDepositAmountByPaymentId($payment->id);
         $arr['message'] = array('message' => lang('updated'), 'title' => lang('updated'));
         echo json_encode($arr);
     }
-
 
 }
 

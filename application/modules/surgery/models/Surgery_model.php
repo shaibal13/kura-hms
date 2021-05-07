@@ -72,11 +72,13 @@ class Surgery_model extends CI_model {
         $query = $this->db->get('pre_surgery_medical_analysis');
         return $query->row();
     }
-function getPreSurgeryMedicalAnalysisByPaymentId($payment) {
+
+    function getPreSurgeryMedicalAnalysisByPaymentId($payment) {
         $this->db->where('payment_id', $payment);
         $query = $this->db->get('pre_surgery_medical_analysis');
         return $query->row();
     }
+
     function getPreSurgeryMedicalAnalysisById($id) {
         $this->db->where('id', $id);
         $query = $this->db->get('pre_surgery_medical_analysis');
@@ -194,6 +196,11 @@ function getPreSurgeryMedicalAnalysisByPaymentId($payment) {
     function deletePreSurgeryMedicine($id) {
         $this->db->where('id', $id);
         $this->db->delete('pre_surgery_medicine');
+    }
+
+    function getPreSurgeryMedicineByPaymentId($payment_id) {
+        return $this->db->where('payment_id', $payment_id)
+                        ->get('pre_surgery_medicine')->result();
     }
 
     function getMedicineForOnSurgery($id) {
@@ -358,7 +365,10 @@ function getPreSurgeryMedicalAnalysisByPaymentId($payment) {
                         ->where('date', date('d-m-Y'))
                         ->get('post_service')->row();
     }
-
+function getPostSurgeryMedicineByPaymentId($payment_id) {
+        return $this->db->where('payment_id', $payment_id)
+                        ->get('post_surgery_medicine')->result();
+    }
     function updateCheckout($id, $data) {
         $this->db->where('id', $id);
         $this->db->update('surgery_checkout', $data);
@@ -379,9 +389,11 @@ function getPreSurgeryMedicalAnalysisByPaymentId($payment) {
         return $this->db->where('surgery_id', $id)
                         ->get('surgery_checkout')->row();
     }
-function getPostSurgeryMedicalAnalysisByPaymentId($payment) {
+
+    function getPostSurgeryMedicalAnalysisByPaymentId($payment) {
         $this->db->where('payment_id', $payment);
         $query = $this->db->get('post_surgery_medical_analysis');
         return $query->row();
     }
+
 }
