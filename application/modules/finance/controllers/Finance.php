@@ -2124,6 +2124,7 @@ class Finance extends MX_Controller {
                 $options2 = '<a class="btn btn-info btn-xs invoicebutton" title="' . lang('invoice') . '" style="color: #fff;" href="finance/invoice?id=' . $payment->id . '"><i class="fa fa-file-invoice"></i> ' . lang('invoice') . '</a>';
                 $options4 = '<a class="btn btn-info btn-xs invoicebutton" title="' . lang('print') . '" style="color: #fff;" href="finance/printInvoice?id=' . $payment->id . '"target="_blank"> <i class="fa fa-print"></i> ' . lang('print') . '</a>';
             }
+             $options5 = '<a class="" title="' . lang('invoice') . '" href="finance/invoice?id=' . $payment->id . '"target="_blank">  ' . $payment->id . '</a>';
             if ($this->ion_auth->in_group(array('admin', 'Accountant')) || $permis_2 == 'ok') {
                 if ($payment->payment_from == 'post_surgery_medicine' || $payment->payment_from == 'pre_surgery_medicine' || $payment->payment_from == 'payment' || $payment->payment_from == 'post_surgery_medical_analysis' || $payment->payment_from == 'pre_surgery_medical_analysis' || $payment->payment_from == 'pre_service' || $payment->payment_from == 'post_service') {
                     $options3 = '<a class="btn btn-info btn-xs delete_button" title="' . lang('delete') . '" href="finance/delete?id=' . $payment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"></i> ' . lang('delete') . '</a>';
@@ -2183,7 +2184,7 @@ class Finance extends MX_Controller {
             }
 
             $info[] = array(
-                $payment->id,
+                $options5,
                 $patient_details,
                 $doctor,
                 $date,
