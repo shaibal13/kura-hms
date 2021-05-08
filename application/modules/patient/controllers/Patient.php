@@ -928,7 +928,7 @@ class Patient extends MX_Controller {
                 $data_case['status'] = 'unpaid';
                 //  $data_case['case_status'] = $status;
                 $data_case['date'] = time();
- $data_case['date'] = date('d-m-Y');
+                 $data_case['date_string'] = date('d-m-Y');
 
                 $this->patient_model->insertMedicalHistory($data);
                 $inserted_id_medical = $this->db->insert_id('medical_history');

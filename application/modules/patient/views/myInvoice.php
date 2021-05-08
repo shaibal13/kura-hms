@@ -2,7 +2,7 @@
 <section id="main-content">
     <section class="wrapper site-min-height">
         <!-- invoice start-->
-        <section class="col-md-6">
+        <section class="col-md-7">
 
 
             <div class="panel panel-primary">
@@ -39,12 +39,12 @@
                         <div class="col-md-12">
                             <h4 class="text-center" style="font-weight: bold; margin-top: 20px; text-transform: uppercase;">
                                 <?php
-                                if (!empty($payment->payment_from == 'payment')) {
-                                    echo lang('payment')
+                                if ($payment->payment_from == 'appointment') {
+                                    echo lang('appointment')
                                     ?> <?php
                                     echo lang('invoice');
                                 } else {
-                                    echo lang('appointment')
+                                    echo lang('payment')
                                     ?> <?php
                                     echo lang('invoice');
                                 }
@@ -140,7 +140,7 @@
                                         </span>
                                     </p>
                                 </div>
-                                <?php if ($payment->payment_from != 'case') { ?>
+                                <?php if ($payment->payment_from != 'case' && $payment->payment_from != 'surgery' && $payment->payment_from != 'pre_surgery_medical_analysis' && $payment->payment_from != 'post_surgery_medical_analysis' && $payment->payment_from != 'pre_service' && $payment->payment_from != 'post_service') { ?>
                                     <div class="col-md-12 row details">
                                         <p>
                                             <label class="control-label"><?php echo lang('doctor'); ?>  </label>
@@ -189,12 +189,16 @@
                                     <th><?php echo lang('date_time'); ?></th>
                                     <th><?php echo lang('doctor'); ?></th>
                                     <th><?php echo lang('amount'); ?></th>
-                                <?php } elseif ($payment->payment_from == 'case') { ?>
+                                <?php } elseif ($payment->payment_from == 'case' || $payment->payment_from == 'surgery' || $payment->payment_from == 'pre_surgery_medical_analysis' || $payment->payment_from == 'post_surgery_medical_analysis') { ?>
                                     <th>#</th>
                                     <th><?php echo lang('items'); ?></th>
                                     <th><?php echo lang('type'); ?></th>
                                     <th><?php echo lang('date_to_be_done'); ?></th>
                                     <th><?php echo lang('amount'); ?></th>
+                                    <?php if ($payment->payment_from == 'pre_surgery_medical_analysis' || $payment->payment_from == 'post_surgery_medical_analysis') { ?>
+                                        <th><?php echo lang('discount'); ?></th>
+                                        <th><?php echo lang('grand_total'); ?></th>
+                                    <?php } ?>
                                 <?php } elseif ($payment->payment_from == 'bed') { ?>
                                     <th>#</th>
                                     <th><?php echo lang('medicine'); ?> <?php echo lang('name'); ?></th>
@@ -207,6 +211,14 @@
                                     <th><?php echo lang('unit'); ?> <?php echo lang('price') ?></th>
                                     <th><?php echo lang('quantity'); ?></th>
                                     <th><?php echo lang('amount'); ?></th>
+                                <?php } elseif ($payment->payment_from == 'pre_service' || $payment->payment_from == 'post_service') { ?>
+                                    <th>#</th>
+                                    <th><?php echo lang('service'); ?> <?php echo lang('name'); ?></th>
+                                    <th><?php echo lang('unit'); ?> <?php echo lang('price') ?></th>
+                                    <th><?php echo lang('quantity'); ?></th>
+                                    <th><?php echo lang('amount'); ?></th>
+                                    <th><?php echo lang('discount'); ?></th>
+                                    <th><?php echo lang('grand_total'); ?></th>
                                 <?php } else { ?>
                                     <th>#</th>
                                     <th><?php echo lang('description'); ?></th>
@@ -232,9 +244,17 @@
                                     </tr> 
                                     <?php
                                 }
-                            } elseif ($payment->payment_from == 'case') {
+                            } elseif ($payment->payment_from == 'case' || $payment->payment_from == 'surgery' || $payment->payment_from == 'pre_surgery_medical_analysis' || $payment->payment_from == 'post_surgery_medical_analysis') {
                                 if (!empty($payment->category_name)) {
-                                    $case_setails = $this->db->get_where('medical_history', array('id' => $payment->case_id))->row();
+                                    if ($payment->payment_from == 'case') {
+                                        $case_setails = $this->db->get_where('medical_history', array('id' => $payment->case_id))->row();
+                                    } elseif ($payment->payment_from == 'pre_surgery_medical_analysis') {
+                                        $case_setails = $this->db->get_where('pre_surgery_medical_analysis', array('id' => $payment->pre_medical_surgery_id))->row();
+                                    } elseif ($payment->payment_from == 'post_surgery_medical_analysis') {
+                                        $case_setails = $this->db->get_where('post_surgery_medical_analysis', array('id' => $payment->post_medical_surgery_id))->row();
+                                    } else {
+                                        $case_setails = $this->db->get_where('surgery', array('id' => $payment->surgery_id))->row();
+                                    }
                                     $category = explode('##', $payment->category_name);
                                     $i = 0;
                                     foreach ($category as $cat) {
@@ -245,19 +265,29 @@
                                         <tr>
                                             <td><?php echo $i; ?> </td>
                                             <td><?php echo $cat_new[1]; ?> </td>
-                                            <td class=""><?php echo $cat_new[0]; ?> </td>
+                                            <?php if ($cat_new[0] == 'MedicalAnalysis_pre_surgery' || $cat_new[0] == 'MedicalAnalysis_post_surgery') { ?>
+                                                <td><?php echo lang('medical_analysis'); ?></td>
+                                            <?php } elseif ($cat_new[0] == 'Package_pre_surgery_medical' || $cat_new[0] == 'Package_post_surgery_medical') { ?>
+                                                <td><?php echo lang('package'); ?></td>
+                                            <?php } else { ?>
+                                                <td class=""><?php echo $cat_new[0]; ?> </td>
+                                            <?php } ?>
                                             <td class=""> <?php echo $cat_new[4]; ?> </td>
                                             <td class=""><?php echo $settings->currency; ?> <?php echo $cat_new[3]; ?> </td>
+                                            <?php if ($payment->payment_from == 'pre_surgery_medical_analysis' || $payment->payment_from == 'post_surgery_medical_analysis') { ?>
+                                                <td class=""><?php echo $settings->currency; ?> <?php echo $cat_new[6]; ?> </td>
+                                                <td class=""><?php echo $settings->currency; ?> <?php echo $cat_new[3] - $cat_new[6]; ?> </td>
+                                            <?php }
+                                            ?>
                                         </tr> 
                                         <?php
                                     }
                                 }
                             } elseif ($payment->payment_from == 'bed') {
                                 if (!empty($payment->category_name)) {
-                                    // $case_setails = $this->db->get_where('medical_history', array('id' => $payment->case_id))->row();
+
                                     $category = explode('#', $payment->category_name);
-                                    //  print_r($category);
-                                    //die();
+
                                     $i = 0;
                                     foreach ($category as $cat) {
                                         $i = $i + 1;
@@ -293,6 +323,31 @@
                                             <td class=""><?php echo $settings->currency; ?> <?php echo $cat_new[1]; ?> </td>
                                             <td class=""> <?php echo '1'; ?> </td>
                                             <td class=""><?php echo $settings->currency; ?> <?php echo $cat_new[1]; ?> </td>
+                                        </tr> 
+                                        <?php
+                                    }
+                                }
+                            } elseif ($payment->payment_from == 'pre_service' || $payment->payment_from == 'post_service') {
+                                if (!empty($payment->category_name)) {
+                                    // $case_setails = $this->db->get_where('medical_history', array('id' => $payment->case_id))->row();
+                                    $category = explode('#', $payment->category_name);
+                                    //  print_r($category);
+                                    //die();
+                                    $i = 0;
+                                    foreach ($category as $cat) {
+                                        $i = $i + 1;
+                                        $cat_new = array();
+                                        $cat_new = explode('*', $cat);
+                                        $service = $this->db->get_where('pservice', array('id' => $cat_new[0]))->row();
+                                        ?>
+                                        <tr>
+                                            <td><?php echo $i; ?> </td>
+                                            <td>  <?php echo $service->name; ?> </td>
+                                            <td class=""><?php echo $settings->currency; ?> <?php echo $cat_new[1]; ?> </td>
+                                            <td class=""> <?php echo '1'; ?> </td>
+                                            <td class=""><?php echo $settings->currency; ?> <?php echo $cat_new[1]; ?> </td>
+                                            <td class=""><?php echo $settings->currency; ?> <?php echo $cat_new[2]; ?> </td>
+                                            <td class=""><?php echo $settings->currency; ?> <?php echo $cat_new[1] - $cat_new[2]; ?> </td>
                                         </tr> 
                                         <?php
                                     }
@@ -340,7 +395,7 @@
                                     <h6><?php echo lang('remarks'); ?>: <?php echo $case_setails->remarks; ?></h6>
                                 <?php } elseif ($payment->payment_from == 'bed') { ?>
                                     <h6><?php echo lang('remarks'); ?>: <?php echo $payment->remarks; ?></h6>
-                                      <?php } elseif ($payment->payment_from == 'bed_service') { ?>
+                                <?php } elseif ($payment->payment_from == 'bed_service') { ?>
                                     <h6><?php echo lang('remarks'); ?>: <?php echo $payment->remarks; ?></h6>
                                 <?php } else { ?>
                                     <h6><?php echo lang('notes'); ?>: <?php echo $payment->notes; ?></h6>
@@ -416,7 +471,7 @@
         </section>
 
 
-        <section class="col-md-6">
+        <section class="col-md-5">
 
 
 

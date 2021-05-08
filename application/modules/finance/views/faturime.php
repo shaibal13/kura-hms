@@ -203,7 +203,7 @@
                                                                     if ($payment->gross_total - $this->finance_model->getDepositAmountByPaymentId($payment->id) == 0) {
                                                                         ?>
                                                                         <tr>
-                                                                            <td><?php echo $payment->id; ?></td>
+                                                                            <td><a class="" title="<?php echo lang('invoice'); ?> " href="finance/invoice?id=<?php echo $payment->id; ?>"target="_blank"> <?php echo $payment->id ;?></a></td>
                                                                             <td><?php
                                                                                 $patient_info = $this->db->get_where('patient', array('id' => $payment->patient))->row();
                                                                                 if (!empty($patient_info)) {
@@ -263,7 +263,7 @@
                                                                     if ($payment->gross_total - $this->finance_model->getDepositAmountByPaymentId($payment->id) > 0) {
                                                                         ?>
                                                                         <tr>
-                                                                            <td><?php echo $payment->id; ?></td>
+                                                                             <td><a class="" title="<?php echo lang('invoice'); ?> " href="finance/invoice?id=<?php echo $payment->id; ?>"target="_blank"> <?php echo $payment->id ;?></a></td>
                                                                             <td><?php
                                                                                 $patient_info = $this->db->get_where('patient', array('id' => $payment->patient))->row();
                                                                                 if (!empty($patient_info)) {
@@ -322,7 +322,7 @@
                                                                 } else {
                                                                     ?>
                                                                     <tr>
-                                                                        <td><?php echo $payment->id; ?></td>
+                                                                         <td><a class="" title="<?php echo lang('invoice'); ?> " href="finance/invoice?id=<?php echo $payment->id; ?>"target="_blank"> <?php echo $payment->id ;?></a></td>
                                                                         <td><?php
                                                                             $patient_info = $this->db->get_where('patient', array('id' => $payment->patient))->row();
                                                                             if (!empty($patient_info)) {
@@ -414,7 +414,7 @@
                                                                     if ($payment->gross_total - $this->finance_model->getDepositAmountByPaymentId($payment->id) == 0) {
                                                                         ?>
                                                                         <tr>
-                                                                            <td><?php echo $payment->id; ?></td>
+                                                                             <td><a class="" title="<?php echo lang('invoice'); ?> " href="finance/invoice?id=<?php echo $payment->id; ?>"target="_blank"> <?php echo $payment->id ;?></a></td>
                                                                             <td><?php
                                                                                 $patient_info = $this->db->get_where('patient', array('id' => $payment->patient))->row();
                                                                                 if (!empty($patient_info)) {
@@ -474,7 +474,7 @@
                                                                     if ($payment->gross_total - $this->finance_model->getDepositAmountByPaymentId($payment->id) > 0) {
                                                                         ?>
                                                                         <tr>
-                                                                            <td><?php echo $payment->id; ?></td>
+                                                                             <td><a class="" title="<?php echo lang('invoice'); ?> " href="finance/invoice?id=<?php echo $payment->id; ?>"target="_blank"> <?php echo $payment->id ;?></a></td>
                                                                             <td><?php
                                                                                 $patient_info = $this->db->get_where('patient', array('id' => $payment->patient))->row();
                                                                                 if (!empty($patient_info)) {
@@ -533,7 +533,7 @@
                                                                 } else {
                                                                     ?>
                                                                     <tr>
-                                                                        <td><?php echo $payment->id; ?></td>
+                                                                         <td><a class="" title="<?php echo lang('invoice'); ?> " href="finance/invoice?id=<?php echo $payment->id; ?>"target="_blank"> <?php echo $payment->id ;?></a></td>
                                                                         <td><?php
                                                                             $patient_info = $this->db->get_where('patient', array('id' => $payment->patient))->row();
                                                                             if (!empty($patient_info)) {
@@ -640,7 +640,7 @@
                                                                     if ($payment->gross_total - $this->finance_model->getDepositAmountByPaymentId($payment->id) == 0) {
                                                                         ?>
                                                                         <tr>
-                                                                            <td><?php echo $payment->id; ?></td>
+                                                                             <td><a class="" title="<?php echo lang('invoice'); ?> " href="finance/invoice?id=<?php echo $payment->id; ?>"target="_blank"> <?php echo $payment->id ;?></a></td>
                                                                             <td><?php
                                                                                 $patient_info = $this->db->get_where('patient', array('id' => $payment->patient))->row();
                                                                                 if (!empty($patient_info)) {
@@ -700,7 +700,7 @@
                                                                     if ($payment->gross_total - $this->finance_model->getDepositAmountByPaymentId($payment->id) > 0) {
                                                                         ?>
                                                                         <tr>
-                                                                            <td><?php echo $payment->id; ?></td>
+                                                                             <td><a class="" title="<?php echo lang('invoice'); ?> " href="finance/invoice?id=<?php echo $payment->id; ?>"target="_blank"> <?php echo $payment->id ;?></a></td>
                                                                             <td><?php
                                                                                 $patient_info = $this->db->get_where('patient', array('id' => $payment->patient))->row();
                                                                                 if (!empty($patient_info)) {
@@ -759,7 +759,7 @@
                                                                 } else {
                                                                     ?>
                                                                     <tr>
-                                                                        <td><?php echo $payment->id; ?></td>
+                                                                         <td><a class="" title="<?php echo lang('invoice'); ?> " href="finance/invoice?id=<?php echo $payment->id; ?>"target="_blank"> <?php echo $payment->id ;?></a></td>
                                                                         <td><?php
                                                                             $patient_info = $this->db->get_where('patient', array('id' => $payment->patient))->row();
                                                                             if (!empty($patient_info)) {
@@ -822,7 +822,7 @@
                                                             if ($payment->gross_total - $this->finance_model->getDepositAmountByPaymentId($payment->id) == 0) {
                                                                 ?>
                                                                 <tr>
-                                                                    <td><?php echo $payment->id; ?></td>
+                                                                     <td><a class="" title="<?php echo lang('invoice'); ?> " href="finance/invoice?id=<?php echo $payment->id; ?>"target="_blank"> <?php echo $payment->id ;?></a></td>
                                                                     <td><?php
                                                                         $patient_info = $this->db->get_where('patient', array('id' => $payment->patient))->row();
                                                                         if (!empty($patient_info)) {
@@ -882,7 +882,7 @@
                                                             if ($payment->gross_total - $this->finance_model->getDepositAmountByPaymentId($payment->id) > 0) {
                                                                 ?>
                                                                 <tr>
-                                                                    <td><?php echo $payment->id; ?></td>
+                                                                     <td><a class="" title="<?php echo lang('invoice'); ?> " href="finance/invoice?id=<?php echo $payment->id; ?>"target="_blank"> <?php echo $payment->id ;?></a></td>
                                                                     <td><?php
                                                                         $patient_info = $this->db->get_where('patient', array('id' => $payment->patient))->row();
                                                                         if (!empty($patient_info)) {
@@ -940,8 +940,8 @@
                                                             }
                                                         } else {
                                                             ?>
-                                                            <tr>
-                                                                <td><?php echo $payment->id; ?></td>
+                                                            <tr> 
+                                                                 <td><a class="" title="<?php echo lang('invoice'); ?> " href="finance/invoice?id=<?php echo $payment->id; ?>"target="_blank"> <?php echo $payment->id ;?></a></td>
                                                                 <td><?php
                                                                     $patient_info = $this->db->get_where('patient', array('id' => $payment->patient))->row();
                                                                     if (!empty($patient_info)) {

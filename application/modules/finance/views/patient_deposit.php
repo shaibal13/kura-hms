@@ -234,9 +234,9 @@
                                                         } if ($payment->payment_from == 'pre_surgery_medical_analysis') {
                                                             $surgery_id = $this->db->get_where('pre_surgery_medical_analysis', array('payment_id' => $payment->id))->row()->surgery_id;
                                                         }if ($payment->payment_from == 'pre_service') {
-                                                            $surgery_id = $this->db->get_where('pre_service', array('date' => $payment->date))->row()->surgery_id;
+                                                            $surgery_id = $this->db->get_where('pre_service', array('date' => $payment->date_string))->row()->surgery_id;
                                                         } if ($payment->payment_from == 'post_service') {
-                                                            $surgery_id = $this->db->get_where('post_service', array('date' => $payment->date))->row()->surgery_id;
+                                                            $surgery_id = $this->db->get_where('post_service', array('date' => $payment->date_string))->row()->surgery_id;
                                                         }
                                                         ?>
                                                         <a class="btn-xs btn-info" title="<?php echo lang('edit'); ?>" style="width: 25%;" href="surgery/surgeryDetails?id=<?php echo $surgery_id; ?>"><i class="fa fa-edit"> </i></a>
