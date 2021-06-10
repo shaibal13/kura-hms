@@ -8,6 +8,7 @@ class Laboratorist extends MX_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('laboratorist_model');
+        $this->load->model('category/category_model');
         $group_permission = $this->ion_auth->get_users_groups()->row();
 
         if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
@@ -22,26 +23,27 @@ class Laboratorist extends MX_Controller {
             $permission_access_group = $query->permission_access;
             $this->permission_access_group_explode = explode('***', $permission_access_group);
         }
-         if ($this->ion_auth->in_group(array('pharmacist', 'Accountant', 'Doctor', 'Receptionist', 'Nurse', 'Laboratorist', 'Patient'))) {
-            
+        if ($this->ion_auth->in_group(array('pharmacist', 'Accountant', 'Doctor', 'Receptionist', 'Nurse', 'Laboratorist', 'Patient'))) {
+
             redirect('home/permission');
         }
-      
     }
 
     public function index() {
-         if (!$this->ion_auth->in_group('admin') && !in_array('Laboratorist', $this->pers)) {
+        if (!$this->ion_auth->in_group('admin') && !in_array('Laboratorist', $this->pers)) {
             redirect('home/permission');
         }
         $data['laboratorists'] = $this->laboratorist_model->getLaboratorist();
+        $data['categories'] = $this->category_model->getCategoryByStatus();
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('laboratorist', $data);
         $this->load->view('home/footer'); // just the header file
     }
 
     public function addNewView() {
+        $data['categories'] = $this->category_model->getCategoryByStatus();
         $this->load->view('home/dashboard'); // just the header file
-        $this->load->view('add_new');
+        $this->load->view('add_new', $data);
         $this->load->view('home/footer'); // just the header file
     }
 
@@ -52,7 +54,8 @@ class Laboratorist extends MX_Controller {
         $email = $this->input->post('email');
         $address = $this->input->post('address');
         $phone = $this->input->post('phone');
-
+        $category = $this->input->post('category');
+        $category_implode = implode("***", $category);
         $this->load->library('form_validation');
         $this->form_validation->set_error_delimiters('<div class="error">', '</div>');
 
@@ -72,12 +75,14 @@ class Laboratorist extends MX_Controller {
             if (!empty($id)) {
                 $data = array();
                 $data['laboratorist'] = $this->laboratorist_model->getLaboratoristById($id);
+                $data['categories'] = $this->category_model->getCategoryByStatus();
                 $this->load->view('home/dashboard'); // just the header file
                 $this->load->view('add_new', $data);
                 $this->load->view('home/footer'); // just the footer file
             } else {
                 $data = array();
                 $data['setval'] = 'setval';
+                $data['categories'] = $this->category_model->getCategoryByStatus();
                 $this->load->view('home/dashboard'); // just the header file
                 $this->load->view('add_new', $data);
                 $this->load->view('home/footer'); // just the header file
@@ -117,7 +122,8 @@ class Laboratorist extends MX_Controller {
                     'name' => $name,
                     'email' => $email,
                     'address' => $address,
-                    'phone' => $phone
+                    'phone' => $phone,
+                    'category' => $category_implode
                 );
             } else {
                 //$error = array('error' => $this->upload->display_errors());
@@ -126,7 +132,8 @@ class Laboratorist extends MX_Controller {
                     'name' => $name,
                     'email' => $email,
                     'address' => $address,
-                    'phone' => $phone
+                    'phone' => $phone,
+                    'category' => $category_implode
                 );
             }
             $username = $this->input->post('name');
@@ -169,6 +176,7 @@ class Laboratorist extends MX_Controller {
         $data = array();
         $id = $this->input->get('id');
         $data['laboratorist'] = $this->laboratorist_model->getLaboratoristById($id);
+        $data['categories'] = $this->category_model->getCategoryByStatus();
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('add_new', $data);
         $this->load->view('home/footer'); // just the footer file

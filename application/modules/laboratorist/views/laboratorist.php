@@ -4,7 +4,7 @@
 <section id="main-content">
     <section class="wrapper site-min-height">
         <!-- page start-->
-         <?php
+        <?php
         $group_permission = $this->ion_auth->get_users_groups()->row();
 
         if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
@@ -37,17 +37,17 @@
         <section class="panel">
             <header class="panel-heading">
                 <?php echo lang('laboratorist'); ?>
-                 <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
-                <div class="col-md-4 no-print pull-right"> 
-                    <a data-toggle="modal" href="#myModal">
-                        <div class="btn-group pull-right">
-                            <button id="" class="btn green btn-xs">
-                                <i class="fa fa-plus-circle"></i> <?php echo lang('add_new'); ?>
-                            </button>
-                        </div>
-                    </a>
-                </div>
-                 <?php } ?>
+                <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
+                    <div class="col-md-4 no-print pull-right"> 
+                        <a data-toggle="modal" href="#myModal">
+                            <div class="btn-group pull-right">
+                                <button id="" class="btn green btn-xs">
+                                    <i class="fa fa-plus-circle"></i> <?php echo lang('add_new'); ?>
+                                </button>
+                            </div>
+                        </a>
+                    </div>
+                <?php } ?>
             </header>
             <div class="panel-body">
                 <div class="adv-table editable-table ">
@@ -60,9 +60,9 @@
                                 <th><?php echo lang('email'); ?></th>
                                 <th><?php echo lang('address'); ?></th>
                                 <th><?php echo lang('phone'); ?></th>
-                                 <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
-                                <th class="no-print"><?php echo lang('options'); ?></th>
-                          <?php } ?>
+                                <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
+                                    <th class="no-print"><?php echo lang('options'); ?></th>
+                                <?php } ?>
                             </tr>
                         </thead>
                         <tbody>
@@ -86,16 +86,16 @@
                                 <td><?php echo $laboratorist->email; ?></td>
                                 <td class="center"><?php echo $laboratorist->address; ?></td>
                                 <td><?php echo $laboratorist->phone; ?></td>
-                                 <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
-                                <td class="no-print">
-                                      <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
-                                    <button type="button" class="btn btn-info btn-xs btn_width editbutton" title="<?php echo lang('edit'); ?>" data-toggle="modal" data-id="<?php echo $laboratorist->id; ?>"><i class="fa fa-edit"></i> </button>   
-                                  <?php } ?>
-                                      <?php if ($this->ion_auth->in_group(array('admin')) || $permis_2 == 'ok') { ?>
-                                    <a class="btn btn-info btn-xs btn_width delete_button" href="laboratorist/delete?id=<?php echo $laboratorist->id; ?>" title="<?php echo lang('delete'); ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> </a>
+                                <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
+                                    <td class="no-print">
+                                        <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
+                                            <button type="button" class="btn btn-info btn-xs btn_width editbutton" title="<?php echo lang('edit'); ?>" data-toggle="modal" data-id="<?php echo $laboratorist->id; ?>"><i class="fa fa-edit"></i> </button>   
+                                        <?php } ?>
+                                        <?php if ($this->ion_auth->in_group(array('admin')) || $permis_2 == 'ok') { ?>
+                                            <a class="btn btn-info btn-xs btn_width delete_button" href="laboratorist/delete?id=<?php echo $laboratorist->id; ?>" title="<?php echo lang('delete'); ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> </a>
+                                        <?php } ?>
+                                    </td>
                                 <?php } ?>
-                                </td>
-                                 <?php } ?>
                             </tr>
                         <?php } ?>
                         </tbody>
@@ -149,7 +149,17 @@
                         <label for="exampleInputEmail1"><?php echo lang('image'); ?></label>
                         <input type="file" name="img_url">
                     </div>
-
+                    <div class="form-group col-md-12">
+                        <label for="exampleInputEmail1"><?php echo lang('category'); ?></label>
+                        <div class="form-group col-md-12">
+                            <?php foreach ($categories as $category) { ?> 
+                                <div class="col-md-6">
+                                    <input type="checkbox" class="categories" id="" name="category[]" value="<?php echo $category->id; ?>">
+                                    <label><?php echo $category->name; ?></label>
+                                </div>
+                            <?php } ?>
+                        </div>
+                    </div>
                     <input type="hidden" name="id" value=''>
 
 
@@ -205,7 +215,19 @@
                         <label for="exampleInputEmail1"><?php echo lang('image'); ?></label>
                         <input type="file" name="img_url">
                     </div>
-
+                    <div class="form-group col-md-12">
+                        <label for="exampleInputEmail1"><?php echo lang('category'); ?></label>
+                        <div class="form-group col-md-12">
+                            <?php 
+                            
+                            foreach ($categories as $category) { ?> 
+                                <div class="col-md-6">
+                                    <input type="checkbox" class="categories" id="" name="category[]" value="<?php echo $category->id; ?>">
+                                    <label><?php echo $category->name; ?></label>
+                                </div>
+                            <?php } ?>
+                        </div>
+                    </div>
                     <input type="hidden" name="id" value=''>
 
 
@@ -243,6 +265,11 @@
                                                 $('#editLaboratoristForm').find('[name="email"]').val(response.laboratorist.email).end()
                                                 $('#editLaboratoristForm').find('[name="address"]').val(response.laboratorist.address).end()
                                                 $('#editLaboratoristForm').find('[name="phone"]').val(response.laboratorist.phone).end()
+                                                 var category=response.laboratorist.category.split("***");
+                                                
+                                                 $.each(category, function( index, value ) {
+                                                      $('#editLaboratoristForm').find('[value="'+value+'"]').prop("checked", true);
+                                                 })
                                             });
                                         });
                                     });

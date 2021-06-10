@@ -80,6 +80,27 @@
                                             <label for="exampleInputEmail1">Image</label>
                                             <input type="file" name="img_url">
                                         </div>
+                                        <div class="form-group col-md-12">
+                                            <label for="exampleInputEmail1"><?php echo lang('category'); ?></label>
+                                            <div class="form-group col-md-12">
+                                                <?php 
+                                                 if (!empty($laboratorist->category)) {
+                                                     $category_explode=explode("***",$laboratorist->category);
+                                                 }
+                                                foreach ($categories as $category) { ?> 
+                                                    <div class="col-md-6">
+                                                        <input type="checkbox" class="categories" id="" name="category[]" value="<?php echo $category->id; ?>"
+                                                               <?php if(!empty($laboratorist->category)){
+                                                                   iF(in_array($category->id, $category_explode)){
+                                                                       echo "checked";
+                                                                   }
+                                                               }?>
+                                                               >
+                                                        <label><?php echo $category->name; ?></label>
+                                                    </div>
+                                                <?php } ?>
+                                            </div>
+                                        </div>
                                         <input type="hidden" name="id" value='<?php
                                         if (!empty($laboratorist->id)) {
                                             echo $laboratorist->id;
