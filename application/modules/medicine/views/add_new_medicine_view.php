@@ -66,14 +66,14 @@
                                             }
                                             ?>' placeholder="">
                                         </div>
-                                        <div class="form-group col-md-4">
+                                       <!-- <div class="form-group col-md-4">
                                             <label for="exampleInputEmail1"> <?php echo lang('quantity'); ?></label>
                                             <input type="text" class="form-control" name="quantity" id="exampleInputEmail1" value='<?php
                                             if (!empty($medicine->quantity)) {
                                                 echo $medicine->quantity;
                                             }
                                             ?>' placeholder="">
-                                        </div>
+                                        </div>-->
                                         <div class="form-group col-md-4">
                                             <label for="exampleInputEmail1"> <?php echo lang('generic_name'); ?></label>
                                             <input type="text" class="form-control" name="generic" id="exampleInputEmail1" value='<?php

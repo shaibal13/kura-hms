@@ -170,7 +170,7 @@ class Medicine extends MX_Controller {
         // Validating Selling Price Field
         $this->form_validation->set_rules('s_price', 'Selling Price', 'trim|required|min_length[1]|max_length[100]|xss_clean');
         // Validating Quantity Field
-        $this->form_validation->set_rules('quantity', 'Quantity', 'trim|required|min_length[1]|max_length[100]|xss_clean');
+       // $this->form_validation->set_rules('quantity', 'Quantity', 'trim|required|min_length[1]|max_length[100]|xss_clean');
         // Validating Generic Name Field
         $this->form_validation->set_rules('generic', 'Generic Name', 'trim|required|min_length[2]|max_length[100]|xss_clean');
         // Validating Company Name Field
@@ -196,7 +196,7 @@ class Medicine extends MX_Controller {
                 'price' => $price,
                 'box' => $box,
                 's_price' => $s_price,
-                'quantity' => $quantity,
+                //'quantity' => $quantity,
                 'generic' => $generic,
                 'company' => $company,
                 'effects' => $effects,

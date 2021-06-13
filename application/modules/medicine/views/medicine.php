@@ -155,10 +155,10 @@
                         <label for="exampleInputEmail1"> <?php echo lang('s_price'); ?></label>
                         <input type="text" class="form-control" name="s_price" id="exampleInputEmail1" value='' placeholder="">
                     </div>
-                    <div class="form-group col-md-3">
+                   <!-- <div class="form-group col-md-3">
                         <label for="exampleInputEmail1"> <?php echo lang('quantity'); ?></label>
                         <input type="text" class="form-control" name="quantity" id="exampleInputEmail1" value='' placeholder="">
-                    </div>
+                    </div>-->
                     <div class="form-group col-md-5">
                         <label for="exampleInputEmail1"> <?php echo lang('generic_name'); ?></label>
                         <input type="text" class="form-control" name="generic" id="exampleInputEmail1" value='' placeholder="">
@@ -251,10 +251,10 @@
                         <label for="exampleInputEmail1"> <?php echo lang('s_price'); ?></label>
                         <input type="text" class="form-control" name="s_price" id="exampleInputEmail1" value='' placeholder="">
                     </div>
-                    <div class="form-group col-md-3">
+                 <!--   <div class="form-group col-md-3">
                         <label for="exampleInputEmail1"> <?php echo lang('quantity'); ?></label>
                         <input type="text" class="form-control" name="quantity" id="exampleInputEmail1" value='' placeholder="">
-                    </div>
+                    </div>-->
                     <div class="form-group col-md-5">
                         <label for="exampleInputEmail1"> <?php echo lang('generic_name'); ?></label>
                         <input type="text" class="form-control" name="generic" id="exampleInputEmail1" value='' placeholder="">
@@ -376,7 +376,7 @@
                 $('#editMedicineForm').find('[name="box"]').val(response.medicine.box).end()
                 $('#editMedicineForm').find('[name="price"]').val(response.medicine.price).end()
                 $('#editMedicineForm').find('[name="s_price"]').val(response.medicine.s_price).end()
-                $('#editMedicineForm').find('[name="quantity"]').val(response.medicine.quantity).end()
+               // $('#editMedicineForm').find('[name="quantity"]').val(response.medicine.quantity).end()
                 $('#editMedicineForm').find('[name="generic"]').val(response.medicine.generic).end()
                 $('#editMedicineForm').find('[name="company"]').val(response.medicine.company).end()
                 $('#editMedicineForm').find('[name="effects"]').val(response.medicine.effects).end()
