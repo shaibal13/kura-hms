@@ -326,18 +326,25 @@ class Medicine_model extends CI_model {
         $query = $this->db->get('medicine');
         return $query->result();
     }
- function getGenericInfo($searchTerm) {
+
+    function getGenericInfo($searchTerm) {
+        $this->db->where('name', 'surgery');
+        $this->db->or_where('name', 'Surgery');
+        $query1 = $this->db->get('department')->row();
         if (!empty($searchTerm)) {
             $this->db->select('*');
-            
-            //$this->db->where('quantity >', '0');
+
+            $this->db->where('department', $query1->id);
             $this->db->where("id LIKE '%" . $searchTerm . "%' OR generic LIKE '%" . $searchTerm . "%'");
+
             $fetched_records = $this->db->get('medicine');
             $users = $fetched_records->result_array();
         } else {
             $this->db->select('*');
-            
+
             // $this->db->where('quantity >', '0');
+            $this->db->where('department', $query1->id);
+            $this->db->or_where('department_name', 'Surgery');
             $this->db->limit(10);
             $fetched_records = $this->db->get('medicine');
             $users = $fetched_records->result_array();
@@ -359,9 +366,88 @@ class Medicine_model extends CI_model {
         return $data;
     }
 
+    function getGenericInfoByEmergency($searchTerm) {
+        $this->db->where('name', 'emergency');
+        $this->db->or_where('name', 'Emergency');
+        $query1 = $this->db->get('department')->row();
+        if (!empty($searchTerm)) {
+            $this->db->select('*');
+
+            $this->db->where('department', $query1->id);
+            $this->db->where("id LIKE '%" . $searchTerm . "%' OR generic LIKE '%" . $searchTerm . "%'");
+
+            $fetched_records = $this->db->get('medicine');
+            $users = $fetched_records->result_array();
+        } else {
+            $this->db->select('*');
+
+            // $this->db->where('quantity >', '0');
+            $this->db->where('department', $query1->id);
+
+            $this->db->limit(10);
+            $fetched_records = $this->db->get('medicine');
+            $users = $fetched_records->result_array();
+        }
+
+        $user_gen = array();
+        foreach ($users as $user) {
+            $user_gen[] = $user['generic'];
+        }
+        $result = array_unique($user_gen);
+
+        $data = array();
+        $i = 0;
+        foreach ($result as $user) {
+            //  echo $user[$i];
+            $data[] = array("id" => $user, "text" => $user);
+        }
+
+        return $data;
+    }
+
+    function getGenericInfoByAll($searchTerm) {
+        $this->db->where('name', 'emergency');
+        $this->db->or_where('name', 'Emergency');
+        $query1 = $this->db->get('department')->row();
+       
+        $this->db->where('name', 'surgery');
+        $this->db->or_where('name', 'Surgery');
+        $query2 = $this->db->get('department')->row();
+        if (!empty($searchTerm)) {
+            $this->db->select('*');
+
+
+            $this->db->where("id LIKE '%" . $searchTerm . "%' OR generic LIKE '%" . $searchTerm . "%'");
+
+            $fetched_records = $this->db->get('medicine');
+            $users = $fetched_records->result_array();
+        } else {
+            $this->db->select('*');
+            $this->db->limit(10);
+            $fetched_records = $this->db->get('medicine');
+            $users = $fetched_records->result_array();
+        }
+
+        $user_gen = array();
+        foreach ($users as $user) {
+            if ($user['department'] != $query1->id && $user['department'] != $query2->id) {
+                $user_gen[] = $user['generic'];
+            }
+        }
+        $result = array_unique($user_gen);
+
+        $data = array();
+        $i = 0;
+        foreach ($result as $user) {
+            //  echo $user[$i];
+            $data[] = array("id" => $user, "text" => $user);
+        }
+
+        return $data;
+    }
+
     function getMedicineByGeneric($id) {
         return $this->db->where('generic', $id)
-                     
                         ->get('medicine')
                         ->result();
     }

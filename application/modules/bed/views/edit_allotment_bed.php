@@ -883,11 +883,19 @@ if ($this->ion_auth->in_group('Doctor')) {
                                                     $('#editBedAllotment').find('[name="doctor"]').append(option1).trigger('change');
                                                     var option2 = new Option('<?php echo $accepting_doctor->name; ?>' + '(Id:' + '<?php echo $accepting_doctor->id; ?>' + ')', '<?php echo $accepting_doctor->id; ?>', true, true);
                                                     $('#editBedAllotment').find('[name="accepting_doctor"]').append(option2).trigger('change');
-                                                    $("#generic_name").select2({
+                                                    
+    <?php if ($allotment->category == 'Emergency' || $allotment->category == 'emergency') { 
+        
+        $url_link='medicine/getGenericNameInfoByEmergency';
+    }else{
+         $url_link='medicine/getGenericNameInfoByAll';
+    }
+?>
+    $("#generic_name").select2({
                                                         placeholder: '<?php echo lang('medicine_gen_name'); ?>',
                                                         allowClear: true,
                                                         ajax: {
-                                                            url: 'medicine/getGenericNameInfo',
+                                                            url: '<?php echo $url_link; ?>',
                                                             type: "post",
                                                             dataType: 'json',
                                                             delay: 250,

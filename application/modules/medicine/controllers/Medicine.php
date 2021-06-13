@@ -150,6 +150,7 @@ class Medicine extends MX_Controller {
         $e_date = $this->input->post('e_date');
         $alpha_code = $this->input->post('alpha_code');
         $department = $this->input->post('department');
+        $department_name= $this->department_model->getDepartmentById($department)->name;
         if ((empty($id))) {
             $add_date = date('m/d/y');
         } else {
@@ -202,7 +203,8 @@ class Medicine extends MX_Controller {
                 'add_date' => $add_date,
                 'e_date' => $e_date,
                 'alpha_code' => $alpha_code,
-                'department' => $department
+                'department' => $department,
+                'department_name'=>$department_name
             );
             if (empty($id)) {
                 $this->medicine_model->insertMedicine($data);
@@ -589,7 +591,22 @@ class Medicine extends MX_Controller {
 
         echo json_encode($response);
     }
+ function getGenericNameInfoByEmergency(){
+     $searchTerm = $this->input->post('searchTerm');
 
+// Get users
+        $response = $this->medicine_model->getGenericInfoByEmergency($searchTerm);
+
+        echo json_encode($response);
+ }
+  function getGenericNameInfoByAll(){
+     $searchTerm = $this->input->post('searchTerm');
+
+// Get users
+        $response = $this->medicine_model->getGenericInfoByAll($searchTerm);
+
+        echo json_encode($response);
+ }
     function getMedicineByGeneric() {
         $id = $this->input->get('id');
         $medicines = $this->medicine_model->getMedicineByGeneric($id);
