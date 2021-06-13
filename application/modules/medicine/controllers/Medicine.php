@@ -8,6 +8,7 @@ class Medicine extends MX_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('medicine_model');
+        $this->load->model('department/department_model');
         $group_permission = $this->ion_auth->get_users_groups()->row();
 
         if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
@@ -22,19 +23,19 @@ class Medicine extends MX_Controller {
             $permission_access_group = $query->permission_access;
             $this->permission_access_group_explode = explode('***', $permission_access_group);
         }
-         if ($this->ion_auth->in_group(array( 'Accountant', 'Receptionist', 'Laboratorist', 'Patient'))) {
-            
+        if ($this->ion_auth->in_group(array('Accountant', 'Receptionist', 'Laboratorist', 'Patient'))) {
+
             redirect('home/permission');
         }
-       
     }
 
     public function index() {
-         if (!$this->ion_auth->in_group(array('admin', 'Pharmacist', 'Doctor')) && !in_array('Medicine', $this->pers)) {
+        if (!$this->ion_auth->in_group(array('admin', 'Pharmacist', 'Doctor')) && !in_array('Medicine', $this->pers)) {
             redirect('home/permission');
         }
 
         $data['medicines'] = $this->medicine_model->getMedicine();
+        $data['departments'] = $this->department_model->getDepartment();
         $data['categories'] = $this->medicine_model->getMedicineCategory();
         $data['settings'] = $this->settings_model->getSettings();
 
@@ -129,6 +130,7 @@ class Medicine extends MX_Controller {
         $data = array();
         $data['settings'] = $this->settings_model->getSettings();
         $data['categories'] = $this->medicine_model->getMedicineCategory();
+        $data['departments'] = $this->department_model->getDepartment();
         $this->load->view('home/dashboard', $data); // just the header file
         $this->load->view('add_new_medicine_view', $data);
         $this->load->view('home/footer'); // just the header file
@@ -147,6 +149,7 @@ class Medicine extends MX_Controller {
         $effects = $this->input->post('effects');
         $e_date = $this->input->post('e_date');
         $alpha_code = $this->input->post('alpha_code');
+        $department = $this->input->post('department');
         if ((empty($id))) {
             $add_date = date('m/d/y');
         } else {
@@ -198,7 +201,8 @@ class Medicine extends MX_Controller {
                 'effects' => $effects,
                 'add_date' => $add_date,
                 'e_date' => $e_date,
-                'alpha_code' => $alpha_code
+                'alpha_code' => $alpha_code,
+                'department' => $department
             );
             if (empty($id)) {
                 $this->medicine_model->insertMedicine($data);
@@ -353,12 +357,12 @@ class Medicine extends MX_Controller {
         }
         //  $data['appointments'] = $this->appointment_model->getAppointment();
         $i = 0;
-         $permis = '';
+        $permis = '';
         $permis_1 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
             //$permis='';
-           // $permis_1='';
+            // $permis_1='';
             $perm_explode = explode(",", $perm);
             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Medicine') {
                 $permis = 'ok';
@@ -369,46 +373,71 @@ class Medicine extends MX_Controller {
                 //  break;
             }
         }
+        $count=0;
         foreach ($data['medicines'] as $medicine) {
             $i = $i + 1;
-            $load='';
-            $option1='';
-            $option2='';
+            $load = '';
+            $option1 = '';
+            $option2 = '';
             $settings = $this->settings_model->getSettings();
             if ($medicine->quantity <= 0) {
                 $quan = '<p class="os">Stock Out</p>';
             } else {
                 $quan = $medicine->quantity;
             }
-             if ($this->ion_auth->in_group(array('admin','Pharmacist')) || $permis == 'ok') {
-            $load = '<button type="button" class="btn btn-info btn-xs btn_width load" data-toggle="modal" data-id="' . $medicine->id . '">' . lang('load') . '</button>';
-            $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $medicine->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</button>';
-             }
-               if ($this->ion_auth->in_group(array('admin','Pharmacist')) || $permis_1 == 'ok') {
-            $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="medicine/delete?id=' . $medicine->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i> ' . lang('delete') . '</a>';
-               }
-            $info[] = array(
-                $i,
-                $medicine->name,
-                $medicine->category,
-                $medicine->box,
-                $settings->currency . $medicine->price,
-                $settings->currency . $medicine->s_price,
-                $quan . '<br>' . $load,
-                $medicine->generic,
-                $medicine->company,
-                $medicine->effects,
-                $medicine->e_date,
-                $option1 . ' ' . $option2
-                    //  $options2
-            );
+            if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) || $permis == 'ok') {
+                // $load = '<button type="button" class="btn btn-info btn-xs btn_width load" data-toggle="modal" data-id="' . $medicine->id . '">' . lang('load') . '</button>';
+                $option1 = '<button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="' . $medicine->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</button>';
+            }
+            if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) || $permis_1 == 'ok') {
+                $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="medicine/delete?id=' . $medicine->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i> ' . lang('delete') . '</a>';
+            }
+            if ($this->ion_auth->in_group(array('admin', 'Pharmacist'))) {
+                $info[] = array(
+                    $i,
+                    $medicine->name,
+                    $medicine->category,
+                    $medicine->box,
+                    $settings->currency . $medicine->price,
+                    $settings->currency . $medicine->s_price,
+                    $quan, //. '<br>' .// $load,
+                    $medicine->generic,
+                    $medicine->company,
+                    $medicine->effects,
+                    $medicine->e_date,
+                    $option1 . ' ' . $option2
+                        //  $options2
+                );
+                $count=$count+1;
+            } else {
+                $user = $this->ion_auth->get_user_id();
+                $department = $this->db->get_where('users', array('id' => $user))->row()->department;
+                if ($department == $medicine->department) {
+                    $info[] = array(
+                        $i,
+                        $medicine->name,
+                        $medicine->category,
+                        $medicine->box,
+                        $settings->currency . $medicine->price,
+                        $settings->currency . $medicine->s_price,
+                        $quan, //. '<br>' .// $load,
+                        $medicine->generic,
+                        $medicine->company,
+                        $medicine->effects,
+                        $medicine->e_date,
+                        $option1 . ' ' . $option2
+                            //  $options2
+                    );
+                      $count=$count+1;
+                }
+            }
         }
 
-        if (!empty($data['medicines'])) {
+        if ($count != 0) {
             $output = array(
                 "draw" => intval($requestData['draw']),
-                "recordsTotal" => $this->db->get('medicine')->num_rows(),
-                "recordsFiltered" => $this->db->get('medicine')->num_rows(),
+                "recordsTotal" => $count,
+                "recordsFiltered" => $count,
                 "data" => $info
             );
         } else {

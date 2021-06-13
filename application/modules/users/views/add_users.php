@@ -85,6 +85,20 @@
                                                         ?>
                                             </select>
                                         </div>
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1"> <?php echo lang('department'); ?></label>
+                                            <select class="form-control m-bot15 js-example-basic-single" name="department" value=''>
+                                                <?php foreach ($departments as $department) { ?>
+                                                    <option value="<?php echo $department->id; ?>" <?php
+                                                    if (!empty($user->department)) {
+                                                        if ($department->id == $user->department) {
+                                                            echo 'selected';
+                                                        }
+                                                    }
+                                                    ?> > <?php echo $department->name; ?> </option>
+                                                        <?php } ?> 
+                                            </select>
+                                        </div>
                                         <!--
                                         <input type="checkbox" id='manual' name="manual" value="ok" <?php
                                         if (!empty($user->id)) {

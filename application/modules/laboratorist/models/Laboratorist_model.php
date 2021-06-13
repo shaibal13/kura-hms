@@ -67,5 +67,9 @@ function getLaboratoristInfo($searchTerm) {
         }
         return $data;
     }
-
+ function getLaboratoristByIonId($id) {
+        $this->db->where('ion_user_id', $id);
+        $query = $this->db->get('laboratorist');
+        return $query->row();
+    }
 }

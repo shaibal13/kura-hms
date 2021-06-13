@@ -98,7 +98,7 @@
                                             }
                                             ?>' placeholder="">
                                         </div>
-                                         <div class="form-group col-md-4">
+                                        <div class="form-group col-md-4">
                                             <label for="exampleInputEmail1"> <?php echo lang('alpha_code'); ?></label>
                                             <input type="text" class="form-control" name="alpha_code" id="exampleInputEmail1" value='<?php
                                             if (!empty($medicine->alpha_code)) {
@@ -114,7 +114,20 @@
                                             }
                                             ?>' placeholder="" readonly="">
                                         </div>
-
+                                        <div class="form-group col-md-6">
+                                            <label for="exampleInputEmail1"> <?php echo lang('department'); ?></label>
+                                            <select class="form-control m-bot15 js-example-basic-single" name="department" value=''>
+                                                <?php foreach ($departments as $department) { ?>
+                                                    <option value="<?php echo $department->id; ?>" <?php
+                                                    if (!empty($medicine->department)) {
+                                                        if ($department->id == $medicine->department) {
+                                                            echo 'selected';
+                                                        }
+                                                    }
+                                                    ?> > <?php echo $department->name; ?> </option>
+                                                        <?php } ?> 
+                                            </select>
+                                        </div>
                                         <input type="hidden" name="id" value='<?php
                                         if (!empty($medicine->id)) {
                                             echo $medicine->id;
@@ -124,7 +137,7 @@
                                             <button type="submit" name="submit" class="btn btn-info pull-right"> <?php echo lang('submit'); ?></button>
                                         </div>
                                     </form>
-                                    </div>
+                                </div>
 
                             </section>
                         </div>

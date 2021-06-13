@@ -15,6 +15,7 @@ class Users extends MX_Controller {
         $this->load->model('users/users_model');
         $this->load->model('appointment/appointment_model');
         $this->load->model('patient/patient_model');
+         $this->load->model('department/department_model');
         //  $this->load->model('order/order_model');
         //  $this->load->model('dispatch/dispatch_model');
         $this->load->library('upload');
@@ -50,6 +51,7 @@ class Users extends MX_Controller {
 
     public function index() {
         $data['users'] = $this->db->get('users')->result();
+        $data['departments'] = $this->department_model->getDepartment();
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('users', $data);
         $this->load->view('home/footer');
@@ -57,6 +59,7 @@ class Users extends MX_Controller {
 
     function addUser() {
         $data['groups'] = $this->db->get('groups')->result();
+        $data['departments'] = $this->department_model->getDepartment();
         $data['permissions'] = $this->db->get('permission_features')->result();
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('add_users', $data);
@@ -89,6 +92,7 @@ class Users extends MX_Controller {
         $this->db->where('user_id', $id);
         $data['gid'] = $this->db->get('users_groups')->row();
         $data['permissions'] = $this->db->get('permission_features')->result();
+         $data['departments'] = $this->department_model->getDepartment();
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('add_users', $data);
         $this->load->view('home/footer');
@@ -104,6 +108,7 @@ class Users extends MX_Controller {
 
         $phone = $this->input->post('phone');
         $email = $this->input->post('email');
+         $department= $this->input->post('department');
         //$check = $this->input->post('manual');
         $this->form_validation->set_rules('name', 'First Name', 'required|trim|xss_clean');
         $this->form_validation->set_rules('phone', 'Phone', 'required|trim|xss_clean');
@@ -145,6 +150,7 @@ class Users extends MX_Controller {
                     'phone' => $phone,
                     'email' => $email,
                     'password' => $password,
+                     'department'=>$department
                         //'permissions' => $per,
                         // 'permission' => $check
                 );
@@ -155,6 +161,7 @@ class Users extends MX_Controller {
                     'last_name' => $last_name,
                     'phone' => $phone,
                     'email' => $email,
+                     'department'=>$department
                         // 'permissions' => $per,
                         //  'permission' => $check
                 );
@@ -181,6 +188,7 @@ class Users extends MX_Controller {
                     'last_name' => $last_name,
                     'phone' => $phone,
                     'password' => $password,
+                     'department'=>$department
                         // 'permissions' => $per,
                         // 'permission' => $check
                 );

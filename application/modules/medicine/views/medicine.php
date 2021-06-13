@@ -3,7 +3,7 @@
 <section id="main-content">
     <section class="wrapper site-min-height">
         <!-- page start-->
-          <?php
+        <?php
         $group_permission = $this->ion_auth->get_users_groups()->row();
 
         if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
@@ -36,17 +36,17 @@
         <section class="">
             <header class="panel-heading">
                 <?php echo lang('medicine'); ?> 
-                 <?php if ($this->ion_auth->in_group(array('admin','Pharmacist')) || $permis == 'ok') { ?>
-                <div class="col-md-4 no-print pull-right"> 
-                    <a data-toggle="modal" href="#myModal">
-                        <div class="btn-group pull-right">
-                            <button id="" class="btn green btn-xs">
-                                <i class="fa fa-plus-circle"></i> <?php echo lang('add_medicine'); ?>
-                            </button>
-                        </div>
-                    </a>
-                </div>
-                 <?php } ?>
+                <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) || $permis == 'ok') { ?>
+                    <div class="col-md-4 no-print pull-right"> 
+                        <a data-toggle="modal" href="#myModal">
+                            <div class="btn-group pull-right">
+                                <button id="" class="btn green btn-xs">
+                                    <i class="fa fa-plus-circle"></i> <?php echo lang('add_medicine'); ?>
+                                </button>
+                            </div>
+                        </a>
+                    </div>
+                <?php } ?>
             </header>
             <style>
 
@@ -74,9 +74,9 @@
                                 <th> <?php echo lang('company'); ?></th>
                                 <th> <?php echo lang('effects'); ?></th>
                                 <th> <?php echo lang('expiry_date'); ?></th>
-                                 <?php if ($this->ion_auth->in_group(array('admin','Pharmacist')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
-                                <th> <?php echo lang('options'); ?></th>
-                                 <?php } ?>
+                                <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
+                                    <th> <?php echo lang('options'); ?></th>
+                                <?php } ?>
                             </tr>
                         </thead>
                         <tbody>
@@ -175,13 +175,27 @@
                         <label for="exampleInputEmail1"> <?php echo lang('store_box'); ?></label>
                         <input type="text" class="form-control" name="box" id="exampleInputEmail1" value='' placeholder="">
                     </div>
-                     <div class="form-group col-md-5"> 
+                    <div class="form-group col-md-5"> 
                         <label for="exampleInputEmail1"> <?php echo lang('alpha_code'); ?></label>
                         <input type="text" class="form-control" name="alpha_code" id="exampleInputEmail1" value='' placeholder="">
                     </div>
                     <div class="form-group col-md-3">
                         <label for="exampleInputEmail1"> <?php echo lang('expiry_date'); ?></label>
                         <input type="text" class="form-control default-date-picker" name="e_date" id="exampleInputEmail1" value='' placeholder="" readonly="">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="exampleInputEmail1"> <?php echo lang('department'); ?></label>
+                        <select class="form-control m-bot15 js-example-basic-single" name="department" value=''>
+                            <?php foreach ($departments as $department) { ?>
+                                <option value="<?php echo $department->id; ?>" <?php
+                                if (!empty($medicine->department)) {
+                                    if ($department->id == $medicine->department) {
+                                        echo 'selected';
+                                    }
+                                }
+                                ?> > <?php echo $department->name; ?> </option>
+                                    <?php } ?> 
+                        </select>
                     </div>
                     <div class="form-group col-md-12">
                         <button type="submit" name="submit" class="btn btn-info pull-right"> <?php echo lang('submit'); ?></button>
@@ -257,13 +271,27 @@
                         <label for="exampleInputEmail1"> <?php echo lang('store_box'); ?></label>
                         <input type="text" class="form-control" name="box" id="exampleInputEmail1" value='' placeholder="">
                     </div>
-                     <div class="form-group col-md-5"> 
+                    <div class="form-group col-md-5"> 
                         <label for="exampleInputEmail1"> <?php echo lang('alpha_code'); ?></label>
                         <input type="text" class="form-control" name="alpha_code" id="exampleInputEmail1" value='' placeholder="">
                     </div>
                     <div class="form-group col-md-3">
                         <label for="exampleInputEmail1"> <?php echo lang('expiry_date'); ?></label>
                         <input type="text" class="form-control default-date-picker" name="e_date" id="exampleInputEmail1" value='' placeholder="" readonly="">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="exampleInputEmail1"> <?php echo lang('department'); ?></label>
+                        <select class="form-control m-bot15 js-example-basic-single" name="department" value=''>
+                            <?php foreach ($departments as $department) { ?>
+                                <option value="<?php echo $department->id; ?>" <?php
+                                if (!empty($medicine->department)) {
+                                    if ($department->id == $medicine->department) {
+                                        echo 'selected';
+                                    }
+                                }
+                                ?> > <?php echo $department->name; ?> </option>
+                                    <?php } ?> 
+                        </select>
                     </div>
                     <input type="hidden" name="id" value=''>
                     <div class="form-group col-md-12">
@@ -353,7 +381,8 @@
                 $('#editMedicineForm').find('[name="company"]').val(response.medicine.company).end()
                 $('#editMedicineForm').find('[name="effects"]').val(response.medicine.effects).end()
                 $('#editMedicineForm').find('[name="e_date"]').val(response.medicine.e_date).end()
-                 $('#editMedicineForm').find('[name="alpha_code"]').val(response.medicine.alpha_code).end()
+                $('#editMedicineForm').find('[name="alpha_code"]').val(response.medicine.alpha_code).end()
+                $('#editMedicineForm').find('[name="department"]').val(response.medicine.department).trigger("change")
             });
         });
     });
@@ -397,8 +426,8 @@
             dom: "<'row'<'col-sm-3'l><'col-sm-5 text-center'B><'col-sm-4'f>>" +
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-         
-             buttons: [
+
+            buttons: [
                 {extend: 'copyHtml5', exportOptions: {columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], }},
                 {extend: 'excelHtml5', exportOptions: {columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], }},
                 {extend: 'csvHtml5', exportOptions: {columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], }},

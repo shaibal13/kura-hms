@@ -154,7 +154,7 @@
                         <div class="form-group col-md-12">
                             <?php foreach ($categories as $category) { ?> 
                                 <div class="col-md-6">
-                                    <input type="checkbox" class="categories" id="" name="category[]" value="<?php echo $category->id; ?>">
+                                    <input type="checkbox" class="categories" id="" name="category[]" value="<?php echo $category->id; ?>" checked="">
                                     <label><?php echo $category->name; ?></label>
                                 </div>
                             <?php } ?>

@@ -214,22 +214,54 @@
 
                                 <div class="col-md-6 lab pad_bot">
                                     <label for="exampleInputEmail1"> <?php echo lang('laboratorist'); ?></label>
-                                    <?php if(!$this->ion_auth->in_group(array('Laboratorist'))) { ?>
-                                    <select class="form-control m-bot15 laboratorist" id="laboratorist-select" name="laboratorist" value=''> 
-                                        <?php if (!empty($lab->laboratorist)) { ?>
-                                            <option value="<?php echo $laboratorist->id; ?>" selected="selected"><?php echo $laboratorist->name; ?> - <?php echo $laboratorist->id; ?></option>  
-                                        <?php } ?>
+                                    <?php if (!$this->ion_auth->in_group(array('Laboratorist'))) { ?>
+                                        <?php // if (empty($id_from_to_be)) { ?>
+                                           <!-- <select class="form-control m-bot15 laboratorist" id="laboratorist-select" name="laboratorist" value=''> 
+                                                <?php if (!empty($lab->laboratorist)) { ?>
+                                                    <option value="<?php echo $laboratorist->id; ?>" selected="selected"><?php echo $laboratorist->name; ?> - <?php echo $laboratorist->id; ?></option>  
+                                                <?php } ?>
 
-                                    </select>
-                                    <?php } else{ ?>
-                                     <select class="form-control m-bot15 laboratorist" id="" name="laboratorist" value=''> 
-                                         <?php $laboratorist_id=$this->ion_auth->get_user_id(); 
-                                         $laboratorists=$this->db->get_where('laboratorist',array('ion_user_id'=>$laboratorist_id))->row();
-                                         ?>   
-                                         <option value="<?php echo $laboratorists->id; ?>" selected="selected"><?php echo $laboratorists->name; ?> - <?php echo $laboratorists->id; ?></option>  
-                                        
-                                          </select>
-                                    <?php } ?>
+                                            </select>-->
+                                        <?php //} else {
+
+                                        ?>
+                                            <select class="form-control m-bot15 js-example-basic-single" id="" name="laboratorist" value=''> 
+                                                <?php
+                                                foreach ($laboratorists as $laboratorist_single) {
+                                                   
+                                                    $category_laboratorist = array();
+                                                    $category_laboratorist = explode("***", $laboratorist_single->category);
+                                                   
+                                                   
+                                                    if (!empty($category_laboratorist)) {
+                                                        if (in_array($category_payment_procccedures, $category_laboratorist)) {
+                                                            ?>
+                                                            <option value="<?php echo $laboratorist_single->id; ?>" <?php
+                                                            if (!empty($lab->laboratorist)) {
+                                                                if ($laboratorist_single->id == $lab->laboratorist) {
+                                                                    echo 'selected';
+                                                                }
+                                                            }
+                                                            ?>><?php echo $laboratorist_single->name; ?> - <?php echo $laboratorist_single->id; ?></option>  
+                                                                <?php
+                                                                }
+                                                            }
+                                                        }
+                                                        ?>
+
+
+                                            </select>
+                                            <?php //} ?>
+                                        <?php } else { ?>
+                                        <select class="form-control m-bot15 laboratorist" id="" name="laboratorist" value=''> 
+    <?php
+    $laboratorist_id = $this->ion_auth->get_user_id();
+    $laboratorists = $this->db->get_where('laboratorist', array('ion_user_id' => $laboratorist_id))->row();
+    ?>   
+                                            <option value="<?php echo $laboratorists->id; ?>" selected="selected"><?php echo $laboratorists->name; ?> - <?php echo $laboratorists->id; ?></option>  
+
+                                        </select>
+<?php } ?>
                                 </div>
 
 
@@ -243,7 +275,7 @@
                                             if (!empty($lab->p_name)) {
                                                 echo $lab->p_name;
                                             }
-                                            ?>' placeholder="">
+?>' placeholder="">
                                         </div>
                                     </div>
                                     <div class="col-md-8 lab pad_bot">
@@ -255,7 +287,7 @@
                                             if (!empty($lab->p_email)) {
                                                 echo $lab->p_email;
                                             }
-                                            ?>' placeholder="">
+?>' placeholder="">
                                         </div>
                                     </div>
                                     <div class="col-md-8 lab pad_bot">
@@ -267,7 +299,7 @@
                                             if (!empty($lab->p_phone)) {
                                                 echo $lab->p_phone;
                                             }
-                                            ?>' placeholder="">
+?>' placeholder="">
                                         </div>
                                     </div>
                                 </div>
@@ -301,7 +333,7 @@
                             </div>
                             <?php if (!empty($id_from_to_be)) { ?>
                                 <input type="hidden" name="redirect" value="lab/toBeDone">
-                            <?php } else { ?>
+<?php } else { ?>
                                 <input type="hidden" name="redirect" value="lab">
                             <?php } ?>
 
@@ -561,17 +593,17 @@
 
 
                             <h3>
-                                <?php echo $settings->title ?>
+<?php echo $settings->title ?>
                             </h3>
                             <h4>
-                                <?php echo $settings->address ?>
+<?php echo $settings->address ?>
                             </h4>
                             <h4>
                                 Tel: <?php echo $settings->phone ?>
                             </h4>
                             <img alt="" src="<?php echo $this->settings_model->getSettings()->logo; ?>" width="200" height="100">
                             <h4 style="font-weight: bold; margin-top: 20px; text-transform: uppercase;">
-                                <?php echo lang('lab_report') ?>
+<?php echo lang('lab_report') ?>
                                 <hr style="width: 200px; border-bottom: 1px solid #000; margin-top: 5px; margin-bottom: 5px;">
                             </h4>
                         </div>
@@ -676,9 +708,9 @@
                                             ?>
                                         </span>
                                     </p>
-                                    
+
                                 </div>
-                                   <div class="col-md-12 row details">
+                                <div class="col-md-12 row details">
                                     <p>
                                         <label class="control-label"><?php echo lang('laboratorist'); ?>  </label>
                                         <span style="text-transform: uppercase;"> : 
