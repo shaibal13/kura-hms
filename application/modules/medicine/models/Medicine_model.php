@@ -409,7 +409,7 @@ class Medicine_model extends CI_model {
         $this->db->where('name', 'emergency');
         $this->db->or_where('name', 'Emergency');
         $query1 = $this->db->get('department')->row();
-       
+
         $this->db->where('name', 'surgery');
         $this->db->or_where('name', 'Surgery');
         $query2 = $this->db->get('department')->row();
@@ -450,6 +450,37 @@ class Medicine_model extends CI_model {
         return $this->db->where('generic', $id)
                         ->get('medicine')
                         ->result();
+    }
+
+    function insertInternalMedicineCategory($data) {
+
+        $this->db->insert('internal_medicine_category', $data);
+    }
+
+    function getInternalMedicineCategory() {
+        $query = $this->db->get('internal_medicine_category');
+        return $query->result();
+    }
+
+    function getInternalMedicineCategoryByDepartment($department) {
+        $this->db->where('department', $department);
+        $query = $this->db->get('internal_medicine_category');
+        return $query->result();
+    }
+
+    function getInternalMedicineCategoryById($id) {
+        $this->db->where('id', $id);
+        $query = $this->db->get('internal_medicine_category');
+        return $query->row();
+    }
+
+    function updateInternalMedicineCategory($id, $data) {
+        $this->db->where('id', $id);
+        $this->db->update('internal_medicine_category', $data);
+    }
+    function deleteInternalMedicineCategory($id) {
+        $this->db->where('id', $id);
+        $this->db->delete('internal_medicine_category');
     }
 
 }

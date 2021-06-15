@@ -74,6 +74,7 @@
                                 <th> <?php echo lang('company'); ?></th>
                                 <th> <?php echo lang('effects'); ?></th>
                                 <th> <?php echo lang('expiry_date'); ?></th>
+                                <!-- <th> <?php echo lang('pharmacist'); ?></th>-->
                                 <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
                                     <th> <?php echo lang('options'); ?></th>
                                 <?php } ?>
@@ -197,6 +198,22 @@
                                     <?php } ?> 
                         </select>
                     </div>
+                   <?php  if ($this->ion_auth->in_group(array('admin'))) {?>
+                   <!--  <div class="form-group col-md-6">
+                        <label for="exampleInputEmail1"> <?php echo lang('pharmacist'); ?></label>
+                        <select class="form-control m-bot15 js-example-basic-single" name="pharmacist" value=''>
+                            <?php foreach ($pharmacists as $pharmacist) { ?>
+                                <option value="<?php echo $pharmacist->id; ?>" <?php
+                                if (!empty($medicine->pharmacist)) {
+                                    if ($pharmacist->id == $medicine->pharmacist) {
+                                        echo 'selected';
+                                    }
+                                }
+                                ?> > <?php echo $pharmacist->name; ?> </option>
+                                    <?php } ?> 
+                        </select>
+                    </div>-->
+                   <?php } ?>
                     <div class="form-group col-md-12">
                         <button type="submit" name="submit" class="btn btn-info pull-right"> <?php echo lang('submit'); ?></button>
                     </div>
@@ -293,6 +310,22 @@
                                     <?php } ?> 
                         </select>
                     </div>
+                  <?php  if ($this->ion_auth->in_group(array('admin'))) {?>
+                     <!-- <div class="form-group col-md-6">
+                        <label for="exampleInputEmail1"> <?php echo lang('pharmacist'); ?></label>
+                        <select class="form-control m-bot15 js-example-basic-single" name="pharmacist" value=''>
+                            <?php foreach ($pharmacists as $pharmacist) { ?>
+                                <option value="<?php echo $pharmacist->id; ?>" <?php
+                                if (!empty($medicine->pharmacist)) {
+                                    if ($pharmacist->id == $medicine->pharmacist) {
+                                        echo 'selected';
+                                    }
+                                }
+                                ?> > <?php echo $pharmacist->name; ?> </option>
+                                    <?php } ?> 
+                        </select>
+                    </div>-->
+                   <?php } ?>
                     <input type="hidden" name="id" value=''>
                     <div class="form-group col-md-12">
                         <button type="submit" name="submit" class="btn btn-info pull-right"> <?php echo lang('submit'); ?></button>
@@ -383,6 +416,7 @@
                 $('#editMedicineForm').find('[name="e_date"]').val(response.medicine.e_date).end()
                 $('#editMedicineForm').find('[name="alpha_code"]').val(response.medicine.alpha_code).end()
                 $('#editMedicineForm').find('[name="department"]').val(response.medicine.department).trigger("change")
+                 //  $('#editMedicineForm').find('[name="pharmacist"]').val(response.medicine.pharmacist).trigger("change")
             });
         });
     });

@@ -9,6 +9,7 @@ class Medicine extends MX_Controller {
         parent::__construct();
         $this->load->model('medicine_model');
         $this->load->model('department/department_model');
+        $this->load->model('pharmacist/pharmacist_model');
         $group_permission = $this->ion_auth->get_users_groups()->row();
 
         if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
@@ -38,6 +39,7 @@ class Medicine extends MX_Controller {
         $data['departments'] = $this->department_model->getDepartment();
         $data['categories'] = $this->medicine_model->getMedicineCategory();
         $data['settings'] = $this->settings_model->getSettings();
+        $data['pharmacists'] = $this->pharmacist_model->getPharmacist();
 
         $this->load->view('home/dashboard', $data); // just the header file
         $this->load->view('medicine', $data);
@@ -131,6 +133,7 @@ class Medicine extends MX_Controller {
         $data['settings'] = $this->settings_model->getSettings();
         $data['categories'] = $this->medicine_model->getMedicineCategory();
         $data['departments'] = $this->department_model->getDepartment();
+        $data['pharmacists'] = $this->pharmacist_model->getPharmacist();
         $this->load->view('home/dashboard', $data); // just the header file
         $this->load->view('add_new_medicine_view', $data);
         $this->load->view('home/footer'); // just the header file
@@ -150,7 +153,9 @@ class Medicine extends MX_Controller {
         $e_date = $this->input->post('e_date');
         $alpha_code = $this->input->post('alpha_code');
         $department = $this->input->post('department');
-        $department_name= $this->department_model->getDepartmentById($department)->name;
+        $department_name = $this->department_model->getDepartmentById($department)->name;
+        $pharmacist = $this->input->post('pharmacist');
+        $pharmacist_name = $this->pharmacist_model->getPharmacistById($pharmacist)->name;
         if ((empty($id))) {
             $add_date = date('m/d/y');
         } else {
@@ -170,7 +175,7 @@ class Medicine extends MX_Controller {
         // Validating Selling Price Field
         $this->form_validation->set_rules('s_price', 'Selling Price', 'trim|required|min_length[1]|max_length[100]|xss_clean');
         // Validating Quantity Field
-       // $this->form_validation->set_rules('quantity', 'Quantity', 'trim|required|min_length[1]|max_length[100]|xss_clean');
+        // $this->form_validation->set_rules('quantity', 'Quantity', 'trim|required|min_length[1]|max_length[100]|xss_clean');
         // Validating Generic Name Field
         $this->form_validation->set_rules('generic', 'Generic Name', 'trim|required|min_length[2]|max_length[100]|xss_clean');
         // Validating Company Name Field
@@ -204,7 +209,9 @@ class Medicine extends MX_Controller {
                 'e_date' => $e_date,
                 'alpha_code' => $alpha_code,
                 'department' => $department,
-                'department_name'=>$department_name
+                'department_name' => $department_name,
+                'pharmacist' => $department,
+                'pharmacist_name' => $pharmacist_name
             );
             if (empty($id)) {
                 $this->medicine_model->insertMedicine($data);
@@ -259,6 +266,7 @@ class Medicine extends MX_Controller {
         }
         $data['categories'] = $this->medicine_model->getMedicineCategory();
         $data['settings'] = $this->settings_model->getSettings();
+
         $this->load->view('home/dashboard', $data); // just the header file
         $this->load->view('medicine_category', $data);
         $this->load->view('home/footer'); // just the header file
@@ -375,7 +383,7 @@ class Medicine extends MX_Controller {
                 //  break;
             }
         }
-        $count=0;
+        $count = 0;
         foreach ($data['medicines'] as $medicine) {
             $i = $i + 1;
             $load = '';
@@ -394,6 +402,12 @@ class Medicine extends MX_Controller {
             if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) || $permis_1 == 'ok') {
                 $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="medicine/delete?id=' . $medicine->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i> ' . lang('delete') . '</a>';
             }
+            $pharmacist = $this->pharmacist_model->getPharmacistById($medicine->pharmacist);
+            if (empty($pharmacist)) {
+                $pharmacist_name = $medicine->pharmacist_name;
+            } else {
+                $pharmacist_name = $pharmacist->name;
+            }
             if ($this->ion_auth->in_group(array('admin', 'Pharmacist'))) {
                 $info[] = array(
                     $i,
@@ -407,10 +421,11 @@ class Medicine extends MX_Controller {
                     $medicine->company,
                     $medicine->effects,
                     $medicine->e_date,
+                    $pharmacist_name,
                     $option1 . ' ' . $option2
                         //  $options2
                 );
-                $count=$count+1;
+                $count = $count + 1;
             } else {
                 $user = $this->ion_auth->get_user_id();
                 $department = $this->db->get_where('users', array('id' => $user))->row()->department;
@@ -430,7 +445,7 @@ class Medicine extends MX_Controller {
                         $option1 . ' ' . $option2
                             //  $options2
                     );
-                      $count=$count+1;
+                    $count = $count + 1;
                 }
             }
         }
@@ -591,22 +606,25 @@ class Medicine extends MX_Controller {
 
         echo json_encode($response);
     }
- function getGenericNameInfoByEmergency(){
-     $searchTerm = $this->input->post('searchTerm');
+
+    function getGenericNameInfoByEmergency() {
+        $searchTerm = $this->input->post('searchTerm');
 
 // Get users
         $response = $this->medicine_model->getGenericInfoByEmergency($searchTerm);
 
         echo json_encode($response);
- }
-  function getGenericNameInfoByAll(){
-     $searchTerm = $this->input->post('searchTerm');
+    }
+
+    function getGenericNameInfoByAll() {
+        $searchTerm = $this->input->post('searchTerm');
 
 // Get users
         $response = $this->medicine_model->getGenericInfoByAll($searchTerm);
 
         echo json_encode($response);
- }
+    }
+
     function getMedicineByGeneric() {
         $id = $this->input->get('id');
         $medicines = $this->medicine_model->getMedicineByGeneric($id);
@@ -623,6 +641,101 @@ class Medicine extends MX_Controller {
         $data = array();
         $data['medicine'] = $this->medicine_model->getMedicineById($id);
         echo json_encode($data);
+    }
+
+    public function medicineInternalCategory() {
+        if (!$this->ion_auth->logged_in()) {
+            redirect('auth/login', 'refresh');
+        }
+        if ($this->ion_auth->in_group(array('admin'))) {
+            $data['categories'] = $this->medicine_model->getInternalMedicineCategory();
+        } else {
+            $user = $this->ion_auth->get_user_id();
+            $department = $this->db->get_where('users', array('id' => $user))->department;
+            $data['categories'] = $this->medicine_model->getInternalMedicineCategoryByDepartment($department);
+        }
+
+        $data['settings'] = $this->settings_model->getSettings();
+        $data['departments'] = $this->department_model->getDepartment();
+       
+        $this->load->view('home/dashboard', $data); // just the header file
+        $this->load->view('medicine_internal_category', $data);
+        $this->load->view('home/footer'); // just the header file
+    }
+
+    public function addInternalCategoryView() {
+        $data['settings'] = $this->settings_model->getSettings();
+        $data['departments'] = $this->department_model->getDepartment();
+        $this->load->view('home/dashboard', $data); // just the header file
+        $this->load->view('add_new_internal_category_view', $data);
+        $this->load->view('home/footer'); // just the header file
+    }
+
+    public function addNewInternalCategory() {
+        $id = $this->input->post('id');
+        $category = $this->input->post('category');
+        $description = $this->input->post('description');
+        if ($this->ion_auth->in_group(array('admin'))) {
+            $department = $this->input->post('department');
+            $department_name = $this->department_model->getDepartmentById($department)->name;
+        } else {
+            $user = $this->ion_auth->get_user_id();
+            $department = $this->db->get_where('users', array('id' => $user))->row()->department;
+            $department_name = $this->department_model->getDepartmentById($department)->name;
+        }
+        $this->load->library('form_validation');
+        $this->form_validation->set_error_delimiters('<div class="error">', '</div>');
+        // Validating Category Name Field
+        $this->form_validation->set_rules('category', 'Category', 'trim|required|min_length[2]|max_length[100]|xss_clean');
+        // Validating Description Field
+        $this->form_validation->set_rules('description', 'Description', 'trim|required|min_length[5]|max_length[100]|xss_clean');
+        if ($this->form_validation->run() == FALSE) {
+            $data['settings'] = $this->settings_model->getSettings();
+            $data['departments'] = $this->department_model->getDepartment();
+            $this->load->view('home/dashboard', $data); // just the header file
+            $this->load->view('add_new_internal_category_view', $data);
+            $this->load->view('home/footer'); // just the header file
+        } else {
+            $data = array();
+            $data = array('category' => $category,
+                'description' => $description,
+                'department' => $department,
+                'department_name' => $department_name
+            );
+            
+            if (empty($id)) {
+               
+                $this->medicine_model->insertInternalMedicineCategory($data);
+                $this->session->set_flashdata('feedback', lang('added'));
+            } else {
+                $this->medicine_model->updateMedicineCategory($id, $data);
+                $this->session->set_flashdata('feedback', lang('updated'));
+            }
+            redirect('medicine/medicineInternalCategory');
+        }
+    }
+
+    function editInternalcategory() {
+        $data = array();
+        $id = $this->input->get('id');
+        $data['medicine'] = $this->medicine_model->getInternalMedicineCategoryById($id);
+        $data['settings'] = $this->settings_model->getSettings();
+        $this->load->view('home/dashboard', $data); // just the header file
+        $this->load->view('add_new_internal_category_view', $data);
+        $this->load->view('home/footer'); // just the footer file
+    }
+
+    function editInternalMedicineCategoryByJason() {
+        $id = $this->input->get('id');
+        $data['medicinecategory'] = $this->medicine_model->getInternalMedicineCategoryById($id);
+        echo json_encode($data);
+    }
+
+    function deleteInternalMedicineCategory() {
+        $id = $this->input->get('id');
+        $this->medicine_model->deleteInternalMedicineCategory($id);
+        $this->session->set_flashdata('feedback', lang('deleted'));
+        redirect('medicine/medicineInternalCategory');
     }
 
 }

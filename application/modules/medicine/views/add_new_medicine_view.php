@@ -66,14 +66,14 @@
                                             }
                                             ?>' placeholder="">
                                         </div>
-                                       <!-- <div class="form-group col-md-4">
-                                            <label for="exampleInputEmail1"> <?php echo lang('quantity'); ?></label>
-                                            <input type="text" class="form-control" name="quantity" id="exampleInputEmail1" value='<?php
-                                            if (!empty($medicine->quantity)) {
-                                                echo $medicine->quantity;
-                                            }
-                                            ?>' placeholder="">
-                                        </div>-->
+                                        <!-- <div class="form-group col-md-4">
+                                             <label for="exampleInputEmail1"> <?php echo lang('quantity'); ?></label>
+                                             <input type="text" class="form-control" name="quantity" id="exampleInputEmail1" value='<?php
+                                        if (!empty($medicine->quantity)) {
+                                            echo $medicine->quantity;
+                                        }
+                                        ?>' placeholder="">
+                                         </div>-->
                                         <div class="form-group col-md-4">
                                             <label for="exampleInputEmail1"> <?php echo lang('generic_name'); ?></label>
                                             <input type="text" class="form-control" name="generic" id="exampleInputEmail1" value='<?php
@@ -128,6 +128,22 @@
                                                         <?php } ?> 
                                             </select>
                                         </div>
+                                        <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
+                                          <div class="form-group col-md-6">
+                                                <label for="exampleInputEmail1"> <?php echo lang('pharmacist'); ?></label>
+                                                <select class="form-control m-bot15 js-example-basic-single" name="pharmacist" value=''>
+                                                    <?php foreach ($pharmacists as $pharmacist) { ?>
+                                                        <option value="<?php echo $pharmacist->id; ?>" <?php
+                                                        if (!empty($medicine->pharmacist)) {
+                                                            if ($pharmacist->id == $medicine->pharmacist) {
+                                                                echo 'selected';
+                                                            }
+                                                        }
+                                                        ?> > <?php echo $pharmacist->name; ?> </option>
+                                                            <?php } ?> 
+                                                </select>
+                                            </div>
+                                        <?php } ?>
                                         <input type="hidden" name="id" value='<?php
                                         if (!empty($medicine->id)) {
                                             echo $medicine->id;
