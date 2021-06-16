@@ -129,7 +129,7 @@
                                             </select>
                                         </div>
                                         <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
-                                          <div class="form-group col-md-6">
+                                         <!-- <div class="form-group col-md-6">
                                                 <label for="exampleInputEmail1"> <?php echo lang('pharmacist'); ?></label>
                                                 <select class="form-control m-bot15 js-example-basic-single" name="pharmacist" value=''>
                                                     <?php foreach ($pharmacists as $pharmacist) { ?>
@@ -142,7 +142,7 @@
                                                         ?> > <?php echo $pharmacist->name; ?> </option>
                                                             <?php } ?> 
                                                 </select>
-                                            </div>
+                                            </div>-->
                                         <?php } ?>
                                         <input type="hidden" name="id" value='<?php
                                         if (!empty($medicine->id)) {

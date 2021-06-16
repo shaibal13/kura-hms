@@ -57,5 +57,9 @@ class Settings_model extends CI_model {
         $permissions = explode(',', $query->permissions);
         return $permissions;
     }
+    function getUserDepartment(){
+        return $this->db->where('id',$this->ion_auth->get_user_id())
+                ->get('users')->row();
+    }
 
 }

@@ -374,7 +374,7 @@ class Medicine_model extends CI_model {
             $this->db->select('*');
 
             $this->db->where('department', $query1->id);
-            $this->db->where("id LIKE '%" . $searchTerm . "%' OR generic LIKE '%" . $searchTerm . "%'");
+            $this->db->where("id LIKE '%" . $searchTerm . "%' OR generic LIKE '%" . $searchTerm . "%'OR medicine_id LIKE '%" . $searchTerm . "%'");
 
             $fetched_records = $this->db->get('medicine');
             $users = $fetched_records->result_array();
@@ -385,7 +385,7 @@ class Medicine_model extends CI_model {
             $this->db->where('department', $query1->id);
 
             $this->db->limit(10);
-            $fetched_records = $this->db->get('medicine');
+            $fetched_records = $this->db->get('internal_medicine');
             $users = $fetched_records->result_array();
         }
 
@@ -478,9 +478,96 @@ class Medicine_model extends CI_model {
         $this->db->where('id', $id);
         $this->db->update('internal_medicine_category', $data);
     }
+
     function deleteInternalMedicineCategory($id) {
         $this->db->where('id', $id);
         $this->db->delete('internal_medicine_category');
     }
 
+    function getMedicineByDepartment($department) {
+        $this->db->order_by('id', 'asc');
+        $this->db->where('department', $department);
+        $query = $this->db->get('medicine');
+        return $query->result();
+    }
+
+    function getInternalMedicineByDepartment($department) {
+        $this->db->where('department', $department);
+        $query = $this->db->get('internal_medicine');
+        return $query->result();
+    }
+
+    function insertInternalMedicine($data) {
+        $this->db->insert('internal_medicine', $data);
+    }
+
+    function updateInternalMedicine($id, $data) {
+        $this->db->where('id', $id);
+        $this->db->update('internal_medicine', $data);
+    }
+     function getInternalMedicineById($id) {
+        $this->db->where('id', $id);
+        $query = $this->db->get('internal_medicine');
+        return $query->row();
+    }
+    
+       function getInternalMedicineBySearch($search, $order, $dir) {
+        if ($order != null) {
+            $this->db->order_by($order, $dir);
+        } else {
+            $this->db->order_by('id', 'desc');
+        }
+        $this->db->like('id', $search);
+        $this->db->or_like('category', $search);
+        $this->db->or_like('name', $search);
+        $this->db->or_like('e_date', $search);
+        $this->db->or_like('generic', $search);
+        $this->db->or_like('company', $search);
+        $this->db->or_like('effects', $search);
+        $query = $this->db->get('internal_medicine');
+        return $query->result();
+    }
+
+    function getInternalMedicineByLimit($limit, $start, $order, $dir) {
+        if ($order != null) {
+            $this->db->order_by($order, $dir);
+        } else {
+            $this->db->order_by('id', 'desc');
+        }
+        $this->db->limit($limit, $start);
+        $query = $this->db->get('internal_medicine');
+        return $query->result();
+    }
+
+    function getInternalMedicineByLimitBySearch($limit, $start, $search, $order, $dir) {
+        if ($order != null) {
+            $this->db->order_by($order, $dir);
+        } else {
+            $this->db->order_by('id', 'desc');
+        }
+        $this->db->like('id', $search);
+        $this->db->or_like('category', $search);
+        $this->db->or_like('name', $search);
+        $this->db->or_like('e_date', $search);
+        $this->db->or_like('generic', $search);
+        $this->db->or_like('company', $search);
+        $this->db->or_like('effects', $search);
+
+        $this->db->limit($limit, $start);
+        $query = $this->db->get('internal_medicine');
+        return $query->result();
+    }
+    function getInternalMedicineWithoutSearch($order, $dir) {
+        if ($order != null) {
+            $this->db->order_by($order, $dir);
+        } else {
+            $this->db->order_by('id', 'asc');
+        }
+        $query = $this->db->get('internal_medicine');
+        return $query->result();
+    }
+      function deleteInternalMedicine($id) {
+        $this->db->where('id', $id);
+        $this->db->delete('internal_medicine');
+    }
 }
