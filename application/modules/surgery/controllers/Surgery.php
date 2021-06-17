@@ -1112,7 +1112,7 @@ class Surgery extends MX_Controller {
         $generic_name = $this->input->post('generic_name');
         $surgery_id = $this->input->post('surgery_id');
         $total = $this->input->post('total');
-        $medicine_name = $this->medicine_model->getMedicineById($medicine_id)->name;
+        $medicine_name = $this->medicine_model->getInternalMedicineById($medicine_id);
 
 
 
@@ -1126,7 +1126,8 @@ class Surgery extends MX_Controller {
             'surgery_id' => $surgery_id,
             's_price' => $sales_price,
             'medicine_id' => $medicine_id,
-            'medicine_name' => $medicine_name,
+            'medicine_name' => $medicine_name->name,
+            'pharmacy_medicine_id' => $medicine_name->id,
             'generic_name' => $generic_name,
             'total' => $total
         );
@@ -1187,7 +1188,7 @@ class Surgery extends MX_Controller {
         $medicine_list = $this->surgery_model->getMedicineForPreSurgery($id);
         foreach ($medicine_list as $medicine) {
             if (empty($medicine->payment_id)) {
-                $medicine_con[] = $medicine->medicine_id . '*' . $medicine->medicine_name . '*' . $medicine->s_price . '*' . $medicine->quantity . '*' . $medicine->total . '*' . $medicine->id;
+                $medicine_con[] = $medicine->medicine_id . '*' . $medicine->medicine_name . '*' . $medicine->s_price . '*' . $medicine->quantity . '*' . $medicine->total . '*' . $medicine->id.'*'.$medicine->pharmacy_medicine_id;
                 $price[] = $medicine->total;
                 // $quantity[] = $medicine->quantity;
                 $medicine_id[] = $medicine->medicine_id;
@@ -1253,7 +1254,7 @@ class Surgery extends MX_Controller {
         $generic_name = $this->input->post('generic_name');
         $surgery_id = $this->input->post('surgery_id');
         $total = $this->input->post('total');
-        $medicine_name = $this->medicine_model->getMedicineById($medicine_id)->name;
+        $medicine_name = $this->medicine_model->getInternalMedicineById($medicine_id);
 
 
 
@@ -1267,7 +1268,8 @@ class Surgery extends MX_Controller {
             'surgery_id' => $surgery_id,
             's_price' => $sales_price,
             'medicine_id' => $medicine_id,
-            'medicine_name' => $medicine_name,
+            'medicine_name' => $medicine_name->name,
+            'pharmacy_medicine_id' => $medicine_name->id,
             'generic_name' => $generic_name,
             'total' => $total
         );
@@ -1328,7 +1330,7 @@ class Surgery extends MX_Controller {
         $medicine_list = $this->surgery_model->getMedicineForOnSurgery($id);
         foreach ($medicine_list as $medicine) {
             if (empty($medicine->payment_id)) {
-                $medicine_con[] = $medicine->medicine_id . '*' . $medicine->medicine_name . '*' . $medicine->s_price . '*' . $medicine->quantity . '*' . $medicine->total . '*' . $medicine->id;
+                $medicine_con[] = $medicine->medicine_id . '*' . $medicine->medicine_name . '*' . $medicine->s_price . '*' . $medicine->quantity . '*' . $medicine->total . '*' . $medicine->id. '*' . $medicine->pharmacy_medicine_id;
                 $price[] = $medicine->total;
                 // $quantity[] = $medicine->quantity;
                 $medicine_id[] = $medicine->medicine_id;
@@ -1394,7 +1396,7 @@ class Surgery extends MX_Controller {
         $generic_name = $this->input->post('generic_name');
         $surgery_id = $this->input->post('surgery_id');
         $total = $this->input->post('total');
-        $medicine_name = $this->medicine_model->getMedicineById($medicine_id)->name;
+        $medicine_name = $this->medicine_model->getInternalMedicineById($medicine_id);
 
 
 
@@ -1408,7 +1410,8 @@ class Surgery extends MX_Controller {
             'surgery_id' => $surgery_id,
             's_price' => $sales_price,
             'medicine_id' => $medicine_id,
-            'medicine_name' => $medicine_name,
+            'medicine_name' => $medicine_name->name,
+            'pharmacy_medicine_id' => $medicine_name->id,
             'generic_name' => $generic_name,
             'total' => $total
         );
@@ -1469,7 +1472,7 @@ class Surgery extends MX_Controller {
         $medicine_list = $this->surgery_model->getMedicineForPostSurgery($id);
         foreach ($medicine_list as $medicine) {
             if (empty($medicine->payment_id)) {
-                $medicine_con[] = $medicine->medicine_id . '*' . $medicine->medicine_name . '*' . $medicine->s_price . '*' . $medicine->quantity . '*' . $medicine->total . '*' . $medicine->id;
+                $medicine_con[] = $medicine->medicine_id . '*' . $medicine->medicine_name . '*' . $medicine->s_price . '*' . $medicine->quantity . '*' . $medicine->total . '*' . $medicine->id. '*' . $medicine->pharmacy_medicine_id;
                 $price[] = $medicine->total;
                 // $quantity[] = $medicine->quantity;
                 $medicine_id[] = $medicine->medicine_id;

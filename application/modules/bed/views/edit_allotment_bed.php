@@ -1075,7 +1075,7 @@ if ($this->ion_auth->in_group('Doctor')) {
                                                     $('#medicines_option').change(function () {
                                                         var id = $(this).val();
                                                         $.ajax({
-                                                            url: 'medicine/getMedicine?id=' + id,
+                                                            url: 'medicine/getInternalMedicine?id=' + id,
                                                             method: 'GET',
                                                             data: '',
                                                             dataType: 'json',

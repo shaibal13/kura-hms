@@ -461,7 +461,7 @@
                                              <th><?php echo lang('discount'); ?></th>
                                             <th><?php echo lang('grand_total'); ?></th>
                                         <?php } ?>
-                                        <?php } elseif ($payment->payment_from == 'bed') { ?>
+                                        <?php } elseif ($payment->payment_from == 'bed' || $payment->payment_from == 'pre_surgery_medicine' || $payment->payment_from == 'post_surgery_medicine') { ?>
                                             <th>#</th>
                                             <th><?php echo lang('medicine'); ?> <?php echo lang('name'); ?></th>
                                             <th><?php echo lang('unit'); ?> <?php echo lang('price') ?></th>
@@ -546,7 +546,7 @@
                                                     <?php
                                                 }
                                             }
-                                        } elseif ($payment->payment_from == 'bed') {
+                                        } elseif ($payment->payment_from == 'bed'|| $payment->payment_from == 'pre_surgery_medicine' || $payment->payment_from == 'post_surgery_medicine') {
                                             if (!empty($payment->category_name)) {
                                                 // $case_setails = $this->db->get_where('medical_history', array('id' => $payment->case_id))->row();
                                                 $category = explode('#', $payment->category_name);

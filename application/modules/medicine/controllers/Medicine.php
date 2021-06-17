@@ -644,12 +644,19 @@ class Medicine extends MX_Controller {
 
     function getMedicineByGeneric() {
         $id = $this->input->get('id');
-        $medicines = $this->medicine_model->getMedicineByGeneric($id);
+        $medicines = $this->medicine_model->getInternalMedicineByGenericId($id);
         $option = '<option  value="select">' . lang('select') . '</option>';
         foreach ($medicines as $medicine) {
             $option .= '<option value="' . $medicine->id . '">' . $medicine->name . '</option>';
         }
         $data['response'] = $option;
+        echo json_encode($data);
+    }
+
+    function getInternalMedicine() {
+        $id = $this->input->get('id');
+        $data = array();
+        $data['medicine'] = $this->medicine_model->getInternalMedicineById($id);
         echo json_encode($data);
     }
 
@@ -725,7 +732,7 @@ class Medicine extends MX_Controller {
                 $this->medicine_model->insertInternalMedicineCategory($data);
                 $this->session->set_flashdata('feedback', lang('added'));
             } else {
-                $this->medicine_model->updateMedicineCategory($id, $data);
+                $this->medicine_model->updateInternalMedicineCategory($id, $data);
                 $this->session->set_flashdata('feedback', lang('updated'));
             }
             redirect('medicine/medicineInternalCategory');
@@ -835,11 +842,11 @@ class Medicine extends MX_Controller {
         foreach ($medicine_list as $med) {
             if ($med->id == $med_details->medicine_id) {
                 $option .= '<option value="' . $med->id . '">' . $med->name . '</option>';
-            } elseif (!in_array($med->id,$data['internal'])) {
+            } elseif (!in_array($med->id, $data['internal'])) {
                 $option .= '<option value="' . $med->id . '">' . $med->name . '</option>';
             }
         }
-      
+
         foreach ($category as $cat) {
             $option1 .= '<option value="' . $cat->category . '">' . $cat->category . '</option>';
         }
@@ -994,7 +1001,7 @@ class Medicine extends MX_Controller {
 
                 $option .= '<option value="' . $med->id . '" selected>' . $med->name . '</option>';
             } else {
-                if (!in_array($med->id,$data['internal'])) {
+                if (!in_array($med->id, $data['internal'])) {
                     $option .= '<option value="' . $med->id . '">' . $med->name . '</option>';
                 }
             }
@@ -1135,15 +1142,15 @@ class Medicine extends MX_Controller {
         $this->session->set_flashdata('feedback', lang('deleted'));
         redirect('medicine/internalMedicine');
     }
+
     function editInternalMedicine() {
         $data = array();
-       // $data['categories'] = $this->medicine_model->getMedicineCategory();
+        // $data['categories'] = $this->medicine_model->getMedicineCategory();
         $id = $this->input->get('id');
         $data['medicine'] = $this->medicine_model->getInternalMedicineById($id);
-         if ($this->ion_auth->in_group(array('admin', 'Doctor'))) {
+        if ($this->ion_auth->in_group(array('admin', 'Doctor'))) {
 
             $data['departments'] = $this->department_model->getDepartment();
-             
         } else {
 
             $department = $this->settings_model->getUserDepartment();
@@ -1156,15 +1163,14 @@ class Medicine extends MX_Controller {
                 //array_push($data['internal'][$i], $internal->medicine_id);
                 $i = $i + 1;
             }
-
-           
         }
-         $data['medicines'] = $this->medicine_model->getMedicineByDepartment( $data['medicine']->department);
-            $data['categories'] = $this->medicine_model->getInternalMedicineCategoryByDepartment( $data['medicine']->department);
+        $data['medicines'] = $this->medicine_model->getMedicineByDepartment($data['medicine']->department);
+        $data['categories'] = $this->medicine_model->getInternalMedicineCategoryByDepartment($data['medicine']->department);
         $this->load->view('home/dashboard', $data); // just the header file
         $this->load->view('add_new_internal_medicine_view', $data);
         $this->load->view('home/footer'); // just the footer file
     }
+
 }
 
 /* End of file medicine.php */

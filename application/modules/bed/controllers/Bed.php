@@ -805,7 +805,7 @@ class Bed extends MX_Controller {
         $generic_name = $this->input->post('generic_name');
         $alloted_bed_id = $this->input->post('alloted_bed_id');
         $total = $this->input->post('total');
-        $medicine_name = $this->medicine_model->getMedicineById($medicine_id)->name;
+        $medicine_name = $this->medicine_model->getInternalMedicineById($medicine_id);
 
 
 
@@ -819,7 +819,8 @@ class Bed extends MX_Controller {
             'alloted_bed_id' => $alloted_bed_id,
             's_price' => $sales_price,
             'medicine_id' => $medicine_id,
-            'medicine_name' => $medicine_name,
+            'medicine_pharmacy_id'=>$medicine_name->medicine_id,
+            'medicine_name' => $medicine_name->name,
             'generic_name' => $generic_name,
             'total' => $total
         );
@@ -829,12 +830,12 @@ class Bed extends MX_Controller {
 
         $this->bed_model->insertMedicineAllotedPatient($data);
         $insert_id = $this->db->insert_id();
-        //  $inserted_id=$this->db->inserted_id('daily_progress');
+      
         $arr['info'] = $this->bed_model->getMedicineAllotedPatientById($insert_id);
         $arr['medicine'] = $this->medicine_model->getMedicineById($arr['info']->medicine_id);
-        // $arr['insert']=$insert_id;
+        
         $arr['message'] = array('message' => lang('added'), 'title' => lang('added'));
-        // $arr['added'] = array('redir' => 'added');
+       
         echo json_encode($arr);
     }
 
@@ -1135,7 +1136,7 @@ class Bed extends MX_Controller {
         $medicine_list = $this->bed_model->getMedicineAllotedByBedId($id);
         foreach ($medicine_list as $medicine) {
             if (empty($medicine->payment_id)) {
-                $medicine_con[] = $medicine->medicine_id . '*' . $medicine->medicine_name . '*' . $medicine->s_price . '*' . $medicine->quantity . '*' . $medicine->total . '*' . $medicine->id;
+                $medicine_con[] = $medicine->medicine_id . '*' . $medicine->medicine_name . '*' . $medicine->s_price . '*' . $medicine->quantity . '*' . $medicine->total . '*' . $medicine->id. '*' . $medicine->medicine_pharmacy_id;
                 $price[] = $medicine->total;
                 // $quantity[] = $medicine->quantity;
                 $medicine_id[] = $medicine->medicine_id;
