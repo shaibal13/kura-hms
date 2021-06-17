@@ -408,7 +408,7 @@ class Medicine extends MX_Controller {
             } else {
                 $pharmacist_name = $pharmacist->name;
             }
-            if ($this->ion_auth->in_group(array('admin'))) {
+            if ($this->ion_auth->in_group(array('admin','Pharmacist'))) {
                 $info[] = array(
                     $i,
                     $medicine->name,
@@ -422,23 +422,6 @@ class Medicine extends MX_Controller {
                     $medicine->effects,
                     $medicine->e_date,
                     $medicine->department_name,
-                    $option1 . ' ' . $option2
-                        //  $options2
-                );
-                $count = $count + 1;
-            } elseif ($this->ion_auth->in_group(array('Pharmacist'))) {
-                $info[] = array(
-                    $i,
-                    $medicine->name,
-                    $medicine->category,
-                    $medicine->box,
-                    $settings->currency . $medicine->price,
-                    $settings->currency . $medicine->s_price,
-                    $quan, //. '<br>' .// $load,
-                    $medicine->generic,
-                    $medicine->company,
-                    $medicine->effects,
-                    $medicine->e_date,
                     $option1 . ' ' . $option2
                         //  $options2
                 );

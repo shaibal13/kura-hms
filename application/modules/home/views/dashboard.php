@@ -327,7 +327,7 @@
                         <?php } ?> 
                         <!-- donor notification end -->  
                         <!-- medicine notification start-->
-                        <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist', 'Doctor')) || in_array('Medicine', $pers)) { ?> 
+                        <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist'))) { ?> 
                             <li id="header_notification_bar" class="dropdown">
                                 <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                                     <i class="fa fa-medkit"></i>
@@ -366,7 +366,47 @@
                                 </ul>
                             </li>
                         <?php } ?> 
+
                         <!-- medicine notification end -->  
+                        <?php if ($this->ion_auth->in_group(array('admin', 'Doctor')) || in_array('Medicine', $pers)) { ?> 
+                            <li id="header_notification_bar" class="dropdown">
+                                <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                    <i class="fa fa-medkit"></i>
+                                    <span class="badge bg-success">                          
+                                        <?php
+                                        $this->db->where('add_date', date('m/d/y'));
+                                        $query = $this->db->get('internal_medicine');
+                                        $query = $query->result();
+                                        foreach ($query as $medicine) {
+                                            $medicine_number[] = '1';
+                                        }
+                                        if (!empty($medicine_number)) {
+                                            echo $medicine_number = array_sum($medicine_number);
+                                        } else {
+                                            $medicine_number = 0;
+                                            echo $medicine_number;
+                                        }
+                                        ?>
+                                    </span>
+                                </a>
+                                <ul class="dropdown-menu extended notification">
+                                    <div class="notify-arrow notify-arrow-yellow"></div>
+                                    <li>
+                                        <p class="yellow"><?php
+                                            echo $medicine_number . ' ';
+                                            if ($medicine_number <= 1) {
+                                                echo lang('medicine_registerred_today');
+                                            } else {
+                                                echo lang('medicines_registered_today');
+                                            }
+                                            ?> </p>
+                                    </li>
+                                    <li>
+                                        <a href="medicine/internalMedicine"><p class="green"><?php echo lang('see_all_medicines'); ?></p></a>
+                                    </li>
+                                </ul>
+                            </li>
+                        <?php } ?> 
                         <!-- report notification start-->
                         <?php if ($this->ion_auth->in_group(array('admin', 'Doctor', 'Laboratorist', 'Nurse')) || in_array('Report', $pers)) { ?> 
                             <li id="header_notification_bar" class="dropdown">
@@ -887,8 +927,8 @@
                                 </ul>
                             </li>
                         <?php } ?>
-                           
-                        
+
+
 
 
 
@@ -910,9 +950,9 @@
                             <li class="sub-menu">
                                 <a href="javascript:;" >
                                     <i class="fa  fa-medkit"></i>
-                                     <?php if ($this->ion_auth->in_group(array('admin'))){  ?> 
-                                    <span><?php echo lang('hospital'); ?> <?php echo lang('medicine'); ?></span>
-                                     <?php } else{ ?><span><?php echo lang('medicine'); ?></span><?php } ?>
+                                    <?php if ($this->ion_auth->in_group(array('admin'))) { ?> 
+                                        <span><?php echo lang('hospital'); ?> <?php echo lang('medicine'); ?></span>
+                                    <?php } else { ?><span><?php echo lang('medicine'); ?></span><?php } ?>
                                 </a>
                                 <ul class="sub">
                                     <li><a  href="medicine/internalMedicine"><i class="fa fa-medkit"></i><?php echo lang('medicine_list'); ?></a></li>
@@ -924,7 +964,7 @@
                                         <li><a  href="medicine/addInternalCategoryView"><i class="fa fa-plus-circle"></i><?php echo lang('add_medicine_category'); ?></a></li>
                                     <?php } ?>
                                     <li><a  href="medicine/internalMedicineStockAlert"><i class="fa fa-plus-circle"></i><?php echo lang('medicine_stock_alert'); ?></a></li>
-                              
+
 
                                 </ul>
                             </li>
@@ -954,33 +994,36 @@
                                 }
                             }
                             ?>
-                        <?php    if ($this->ion_auth->in_group(array('admin', 'Pharmacist'))) { ?>
                             <li class="sub-menu">
                                 <a href="javascript:;" >
                                     <i class="fas fa-capsules"></i>
                                     <span><?php echo lang('pharmacy'); ?></span>
                                 </a>
                                 <ul class="sub">
-                                        <li class="sub-menu">
-                                <a href="javascript:;" >
-                                    <i class="fa  fa-medkit"></i>
-                                    <span><?php echo lang('medicine'); ?></span>
-                                </a>
-                                <ul class="sub">
-                                    <li><a  href="medicine"><i class="fa fa-medkit"></i><?php echo lang('medicine_list'); ?></a></li>
-                                    <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
-                                        <li><a  href="medicine/addmedicineView"><i class="fa fa-plus-circle"></i><?php echo lang('add_medicine'); ?></a></li>
-                                    <?php } ?>
-                                    <li><a  href="medicine/medicineCategory"><i class="fa fa-edit"></i><?php echo lang('medicine_category'); ?></a></li>
-                                    <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
-                                        <li><a  href="medicine/addCategoryView"><i class="fa fa-plus-circle"></i><?php echo lang('add_medicine_category'); ?></a></li>
-                                    <?php } ?>
-                                    <li><a  href="medicine/medicineStockAlert"><i class="fa fa-plus-circle"></i><?php echo lang('medicine_stock_alert'); ?></a></li>
-                              
+                                    <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
 
-                                </ul>
-                            </li>
-                        <?php } ?>
+
+                                        <li class="sub-menu">
+                                            <a href="javascript:;" >
+                                                <i class="fa  fa-medkit"></i>
+                                                <span><?php echo lang('medicine'); ?></span>
+                                            </a>
+                                            <ul class="sub">
+                                                <li><a  href="medicine"><i class="fa fa-medkit"></i><?php echo lang('medicine_list'); ?></a></li>
+                                                <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
+                                                    <li><a  href="medicine/addmedicineView"><i class="fa fa-plus-circle"></i><?php echo lang('add_medicine'); ?></a></li>
+                                                <?php } ?>
+                                                <li><a  href="medicine/medicineCategory"><i class="fa fa-edit"></i><?php echo lang('medicine_category'); ?></a></li>
+                                                <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
+                                                    <li><a  href="medicine/addCategoryView"><i class="fa fa-plus-circle"></i><?php echo lang('add_medicine_category'); ?></a></li>
+                                                <?php } ?>
+                                                <li><a  href="supply"><i class="fa fa-medkit"></i><?php echo lang('supply'); ?> <?php echo lang('medicine'); ?></a></li>
+                                                <li><a  href="medicine/medicineStockAlert"><i class="fa fa-plus-circle"></i><?php echo lang('medicine_stock_alert'); ?></a></li>
+
+
+                                            </ul>
+                                        </li>
+                                    <?php } ?>
                                     <?php if (!$this->ion_auth->in_group(array('Pharmacist'))) { ?>
                                         <li><a  href="finance/pharmacy/home"><i class="fa fa-home"></i> <?php echo lang('dashboard'); ?></a></li>
                                     <?php } ?>
@@ -1347,7 +1390,7 @@
 
                         <!--
                         <?php if ($this->ion_auth->in_group('Doctor')) { ?>
-                                                                                                                                            <li><a href="meeting/settings"><i class="fa fa-headphones"></i><?php echo lang('zoom'); ?> <?php echo lang('settings'); ?></a></li>
+                                                                                                                                                    <li><a href="meeting/settings"><i class="fa fa-headphones"></i><?php echo lang('zoom'); ?> <?php echo lang('settings'); ?></a></li>
                         <?php } ?>
                         -->
 
@@ -1418,6 +1461,19 @@
                         <?php } ?>
 
                         <?php if ($this->ion_auth->in_group('Pharmacist')) { ?>
+                            <li class="sub-menu">
+                                <a href="javascript:;" >
+                                    <i class="fa  fa-medkit"></i>
+                                    <span><?php echo lang('supply'); ?> <?php echo lang('medicine'); ?></span>
+                                </a>
+                                <ul class="sub">
+
+                                    <li><a  href="supply"><i class="fa fa-medkit"></i><?php echo lang('supply'); ?> <?php echo lang('medicine'); ?></a></li>
+                                     <li><a  href="supply/addNewSupply"><i class="fa fa-medkit"></i><?php echo lang('add'); ?> <?php echo lang('supply'); ?> <?php echo lang('medicine'); ?></a></li>
+
+
+                                </ul>
+                            </li>
                             <li>
                                 <a href="medicine" >
                                     <i class="fa fa-medkit"></i>

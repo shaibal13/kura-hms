@@ -897,3 +897,7 @@ $lang['faturime'] = 'Faturime';
 $lang['not_fully_paid'] = 'Not Fully Paid';
 $lang['payment_proccedure'] = 'Payment Proccedure';
 $lang['filter_by'] = 'Filter By';
+$lang['supply'] = 'Supply';
+$lang['edit_supply'] = 'Edit Supply';
+$lang['add_new_supply'] = 'Add New supply';
+$lang['vendor_name'] = 'Vendor Name';
