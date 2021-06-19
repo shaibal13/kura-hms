@@ -142,7 +142,14 @@
                                                     <label for="exampleInputEmail1"> <?php echo lang('select'); ?></label>
                                                     <select name="medicine_id[]" id="" class="multi-select" multiple="" id="my_multi_select3" required="" >
                                                         <?php foreach ($medicines as $medicine) { ?>
-                                                            <option class="ooppttiioonn"  data-idd="<?php echo $medicine->id; ?>" data-name="<?php echo $medicine->name; ?>" value="<?php echo $medicine->id; ?>"><?php echo $medicine->name; ?></option>
+                                                            <option class="ooppttiioonn"  data-idd="<?php echo $medicine->id; ?>" data-name="<?php echo $medicine->name; ?>" value="<?php echo $medicine->id; ?>"<?php
+                                                                    if(!empty($supply)){
+                                                                        $supply_medicine= explode(",", $supply->supply_medicine);
+                                                                        foreach ($supply_medicine as $supply_medicine_individual){
+                                                                            $supply_medicine_individual_all= explode("*", $supply_medicine_individual);
+                                                                        }
+                                                                    }
+                                                                    ?>><?php echo $medicine->name; ?></option>
                                                         <?php } ?>
                                                     </select>
                                                 </div>
