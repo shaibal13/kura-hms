@@ -10,8 +10,19 @@ class Supply_model extends CI_model {
         $this->load->database();
     }
 
-    function insertMedicine($data) {
-        $this->db->insert('medicine', $data);
+    function insertSupply($data) {
+        return $this->db->insert('supply', $data);
+    }
+
+    function updateSupply($id, $data) {
+        $this->db->where('id', $id);
+        return $this->db->update('supply', $data);
+    }
+
+    function getSupplyById($id) {
+        $this->db->where('id', $id);
+        $query = $this->db->get('supply');
+        return $query->row();
     }
 
     function getMedicine() {
@@ -64,12 +75,6 @@ class Supply_model extends CI_model {
         return $query->result();
     }
 
-    function getMedicineById($id) {
-        $this->db->where('id', $id);
-        $query = $this->db->get('medicine');
-        return $query->row();
-    }
-
     function getMedicineByKeyByStockAlert($page_number, $key) {
         $data_range_1 = 50 * $page_number;
 
@@ -98,11 +103,6 @@ class Supply_model extends CI_model {
         $this->db->order_by('id', 'asc');
         $query = $this->db->get('medicine');
         return $query->result();
-    }
-
-    function updateMedicine($id, $data) {
-        $this->db->where('id', $id);
-        $this->db->update('medicine', $data);
     }
 
     function insertMedicineCategory($data) {
@@ -457,8 +457,6 @@ class Supply_model extends CI_model {
         $this->db->insert('internal_medicine_category', $data);
     }
 
-   
-
     function getInternalMedicineCategory() {
         $query = $this->db->get('internal_medicine_category');
         return $query->result();
@@ -575,9 +573,10 @@ class Supply_model extends CI_model {
         $this->db->where('id', $id);
         $this->db->delete('internal_medicine');
     }
-    function getInternalMedicineByGenericId($id){
-        return $this->db->where('generic',$id)
-                -> get('internal_medicine')->result();
+
+    function getInternalMedicineByGenericId($id) {
+        return $this->db->where('generic', $id)
+                        ->get('internal_medicine')->result();
     }
 
 }

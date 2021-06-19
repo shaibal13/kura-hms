@@ -37,46 +37,139 @@ class Supply extends MX_Controller {
         }
 
         $data['medicines'] = $this->medicine_model->getMedicine();
-        $data['settings'] = $this->settings_model->getSettings();       
+        $data['settings'] = $this->settings_model->getSettings();
         $this->load->view('home/dashboard', $data); // just the header file
         $this->load->view('medicine', $data);
         $this->load->view('home/footer'); // just the header file
     }
+
     public function addNewSupply() {
         if (!$this->ion_auth->in_group(array('admin', 'Pharmacist'))) {
             redirect('home/permission');
         }
 
         $data['medicines'] = $this->medicine_model->getMedicine();
-        $data['settings'] = $this->settings_model->getSettings();       
+        $data['settings'] = $this->settings_model->getSettings();
         $this->load->view('home/dashboard', $data); // just the header file
         $this->load->view('add_new_supply', $data);
         $this->load->view('home/footer'); // just the header file
     }
-   function addSupply(){
-    $vendor_name= $this->input->post('vendor_name');
-    $id= $this->input->post('id');
-    $item_selected = $this->input->post('medicine_id');
-    $quantity = array();
-    $category_selected = array();
-     $item_quantity_array = array();
-     $quantity = $this->input->post('quantity');
-    $item_quantity_array = array_combine($item_selected, $quantity);
-     if (!empty($item_quantity_array)) {
+
+    function addSupply() {
+        $vendor_name = $this->input->post('vendor_name');
+        $id = $this->input->post('id');
+        $item_selected = $this->input->post('medicine_id');
+        $quantity = array();
+        $category_selected = array();
+        $item_quantity_array = array();
+        $quantity = $this->input->post('quantity');
+        $item_quantity_array = array_combine($item_selected, $quantity);
+        if (!empty($item_quantity_array)) {
             foreach ($item_quantity_array as $key => $value) {
                 $current_item = $this->medicine_model->getMedicineById($key);
                 $category_price = $current_item->price;
                 $category_type = $current_item->category;
                 $qty = $value;
-                $medicine[] = $key .'*' . $current_item->name . '*' . $category_price . '*' . $category_type . '*' . $qty;
+                $medicine[] = $key . '*' . $current_item->name . '*' . $category_price . '*' . $category_type . '*' . $qty;
                 $amount_by_category[] = $category_price * $qty;
                 $count = $count + 1;
             }
-            $category_name = implode(',', $cat_and_price);
+            $category_name = implode(',', $medicine);
         }
-        if()
-        
-   }
+        if (empty($id)) {
+            $date = time();
+            $date_string = date('d-m-Y', $date);
+        }
+        $this->form_validation->set_error_delimiters('<div class="error">', '</div>');
+        $this->form_validation->set_rules('vendor_name', 'Vendor Name', 'trim|min_length[1]|max_length[100]|xss_clean');
+        if ($this->form_validation->run() == FALSE) {
+            redirect("supply/addNewSupply");
+        } else {
+            $data = array();
+            if (empty($id)) {
+                $data = array(
+                    'vendor_name' => $vendor_name,
+                    'supply_medicine' => $category_name,
+                    'date' => $date,
+                    'date_string' => $date_string,
+                    'address' => $this->input->post('address'),
+                    'phone' => $this->input->post('phone'),
+                    'nipt' => $this->input->post('nipt')
+                );
+            } else {
+                $data = array(
+                    'vendor_name' => $vendor_name,
+                    'supply_medicine' => $category_name,
+                    'address' => $this->input->post('address'),
+                    'phone' => $this->input->post('phone'),
+                    'nipt' => $this->input->post('nipt')
+                );
+            }
+            if (empty($id)) {
+                $supply = $this->supply_model->insertSupply($data);
+                if ($supply) {
+                    if (!empty($item_quantity_array)) {
+                        foreach ($item_quantity_array as $key => $value) {
+                            $medicine_list = $this->medicine_model->getMedicineById($key);
+                            if (empty($medicine_list->quantity)) {
+                                $quantity_update = $medicine_list->quantity;
+                            } else {
+                                $quantity_update = $medicine_list->quantity + $value;
+                            }
+                            $data_med = array();
+                            $data_med = array('quantity' => $quantity_update);
+                            $this->medicine_model->updateMedicine($key, $data_med);
+                        }
+                    }
+                }
+            } else {
+                $previous_supply = $this->supply_model->getSupplyById($id);
+                if (!empty($item_quantity_array)) {
+                    $supply_previous_explode1 = explode(",", $previous_supply->supply_medicine);
+                    foreach ($supply_previous_explode1 as $supply_individual_medicine) {
+                        $medicine_supply_explode1 = explode("*", $supply_individual_medicine);
+                        if (!in_array($supply_individual_medicine1[0], $item_selected)) {
+                            $medicine_list1 = $this->medicine_model->getMedicineById($supply_individual_medicine1[0]);
+                            $med_quan = $medicine_list1->quantity - $medicine_supply_explode[4];
+                            $data_med = array();
+                            $data_med = array('quantity' => $med_quan);
+                            $this->medicine_model->updateMedicine($key, $data_med);
+                        }
+                    }
+
+                    foreach ($item_quantity_array as $key => $value) {
+                        $medicine_list = $this->medicine_model->getMedicineById($key);
+                        if (empty($medicine_list->quantity)) {
+                            $quantity_update = $medicine_list->quantity;
+                        } else {
+                            $supply_previous_explode = explode(",", $previous_supply->supply_medicine);
+                            foreach ($supply_previous_explode as $supply_individual_medicine) {
+                                $medicine_supply_explode = explode("*", $supply_individual_medicine);
+                                if ($medicine_supply_explode[0] == $key) {
+                                    $quantity_update = $medicine_list->quantity - $medicine_supply_explode[4] + $value;
+                                }
+                            }
+                        }
+                        $data_med = array();
+                        $data_med = array('quantity' => $quantity_update);
+                        $this->medicine_model->updateMedicine($key, $data_med);
+                    }
+                }
+                $supply = $this->supply_model->updateSupply($id, $data);
+            }
+
+            function editSupply() {
+                $id = $this->input->get('id');
+                $data['supply'] = $this->supply_model->getSupplyById($id);
+                $data['medicines'] = $this->medicine_model->getMedicine();
+                $data['settings'] = $this->settings_model->getSettings();
+                $this->load->view('home/dashboard', $data); // just the header file
+                $this->load->view('add_new_supply', $data);
+                $this->load->view('home/footer'); // just the header file
+            }
+
+        }
+    }
 
 }
 

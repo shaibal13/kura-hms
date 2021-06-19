@@ -111,9 +111,31 @@
                                     <form role="form" id="editSupplyForm" class="clearfix" action="supply/addSupply" method="post" enctype="multipart/form-data">
 
                                         <div class="col-md-5 row">
-                                            <div class="form-group col-md-12"> 
+                                            <div class="col-md-12"> 
+                                                <div class="form-group col-md-6"> 
                                                 <label for="exampleInputEmail1"> <?php echo lang('vendor_name'); ?></label>
-                                                <input type="text" class="form-control" name="vendor_name" id="exampleInputEmail1" value='' placeholder="" required="">
+                                                <input type="text" class="form-control" name="vendor_name" id="exampleInputEmail1" value='<?php if(!empty($supply)){
+                                                    echo $supply->vendor_name;
+                                                }?>' placeholder="" required="">
+                                            </div>
+                                                  <div class="form-group col-md-6"> 
+                                                <label for="exampleInputEmail1"> <?php echo lang('address'); ?></label>
+                                                <input type="text" class="form-control" name="address" id="exampleInputEmail1" value='<?php if(!empty($supply)){
+                                                    echo $supply->address;
+                                                }?>' placeholder="" required="">
+                                            </div>
+                                                  <div class="form-group col-md-6"> 
+                                                <label for="exampleInputEmail1"> <?php echo lang('phone'); ?></label>
+                                                <input type="text" class="form-control" name="phone" id="exampleInputEmail1" value='<?php if(!empty($supply)){
+                                                    echo $supply->phone;
+                                                }?>' placeholder="" required="">
+                                            </div>
+                                                 <div class="form-group col-md-6"> 
+                                                <label for="exampleInputEmail1"> <?php echo lang('nipt'); ?></label>
+                                                <input type="text" class="form-control" name="nipt" id="exampleInputEmail1" value='<?php if(!empty($supply)){
+                                                    echo $supply->nipt;
+                                                }?>' placeholder="" required="">
+                                            </div>
                                             </div>
                                             <div class="col-md-12 payment">
                                                 <div class="form-group last"> 
