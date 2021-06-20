@@ -901,3 +901,4 @@ $lang['supply'] = 'Supply';
 $lang['edit_supply'] = 'Edit Supply';
 $lang['add_new_supply'] = 'Add New supply';
 $lang['vendor_name'] = 'Vendor Name';
+$lang['nipt'] = 'NIPT';
