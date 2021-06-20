@@ -154,8 +154,15 @@ class Medicine extends MX_Controller {
         $alpha_code = $this->input->post('alpha_code');
         $department = $this->input->post('department');
         $department_name = $this->department_model->getDepartmentById($department)->name;
-        $pharmacist = $this->input->post('pharmacist');
-        $pharmacist_name = $this->pharmacist_model->getPharmacistById($pharmacist)->name;
+        if ($this->ion_auth->in_group(array('admin'))) {
+            $pharmacist = $this->input->post('pharmacist');
+            $pharmacist_name = $this->pharmacist_model->getPharmacistById($pharmacist)->name;
+        } else {
+            $user = $this->ion_auth->get_user_id();
+            $pharmacist_details = $this->pharmacist_model->getPharmacistByIonUserId($user);
+            $pharmacist = $pharmacist_details->id;
+            $pharmacist_name = $pharmacist_details->name;
+        }
         if ((empty($id))) {
             $add_date = date('m/d/y');
         } else {
@@ -210,7 +217,7 @@ class Medicine extends MX_Controller {
                 'alpha_code' => $alpha_code,
                 'department' => $department,
                 'department_name' => $department_name,
-                'pharmacist' => $department,
+                'pharmacist' => $pharmacist,
                 'pharmacist_name' => $pharmacist_name
             );
             if (empty($id)) {
@@ -408,7 +415,26 @@ class Medicine extends MX_Controller {
             } else {
                 $pharmacist_name = $pharmacist->name;
             }
-            if ($this->ion_auth->in_group(array('admin','Pharmacist'))) {
+            if ($this->ion_auth->in_group(array('admin'))) {
+                $info[] = array(
+                    $i,
+                    $medicine->name,
+                    $medicine->category,
+                    $medicine->box,
+                    $settings->currency . $medicine->price,
+                    $settings->currency . $medicine->s_price,
+                    $quan, //. '<br>' .// $load,
+                    $medicine->generic,
+                    $medicine->company,
+                    $medicine->effects,
+                    $medicine->e_date,
+                    $medicine->department_name,
+                    $pharmacist_name,
+                    $option1 . ' ' . $option2
+                        //  $options2
+                );
+                $count = $count + 1;
+            } elseif ($this->ion_auth->in_group(array('Pharmacist'))) {
                 $info[] = array(
                     $i,
                     $medicine->name,
@@ -1152,6 +1178,239 @@ class Medicine extends MX_Controller {
         $this->load->view('home/dashboard', $data); // just the header file
         $this->load->view('add_new_internal_medicine_view', $data);
         $this->load->view('home/footer'); // just the footer file
+    }
+
+    function medicineRequisition() {
+        $data['settings'] = $this->settings_model->getSettings();
+        $this->load->view('home/dashboard', $data); // just the header file
+        $this->load->view('medicine_requisition', $data);
+        $this->load->view('home/footer'); // just the header file
+    }
+
+    function addMedicineRequisition() {
+
+        if ($this->ion_auth->in_group(array('admin'))) {
+
+            $data['departments'] = $this->department_model->getDepartment();
+        } else {
+
+            $department = $this->settings_model->getUserDepartment();
+            $data['internal_medicines'] = $this->medicine_model->getInternalMedicineByDepartment($department->department);
+        }
+        $data['settings'] = $this->settings_model->getSettings();
+
+        $this->load->view('home/dashboard', $data); // just the header file
+        $this->load->view('add_new_medicine_requisition', $data);
+        $this->load->view('home/footer'); // just the header file
+    }
+
+    public function getMedicineForInternalMedicineByDepartment() {
+
+        $searchTerm = $this->input->post('searchTerm');
+
+
+        $department = $this->settings_model->getUserDepartment()->department;
+        $response = $this->medicine_model->getMedicineForInternalMedicineByDepartment($department, $searchTerm);
+
+        echo json_encode($response);
+    }
+
+    function getMedicineByDepartmentWiseForAdmin() {
+        $department = $this->input->get('id');
+        $medicine_internal_department = $this->medicine_model->getInternalMedicineByDepartment($department);
+        $option = '';
+        foreach ($medicine_internal_department as $medicine_internal) {
+            $medicine = $this->medicine_model->getMedicineById($medicine_internal->medicine_id);
+            $option .= '<option value="' . $medicine_internal->id . '*' . (float) $medicine->s_price . '*' . $medicine->name . '*' . $medicine->company . '*' . $medicine->quantity . '*' . $medicine->id . '">' . $medicine->name . '</option>';
+        }
+        $data['option'] = $option;
+        echo json_encode($data);
+    }
+
+    function addNewMedicineRequisition() {
+        if ($this->ion_auth->in_group(array('admin'))) {
+
+            $department = $this->input->post('department');
+            $department_name = $this->department_model->getDepartmentById($department)->name;
+        } else {
+
+            $department = $this->settings_model->getUserDepartment()->department;
+            $department_name = $this->department_model->getDepartmentById($department)->name;
+        }
+        $item_selected = $this->input->post('medicine_id');
+        $quantity = $this->input->post('quantity');
+        $item_quantity_array = array();
+        $item_quantity_array = array_combine($item_selected, $quantity);
+        foreach ($item_quantity_array as $key => $value) {
+            $internal_medicine = $this->medicine_model->getInternalMedicineById($key);
+            $current_medicine = $this->db->get_where('medicine', array('id' => $internal_medicine->medicine_id))->row();
+            $unit_price = $current_medicine->s_price;
+            $cost = $current_medicine->price;
+
+            $qty = $value;
+            $item_price[] = $unit_price * $value;
+            $category_name[] = $current_medicine->id . '*' . $unit_price . '*' . $qty . '*' . $cost . '*' . $key;
+        }
+
+        $category_name = implode(',', $category_name);
+        $amount = array_sum($item_price);
+        $sub_total = $amount;
+        if (empty($id)) {
+            $date = time();
+        }
+        $data = array();
+        $data = array('category_name' => $category_name,
+            'amount' => $sub_total,
+            'gross_total' => $sub_total,
+            'department' => $department,
+            'department_name' => $department_name,
+            'date' => $date,
+            'date_string' => date('d-m-Y', $date),
+            'status' => 'unapproved'
+        );
+        if (empty($id)) {
+            $this->medicine_model->insertRequisition($data);
+        } else {
+            $this->medicine_model->updateRequisition($id, $data);
+        }
+        $this->session->set_flashdata('feedback', lang('medicine_requisition_sent'));
+        redirect("medicine/medicineRequisition");
+    }
+
+    function getRequisitionList() {
+        $requestData = $_REQUEST;
+        $start = $requestData['start'];
+        $limit = $requestData['length'];
+        $search = $this->input->post('search')['value'];
+
+        $order = $this->input->post("order");
+        $columns_valid = array(
+            "0" => "id",
+            "3" => "price",
+            "4" => "s_price",
+            "6" => "quantity",
+        );
+        $values = $this->settings_model->getColumnOrder($order, $columns_valid);
+        $dir = $values[0];
+        $order = $values[1];
+
+        if ($limit == -1) {
+            if (!empty($search)) {
+                $data['requisitions'] = $this->medicine_model->getRequisitionBysearch($search, $order, $dir);
+            } else {
+                $data['requisitions'] = $this->medicine_model->getRequisitionWithoutSearch($order, $dir);
+            }
+        } else {
+            if (!empty($search)) {
+                $data['requisitions'] = $this->medicine_model->getRequisitionByLimitBySearch($limit, $start, $search, $order, $dir);
+            } else {
+                $data['requisitions'] = $this->medicine_model->getRequisitionByLimit($limit, $start, $order, $dir);
+            }
+        }
+
+        $i = 0;
+        $permis = '';
+        $permis_1 = '';
+        foreach ($this->permission_access_group_explode as $perm) {
+            $perm_explode = array();
+
+            $perm_explode = explode(",", $perm);
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Medicine') {
+                $permis = 'ok';
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Medicine') {
+                $permis_1 = 'ok';
+            }
+        }
+        $count = 0;
+        foreach ($data['requisitions'] as $requisition) {
+            $i = $i + 1;
+            $load = '';
+            $option1 = '';
+            $option2 = $option3 = '';
+            $settings = $this->settings_model->getSettings();
+
+            if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') {
+                if ($requisition->status == 'unapproved' || empty($requisition->status)) {
+                    $option1 = '<a class="btn btn-info btn-xs btn_width editbutton" href="medicine/editRequisition?id=' . $requisition->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
+                }
+            }
+            if ($this->ion_auth->in_group(array('admin')) || $permis_1 == 'ok') {
+                if ($requisition->status == 'unapproved' || empty($requisition->status)) {
+                    $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="medicine/deleteRequisition?id=' . $requisition->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i> ' . lang('delete') . '</a>';
+                }
+            }
+            $option3 = '<a class="btn btn-info btn-xs invoicebutton" title="' . lang('invoice') . '" style="color: #fff;" href="medicine/invoiceRequisition?id=' . $requisition->id . '"><i class="fa fa-file-invoice"></i> ' . lang('invoice') . '</a>';
+
+            if ($this->ion_auth->in_group(array('admin'))) {
+                $info[] = array(
+                    $i,
+                    $requisition->date_string,
+                    $settings->currency . $requisition->amount,
+                    $settings->currency . $requisition->gross_total,
+                    $requisition->department_name,
+                    $option1 . ' ' . $option3 . ' ' . $option2
+                );
+                $count = $count + 1;
+            } else {
+                $user = $this->ion_auth->get_user_id();
+                $department = $this->db->get_where('users', array('id' => $user))->row()->department;
+                if ($department == $requisition->department) {
+                    $info[] = array(
+                        $i,
+                        $requisition->date_string,
+                        $settings->currency . $requisition->amount,
+                        $settings->currency . $requisition->gross_total,
+                        $option1 . ' ' . $option3 . ' ' . $option2
+                    );
+                    $count = $count + 1;
+                }
+            }
+        }
+
+        if ($count != 0) {
+            $output = array(
+                "draw" => intval($requestData['draw']),
+                "recordsTotal" => $count,
+                "recordsFiltered" => $count,
+                "data" => $info
+            );
+        } else {
+            $output = array(
+                // "draw" => 1,
+                "recordsTotal" => 0,
+                "recordsFiltered" => 0,
+                "data" => []
+            );
+        }
+
+        echo json_encode($output);
+    }
+
+    function deleteRequisition() {
+        $id = $this->input->get('id');
+        $this->medicine_model->deleteRequisition($id);
+        $this->session->set_flashdata('feedback', lang('deleted'));
+        redirect('medicine/medicineRequisition');
+    }
+    function editRequisition(){
+        $id= $this->input->get('id');
+        $data['internal_requisition']= $this->medicine_model->getRequisitionById($id);
+         if ($this->ion_auth->in_group(array('admin'))) {
+
+            $data['departments'] = $this->department_model->getDepartment();
+             $data['internal_medicines'] = $this->medicine_model->getInternalMedicineByDepartment($data['internal_requisition']->department);
+        
+        } else {
+
+            $department = $this->settings_model->getUserDepartment();
+            $data['internal_medicines'] = $this->medicine_model->getInternalMedicineByDepartment($department->department);
+        }
+        $data['settings'] = $this->settings_model->getSettings();
+       
+        $this->load->view('home/dashboard', $data); // just the header file
+        $this->load->view('add_new_medicine_requisition', $data);
+        $this->load->view('home/footer'); // just the header file
     }
 
 }

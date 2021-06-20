@@ -457,8 +457,6 @@ class Medicine_model extends CI_model {
         $this->db->insert('internal_medicine_category', $data);
     }
 
-   
-
     function getInternalMedicineCategory() {
         $query = $this->db->get('internal_medicine_category');
         return $query->result();
@@ -575,9 +573,103 @@ class Medicine_model extends CI_model {
         $this->db->where('id', $id);
         $this->db->delete('internal_medicine');
     }
-    function getInternalMedicineByGenericId($id){
-        return $this->db->where('generic',$id)
-                -> get('internal_medicine')->result();
+
+    function getInternalMedicineByGenericId($id) {
+        return $this->db->where('generic', $id)
+                        ->get('internal_medicine')->result();
+    }
+
+    function getMedicineForInternalMedicineByDepartment($department, $searchTerm) {
+        if (!empty($searchTerm)) {
+            $this->db->select('*');
+            $this->db->where('department', $department);
+            $this->db->where("name like '%" . $searchTerm . "%' ");
+            $this->db->or_where("id like '%" . $searchTerm . "%' ");
+            $fetched_records = $this->db->get('internal_medicine');
+            $users = $fetched_records->result_array();
+        } else {
+            $this->db->select('*');
+
+            $this->db->limit(10);
+            $this->db->where('department', $department);
+            $fetched_records = $this->db->get('internal_medicine');
+            $users = $fetched_records->result_array();
+        }
+        // Initialize Array with fetched data
+        $data = array();
+        foreach ($users as $user) {
+            $medicine = $this->db->where('id', $user['medicine_id'])->get('medicine')->row();
+            $data[] = array("id" => $user['id'] . '*' . (float) $medicine->s_price . '*' . $medicine->name . '*' . $medicine->company . '*' . $medicine->quantity . '*' . $medicine->id, "text" => $medicine->name);
+        }
+        return $data;
+    }
+
+    function insertRequisition($data) {
+        $this->db->insert('requisition', $data);
+    }
+
+    function updateRequisition($id, $data) {
+        $this->db->where('id', $id);
+        $this->db->update('requisition', $data);
+    }
+
+    function getRequisitionBySearch($search, $order, $dir) {
+        if ($order != null) {
+            $this->db->order_by($order, $dir);
+        } else {
+            $this->db->order_by('id', 'desc');
+        }
+        $this->db->like('id', $search);
+        $this->db->or_like('date_string', $search);
+
+        $query = $this->db->get('requisition');
+        return $query->result();
+    }
+
+    function getRequisitionByLimit($limit, $start, $order, $dir) {
+        if ($order != null) {
+            $this->db->order_by($order, $dir);
+        } else {
+            $this->db->order_by('id', 'desc');
+        }
+        $this->db->limit($limit, $start);
+        $query = $this->db->get('requisition');
+        return $query->result();
+    }
+
+    function getRequisitionByLimitBySearch($limit, $start, $search, $order, $dir) {
+        if ($order != null) {
+            $this->db->order_by($order, $dir);
+        } else {
+            $this->db->order_by('id', 'desc');
+        }
+        $this->db->like('id', $search);
+        $this->db->or_like('date_string', $search);
+
+        $this->db->limit($limit, $start);
+        $query = $this->db->get('requisition');
+        return $query->result();
+    }
+
+    function getRequisitionWithoutSearch($order, $dir) {
+        if ($order != null) {
+            $this->db->order_by($order, $dir);
+        } else {
+            $this->db->order_by('id', 'asc');
+        }
+        $query = $this->db->get('requisition');
+        return $query->result();
+    }
+
+    function deleteRequisition($id) {
+        $this->db->where('id', $id);
+        $this->db->delete('requisition');
+    }
+
+    function getRequisitionById($id) {
+        $this->db->where('id', $id);
+        $query = $this->db->get('requisition');
+        return $query->row();
     }
 
 }

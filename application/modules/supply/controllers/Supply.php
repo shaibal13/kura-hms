@@ -36,10 +36,8 @@ class Supply extends MX_Controller {
             redirect('home/permission');
         }
 
-        $data['medicines'] = $this->medicine_model->getMedicine();
-        $data['settings'] = $this->settings_model->getSettings();
         $this->load->view('home/dashboard', $data); // just the header file
-        $this->load->view('medicine', $data);
+        $this->load->view('supply', $data);
         $this->load->view('home/footer'); // just the header file
     }
 
@@ -94,7 +92,8 @@ class Supply extends MX_Controller {
                     'date_string' => $date_string,
                     'address' => $this->input->post('address'),
                     'phone' => $this->input->post('phone'),
-                    'nipt' => $this->input->post('nipt')
+                    'nipt' => $this->input->post('nipt'),
+                    'user' => $this->ion_auth->get_user_id()
                 );
             } else {
                 $data = array(
@@ -102,7 +101,8 @@ class Supply extends MX_Controller {
                     'supply_medicine' => $category_name,
                     'address' => $this->input->post('address'),
                     'phone' => $this->input->post('phone'),
-                    'nipt' => $this->input->post('nipt')
+                    'nipt' => $this->input->post('nipt'),
+                   
                 );
             }
             if (empty($id)) {
@@ -111,8 +111,8 @@ class Supply extends MX_Controller {
                     if (!empty($item_quantity_array)) {
                         foreach ($item_quantity_array as $key => $value) {
                             $medicine_list = $this->medicine_model->getMedicineById($key);
-                            if (empty($medicine_list->quantity)) {
-                                $quantity_update = $medicine_list->quantity;
+                            if (is_null($medicine_list->quantity) || empty($medicine_list->quantity) || $medicine_list->quantity == '0') {
+                                $quantity_update = $value;
                             } else {
                                 $quantity_update = $medicine_list->quantity + $value;
                             }
@@ -122,6 +122,7 @@ class Supply extends MX_Controller {
                         }
                     }
                 }
+                $this->session->set_flashdata('feedback', lang('quantity_updated_in_medicine'));
             } else {
                 $previous_supply = $this->supply_model->getSupplyById($id);
                 if (!empty($item_quantity_array)) {
@@ -140,7 +141,7 @@ class Supply extends MX_Controller {
                     foreach ($item_quantity_array as $key => $value) {
                         $medicine_list = $this->medicine_model->getMedicineById($key);
                         if (empty($medicine_list->quantity)) {
-                            $quantity_update = $medicine_list->quantity;
+                            $quantity_update = $value;
                         } else {
                             $supply_previous_explode = explode(",", $previous_supply->supply_medicine);
                             foreach ($supply_previous_explode as $supply_individual_medicine) {
@@ -155,22 +156,132 @@ class Supply extends MX_Controller {
                         $this->medicine_model->updateMedicine($key, $data_med);
                     }
                 }
+                
                 $supply = $this->supply_model->updateSupply($id, $data);
+                  $this->session->set_flashdata('feedback', lang('quantity_updated_in_medicine'));
             }
-
-            function editSupply() {
-                $id = $this->input->get('id');
-                $data['supply'] = $this->supply_model->getSupplyById($id);
-                $data['medicines'] = $this->medicine_model->getMedicine();
-                $data['settings'] = $this->settings_model->getSettings();
-                $this->load->view('home/dashboard', $data); // just the header file
-                $this->load->view('add_new_supply', $data);
-                $this->load->view('home/footer'); // just the header file
-            }
-
+            redirect("supply");
         }
     }
 
+    function editSupply() {
+
+        $id = $this->input->get('id');
+        $data['supply'] = $this->supply_model->getSupplyById($id);
+        $data['medicines'] = $this->medicine_model->getMedicine();
+        $data['settings'] = $this->settings_model->getSettings();
+        $this->load->view('home/dashboard', $data); // just the header file
+        $this->load->view('add_new_supply', $data);
+        $this->load->view('home/footer'); // just the header file
+    }
+
+    function getSupplyList() {
+        $requestData = $_REQUEST;
+        $start = $requestData['start'];
+        $limit = $requestData['length'];
+        $search = $this->input->post('search')['value'];
+
+        $order = $this->input->post("order");
+        $columns_valid = array(
+            "0" => "id",
+            "3" => "price",
+            "4" => "s_price",
+            "6" => "quantity",
+            "10" => "e_date",
+        );
+        $values = $this->settings_model->getColumnOrder($order, $columns_valid);
+        $dir = $values[0];
+        $order = $values[1];
+
+        if ($limit == -1) {
+            if (!empty($search)) {
+                $data['supplies'] = $this->supply_model->getSupplyBysearch($search, $order, $dir);
+            } else {
+                $data['supplies'] = $this->supply_model->getSupplyWithoutSearch($order, $dir);
+            }
+        } else {
+            if (!empty($search)) {
+                $data['supplies'] = $this->supply_model->getSupplyByLimitBySearch($limit, $start, $search, $order, $dir);
+            } else {
+                $data['supplies'] = $this->supply_model->getSupplyByLimit($limit, $start, $order, $dir);
+            }
+        }
+
+        $i = 0;
+
+        $count = 0;
+        foreach ($data['supplies'] as $supply) {
+            $i = $i + 1;
+            $load = '';
+            $option1 = '';
+            $option2 = '';
+            $settings = $this->settings_model->getSettings();
+            if ($medicine->quantity <= 0) {
+                $quan = '<p class="os">Stock Out</p>';
+            } else {
+                $quan = $medicine->quantity;
+            }
+
+            if ($this->ion_auth->in_group(array('admin', 'Pharmacist'))) {
+                $option1 = '<a class="btn btn-info btn-xs invoicebutton" title="' . lang('invoice') . '" style="color: #fff;" href="supply/invoice?id=' . $supply->id . '"><i class="fa fa-file-invoice"></i> ' . lang('invoice') . '</a>';
+                $option2 = '<a class="btn btn-info btn-xs btn_width editbutton" href="supply/editSupply?id=' . $supply->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
+            }
+
+            if ($this->ion_auth->in_group(array('admin', 'Pharmacist'))) {
+                $info[] = array(
+                    $i,
+                    '00-'.$supply->id,
+                    $supply->date_string,
+                    $supply->vendor_name,
+                    $supply->address,
+                    $supply->phone,
+                    $supply->nipt,
+                    $option1 . ' ' . $option2
+                        //  $options2
+                );
+                $count = $count + 1;
+            } else {
+                $info[] = array(
+                    $i,
+                    '00' - $supply->id,
+                    $supply->date_string,
+                    $supply->vendor_name,
+                    $supply->address,
+                    $supply->phone,
+                    $supply->nipt,
+                    $option1 . ' ' . $option2
+                        //  $options2
+                );
+                $count = $count + 1;
+            }
+        }
+
+        if ($count != 0) {
+            $output = array(
+                "draw" => intval($requestData['draw']),
+                "recordsTotal" => $count,
+                "recordsFiltered" => $count,
+                "data" => $info
+            );
+        } else {
+            $output = array(
+                // "draw" => 1,
+                "recordsTotal" => 0,
+                "recordsFiltered" => 0,
+                "data" => []
+            );
+        }
+
+        echo json_encode($output);
+    }
+   function invoice(){
+        $id= $this->input->get('id');
+         $data['settings']= $this->settings_model->getSettings();
+        $data['supply']= $this->supply_model->getSupplyById($id);
+        $this->load->view('home/dashboard', $data); // just the header file
+        $this->load->view('invoice', $data);
+        $this->load->view('home/footer'); // just the header file
+   }
 }
 
 /* End of file medicine.php */

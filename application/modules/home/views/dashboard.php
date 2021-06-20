@@ -963,6 +963,7 @@
                                     <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
                                         <li><a  href="medicine/addInternalCategoryView"><i class="fa fa-plus-circle"></i><?php echo lang('add_medicine_category'); ?></a></li>
                                     <?php } ?>
+                                        <li><a  href="medicine/medicineRequisition"><i class="fa fa-plus-circle"></i><?php echo lang('medicine_requisition'); ?></a></li>
                                     <li><a  href="medicine/internalMedicineStockAlert"><i class="fa fa-plus-circle"></i><?php echo lang('medicine_stock_alert'); ?></a></li>
 
 
@@ -1017,7 +1018,8 @@
                                                 <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
                                                     <li><a  href="medicine/addCategoryView"><i class="fa fa-plus-circle"></i><?php echo lang('add_medicine_category'); ?></a></li>
                                                 <?php } ?>
-                                                <li><a  href="supply"><i class="fa fa-medkit"></i><?php echo lang('supply'); ?> <?php echo lang('medicine'); ?></a></li>
+                                                <li><a  href="supply"><i class="fa fa-medkit"></i><?php echo lang('supply'); ?> <?php echo lang('invoices'); ?></a></li>
+                                                <li><a  href="supply/addNewSupply"><i class="fa fa-medkit"></i><?php echo lang('add'); ?> <?php echo lang('supply'); ?> <?php echo lang('medicine'); ?></a></li>
                                                 <li><a  href="medicine/medicineStockAlert"><i class="fa fa-plus-circle"></i><?php echo lang('medicine_stock_alert'); ?></a></li>
 
 
@@ -1468,7 +1470,7 @@
                                 </a>
                                 <ul class="sub">
 
-                                    <li><a  href="supply"><i class="fa fa-medkit"></i><?php echo lang('supply'); ?> <?php echo lang('medicine'); ?></a></li>
+                                    <li><a  href="supply"><i class="fa fa-medkit"></i><?php echo lang('supply'); ?> <?php echo lang('invoices'); ?></a></li>
                                      <li><a  href="supply/addNewSupply"><i class="fa fa-medkit"></i><?php echo lang('add'); ?> <?php echo lang('supply'); ?> <?php echo lang('medicine'); ?></a></li>
 
 

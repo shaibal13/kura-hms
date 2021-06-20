@@ -74,10 +74,12 @@
                                 <th> <?php echo lang('company'); ?></th>
                                 <th> <?php echo lang('effects'); ?></th>
                                 <th> <?php echo lang('expiry_date'); ?></th>
-                                <?php  if ($this->ion_auth->in_group(array('admin', 'Pharmacist'))) { ?>
-                                <th> <?php echo lang('department'); ?></th>
+                                <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist'))) { ?>
+                                    <th> <?php echo lang('department'); ?></th>
                                 <?php } ?>
-                                <!-- <th> <?php echo lang('pharmacist'); ?></th>-->
+                                <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
+                                    <th> <?php echo lang('pharmacist'); ?></th>
+                                <?php } ?>
                                 <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
                                     <th> <?php echo lang('options'); ?></th>
                                 <?php } ?>
@@ -159,10 +161,10 @@
                         <label for="exampleInputEmail1"> <?php echo lang('s_price'); ?></label>
                         <input type="text" class="form-control" name="s_price" id="exampleInputEmail1" value='' placeholder="">
                     </div>
-                   <!-- <div class="form-group col-md-3">
-                        <label for="exampleInputEmail1"> <?php echo lang('quantity'); ?></label>
-                        <input type="text" class="form-control" name="quantity" id="exampleInputEmail1" value='' placeholder="">
-                    </div>-->
+                    <!-- <div class="form-group col-md-3">
+                         <label for="exampleInputEmail1"> <?php echo lang('quantity'); ?></label>
+                         <input type="text" class="form-control" name="quantity" id="exampleInputEmail1" value='' placeholder="">
+                     </div>-->
                     <div class="form-group col-md-5">
                         <label for="exampleInputEmail1"> <?php echo lang('generic_name'); ?></label>
                         <input type="text" class="form-control" name="generic" id="exampleInputEmail1" value='' placeholder="">
@@ -201,22 +203,22 @@
                                     <?php } ?> 
                         </select>
                     </div>
-                   <?php  if ($this->ion_auth->in_group(array('admin'))) {?>
-                   <!--  <div class="form-group col-md-6">
-                        <label for="exampleInputEmail1"> <?php echo lang('pharmacist'); ?></label>
-                        <select class="form-control m-bot15 js-example-basic-single" name="pharmacist" value=''>
-                            <?php foreach ($pharmacists as $pharmacist) { ?>
-                                <option value="<?php echo $pharmacist->id; ?>" <?php
-                                if (!empty($medicine->pharmacist)) {
-                                    if ($pharmacist->id == $medicine->pharmacist) {
-                                        echo 'selected';
+                    <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
+                        <div class="form-group col-md-6">
+                            <label for="exampleInputEmail1"> <?php echo lang('pharmacist'); ?></label>
+                            <select class="form-control m-bot15 js-example-basic-single" name="pharmacist" value=''>
+                                <?php foreach ($pharmacists as $pharmacist) { ?>
+                                    <option value="<?php echo $pharmacist->id; ?>" <?php
+                                    if (!empty($medicine->pharmacist)) {
+                                        if ($pharmacist->id == $medicine->pharmacist) {
+                                            echo 'selected';
+                                        }
                                     }
-                                }
-                                ?> > <?php echo $pharmacist->name; ?> </option>
-                                    <?php } ?> 
-                        </select>
-                    </div>-->
-                   <?php } ?>
+                                    ?> > <?php echo $pharmacist->name; ?> </option>
+                                        <?php } ?> 
+                            </select>
+                        </div>
+                    <?php } ?>
                     <div class="form-group col-md-12">
                         <button type="submit" name="submit" class="btn btn-info pull-right"> <?php echo lang('submit'); ?></button>
                     </div>
@@ -271,10 +273,10 @@
                         <label for="exampleInputEmail1"> <?php echo lang('s_price'); ?></label>
                         <input type="text" class="form-control" name="s_price" id="exampleInputEmail1" value='' placeholder="">
                     </div>
-                 <!--   <div class="form-group col-md-3">
-                        <label for="exampleInputEmail1"> <?php echo lang('quantity'); ?></label>
-                        <input type="text" class="form-control" name="quantity" id="exampleInputEmail1" value='' placeholder="">
-                    </div>-->
+                    <!--   <div class="form-group col-md-3">
+                           <label for="exampleInputEmail1"> <?php echo lang('quantity'); ?></label>
+                           <input type="text" class="form-control" name="quantity" id="exampleInputEmail1" value='' placeholder="">
+                       </div>-->
                     <div class="form-group col-md-5">
                         <label for="exampleInputEmail1"> <?php echo lang('generic_name'); ?></label>
                         <input type="text" class="form-control" name="generic" id="exampleInputEmail1" value='' placeholder="">
@@ -313,22 +315,22 @@
                                     <?php } ?> 
                         </select>
                     </div>
-                  <?php  if ($this->ion_auth->in_group(array('admin'))) {?>
-                     <!-- <div class="form-group col-md-6">
-                        <label for="exampleInputEmail1"> <?php echo lang('pharmacist'); ?></label>
-                        <select class="form-control m-bot15 js-example-basic-single" name="pharmacist" value=''>
-                            <?php foreach ($pharmacists as $pharmacist) { ?>
-                                <option value="<?php echo $pharmacist->id; ?>" <?php
-                                if (!empty($medicine->pharmacist)) {
-                                    if ($pharmacist->id == $medicine->pharmacist) {
-                                        echo 'selected';
+                    <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
+                        <div class="form-group col-md-6">
+                            <label for="exampleInputEmail1"> <?php echo lang('pharmacist'); ?></label>
+                            <select class="form-control m-bot15 js-example-basic-single" name="pharmacist" value=''>
+                                <?php foreach ($pharmacists as $pharmacist) { ?>
+                                    <option value="<?php echo $pharmacist->id; ?>" <?php
+                                    if (!empty($medicine->pharmacist)) {
+                                        if ($pharmacist->id == $medicine->pharmacist) {
+                                            echo 'selected';
+                                        }
                                     }
-                                }
-                                ?> > <?php echo $pharmacist->name; ?> </option>
-                                    <?php } ?> 
-                        </select>
-                    </div>-->
-                   <?php } ?>
+                                    ?> > <?php echo $pharmacist->name; ?> </option>
+                                        <?php } ?> 
+                            </select>
+                        </div>
+                    <?php } ?>
                     <input type="hidden" name="id" value=''>
                     <div class="form-group col-md-12">
                         <button type="submit" name="submit" class="btn btn-info pull-right"> <?php echo lang('submit'); ?></button>
@@ -412,14 +414,16 @@
                 $('#editMedicineForm').find('[name="box"]').val(response.medicine.box).end()
                 $('#editMedicineForm').find('[name="price"]').val(response.medicine.price).end()
                 $('#editMedicineForm').find('[name="s_price"]').val(response.medicine.s_price).end()
-               // $('#editMedicineForm').find('[name="quantity"]').val(response.medicine.quantity).end()
+                // $('#editMedicineForm').find('[name="quantity"]').val(response.medicine.quantity).end()
                 $('#editMedicineForm').find('[name="generic"]').val(response.medicine.generic).end()
                 $('#editMedicineForm').find('[name="company"]').val(response.medicine.company).end()
                 $('#editMedicineForm').find('[name="effects"]').val(response.medicine.effects).end()
                 $('#editMedicineForm').find('[name="e_date"]').val(response.medicine.e_date).end()
                 $('#editMedicineForm').find('[name="alpha_code"]').val(response.medicine.alpha_code).end()
                 $('#editMedicineForm').find('[name="department"]').val(response.medicine.department).trigger("change")
-                 //  $('#editMedicineForm').find('[name="pharmacist"]').val(response.medicine.pharmacist).trigger("change")
+<?php if ($this->ion_auth->in_group(array('admin'))) { ?>
+                    $('#editMedicineForm').find('[name="pharmacist"]').val(response.medicine.pharmacist).trigger("change")
+<?php } ?>
             });
         });
     });
