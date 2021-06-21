@@ -1206,6 +1206,18 @@ class Pharmacy extends MX_Controller {
         $this->load->view('pharmacy/inventory_report', $data);
         $this->load->view('home/footer'); // just the header file
     }
+    function addInventoryReport(){
+        $data['date']= $this->input->post('date');
+        $data['title']= $this->input->post('title');
+         $data['description']= $this->input->post('description');
+        $user= $this->ion_auth->get_user_id();
+        $data['pharmacist']= $this->pharmacist_model->getPharmacistByIonUserId($user);
+        $data['medicine']= $this->medicine_model->getMedicineByPharmacist( $data['pharmacist']->id);
+        $this->load->view('home/dashboard', $data); // just the header file
+        $this->load->view('pharmacy/inventory_report_view', $data);
+        $this->load->view('home/footer'); // just the header file
+        
+    }
 
 }
 
