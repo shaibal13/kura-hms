@@ -10,8 +10,10 @@ class Pharmacy extends MX_Controller {
         $this->load->model('pharmacy_model');
         $this->load->model('medicine/medicine_model');
         $this->load->model('settings/settings_model');
+        $this->load->model('department/department_model');
+        $this->load->model('finance/finance_model');
         $data['settings'] = $this->settings_model->getSettings();
-         $group_permission = $this->ion_auth->get_users_groups()->row();
+        $group_permission = $this->ion_auth->get_users_groups()->row();
 
         if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
 
@@ -28,11 +30,10 @@ class Pharmacy extends MX_Controller {
         if ($this->ion_auth->in_group(array('Patient', 'Receptionist', 'Nurse', 'Laboratorist', 'Doctor'))) {
             redirect('home/permission');
         }
-       
     }
 
     function home() {
-         if (!$this->ion_auth->in_group(array('admin', 'Accountant', 'Pharmacist')) && !in_array('Pharmacy', $this->pers)) {
+        if (!$this->ion_auth->in_group(array('admin', 'Accountant', 'Pharmacist')) && !in_array('Pharmacy', $this->pers)) {
             redirect('home/permission');
         }
         $data = array();
@@ -652,7 +653,7 @@ class Pharmacy extends MX_Controller {
         $option1 = '';
         $option2 = '';
         $option3 = '';
-          $permis = '';
+        $permis = '';
         $permis_1 = '';
         $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
@@ -676,13 +677,23 @@ class Pharmacy extends MX_Controller {
         foreach ($data['payments'] as $payment) {
             //$i = $i + 1;
             $settings = $this->settings_model->getSettings();
-            if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) ||  $permis_1 == 'ok') {
-                $option1 = '<a class="btn btn-info btn-xs editbutton" href="finance/pharmacy/editPayment?id=' . $payment->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
+            if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) || $permis_1 == 'ok') {
+                if (empty($payment->from_where)) {
+                    $option1 = '<a class="btn btn-info btn-xs editbutton" href="finance/pharmacy/editPayment?id=' . $payment->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
+                } else {
+                    $option1 = '<a class="btn btn-info btn-xs editbutton" href="finance/pharmacy/editRequisition?id=' . $payment->requisition_id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
+                }
             }
             if ($this->ion_auth->in_group('admin') || $permis_2 == 'ok') {
-                $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="finance/pharmacy/delete?id=' . $payment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+                if (empty($payment->from_where)) {
+                    $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="finance/pharmacy/delete?id=' . $payment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i></a>';
+                }
             }
-            $option3 = '<a class="btn btn-xs green" style="color: #fff;" href="finance/pharmacy/invoice?id=' . $payment->id . '"><i class="fa fa-file-invoice"></i> ' . lang('invoice') . '</a>';
+            if (empty($payment->from_where)) {
+                $option3 = '<a class="btn btn-xs green" style="color: #fff;" href="finance/pharmacy/invoice?id=' . $payment->id . '"><i class="fa fa-file-invoice"></i> ' . lang('invoice') . '</a>';
+            } else {
+                $option3 = '<a class="btn btn-xs green" style="color: #fff;" href="finance/pharmacy/invoiceRequisition?id=' . $payment->requisition_id . '"><i class="fa fa-file-invoice"></i> ' . lang('invoice') . '</a>';
+            }
             $options4 = '<a class="btn btn-info btn-xs invoicebutton" title="' . lang('print') . '" style="color: #fff;" href="finance/pharmacy/printInvoice?id=' . $payment->id . '"target="_blank"> <i class="fa fa-print"></i> ' . lang('print') . '</a>';
             if (!empty($payment->flat_discount)) {
                 $discount = number_format($payment->flat_discount, 2, '.', ',');
@@ -919,13 +930,266 @@ class Pharmacy extends MX_Controller {
         $data['settings'] = $this->settings_model->getSettings();
         $data['discount_type'] = $this->pharmacy_model->getDiscountType();
         $data['payment'] = $this->pharmacy_model->getPaymentById($id);
-        $data['redirect']='download';
+        $data['redirect'] = 'download';
         $mpdf = new \Mpdf\Mpdf(['format' => 'A4']);
         $html = $this->load->view('pharmacy/invoice', $data, true);
         $mpdf->WriteHTML($html);
 
         $filename = "invoice--00" . $id . ".pdf";
         $mpdf->Output($filename, 'D');
+    }
+
+    function medicineRequisition() {
+        $data['settings'] = $this->settings_model->getSettings();
+        $this->load->view('home/dashboard', $data); // just the header file
+        $this->load->view('pharmacy/medicine_requisition', $data);
+        $this->load->view('home/footer'); // just the header file
+    }
+
+    function getRequisitionList() {
+        $requestData = $_REQUEST;
+        $start = $requestData['start'];
+        $limit = $requestData['length'];
+        $search = $this->input->post('search')['value'];
+
+        $order = $this->input->post("order");
+        $columns_valid = array(
+            "0" => "id",
+            "3" => "price",
+            "4" => "s_price",
+            "6" => "quantity",
+        );
+        $values = $this->settings_model->getColumnOrder($order, $columns_valid);
+        $dir = $values[0];
+        $order = $values[1];
+
+        if ($limit == -1) {
+            if (!empty($search)) {
+                $data['requisitions'] = $this->medicine_model->getRequisitionBysearch($search, $order, $dir);
+            } else {
+                $data['requisitions'] = $this->medicine_model->getRequisitionWithoutSearch($order, $dir);
+            }
+        } else {
+            if (!empty($search)) {
+                $data['requisitions'] = $this->medicine_model->getRequisitionByLimitBySearch($limit, $start, $search, $order, $dir);
+            } else {
+                $data['requisitions'] = $this->medicine_model->getRequisitionByLimit($limit, $start, $order, $dir);
+            }
+        }
+
+        $i = 0;
+
+
+        $count = 0;
+        foreach ($data['requisitions'] as $requisition) {
+            $i = $i + 1;
+            $load = '';
+            $option1 = '';
+            $option2 = $option3 = '';
+            $settings = $this->settings_model->getSettings();
+
+            if ($this->ion_auth->in_group(array('Pharmacist'))) {
+                if ($requisition->status == 'unapproved' || empty($requisition->status)) {
+                    $option1 = '<a class="btn btn-info btn-xs btn_width editbutton" href="finance/pharmacy/editRequisition?id=' . $requisition->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
+                }
+            }
+            if ($requisition->status == 'unapproved' || empty($requisition->status)) {
+                $status = lang('pending');
+            } elseif ($requisition->status == 'approved') {
+                $status = lang('confirmed');
+            }
+
+            $option3 = '<a class="btn btn-info btn-xs invoicebutton" title="' . lang('invoice') . '" style="color: #fff;" href="finance/pharmacy/invoiceRequisition?id=' . $requisition->id . '"><i class="fa fa-file-invoice"></i> ' . lang('invoice') . '</a>';
+
+            if ($this->ion_auth->in_group(array('Pharmacist'))) {
+                $info[] = array(
+                    $i,
+                    $requisition->date_string,
+                    $settings->currency . $requisition->amount,
+                    $settings->currency . $requisition->gross_total,
+                    $status,
+                    $requisition->department_name,
+                    $option1 . ' ' . $option3
+                );
+                $count = $count + 1;
+            }
+        }
+
+        if ($count != 0) {
+            $output = array(
+                "draw" => intval($requestData['draw']),
+                "recordsTotal" => $count,
+                "recordsFiltered" => $count,
+                "data" => $info
+            );
+        } else {
+            $output = array(
+                // "draw" => 1,
+                "recordsTotal" => 0,
+                "recordsFiltered" => 0,
+                "data" => []
+            );
+        }
+
+        echo json_encode($output);
+    }
+
+    function editRequisition() {
+        $id = $this->input->get('id');
+        $data['internal_requisition'] = $this->medicine_model->getRequisitionById($id);
+        $data['discount_type'] = $this->pharmacy_model->getDiscountType();
+        $data['settings'] = $this->settings_model->getSettings();
+
+        $this->load->view('home/dashboard', $data); // just the header file
+        $this->load->view('pharmacy/add_new_medicine_requisition', $data);
+        $this->load->view('home/footer'); // just the header file
+    }
+
+    public function getMedicineForInternalMedicineByDepartment() {
+
+        $searchTerm = $this->input->post('searchTerm');
+        $department = $this->input->post('department');
+
+
+        $response = $this->medicine_model->getMedicineForInternalMedicineByDepartment($department, $searchTerm);
+
+        echo json_encode($response);
+    }
+
+    function addNewMedicineRequisition() {
+        $id = $this->input->post('id');
+        $invoice_id = $this->input->post('invoice_id');
+        $item_selected = $this->input->post('medicine_id');
+        $quantity = $this->input->post('quantity');
+
+        $department = $this->medicine_model->getRequisitionById($id)->department;
+        $department_name = $this->department_model->getDepartmentById($department)->name;
+
+
+        $item_quantity_array = array();
+        $item_quantity_array = array_combine($item_selected, $quantity);
+        
+        foreach ($item_quantity_array as $key => $value) {
+            $internal_medicine = $this->medicine_model->getInternalMedicineById($key);
+            $current_medicine = $this->db->get_where('medicine', array('id' => $internal_medicine->medicine_id))->row();
+            $unit_price = $current_medicine->s_price;
+            $cost = $current_medicine->price;
+
+            $qty = $value;
+            $item_price[] = $unit_price * $value;
+            $category_name[] = $key. '*' . $unit_price . '*' . $qty . '*' . $cost . '*' . $current_medicine->id ;
+             $category_name1[] = $current_medicine->id. '*' . $unit_price . '*' . $qty . '*' . $cost . '*' . $key ;
+        }
+
+        $category_name = implode(',', $category_name);
+         $category_name1 = implode(',', $category_name1);
+        $amount = array_sum($item_price);
+        $sub_total = $amount;
+        $discount_type = $this->finance_model->getDiscountType();
+        $discount = $this->input->post('discount');
+        if (!empty($discount)) {
+            $discount = $discount;
+        } else {
+            $discount = '0';
+        }
+        if ($discount_type == 'flat') {
+            $flat_discount = $discount;
+            $gross = $sub_total - $flat_discount;
+        } else {
+            $flat_discount = $sub_total * ($discount / 100);
+            $gross = $sub_total - $flat_discount;
+        }
+
+        if (empty($invoice_id)) {
+            $date = time();
+            $date_string = date('d-m-Y', $date);
+        }
+        $data = array();
+        $data_requisition = array();
+        $data_requisition = array(
+            'category_name' => $category_name,
+            'amount' => $sub_total,
+            'gross_total' => $gross,
+            'discount' => $flat_discount,
+            'department' => $department,
+            'department_name' => $department_name,
+            'status' => 'approved'
+        );
+
+        if (empty($invoice_id)) {
+            $data = array('category_name' => $category_name1,
+                'amount' => $sub_total,
+                'gross_total' => $gross,
+                'discount' => $flat_discount,
+                'date' => $date,
+                'date_string' => $date_string,
+                'status' => 'unpaid',
+                'from_where' => 'requisition',
+                'requisition_id' => $id,
+            );
+        } else {
+            $data = array('category_name' => $category_name1,
+                'amount' => $sub_total,
+                'gross_total' => $gross,
+                'discount' => $discount,
+                'status' => 'unpaid',
+                'from_where' => 'requisition',
+                'requisition_id' => $id,
+            );
+        }
+       
+        if (empty($invoice_id)) {
+            $this->pharmacy_model->insertPayment($data);
+            $payment_id = $this->db->insert_id();
+            $data_requisition['invoice_id'] = $payment_id;
+            $this->medicine_model->updateRequisition($id, $data_requisition);
+            foreach ($item_quantity_array as $key => $value) {
+                $previous_qty_medicine = $this->db->get_where('internal_medicine', array('id' => $key))->row();
+                $previous_qty = $this->db->get_where('medicine', array('id' => $previous_qty_medicine->medicine_id))->row()->quantity;
+                $new_qty = $previous_qty - $value;
+                $new_qty_internal=$previous_qty_medicine + $value;
+                $this->db->where('id', $key);
+                $this->db->update('internal_medicine', array('quantity' => $new_qty_internal));
+                $this->db->where('id', $previous_qty_medicine->medicine_id);
+                $this->db->update('medicine', array('quantity' => $new_qty));
+            }
+        } else {
+
+            $this->medicine_model->updateRequisition($id, $data_requisition);
+            $original_sale = $this->pharmacy_model->getPaymentById($invoice_id);
+            $original_sale_quantity = array();
+            $original_sale_quantity = explode(',', $original_sale->category_name);
+            $o_s_value[] = array();
+            foreach ($item_quantity_array as $key => $value) {
+                $previous_qty_medicine = $this->db->get_where('internal_medicine', array('id' => $key))->row();
+                $previous_qty = $this->db->get_where('medicine', array('id' => $previous_qty_medicine->medicine_id))->row()->quantity;
+                foreach ($original_sale_quantity as $osq_key => $osq_value) {
+                    $o_s_value = explode('*', $osq_value);
+                    if ($o_s_value[0] == $previous_qty_medicine->medicine_id) {
+                        $previous_qty1 = $previous_qty + $o_s_value[2];
+                        $new_qty = $previous_qty1 - $value;
+                        $new_qty_internal=$previous_qty_medicine->quantity+ $o_s_value[2]-$value;
+                        $this->db->where('id', $key);
+                        $this->db->update('internal_medicine', array('quantity' => $new_qty_internal));
+                        $this->db->where('id', $key);
+                        $this->db->update('medicine', array('quantity' => $new_qty));
+                    }
+                }
+            }
+            $this->pharmacy_model->updatePayment($invoice_id, $data);
+        }
+
+        $this->session->set_flashdata('feedback', lang('requisition_medicine_approved'));
+        redirect("finance/pharmacy/medicineRequisition");
+    }
+      function invoiceRequisition() {
+        $id = $this->input->get('id');
+        $data['settings'] = $this->settings_model->getSettings();
+        $data['discount_type'] = $this->settings_model->getDiscountType();
+        $data['requisition'] = $this->medicine_model->getRequisitionById($id);
+        $this->load->view('home/dashboard', $data); // just the header file
+        $this->load->view('pharmacy/invoice_requisition', $data);
+        $this->load->view('home/footer'); // just the header file
     }
 
 }

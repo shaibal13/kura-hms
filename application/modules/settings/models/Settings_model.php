@@ -61,5 +61,10 @@ class Settings_model extends CI_model {
         return $this->db->where('id',$this->ion_auth->get_user_id())
                 ->get('users')->row();
     }
+     function getDiscountType() {
+        $query = $this->db->get('settings');
+        return $query->row()->discount;
+    }
+
 
 }

@@ -40,109 +40,49 @@
                             }
                         </style>
 
-                        <form role="form" class="clearfix pos form1"  id="editPaymentForm" action="medicine/addNewMedicineRequisition" method="post" enctype="multipart/form-data">
+                        <form role="form" class="clearfix pos form1"  id="editPaymentForm" action="finance/pharmacy/addNewMedicineRequisition" method="post" enctype="multipart/form-data">
                             <div class="col-md-6 row">     
-                                <?php if (!empty($internal_requisition->id)) { ?>
+                                <?php if (!empty($internal_requisition->invoice_id)) { ?>
                                     <div class="col-md-8 payment pad_bot">
                                         <div class="col-md-3 payment_label"> 
                                             <label for="exampleInputEmail1">  <?php echo lang('invoice_id'); ?> :</label>
                                         </div>
                                         <div class="col-md-6">                                                   
-                                            <?php echo '00' . $internal_requisition->id; ?>                                                                                                       
+                                            <?php echo '00' . $internal_requisition->invoice_id; ?>                                                                                                       
                                         </div>                                              
                                     </div>                                           
                                 <?php } ?>
                                 <div class="col-md-8 payment">
-                                    <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
-                                        <div class="form-group col-md-12">
-                                            <label for="exampleInputEmail1"> <?php echo lang('department'); ?></label>
-                                            <select class="form-control m-bot15 js-example-basic-single" name="department" id="department" value=''>
-                                                <?php foreach ($departments as $department) { ?>
-                                                    <option value="<?php echo $department->id; ?>" <?php
-                                                    if (!empty($internal_requisition->department)) {
-                                                        if ($department->id == $internal_requisition->department) {
-                                                            echo 'selected';
-                                                        }
-                                                    }
-                                                    ?> > <?php echo $department->name; ?> </option>
-                                                        <?php } ?> 
-                                            </select>
-                                        </div>
-                                    <?php } ?>
+
                                     <div class="form-group last">
                                         <div class="col-md-6 payment_label row"> 
                                             <label for="exampleInputEmail1"> <?php echo lang('select_item'); ?></label>
                                         </div>
                                         <div class="col-md-9 row" style="margin-left: 0px; width: 100%;">
-                                            <?php if (empty($internal_requisition->id)) { ?>
 
-                                                <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
-                                                    <select name="category_name[]" class="multi-select1 js-example-basic-multiple" id="my_multi_select4" multiple="multiple" required="">
+                                            <select name="category_name[]"  class="multi-select1"  multiple="multiple" id="my_multi_select4" required="" >
+                                                <?php
+                                                if (!empty($internal_requisition)) {
 
-                                                    </select>
-                                                <?php } else { ?>
-                                                    <select name="category_name[]" class="multi-select1" id="my_multi_select4" required="">
-
-                                                    </select>
-                                                <?php } ?>
-                                            <?php } else { ?>
-                                                <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
-                                                    <select name="category_name[]"  class="multi-select1 js-example-basic-multiple"  multiple="multiple" id="my_multi_select4" required="" >
-                                                        <?php
-                                                        if (!empty($internal_requisition)) {
-                                                            $category_name = $internal_requisition->category_name;
-                                                            $category_name1 = explode(',', $category_name);
-                                                            foreach ($category_name1 as $category_name2) {
-                                                                $category_name3 = explode('*', $category_name2);
-                                                                $selected_medicine[] = $category_name3[4];
-                                                                $selected_quantity[] = $category_name3[2];
-                                                            }
-                                                            $item_quantity_array = array_combine($selected_medicine, $selected_quantity);
-                                                            foreach ($internal_medicines as $internal_med) {
-                                                                $medicine = $this->medicine_model->getMedicineById($internal_med->medicine_id);
-                                                                if (in_array($internal_med->id, $selected_medicine)) {
-                                                                    ?>
-                                                                    <option value="<?php echo $internal_med->id . '*' . (float) $medicine->s_price . '*' . $medicine->name . '*' . $medicine->company . '*' . $medicine->quantity . '*' . $medicine->id; ?>" data-qtity="<?php echo $item_quantity_array[$internal_med->id]; ?>" selected="selected">
-                                                                    <?php echo $medicine->name; ?>
-                                                                    </option> 
-                                                                    <?php } else { ?>
-                                                                    <option value="<?php echo $internal_med->id . '*' . (float) $medicine->s_price . '*' . $medicine->name . '*' . $medicine->company . '*' . $medicine->quantity . '*' . $medicine->id; ?>" data-qtity="<?php echo '1'; ?>">
-                                                                    <?php echo $medicine->name; ?>
-                                                                    </option> 
-                                                                <?php }
-                                                                ?>
-
-            <?php } ?> 
-
-
-                                                            <?php
-                                                        }
+                                                    $category_name = $internal_requisition->category_name;
+                                                    $category_name1 = explode(',', $category_name);
+                                                    foreach ($category_name1 as $category_name2) {
+                                                        $category_name3 = explode('*', $category_name2);
+                                                        $medicine_list = $this->medicine_model->getInternalMedicineById($category_name3[0]);
+                                                        $medicine = $this->medicine_model->getMedicineById($medicine_list->medicine_id);
                                                         ?>
-                                                    </select>
-                                                <?php } else { ?>
-                                                    <select name="category_name[]"  class="multi-select1"  multiple="multiple" id="my_multi_select4" required="" >
+                                                        <option value="<?php echo $category_name3[0] . '*' . (float) $medicine->s_price . '*' . $medicine->name . '*' . $medicine->company . '*' . $medicine->quantity . '*' . $medicine->id; ?>" data-qtity="<?php echo $category_name3[2]; ?>" selected="selected">
+                                                            <?php echo $medicine->name; ?>
+                                                        </option>                   
+
                                                         <?php
-                                                        if (!empty($internal_requisition)) {
+                                                    }
+                                                }
+                                                ?>
+                                            </select>
 
-                                                            $category_name = $internal_requisition->category_name;
-                                                            $category_name1 = explode(',', $category_name);
-                                                            foreach ($category_name1 as $category_name2) {
-                                                                $category_name3 = explode('*', $category_name2);
-                                                                $medicine_list = $this->medicine_model->getInternalMedicineById($category_name3[4]);
-                                                                $medicine = $this->medicine_model->getMedicineById($medicine_list->medicine_id);
-                                                                ?>
-                                                                <option value="<?php echo $category_name3[0] . '*' . (float) $medicine->s_price . '*' . $medicine->name . '*' . $medicine->company . '*' . $medicine->quantity. '*' . $medicine->id; ?>" data-qtity="<?php echo $category_name3[2]; ?>" selected="selected">
-                                                                    <?php echo $medicine->name; ?>
-                                                                </option>                
 
-                                                                <?php
-                                                            }
-                                                        }
-                                                        ?>
-                                                    </select>
-                                                <?php } ?>
 
-                                            <?php } ?>
                                         </div> 
                                     </div>
                                 </div>
@@ -163,40 +103,38 @@
                                     </div>
 
                                 </div>
-                                <!--     <div class="col-md-12 payment right-six">
-                                         <div class="col-md-3 payment_label"> 
-                                             <label for="exampleInputEmail1"> <?php echo lang('discount'); ?><?php
-                                if ($discount_type == 'percentage') {
-                                    echo ' (%)';
-                                }
-                                ?> </label>
-                                         </div>
-                                         <div class="col-md-9"> 
-                                             <input type="text" class="form-control pay_in" name="discount" id="dis_id" value='<?php
-                                if (!empty($internal_requisition->discount)) {
-                                    $discount = explode('*', $internal_requisition->discount);
-                                    echo $discount[0];
-                                }
-                                ?>' placeholder="Discount">
-                                         </div>
-                                     </div>
-                                  
-                                     <div class="col-md-12 payment right-six">
-                                         <div class="col-md-3 payment_label"> 
-                                             <label for="exampleInputEmail1"> <?php echo lang('gross_total'); ?></label>
-                                         </div>
-                                         <div class="col-md-9"> 
-                                             <input type="text" class="form-control pay_in" name="grsss" id="gross" value='<?php
-                                if (!empty($internal_requisition->gross_total)) {
+                                <div class="col-md-12 payment right-six">
+                                    <div class="col-md-3 payment_label"> 
+                                        <label for="exampleInputEmail1"> <?php echo lang('discount'); ?><?php
+                                            if ($discount_type == 'percentage') {
+                                                echo ' (%)';
+                                            }
+                                            ?> </label>
+                                    </div>
+                                    <div class="col-md-9"> 
+                                        <input type="text" class="form-control pay_in" name="discount" id="dis_id" value='<?php
+                                        if (!empty($internal_requisition->discount)) {
+                                            // $discount = explode('*', $internal_requisition->discount);
+                                            echo $internal_requisition->discount;
+                                        }
+                                        ?>' placeholder="Discount">
+                                    </div>
+                                </div>
 
-                                    echo $internal_requisition->gross_total;
-                                } else {
-                                    echo '0';
-                                }
-                                ?>' placeholder=" " disabled>
-                                         </div>
-     
-                                     </div>-->
+                                <div class="col-md-12 payment right-six">
+                                    <div class="col-md-3 payment_label"> 
+                                        <label for="exampleInputEmail1"> <?php echo lang('gross_total'); ?></label>
+                                    </div>
+                                    <div class="col-md-9"> 
+                                        <input type="text" class="form-control pay_in" name="grsss" id="gross" value='<?php
+                                        if (!empty($internal_requisition->gross_total)) {
+
+                                            echo $internal_requisition->gross_total;
+                                        }
+                                        ?>' placeholder=" " disabled>
+                                    </div>
+
+                                </div>
 
 
                                 <div class="col-md-12 payment right-six">
@@ -215,6 +153,11 @@
                                 <input type="hidden" name="id" value='<?php
                                 if (!empty($internal_requisition->id)) {
                                     echo $internal_requisition->id;
+                                }
+                                ?>'>
+                                <input type="hidden" name="invoice_id" value='<?php
+                                if (!empty($internal_requisition->invoice_id)) {
+                                    echo $internal_requisition->invoice_id;
                                 }
                                 ?>'>
                                 <div class="row">
@@ -462,78 +405,43 @@
     });
 
 </script> 
-<?php if (!$this->ion_auth->in_group(array('admin'))) { ?>
-    <script>
-        $(document).ready(function () {
+
+<script>
+    $(document).ready(function () {
 
 
-            $("#my_multi_select4").select2({
-                placeholder: '<?php echo lang('medicine'); ?>',
-                multiple: true,
-                allowClear: true,
-                ajax: {
-                    url: 'medicine/getMedicineForInternalMedicineByDepartment',
-                    type: "post",
-                    dataType: 'json',
-                    delay: 250,
-                    data: function (params) {
-                        return {
-                            searchTerm: params.term // search term
-                        };
-                    },
-                    processResults: function (response) {
-                        return {
-                            results: response
-                        };
-                    },
-                    cache: true
-                }
+        $("#my_multi_select4").select2({
+            placeholder: '<?php echo lang('medicine'); ?>',
+            multiple: true,
+            allowClear: true,
+            ajax: {
+                url: 'finance/pharmacy/getMedicineForInternalMedicineByDepartment',
+                type: "post",
+                dataType: 'json',
 
-            });
-        });</script>
+                delay: 250,
+                data: function (params) {
+                    return {
+                        searchTerm: params.term, // search term,
+                        department: '<?php echo $internal_requisition->department; ?>'
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
 
-<?php } else { ?>
-    <script>
-        $(document).ready(function () {
-            $('#department').change(function () {
-                var department = $(this).val();
-                var selected = $('#my_multi_select4').find('option:selected');
-                var unselected = $('#my_multi_select4').find('option:not(:selected)');
-                selected.attr('data-selected', '1');
-                $.each(selected, function (index, value1) {
-                    if ($(this).attr('data-selected') == '1') {
-                        var value = $(this).val();
-                        var res = value.split("*");
-                        // var unit_price = res[1];
-                        var id = res[0];
-                        $('#id-div' + id).remove();
-                        $('#idinput-' + id).remove();
-                        $('#mediidinput-' + id).remove();
-                        // $('#removediv' + $(this).val() + '').remove();
-                        //this option was selected before
+        });
+    });</script>
 
-                    }
-                });
-                $('#editPaymentForm').find('[name="subtotal"]').val('0').end()
-                $("#my_multi_select4").val(null).trigger("change");
-
-                $.ajax({
-                    url: 'medicine/getMedicineByDepartmentWiseForAdmin?id=' + department,
-                    method: 'GET',
-                    data: '',
-                    dataType: 'json',
-                }).success(function (response) {
-                    $('#my_multi_select4').append(response.option);
-                })
-            })
-        })
-    </script>
-<?php } ?>
 
 
 <script src="common/js/codearistos.min.js"></script>
 <script>
-            $(document).ready(function () {
-                $(".flashmessage").delay(3000).fadeOut(100);
-            });
+    $(document).ready(function () {
+        $(".flashmessage").delay(3000).fadeOut(100);
+    });
 </script>

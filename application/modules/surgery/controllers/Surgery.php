@@ -180,7 +180,7 @@ class Surgery extends MX_Controller {
                 //  $data_case['case_status'] = $status;
                 $data_surgery['date'] = time();
 
-             $data_surgery['date_string'] = date('d-m-Y',time());
+                $data_surgery['date_string'] = date('d-m-Y', time());
                 $this->surgery_model->insertSurgery($data);
                 $inserted_id_medical = $this->db->insert_id('surgery');
                 $data_surgery['surgery_id'] = $inserted_id_medical;
@@ -295,28 +295,28 @@ class Surgery extends MX_Controller {
         $data['daily_medicine_on'] = $this->surgery_model->getMedicineForOnSurgery($data['surgeries']->id);
         $data['daily_service_pre'] = $this->surgery_model->getPreServiceBySurgeryId($data['surgeries']->id);
         $data['daily_medicine_post'] = $this->surgery_model->getMedicineForPostSurgery($data['surgeries']->id);
-         $data['bed_checkout'] = $this->surgery_model->getCheckoutBySurgeryId($data['surgeries']->id);
+        $data['bed_checkout'] = $this->surgery_model->getCheckoutBySurgeryId($data['surgeries']->id);
         $date_exist = $this->surgery_model->getPreServicesByDate(date('d-m-Y', time()));
         if (!empty($date_exist)) {
             $data['checked'] = explode("**", $date_exist->service);
         } else {
             $data['checked'] = array();
         }
-         $data['daily_service_on'] = $this->surgery_model->getOnServiceBySurgeryId($data['surgeries']->id);
-          $date_exist_on = $this->surgery_model->getOnServicesByDate(date('d-m-Y', time()));
+        $data['daily_service_on'] = $this->surgery_model->getOnServiceBySurgeryId($data['surgeries']->id);
+        $date_exist_on = $this->surgery_model->getOnServicesByDate(date('d-m-Y', time()));
         if (!empty($date_exist_on)) {
             $data['checked_on'] = explode("**", $date_exist_on->service);
         } else {
             $data['checked_on'] = array();
         }
-         $data['daily_service_post'] = $this->surgery_model->getPostServiceBySurgeryId($data['surgeries']->id);
-          $date_exist_post = $this->surgery_model->getPostServicesByDate(date('d-m-Y', time()));
+        $data['daily_service_post'] = $this->surgery_model->getPostServiceBySurgeryId($data['surgeries']->id);
+        $date_exist_post = $this->surgery_model->getPostServicesByDate(date('d-m-Y', time()));
         if (!empty($date_exist_post)) {
             $data['checked_post'] = explode("**", $date_exist_post->service);
         } else {
             $data['checked_post'] = array();
         }
-        
+
         $data['payment_category'] = $this->finance_model->getPaymentCategory();
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('view_more', $data);
@@ -1157,6 +1157,12 @@ class Surgery extends MX_Controller {
                 if ($individual[5] != $med_details->id) {
                     $price[] = $individual[4];
                     $cat_new[] = $cat;
+                } else {
+                    $medicine_internal = array();
+                    $medicine_internal = $this->db->get_where('internal_medicine', array('id' => $med_details->medicine_id))->row();
+                    $new_quantity = $medicine_internal->quantity + $individual[3];
+                    $data_internal_med = array('quantity' => $new_quantity);
+                    $this->medicine_model->updateInternalMedicine($medicine_internal->id, $data_internal_med);
                 }
             }
 
@@ -1188,9 +1194,10 @@ class Surgery extends MX_Controller {
         $medicine_list = $this->surgery_model->getMedicineForPreSurgery($id);
         foreach ($medicine_list as $medicine) {
             if (empty($medicine->payment_id)) {
-                $medicine_con[] = $medicine->medicine_id . '*' . $medicine->medicine_name . '*' . $medicine->s_price . '*' . $medicine->quantity . '*' . $medicine->total . '*' . $medicine->id.'*'.$medicine->pharmacy_medicine_id;
+                $medicine_con[] = $medicine->medicine_id . '*' . $medicine->medicine_name . '*' . $medicine->s_price . '*' . $medicine->quantity . '*' . $medicine->total . '*' . $medicine->id . '*' . $medicine->pharmacy_medicine_id;
                 $price[] = $medicine->total;
-                // $quantity[] = $medicine->quantity;
+                $quantity[] = $medicine->quantity;
+
                 $medicine_id[] = $medicine->medicine_id;
                 // $medicine_name[] = $medicine->medicine_name;
                 //  $sale_price[] = $medicine->s_price;
@@ -1198,6 +1205,13 @@ class Surgery extends MX_Controller {
             }
         }
         if (!empty($medicine_id)) {
+            foreach ($medicine_list as $medicine) {
+                $medicine_internal = array();
+                $medicine_internal = $this->db->get_where('internal_medicine', array('id' => $medicine->medicine_id))->row();
+                $new_quantity = $medicine_internal->quantity - $medicine->quantity;
+                $data_internal_med = array('quantity' => $new_quantity);
+                $this->medicine_model->updateInternalMedicine($medicine_internal->id, $data_internal_med);
+            }
             // $length = count($medicine_id);
             $total = array_sum($price);
             $arr['ids'] = implode(",", $ids);
@@ -1238,7 +1252,7 @@ class Surgery extends MX_Controller {
             }
             $arr['message'] = array('message' => lang('invoice') . ' ' . lang('generated'), 'title' => lang('invoice') . ' ' . lang('generated'));
         } else {
-              $arr['ids'] ='1';
+            $arr['ids'] = '1';
             $arr['message'] = array('message' => lang('no_new_medicine_add'), 'title' => lang('no_new_medicine_add'));
         }
         echo json_encode($arr);
@@ -1330,7 +1344,7 @@ class Surgery extends MX_Controller {
         $medicine_list = $this->surgery_model->getMedicineForOnSurgery($id);
         foreach ($medicine_list as $medicine) {
             if (empty($medicine->payment_id)) {
-                $medicine_con[] = $medicine->medicine_id . '*' . $medicine->medicine_name . '*' . $medicine->s_price . '*' . $medicine->quantity . '*' . $medicine->total . '*' . $medicine->id. '*' . $medicine->pharmacy_medicine_id;
+                $medicine_con[] = $medicine->medicine_id . '*' . $medicine->medicine_name . '*' . $medicine->s_price . '*' . $medicine->quantity . '*' . $medicine->total . '*' . $medicine->id . '*' . $medicine->pharmacy_medicine_id;
                 $price[] = $medicine->total;
                 // $quantity[] = $medicine->quantity;
                 $medicine_id[] = $medicine->medicine_id;
@@ -1441,6 +1455,12 @@ class Surgery extends MX_Controller {
                 if ($individual[5] != $med_details->id) {
                     $price[] = $individual[4];
                     $cat_new[] = $cat;
+                } else {
+                    $medicine_internal = array();
+                    $medicine_internal = $this->db->get_where('internal_medicine', array('id' => $med_details->medicine_id))->row();
+                    $new_quantity = $medicine_internal->quantity + $individual[3];
+                    $data_internal_med = array('quantity' => $new_quantity);
+                    $this->medicine_model->updateInternalMedicine($medicine_internal->id, $data_internal_med);
                 }
             }
 
@@ -1472,9 +1492,9 @@ class Surgery extends MX_Controller {
         $medicine_list = $this->surgery_model->getMedicineForPostSurgery($id);
         foreach ($medicine_list as $medicine) {
             if (empty($medicine->payment_id)) {
-                $medicine_con[] = $medicine->medicine_id . '*' . $medicine->medicine_name . '*' . $medicine->s_price . '*' . $medicine->quantity . '*' . $medicine->total . '*' . $medicine->id. '*' . $medicine->pharmacy_medicine_id;
+                $medicine_con[] = $medicine->medicine_id . '*' . $medicine->medicine_name . '*' . $medicine->s_price . '*' . $medicine->quantity . '*' . $medicine->total . '*' . $medicine->id . '*' . $medicine->pharmacy_medicine_id;
                 $price[] = $medicine->total;
-                // $quantity[] = $medicine->quantity;
+                $quantity[] = $medicine->quantity;
                 $medicine_id[] = $medicine->medicine_id;
                 // $medicine_name[] = $medicine->medicine_name;
                 //  $sale_price[] = $medicine->s_price;
@@ -1482,6 +1502,13 @@ class Surgery extends MX_Controller {
             }
         }
         if (!empty($medicine_id)) {
+            foreach ($medicine_list as $medicine) {
+                $medicine_internal = array();
+                $medicine_internal = $this->db->get_where('internal_medicine', array('id' => $medicine->medicine_id))->row();
+                $new_quantity = $medicine_internal->quantity - $medicine->quantity;
+                $data_internal_med = array('quantity' => $new_quantity);
+                $this->medicine_model->updateInternalMedicine($medicine_internal->id, $data_internal_med);
+            }
             // $length = count($medicine_id);
             $total = array_sum($price);
             $arr['ids'] = implode(",", $ids);
@@ -1522,7 +1549,7 @@ class Surgery extends MX_Controller {
             }
             $arr['message'] = array('message' => lang('invoice') . ' ' . lang('generated'), 'title' => lang('invoice') . ' ' . lang('generated'));
         } else {
-             $arr['ids'] ='1';
+            $arr['ids'] = '1';
             $arr['message'] = array('message' => lang('no_new_medicine_add'), 'title' => lang('no_new_medicine_add'));
         }
         echo json_encode($arr);
@@ -1610,13 +1637,13 @@ class Surgery extends MX_Controller {
             $discount_total_new = '0';
             $grand_total_new = '0';
         } else {
-          foreach ($services_all as $services) {
+            foreach ($services_all as $services) {
                 $price_u = explode("**", $services->price);
                 $discount_u = explode("**", $services->discount);
-                 $price_ups[]=array_sum($price_u);
-                 $discount_ups[]=array_sum($discount_u);
+                $price_ups[] = array_sum($price_u);
+                $discount_ups[] = array_sum($discount_u);
             }
-           
+
             $price_total = array_sum($price_ups);
             $discount_total_new = array_sum($discount_ups);
             $grand_total_new = $price_total - $discount_total_new;
@@ -1632,7 +1659,7 @@ class Surgery extends MX_Controller {
 //$discount_id= $this->input->post('discount_id');
 //$discount= $this->input->post('discount');
 //if(!empty(discount))
-        $surgery_id= $this->input->post('alloted');
+        $surgery_id = $this->input->post('alloted');
         $nurse = $this->input->post('nurse');
         $date = date('d-m-Y', time());
         $date_exist1 = $this->surgery_model->getPreServicesByDate($date);
@@ -1743,8 +1770,8 @@ class Surgery extends MX_Controller {
                                                         <td><input type="number" min="0" name="price_pre_service[]" value="' . $price[$i] . '"class="price-pre-services" id="pre-service-price-' . $servicename->id . '"readonly></td>
                                                         <td> 1 </td>
                                                         <td>' . $settings->currency . ' ' . $price[$i] . '</td>
-                                                        <td><input type="number" min="0" name="discount_pre_service[]" value="' . $discount_pre[$i] . '"class="discount-price-pre-services" id="pre-service-discount-' . $servicename->id . '-'.$service->date.'"></td>
- <td id="discount-pre-'.$service->date .'-'. $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                       
+                                                        <td><input type="number" min="0" name="discount_pre_service[]" value="' . $discount_pre[$i] . '"class="discount-price-pre-services" id="pre-service-discount-' . $servicename->id . '-' . $service->date . '"></td>
+ <td id="discount-pre-' . $service->date . '-' . $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                       
 <td class="no-print" id="delete-service-' . $date_explode[0] . '-' . $servicename->id . '"><button type="button" class="btn btn-danger btn-xs btn_width delete_service" title=' . lang('delete') . ' data-toggle=" "data-id="' . $service->id . "**" . $service_update[$i] . '"><i class="fa fa-trash"></i></button></td>
                                                     </tr>';
                     } else {
@@ -1756,8 +1783,8 @@ class Surgery extends MX_Controller {
                                                         <td><input type="number" min="0" name="price_pre_service[]" value="' . $price[$i] . '"class="price-pre-services" id="pre-service-price-' . $servicename->id . '"readonly></td>
                                                         <td> 1 </td>
                                                         <td>' . $settings->currency . ' ' . $price[$i] . '</td>
-                                                                 <td><input type="number" min="0" name="discount_pre_service[]" value="' . $discount_pre[$i] . '"class="discount-price-pre-services" id="pre-service-discount-' . $servicename->id . '-'.$service->date.'"></td>
- <td id="discount-pre-' .$service->date .'-'. $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                        
+                                                                 <td><input type="number" min="0" name="discount_pre_service[]" value="' . $discount_pre[$i] . '"class="discount-price-pre-services" id="pre-service-discount-' . $servicename->id . '-' . $service->date . '"></td>
+ <td id="discount-pre-' . $service->date . '-' . $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                        
 <td class="no-print" id="delete-service-' . $date_explode[0] . '-' . $servicename->id . '"><button type="button" class="btn btn-danger btn-xs btn_width delete_service" title=' . lang('delete') . ' data-toggle=" "data-id="' . $service->id . "**" . $service_update[$i] . '"><i class="fa fa-trash"></i></button></td>
                                                     </tr>';
                         } else {
@@ -1769,8 +1796,8 @@ class Surgery extends MX_Controller {
                                                         <td><input type="number" min="0" name="price_pre_service[]" value="' . $price[$i] . '"class="price-pre-services" id="pre-service-price-' . $servicename->id . '"readonly></td>
                                                         <td> 1 </td>
                                                         <td>' . $settings->currency . ' ' . $price[$i] . '</td>
-                                                        <td><input type="number" min="0" name="discount_pre_service[]" value="' . $discount_pre[$i] . '"class="discount-price-pre-services" id="pre-service-discount-' . $servicename->id . '-'.$service->date.'"></td>
-                                                        <td id="discount-pre-' .$service->date .'-'. $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                      
+                                                        <td><input type="number" min="0" name="discount_pre_service[]" value="' . $discount_pre[$i] . '"class="discount-price-pre-services" id="pre-service-discount-' . $servicename->id . '-' . $service->date . '"></td>
+                                                        <td id="discount-pre-' . $service->date . '-' . $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                      
                                                         <td></td>
                                                     </tr>';
                             } else {
@@ -1781,8 +1808,8 @@ class Surgery extends MX_Controller {
                                                         <td><input type="number" min="0" name="price_pre_service[]" value="' . $price[$i] . '"class="price-pre-services" id="pre-service-price-' . $servicename->id . '"readonly></td>
                                                         <td> 1 </td>
                                                         <td>' . $settings->currency . ' ' . $price[$i] . '</td>
-                                                       <td><input type="number" min="0" name="discount_pre_service[]" value="' . $discount_pre[$i] . '"class="discount-price-pre-services" id="pre-service-discount-' . $servicename->id . '-'.$service->date.'"></td>
- <td id="discount-pre-'.$service->date .'-'. $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                     
+                                                       <td><input type="number" min="0" name="discount_pre_service[]" value="' . $discount_pre[$i] . '"class="discount-price-pre-services" id="pre-service-discount-' . $servicename->id . '-' . $service->date . '"></td>
+ <td id="discount-pre-' . $service->date . '-' . $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                     
 <td class="no-print" id="delete-service-' . $date_explode[0] . '-' . $servicename->id . '"><button type="button" class="btn btn-danger btn-xs btn_width delete_service" title=' . lang('delete') . ' data-toggle=" "data-id="' . $service->id . "**" . $service_update[$i] . '"><i class="fa fa-trash"></i></button></td>
                                                     </tr>';
                             }
@@ -1797,14 +1824,14 @@ class Surgery extends MX_Controller {
             $discount_total_new = '0';
             $grand_total_new = '0';
         } else {
-           
-           foreach ($services_all as $services) {
+
+            foreach ($services_all as $services) {
                 $price_u = explode("**", $services->price);
                 $discount_u = explode("**", $services->discount);
-                 $price_ups[]=array_sum($price_u);
-                 $discount_ups[]=array_sum($discount_u);
+                $price_ups[] = array_sum($price_u);
+                $discount_ups[] = array_sum($discount_u);
             }
-           
+
             $price_total = array_sum($price_ups);
             $discount_total_new = array_sum($discount_ups);
             $grand_total_new = $price_total - $discount_total_new;
@@ -1820,25 +1847,25 @@ class Surgery extends MX_Controller {
         $discount = $this->input->post('discount');
         //$discount_update = implode("**", $discount);
         $id = $this->input->post('alloted');
-         $date = $this->input->post('date');
-         $service_id=$this->input->post('service');
+        $date = $this->input->post('date');
+        $service_id = $this->input->post('service');
         //$date = date('d-m-Y', time());
         $date_exist = $this->surgery_model->getPreServicesByDate($date);
-        $service_update= explode("**", $date_exist->service);
-         $discount_update= explode("**", $date_exist->discount);
-         for($i=0;$i<count($service_update);$i++){
-             if($service_update[$i]==$service_id){
-                 $discount_new[]=$discount;
-             }else{
-                 $discount_new[]=$discount_update[$i];
-             }
-         }
-         $discount_update_new = implode("**", $discount_new);
+        $service_update = explode("**", $date_exist->service);
+        $discount_update = explode("**", $date_exist->discount);
+        for ($i = 0; $i < count($service_update); $i++) {
+            if ($service_update[$i] == $service_id) {
+                $discount_new[] = $discount;
+            } else {
+                $discount_new[] = $discount_update[$i];
+            }
+        }
+        $discount_update_new = implode("**", $discount_new);
         $data = array();
         $data = array('discount' => $discount_update_new);
         $this->surgery_model->updatePreServices($date_exist->id, $data);
         $price = $this->input->post('price');
-          $services_all = $this->surgery_model->getPreServiceBySurgeryId($date_exist->surgery_id);
+        $services_all = $this->surgery_model->getPreServiceBySurgeryId($date_exist->surgery_id);
         if (empty($services_all)) {
             $price_total = '0';
             $discount_total_new = '0';
@@ -1847,35 +1874,36 @@ class Surgery extends MX_Controller {
             foreach ($services_all as $services) {
                 $price_u = explode("**", $services->price);
                 $discount_u = explode("**", $services->discount);
-                 $price_ups[]=array_sum($price_u);
-                 $discount_ups[]=array_sum($discount_u);
+                $price_ups[] = array_sum($price_u);
+                $discount_ups[] = array_sum($discount_u);
             }
-           
+
             $price_total = array_sum($price_ups);
             $discount_total_new = array_sum($discount_ups);
             $grand_total_new = $price_total - $discount_total_new;
         }
-        $data['total'] =$price_total;
+        $data['total'] = $price_total;
         $data['discount'] = $discount_total_new;
-        $data['grand_total'] =$grand_total_new;
+        $data['grand_total'] = $grand_total_new;
 
         echo json_encode($data);
     }
-  public function createPreServiceInvoice() {
+
+    public function createPreServiceInvoice() {
         $id = $this->input->get('id');
         $service_list = $this->surgery_model->getPreServicedByIdByDate($id);
         $previous_payment_ids = $service_list->payment_id;
         if (!empty($service_list)) {
             $price = explode("**", $service_list->price);
             $services = explode("**", $service_list->service);
-             $discounts = explode("**", $service_list->discount);
+            $discounts = explode("**", $service_list->discount);
             $i = 0;
             if (!empty($service_list->payment_id)) {
                 $paymentid = explode(",", $service_list->payment_id);
-                foreach ($paymentid as $key=>$payment) {
+                foreach ($paymentid as $key => $payment) {
                     $payment_details = $this->finance_model->getPaymentById($payment);
                     $payment_cat = explode("#", $payment_details->category_name);
-                    foreach ($payment_cat as $key=>$pay) {
+                    foreach ($payment_cat as $key => $pay) {
                         $cat_name = explode("*", $pay);
                         $previous_invoice_service[] = $cat_name[0];
                     }
@@ -1885,7 +1913,7 @@ class Surgery extends MX_Controller {
             }
             for ($i = 0; $i < count($services); $i++) {
                 if (!in_array($services[$i], $previous_invoice_service)) {
-                    $service_new[] = $services[$i] . '*' . $price[$i].'*'.$discounts[$i];
+                    $service_new[] = $services[$i] . '*' . $price[$i] . '*' . $discounts[$i];
                     $arr['ids'] = $services[$i];
                 }
                 //$i++;
@@ -1893,11 +1921,11 @@ class Surgery extends MX_Controller {
             if (!empty($service_new)) {
                 $service_implode = implode("#", $service_new);
                 $total = array_sum($price);
-                $discount= array_sum($discounts);
-                $grand=$total-$discount;
+                $discount = array_sum($discounts);
+                $grand = $total - $discount;
                 $bed_alloted = $this->surgery_model->getSurgeryById($id);
                 $patient = $this->patient_model->getPatientById($bed_alloted->patient_id);
-               // $doctor = $this->doctor_model->getDoctorById($bed_alloted->doctor);
+                // $doctor = $this->doctor_model->getDoctorById($bed_alloted->doctor);
                 $date = time();
                 $date_string = date('d-m-Y');
                 $data = array(
@@ -1905,8 +1933,8 @@ class Surgery extends MX_Controller {
                     'patient' => $patient->id,
                     'date' => $date,
                     'amount' => $total,
-                    'discount'=>$discount,
-                   // 'doctor' => $bed_alloted->doctor,
+                    'discount' => $discount,
+                    // 'doctor' => $bed_alloted->doctor,
                     'gross_total' => $grand,
                     'status' => 'unpaid',
                     'hospital_amount' => $grand,
@@ -1915,7 +1943,7 @@ class Surgery extends MX_Controller {
                     'patient_name' => $patient->name,
                     'patient_phone' => $patient->phone,
                     'patient_address' => $patient->address,
-                   // 'doctor_name' => $doctor->name,
+                    // 'doctor_name' => $doctor->name,
                     'date_string' => $date_string,
                     'payment_from' => 'pre_service'
                 );
@@ -1931,11 +1959,11 @@ class Surgery extends MX_Controller {
                 $arr['date'] = date('d');
                 $arr['message'] = array('message' => lang('invoice') . ' ' . lang('generated'), 'title' => lang('invoice') . ' ' . lang('generated'));
             } else {
-                  $arr['ids'] ='1';
+                $arr['ids'] = '1';
                 $arr['message'] = array('message' => lang('no_new_service_add'), 'title' => lang('no_new_service_add'));
             }
         } else {
-              $arr['ids'] ='1';
+            $arr['ids'] = '1';
             $arr['message'] = array('message' => lang('no_new_service_add'), 'title' => lang('no_new_service_add'));
         }
 
@@ -2014,13 +2042,13 @@ class Surgery extends MX_Controller {
             $discount_total_new = '0';
             $grand_total_new = '0';
         } else {
-          foreach ($services_all as $services) {
+            foreach ($services_all as $services) {
                 $price_u = explode("**", $services->price);
                 $discount_u = explode("**", $services->discount);
-                 $price_ups[]=array_sum($price_u);
-                 $discount_ups[]=array_sum($discount_u);
+                $price_ups[] = array_sum($price_u);
+                $discount_ups[] = array_sum($discount_u);
             }
-           
+
             $price_total = array_sum($price_ups);
             $discount_total_new = array_sum($discount_ups);
             $grand_total_new = $price_total - $discount_total_new;
@@ -2036,7 +2064,7 @@ class Surgery extends MX_Controller {
 //$discount_id= $this->input->post('discount_id');
 //$discount= $this->input->post('discount');
 //if(!empty(discount))
-        $surgery_id= $this->input->post('alloted');
+        $surgery_id = $this->input->post('alloted');
         $nurse = $this->input->post('nurse');
         $date = date('d-m-Y', time());
         $date_exist1 = $this->surgery_model->getOnServicesByDate($date);
@@ -2147,8 +2175,8 @@ class Surgery extends MX_Controller {
                                                         <td><input type="number" min="0" name="price_on_service[]" value="' . $price[$i] . '"class="price-on-services" id="on-service-price-' . $servicename->id . '"readonly></td>
                                                         <td> 1 </td>
                                                         <td>' . $settings->currency . ' ' . $price[$i] . '</td>
-                                                        <td><input type="number" min="0" name="discount_on_service[]" value="' . $discount_pre[$i] . '"class="discount-price-on-services" id="on-service-discount-' . $servicename->id . '-'.$service->date.'"></td>
- <td id="discount-on-'.$service->date .'-'. $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                       
+                                                        <td><input type="number" min="0" name="discount_on_service[]" value="' . $discount_pre[$i] . '"class="discount-price-on-services" id="on-service-discount-' . $servicename->id . '-' . $service->date . '"></td>
+ <td id="discount-on-' . $service->date . '-' . $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                       
 <td class="no-print" id="delete-service-on-' . $date_explode[0] . '-' . $servicename->id . '"><button type="button" class="btn btn-danger btn-xs btn_width delete_service" title=' . lang('delete') . ' data-toggle=" "data-id="' . $service->id . "**" . $service_update[$i] . '"><i class="fa fa-trash"></i></button></td>
                                                     </tr>';
                     } else {
@@ -2160,8 +2188,8 @@ class Surgery extends MX_Controller {
                                                         <td><input type="number" min="0" name="price_on_service[]" value="' . $price[$i] . '"class="price-on-services" id="on-service-price-' . $servicename->id . '"readonly></td>
                                                         <td> 1 </td>
                                                         <td>' . $settings->currency . ' ' . $price[$i] . '</td>
-                                                                 <td><input type="number" min="0" name="discount_on_service[]" value="' . $discount_pre[$i] . '"class="discount-price-on-services" id="on-service-discount-' . $servicename->id . '-'.$service->date.'"></td>
- <td id="discount-pre-' .$service->date .'-'. $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                        
+                                                                 <td><input type="number" min="0" name="discount_on_service[]" value="' . $discount_pre[$i] . '"class="discount-price-on-services" id="on-service-discount-' . $servicename->id . '-' . $service->date . '"></td>
+ <td id="discount-pre-' . $service->date . '-' . $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                        
 <td class="no-print" id="delete-service-on-' . $date_explode[0] . '-' . $servicename->id . '"><button type="button" class="btn btn-danger btn-xs btn_width delete_service" title=' . lang('delete') . ' data-toggle=" "data-id="' . $service->id . "**" . $service_update[$i] . '"><i class="fa fa-trash"></i></button></td>
                                                     </tr>';
                         } else {
@@ -2173,8 +2201,8 @@ class Surgery extends MX_Controller {
                                                         <td><input type="number" min="0" name="price_on_service[]" value="' . $price[$i] . '"class="price-on-services" id="on-service-price-' . $servicename->id . '"readonly></td>
                                                         <td> 1 </td>
                                                         <td>' . $settings->currency . ' ' . $price[$i] . '</td>
-                                                        <td><input type="number" min="0" name="discount_on_service[]" value="' . $discount_pre[$i] . '"class="discount-price-on-services" id="on-service-discount-' . $servicename->id . '-'.$service->date.'"></td>
-                                                        <td id="discount-on-' .$service->date .'-'. $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                      
+                                                        <td><input type="number" min="0" name="discount_on_service[]" value="' . $discount_pre[$i] . '"class="discount-price-on-services" id="on-service-discount-' . $servicename->id . '-' . $service->date . '"></td>
+                                                        <td id="discount-on-' . $service->date . '-' . $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                      
                                                         <td></td>
                                                     </tr>';
                             } else {
@@ -2185,8 +2213,8 @@ class Surgery extends MX_Controller {
                                                         <td><input type="number" min="0" name="price_on_service[]" value="' . $price[$i] . '"class="price-on-services" id="on-service-price-' . $servicename->id . '"readonly></td>
                                                         <td> 1 </td>
                                                         <td>' . $settings->currency . ' ' . $price[$i] . '</td>
-                                                       <td><input type="number" min="0" name="discount_on_service[]" value="' . $discount_pre[$i] . '"class="discount-price-on-services" id="on-service-discount-' . $servicename->id . '-'.$service->date.'"></td>
- <td id="discount-on-'.$service->date .'-'. $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                     
+                                                       <td><input type="number" min="0" name="discount_on_service[]" value="' . $discount_pre[$i] . '"class="discount-price-on-services" id="on-service-discount-' . $servicename->id . '-' . $service->date . '"></td>
+ <td id="discount-on-' . $service->date . '-' . $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                     
 <td class="no-print" id="delete-service-on-' . $date_explode[0] . '-' . $servicename->id . '"><button type="button" class="btn btn-danger btn-xs btn_width delete_service" title=' . lang('delete') . ' data-toggle=" "data-id="' . $service->id . "**" . $service_update[$i] . '"><i class="fa fa-trash"></i></button></td>
                                                     </tr>';
                             }
@@ -2201,14 +2229,14 @@ class Surgery extends MX_Controller {
             $discount_total_new = '0';
             $grand_total_new = '0';
         } else {
-           
-           foreach ($services_all as $services) {
+
+            foreach ($services_all as $services) {
                 $price_u = explode("**", $services->price);
                 $discount_u = explode("**", $services->discount);
-                 $price_ups[]=array_sum($price_u);
-                 $discount_ups[]=array_sum($discount_u);
+                $price_ups[] = array_sum($price_u);
+                $discount_ups[] = array_sum($discount_u);
             }
-           
+
             $price_total = array_sum($price_ups);
             $discount_total_new = array_sum($discount_ups);
             $grand_total_new = $price_total - $discount_total_new;
@@ -2224,25 +2252,25 @@ class Surgery extends MX_Controller {
         $discount = $this->input->post('discount');
         //$discount_update = implode("**", $discount);
         $id = $this->input->post('alloted');
-         $date = $this->input->post('date');
-         $service_id=$this->input->post('service');
+        $date = $this->input->post('date');
+        $service_id = $this->input->post('service');
         //$date = date('d-m-Y', time());
         $date_exist = $this->surgery_model->getOnServicesByDate($date);
-        $service_update= explode("**", $date_exist->service);
-         $discount_update= explode("**", $date_exist->discount);
-         for($i=0;$i<count($service_update);$i++){
-             if($service_update[$i]==$service_id){
-                 $discount_new[]=$discount;
-             }else{
-                 $discount_new[]=$discount_update[$i];
-             }
-         }
-         $discount_update_new = implode("**", $discount_new);
+        $service_update = explode("**", $date_exist->service);
+        $discount_update = explode("**", $date_exist->discount);
+        for ($i = 0; $i < count($service_update); $i++) {
+            if ($service_update[$i] == $service_id) {
+                $discount_new[] = $discount;
+            } else {
+                $discount_new[] = $discount_update[$i];
+            }
+        }
+        $discount_update_new = implode("**", $discount_new);
         $data = array();
         $data = array('discount' => $discount_update_new);
         $this->surgery_model->updateOnServices($date_exist->id, $data);
         $price = $this->input->post('price');
-          $services_all = $this->surgery_model->getOnServiceBySurgeryId($date_exist->surgery_id);
+        $services_all = $this->surgery_model->getOnServiceBySurgeryId($date_exist->surgery_id);
         if (empty($services_all)) {
             $price_total = '0';
             $discount_total_new = '0';
@@ -2251,35 +2279,36 @@ class Surgery extends MX_Controller {
             foreach ($services_all as $services) {
                 $price_u = explode("**", $services->price);
                 $discount_u = explode("**", $services->discount);
-                 $price_ups[]=array_sum($price_u);
-                 $discount_ups[]=array_sum($discount_u);
+                $price_ups[] = array_sum($price_u);
+                $discount_ups[] = array_sum($discount_u);
             }
-           
+
             $price_total = array_sum($price_ups);
             $discount_total_new = array_sum($discount_ups);
             $grand_total_new = $price_total - $discount_total_new;
         }
-        $data['total'] =$price_total;
+        $data['total'] = $price_total;
         $data['discount'] = $discount_total_new;
-        $data['grand_total'] =$grand_total_new;
+        $data['grand_total'] = $grand_total_new;
 
         echo json_encode($data);
     }
-  public function createOnServiceInvoice() {
+
+    public function createOnServiceInvoice() {
         $id = $this->input->get('id');
         $service_list = $this->surgery_model->getOnServicedByIdByDate($id);
         $previous_payment_ids = $service_list->payment_id;
         if (!empty($service_list)) {
             $price = explode("**", $service_list->price);
             $services = explode("**", $service_list->service);
-             $discounts = explode("**", $service_list->discount);
+            $discounts = explode("**", $service_list->discount);
             $i = 0;
             if (!empty($service_list->payment_id)) {
                 $paymentid = explode(",", $service_list->payment_id);
-                foreach ($paymentid as $key=>$payment) {
+                foreach ($paymentid as $key => $payment) {
                     $payment_details = $this->finance_model->getPaymentById($payment);
                     $payment_cat = explode("#", $payment_details->category_name);
-                    foreach ($payment_cat as $key=> $pay) {
+                    foreach ($payment_cat as $key => $pay) {
                         $cat_name = explode("*", $pay);
                         $previous_invoice_service[] = $cat_name[0];
                     }
@@ -2289,7 +2318,7 @@ class Surgery extends MX_Controller {
             }
             for ($i = 0; $i < count($services); $i++) {
                 if (!in_array($services[$i], $previous_invoice_service)) {
-                    $service_new[] = $services[$i] . '*' . $price[$i].'*'.$discounts[$i];
+                    $service_new[] = $services[$i] . '*' . $price[$i] . '*' . $discounts[$i];
                     $arr['ids'] = $services[$i];
                 }
                 //$i++;
@@ -2297,11 +2326,11 @@ class Surgery extends MX_Controller {
             if (!empty($service_new)) {
                 $service_implode = implode("#", $service_new);
                 $total = array_sum($price);
-                $discount= array_sum($discounts);
-                $grand=$total-$discount;
+                $discount = array_sum($discounts);
+                $grand = $total - $discount;
                 $bed_alloted = $this->surgery_model->getSurgeryById($id);
                 $patient = $this->patient_model->getPatientById($bed_alloted->patient_id);
-               // $doctor = $this->doctor_model->getDoctorById($bed_alloted->doctor);
+                // $doctor = $this->doctor_model->getDoctorById($bed_alloted->doctor);
                 $date = time();
                 $date_string = date('d-m-Y');
                 $data = array(
@@ -2309,8 +2338,8 @@ class Surgery extends MX_Controller {
                     'patient' => $patient->id,
                     'date' => $date,
                     'amount' => $total,
-                    'discount'=>$discount,
-                   // 'doctor' => $bed_alloted->doctor,
+                    'discount' => $discount,
+                    // 'doctor' => $bed_alloted->doctor,
                     'gross_total' => $grand,
                     'status' => 'unpaid',
                     'hospital_amount' => $grand,
@@ -2319,7 +2348,7 @@ class Surgery extends MX_Controller {
                     'patient_name' => $patient->name,
                     'patient_phone' => $patient->phone,
                     'patient_address' => $patient->address,
-                   // 'doctor_name' => $doctor->name,
+                    // 'doctor_name' => $doctor->name,
                     'date_string' => $date_string,
                     'payment_from' => 'pre_service'
                 );
@@ -2335,17 +2364,18 @@ class Surgery extends MX_Controller {
                 $arr['date'] = date('d');
                 $arr['message'] = array('message' => lang('invoice') . ' ' . lang('generated'), 'title' => lang('invoice') . ' ' . lang('generated'));
             } else {
-                $arr['ids'] ='1';
+                $arr['ids'] = '1';
                 $arr['message'] = array('message' => lang('no_new_service_add'), 'title' => lang('no_new_service_add'));
             }
         } else {
-             $arr['ids'] ='1';
+            $arr['ids'] = '1';
             $arr['message'] = array('message' => lang('no_new_service_add'), 'title' => lang('no_new_service_add'));
         }
 
         echo json_encode($arr);
     }
-        function deletePostSurgeryServices() {
+
+    function deletePostSurgeryServices() {
         $id = $this->input->get('id');
         $service = explode("**", $id);
         $service_details = $this->surgery_model->getPostServiceById($service[0]);
@@ -2411,34 +2441,34 @@ class Surgery extends MX_Controller {
         } else {
             $this->surgery_model->updatePostServices($id, $data);
         }
-      /*   $services_post = $this->surgery_model->getPostServiceById($id);
-         $payment_update=array();
-         if(!empty($services_post->payment_id)){
-             $payments= explode(",",$services_post->payment_id);
-             foreach ($payments as $payment_p){
-                 $payment_pk= $this->finance_model->getPaymentById($payment_p);
-                 if(empty($payment_pk->category_name)){
-                       $this->finance_model->deletePayment($payment_p);
-                 }else{
-                     array_push($payment_update, $payment_p);
-                 }
-             }
-             $data_up=array('payment_id'=> implode(",", $payment_update));
-              $this->surgery_model->updatePostServices($id, $data_up);
-         }*/
+        /*   $services_post = $this->surgery_model->getPostServiceById($id);
+          $payment_update=array();
+          if(!empty($services_post->payment_id)){
+          $payments= explode(",",$services_post->payment_id);
+          foreach ($payments as $payment_p){
+          $payment_pk= $this->finance_model->getPaymentById($payment_p);
+          if(empty($payment_pk->category_name)){
+          $this->finance_model->deletePayment($payment_p);
+          }else{
+          array_push($payment_update, $payment_p);
+          }
+          }
+          $data_up=array('payment_id'=> implode(",", $payment_update));
+          $this->surgery_model->updatePostServices($id, $data_up);
+          } */
         $services_all = $this->surgery_model->getPostServiceBySurgeryId($surgery_id);
         if (empty($services_all)) {
             $price_total = '0';
             $discount_total_new = '0';
             $grand_total_new = '0';
         } else {
-          foreach ($services_all as $services) {
+            foreach ($services_all as $services) {
                 $price_u = explode("**", $services->price);
                 $discount_u = explode("**", $services->discount);
-                 $price_ups[]=array_sum($price_u);
-                 $discount_ups[]=array_sum($discount_u);
+                $price_ups[] = array_sum($price_u);
+                $discount_ups[] = array_sum($discount_u);
             }
-           
+
             $price_total = array_sum($price_ups);
             $discount_total_new = array_sum($discount_ups);
             $grand_total_new = $price_total - $discount_total_new;
@@ -2454,7 +2484,7 @@ class Surgery extends MX_Controller {
 //$discount_id= $this->input->post('discount_id');
 //$discount= $this->input->post('discount');
 //if(!empty(discount))
-        $surgery_id= $this->input->post('alloted');
+        $surgery_id = $this->input->post('alloted');
         $nurse = $this->input->post('nurse');
         $date = date('d-m-Y', time());
         $date_exist1 = $this->surgery_model->getPostServicesByDate($date);
@@ -2565,8 +2595,8 @@ class Surgery extends MX_Controller {
                                                         <td><input type="number" min="0" name="price_post_service[]" value="' . $price[$i] . '"class="price-post-services" id="post-service-price-' . $servicename->id . '"readonly></td>
                                                         <td> 1 </td>
                                                         <td>' . $settings->currency . ' ' . $price[$i] . '</td>
-                                                        <td><input type="number" min="0" name="discount_post_service[]" value="' . $discount_pre[$i] . '"class="discount-price-post-services" id="post-service-discount-' . $servicename->id . '-'.$service->date.'"></td>
- <td id="discount-post-'.$service->date .'-'. $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                       
+                                                        <td><input type="number" min="0" name="discount_post_service[]" value="' . $discount_pre[$i] . '"class="discount-price-post-services" id="post-service-discount-' . $servicename->id . '-' . $service->date . '"></td>
+ <td id="discount-post-' . $service->date . '-' . $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                       
 <td class="no-print" id="delete-service-post-' . $date_explode[0] . '-' . $servicename->id . '"><button type="button" class="btn btn-danger btn-xs btn_width delete_service" title=' . lang('delete') . ' data-toggle=" "data-id="' . $service->id . "**" . $service_update[$i] . '"><i class="fa fa-trash"></i></button></td>
                                                     </tr>';
                     } else {
@@ -2578,8 +2608,8 @@ class Surgery extends MX_Controller {
                                                         <td><input type="number" min="0" name="price_post_service[]" value="' . $price[$i] . '"class="price-post-services" id="post-service-price-' . $servicename->id . '"readonly></td>
                                                         <td> 1 </td>
                                                         <td>' . $settings->currency . ' ' . $price[$i] . '</td>
-                                                                 <td><input type="number" min="0" name="discount_post_service[]" value="' . $discount_pre[$i] . '"class="discount-price-post-services" id="post-service-discount-' . $servicename->id . '-'.$service->date.'"></td>
- <td id="discount-post-' .$service->date .'-'. $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                        
+                                                                 <td><input type="number" min="0" name="discount_post_service[]" value="' . $discount_pre[$i] . '"class="discount-price-post-services" id="post-service-discount-' . $servicename->id . '-' . $service->date . '"></td>
+ <td id="discount-post-' . $service->date . '-' . $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                        
 <td class="no-print" id="delete-service-post-' . $date_explode[0] . '-' . $servicename->id . '"><button type="button" class="btn btn-danger btn-xs btn_width delete_service" title=' . lang('delete') . ' data-toggle=" "data-id="' . $service->id . "**" . $service_update[$i] . '"><i class="fa fa-trash"></i></button></td>
                                                     </tr>';
                         } else {
@@ -2591,8 +2621,8 @@ class Surgery extends MX_Controller {
                                                         <td><input type="number" min="0" name="price_post_service[]" value="' . $price[$i] . '"class="price-post-services" id="post-service-price-' . $servicename->id . '"readonly></td>
                                                         <td> 1 </td>
                                                         <td>' . $settings->currency . ' ' . $price[$i] . '</td>
-                                                        <td><input type="number" min="0" name="discount_post_service[]" value="' . $discount_pre[$i] . '"class="discount-price-post-services" id="post-service-discount-' . $servicename->id . '-'.$service->date.'"></td>
-                                                        <td id="discount-post-' .$service->date .'-'. $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                      
+                                                        <td><input type="number" min="0" name="discount_post_service[]" value="' . $discount_pre[$i] . '"class="discount-price-post-services" id="post-service-discount-' . $servicename->id . '-' . $service->date . '"></td>
+                                                        <td id="discount-post-' . $service->date . '-' . $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                      
                                                         <td></td>
                                                     </tr>';
                             } else {
@@ -2603,8 +2633,8 @@ class Surgery extends MX_Controller {
                                                         <td><input type="number" min="0" name="price_post_service[]" value="' . $price[$i] . '"class="price-post-services" id="post-service-price-' . $servicename->id . '"readonly></td>
                                                         <td> 1 </td>
                                                         <td>' . $settings->currency . ' ' . $price[$i] . '</td>
-                                                       <td><input type="number" min="0" name="discount_post_service[]" value="' . $discount_pre[$i] . '"class="discount-price-post-services" id="post-service-discount-' . $servicename->id . '-'.$service->date.'"></td>
- <td id="discount-post-'.$service->date .'-'. $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                     
+                                                       <td><input type="number" min="0" name="discount_post_service[]" value="' . $discount_pre[$i] . '"class="discount-price-post-services" id="post-service-discount-' . $servicename->id . '-' . $service->date . '"></td>
+ <td id="discount-post-' . $service->date . '-' . $servicename->id . '">' . $settings->currency . ' ' . ($price[$i] - $discount_pre[$i]) . '</td>                                                     
 <td class="no-print" id="delete-service-post-' . $date_explode[0] . '-' . $servicename->id . '"><button type="button" class="btn btn-danger btn-xs btn_width delete_service" title=' . lang('delete') . ' data-toggle=" "data-id="' . $service->id . "**" . $service_update[$i] . '"><i class="fa fa-trash"></i></button></td>
                                                     </tr>';
                             }
@@ -2619,14 +2649,14 @@ class Surgery extends MX_Controller {
             $discount_total_new = '0';
             $grand_total_new = '0';
         } else {
-           
-           foreach ($services_all as $services) {
+
+            foreach ($services_all as $services) {
                 $price_u = explode("**", $services->price);
                 $discount_u = explode("**", $services->discount);
-                 $price_ups[]=array_sum($price_u);
-                 $discount_ups[]=array_sum($discount_u);
+                $price_ups[] = array_sum($price_u);
+                $discount_ups[] = array_sum($discount_u);
             }
-           
+
             $price_total = array_sum($price_ups);
             $discount_total_new = array_sum($discount_ups);
             $grand_total_new = $price_total - $discount_total_new;
@@ -2642,25 +2672,25 @@ class Surgery extends MX_Controller {
         $discount = $this->input->post('discount');
         //$discount_update = implode("**", $discount);
         $id = $this->input->post('alloted');
-         $date = $this->input->post('date');
-         $service_id=$this->input->post('service');
+        $date = $this->input->post('date');
+        $service_id = $this->input->post('service');
         //$date = date('d-m-Y', time());
         $date_exist = $this->surgery_model->getPostServicesByDate($date);
-        $service_update= explode("**", $date_exist->service);
-         $discount_update= explode("**", $date_exist->discount);
-         for($i=0;$i<count($service_update);$i++){
-             if($service_update[$i]==$service_id){
-                 $discount_new[]=$discount;
-             }else{
-                 $discount_new[]=$discount_update[$i];
-             }
-         }
-         $discount_update_new = implode("**", $discount_new);
+        $service_update = explode("**", $date_exist->service);
+        $discount_update = explode("**", $date_exist->discount);
+        for ($i = 0; $i < count($service_update); $i++) {
+            if ($service_update[$i] == $service_id) {
+                $discount_new[] = $discount;
+            } else {
+                $discount_new[] = $discount_update[$i];
+            }
+        }
+        $discount_update_new = implode("**", $discount_new);
         $data = array();
         $data = array('discount' => $discount_update_new);
         $this->surgery_model->updatePostServices($date_exist->id, $data);
         $price = $this->input->post('price');
-          $services_all = $this->surgery_model->getPostServiceBySurgeryId($date_exist->surgery_id);
+        $services_all = $this->surgery_model->getPostServiceBySurgeryId($date_exist->surgery_id);
         if (empty($services_all)) {
             $price_total = '0';
             $discount_total_new = '0';
@@ -2669,39 +2699,40 @@ class Surgery extends MX_Controller {
             foreach ($services_all as $services) {
                 $price_u = explode("**", $services->price);
                 $discount_u = explode("**", $services->discount);
-                 $price_ups[]=array_sum($price_u);
-                 $discount_ups[]=array_sum($discount_u);
+                $price_ups[] = array_sum($price_u);
+                $discount_ups[] = array_sum($discount_u);
             }
-           
+
             $price_total = array_sum($price_ups);
             $discount_total_new = array_sum($discount_ups);
             $grand_total_new = $price_total - $discount_total_new;
         }
-        $data['total'] =$price_total;
+        $data['total'] = $price_total;
         $data['discount'] = $discount_total_new;
-        $data['grand_total'] =$grand_total_new;
+        $data['grand_total'] = $grand_total_new;
 
         echo json_encode($data);
     }
-  public function createPostServiceInvoice() {
+
+    public function createPostServiceInvoice() {
         $id = $this->input->get('id');
         $service_list = $this->surgery_model->getPostServicedByIdByDate($id);
         $previous_payment_ids = $service_list->payment_id;
         if (!empty($service_list)) {
             $price = explode("**", $service_list->price);
             $services = explode("**", $service_list->service);
-             $discounts = explode("**", $service_list->discount);
+            $discounts = explode("**", $service_list->discount);
             $i = 0;
             if (!empty($service_list->payment_id)) {
-               
+
                 $paymentid = explode(",", $service_list->payment_id);
-                foreach ($paymentid as $key=>$payment) {
-                 
+                foreach ($paymentid as $key => $payment) {
+
                     $payment_details = $this->finance_model->getPaymentById($payment);
-                   // print_r($payment_details);
-                    $k=0;
+                    // print_r($payment_details);
+                    $k = 0;
                     $payment_cat = explode("#", $payment_details->category_name);
-                    foreach ($payment_cat as $key=>$pay) {
+                    foreach ($payment_cat as $key => $pay) {
                         $cat_name = explode("*", $pay);
                         //array_push($previous_invoice_service, $cat_name[0]);
                         $previous_invoice_service[$k] = $cat_name[0];
@@ -2711,24 +2742,24 @@ class Surgery extends MX_Controller {
             } else {
                 $previous_invoice_service = array();
             }
-           
+
             for ($i = 0; $i < count($services); $i++) {
                 if (!in_array($services[$i], $previous_invoice_service)) {
-                    $service_new[$i] = $services[$i] . '*' . $price[$i].'*'.$discounts[$i];
-                  //  array_push($arr['ids'], $services[$i]);
-                  $arr['ids'] = $services[$i];
+                    $service_new[$i] = $services[$i] . '*' . $price[$i] . '*' . $discounts[$i];
+                    //  array_push($arr['ids'], $services[$i]);
+                    $arr['ids'] = $services[$i];
                 }
                 //$i++;
             }
-            
+
             if (!empty($service_new)) {
                 $service_implode = implode("#", $service_new);
                 $total = array_sum($price);
-                $discount= array_sum($discounts);
-                $grand=$total-$discount;
+                $discount = array_sum($discounts);
+                $grand = $total - $discount;
                 $bed_alloted = $this->surgery_model->getSurgeryById($id);
                 $patient = $this->patient_model->getPatientById($bed_alloted->patient_id);
-               // $doctor = $this->doctor_model->getDoctorById($bed_alloted->doctor);
+                // $doctor = $this->doctor_model->getDoctorById($bed_alloted->doctor);
                 $date = time();
                 $date_string = date('d-m-Y');
                 $data = array(
@@ -2736,8 +2767,8 @@ class Surgery extends MX_Controller {
                     'patient' => $patient->id,
                     'date' => $date,
                     'amount' => $total,
-                    'discount'=>$discount,
-                   // 'doctor' => $bed_alloted->doctor,
+                    'discount' => $discount,
+                    // 'doctor' => $bed_alloted->doctor,
                     'gross_total' => $grand,
                     'status' => 'unpaid',
                     'hospital_amount' => $grand,
@@ -2746,7 +2777,7 @@ class Surgery extends MX_Controller {
                     'patient_name' => $patient->name,
                     'patient_phone' => $patient->phone,
                     'patient_address' => $patient->address,
-                   // 'doctor_name' => $doctor->name,
+                    // 'doctor_name' => $doctor->name,
                     'date_string' => $date_string,
                     'payment_from' => 'post_service'
                 );
@@ -2766,20 +2797,21 @@ class Surgery extends MX_Controller {
                 $arr['message'] = array('message' => lang('no_new_service_add'), 'title' => lang('no_new_service_add'));
             }
         } else {
-            $arr['ids'] ='1';
+            $arr['ids'] = '1';
             $arr['message'] = array('message' => lang('no_new_service_add'), 'title' => lang('no_new_service_add'));
         }
 
         echo json_encode($arr);
     }
-      function updateCheckout() {
+
+    function updateCheckout() {
         $id = $this->input->post('id');
 
         $doctor = $this->input->post('doctors_checkout');
         $surgery_id = $this->input->post('surgery_id');
-         $d_time = $this->input->post('d_time');
+        $d_time = $this->input->post('d_time');
         $type_of_admission = implode(",", $this->input->post('type_of_admission'));
-        
+
         $diagnosis_at_admission = $this->input->post('diagnosis_at_admission');
         $patient_status_at_admission_objective_admission = $this->input->post('patient_status_at_admission_objective_admission');
         $course_of_disease = $this->input->post('course_of_disease');
@@ -2788,14 +2820,14 @@ class Surgery extends MX_Controller {
         $diagnosis_at_discharge = $this->input->post('diagnosis_at_discharge');
         $result = implode(",", $this->input->post('result'));
         $therapy = $this->input->post('therapy');
-        
+
         $next_examination = $this->input->post('next_examination');
         $ability_to_work = $this->input->post('ability_to_work');
         $advises_given_to = $this->input->post('advises_given_to');
-        $hospital_name= $this->input->post('hospital_name');
+        $hospital_name = $this->input->post('hospital_name');
         $physican_name = $this->input->post('physican_name');
         $contact_no = $this->input->post('contact_no');
-        $legal_custodiam= $this->input->post('legal_custodiam');
+        $legal_custodiam = $this->input->post('legal_custodiam');
         $data = array();
         $data = array('date' => $d_time,
             'type_of_admission' => $type_of_admission,
@@ -2803,11 +2835,10 @@ class Surgery extends MX_Controller {
             'doctor' => $doctor,
             'diagnosis_at_admission' => $diagnosis_at_admission,
             'patient_status_at_admission_objective_admission' => $patient_status_at_admission_objective_admission,
-            
             'course_of_disease' => $course_of_disease,
             'laboratory_examination_results' => $laboratory_examination_results,
             'applied_therapy' => $applied_therapy,
-              'diagnosis_at_discharge' => $diagnosis_at_discharge,
+            'diagnosis_at_discharge' => $diagnosis_at_discharge,
             'result' => $result,
             'therapy' => $therapy,
             'next_examination' => $next_examination,
@@ -2816,7 +2847,7 @@ class Surgery extends MX_Controller {
             'hospital_name' => $hospital_name,
             'physican_name' => $physican_name,
             'contact_no' => $contact_no,
-            'legal_custodiam'=>$legal_custodiam,
+            'legal_custodiam' => $legal_custodiam,
         );
 
         if (!empty($id)) {
@@ -2829,13 +2860,13 @@ class Surgery extends MX_Controller {
             $data['message'] = array('message' => lang('added'), 'title' => lang('added'));
         }
         $data['checkout'] = $this->surgery_model->getCheckoutdById($inserted_id);
-      //  $checkin= $this->surgery_model->getSurgeryCheckinById($surgery_id);
-      //  $d_time_array = array();
-       // $d_time_array = explode("-", $d_time);
-      //  $d_timestamp = strtotime($d_time_array[0] . ' ' . $d_time_array[1]);
-     //   $data_update = array('d_time' => $d_time, 'd_timestamp' => $d_timestamp);
-
-      //  $this->bed_model->updateAllotment($alloted_bed_id, $data_update);
+        //  $checkin= $this->surgery_model->getSurgeryCheckinById($surgery_id);
+        //  $d_time_array = array();
+        // $d_time_array = explode("-", $d_time);
+        //  $d_timestamp = strtotime($d_time_array[0] . ' ' . $d_time_array[1]);
+        //   $data_update = array('d_time' => $d_time, 'd_timestamp' => $d_timestamp);
+        //  $this->bed_model->updateAllotment($alloted_bed_id, $data_update);
         echo json_encode($data);
     }
+
 }

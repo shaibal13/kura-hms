@@ -671,5 +671,12 @@ class Medicine_model extends CI_model {
         $query = $this->db->get('requisition');
         return $query->row();
     }
+      function getInternalMedicineByStockAlert() {
+        $this->db->where('quantity <=', '20');
+        $this->db->or_where(array('quantity' => NULL));
+        $this->db->order_by('id', 'asc');
+        $query = $this->db->get('internal_medicine');
+        return $query->result();
+    }
 
 }

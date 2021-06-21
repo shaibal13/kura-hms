@@ -1476,6 +1476,7 @@
 
                                 </ul>
                             </li>
+                             <li><a  href="finance/pharmacy/medicineRequisition"><i class="fa fa-plus-circle"></i><?php echo lang('medicine_requisition'); ?> <?php echo lang('list')?></a></li>
                             <li>
                                 <a href="medicine" >
                                     <i class="fa fa-medkit"></i>

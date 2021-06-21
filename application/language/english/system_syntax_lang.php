@@ -907,3 +907,6 @@ $lang['invoices'] = 'Invoices';
 $lang['created_by'] = 'Created By';
 $lang['medicine_requisition'] = 'Medicine Requisition';
 $lang['medicine_requisition_sent'] = 'Medicine Requisition Sent';
+$lang['requested_department'] = 'Requested Department';
+$lang['unapproved'] = 'Invoices';
+$lang['requisition_medicine_approved'] = ' Requisition Medicine Approved';

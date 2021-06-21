@@ -35,21 +35,7 @@
         }
         ?>
         <section class="">
-            <header class="panel-heading">
-                <?php echo lang('medicine_requisition'); ?>
-                 <?php   if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
-                <div class="col-md-4 no-print pull-right"> 
-                    <a href="medicine/addMedicineRequisition">
-                        <div class="btn-group pull-right">
-                            <button id="" class="btn green btn-xs">
-                                <i class="fa fa-plus-circle"></i> <?php echo lang('add'); ?>  <?php echo lang('medicine_requisition'); ?>
-                            </button>
-                        </div>
-                        
-                    </a>
-                </div>
-                 <?php } ?>
-            </header>
+          
 
 
             <style>
@@ -93,12 +79,10 @@
                             <tr>
                                 <th> # </th>
                                 <th> <?php echo lang('date'); ?> </th>
-                                <th> <?php echo lang('sub_total'); ?> </th>
-                                 <th> <?php echo lang('discount'); ?> </th>
-                                <th> <?php echo lang('grand_total'); ?> </th>
-                               <?php  if ($this->ion_auth->in_group(array('admin'))) { ?>
-                                 <th> <?php echo lang('department'); ?> </th>
-                               <?php } ?>
+                                <th> <?php echo lang('sub_total'); ?> </th>                               
+                                <th> <?php echo lang('grand_total'); ?> </th>   
+                                <th> <?php echo lang('status'); ?> </th> 
+                                 <th> <?php echo lang('requested_department'); ?> </th>                           
                                 <th class="option_th"> <?php echo lang('options'); ?> </th>
                             </tr>
                         </thead>
@@ -150,7 +134,7 @@
             "serverSide": true,
             "searchable": true,
             "ajax": {
-                url: "medicine/getRequisitionList",
+                url: "finance/pharmacy/getRequisitionList",
                 type: 'POST',
             },
             scroller: {

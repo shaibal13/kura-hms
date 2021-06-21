@@ -1249,7 +1249,7 @@ class Medicine extends MX_Controller {
 
             $qty = $value;
             $item_price[] = $unit_price * $value;
-            $category_name[] = $current_medicine->id . '*' . $unit_price . '*' . $qty . '*' . $cost . '*' . $key;
+            $category_name[] = $key . '*' . $unit_price . '*' . $qty . '*' . $cost . '*' . $key . '*' . $current_medicine->id;
         }
 
         $category_name = implode(',', $category_name);
@@ -1257,17 +1257,28 @@ class Medicine extends MX_Controller {
         $sub_total = $amount;
         if (empty($id)) {
             $date = time();
+            $date_string = date('d-m-Y', $date);
         }
         $data = array();
-        $data = array('category_name' => $category_name,
-            'amount' => $sub_total,
-            'gross_total' => $sub_total,
-            'department' => $department,
-            'department_name' => $department_name,
-            'date' => $date,
-            'date_string' => date('d-m-Y', $date),
-            'status' => 'unapproved'
-        );
+        if (empty($id)) {
+            $data = array('category_name' => $category_name,
+                'amount' => $sub_total,
+                'gross_total' => $sub_total,
+                'department' => $department,
+                'department_name' => $department_name,
+                'date' => $date,
+                'date_string' => $date_string,
+                'status' => 'unapproved'
+            );
+        } else {
+            $data = array('category_name' => $category_name,
+                'amount' => $sub_total,
+                'gross_total' => $sub_total,
+                'department' => $department,
+                'department_name' => $department_name,
+                'status' => 'unapproved'
+            );
+        }
         if (empty($id)) {
             $this->medicine_model->insertRequisition($data);
         } else {
@@ -1340,6 +1351,12 @@ class Medicine extends MX_Controller {
                     $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="medicine/deleteRequisition?id=' . $requisition->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i> ' . lang('delete') . '</a>';
                 }
             }
+            if (empty($requisition->discount)) {
+                $discount = '0';
+            } else {
+                $discount = $requisition->discount;
+            }
+
             $option3 = '<a class="btn btn-info btn-xs invoicebutton" title="' . lang('invoice') . '" style="color: #fff;" href="medicine/invoiceRequisition?id=' . $requisition->id . '"><i class="fa fa-file-invoice"></i> ' . lang('invoice') . '</a>';
 
             if ($this->ion_auth->in_group(array('admin'))) {
@@ -1347,6 +1364,7 @@ class Medicine extends MX_Controller {
                     $i,
                     $requisition->date_string,
                     $settings->currency . $requisition->amount,
+                    $settings->currency . $discount,
                     $settings->currency . $requisition->gross_total,
                     $requisition->department_name,
                     $option1 . ' ' . $option3 . ' ' . $option2
@@ -1360,6 +1378,7 @@ class Medicine extends MX_Controller {
                         $i,
                         $requisition->date_string,
                         $settings->currency . $requisition->amount,
+                        $settings->currency . $discount,
                         $settings->currency . $requisition->gross_total,
                         $option1 . ' ' . $option3 . ' ' . $option2
                     );
@@ -1393,23 +1412,45 @@ class Medicine extends MX_Controller {
         $this->session->set_flashdata('feedback', lang('deleted'));
         redirect('medicine/medicineRequisition');
     }
-    function editRequisition(){
-        $id= $this->input->get('id');
-        $data['internal_requisition']= $this->medicine_model->getRequisitionById($id);
-         if ($this->ion_auth->in_group(array('admin'))) {
+
+    function editRequisition() {
+        $id = $this->input->get('id');
+        $data['internal_requisition'] = $this->medicine_model->getRequisitionById($id);
+        if ($this->ion_auth->in_group(array('admin'))) {
 
             $data['departments'] = $this->department_model->getDepartment();
-             $data['internal_medicines'] = $this->medicine_model->getInternalMedicineByDepartment($data['internal_requisition']->department);
-        
+            $data['internal_medicines'] = $this->medicine_model->getInternalMedicineByDepartment($data['internal_requisition']->department);
         } else {
 
             $department = $this->settings_model->getUserDepartment();
             $data['internal_medicines'] = $this->medicine_model->getInternalMedicineByDepartment($department->department);
         }
         $data['settings'] = $this->settings_model->getSettings();
-       
+
         $this->load->view('home/dashboard', $data); // just the header file
         $this->load->view('add_new_medicine_requisition', $data);
+        $this->load->view('home/footer'); // just the header file
+    }
+
+    function invoiceRequisition() {
+        $id = $this->input->get('id');
+        $data['settings'] = $this->settings_model->getSettings();
+        $data['discount_type'] = $this->settings_model->getDiscountType();
+        $data['requisition'] = $this->medicine_model->getRequisitionById($id);
+        $this->load->view('home/dashboard', $data); // just the header file
+        $this->load->view('invoice_requisition', $data);
+        $this->load->view('home/footer'); // just the header file
+    }
+     public function internalMedicineStockAlert() {
+        
+        $data['medicines'] = $this->medicine_model->getInternalMedicineByStockAlert();
+        //  $data['medicines'] = $this->medicine_model->getMedicineByStockAlertByPageNumber($page_number);
+        $data['categories'] = $this->medicine_model->getInternalMedicineCategory();
+       // $data['pagee_number'] = $page_number;
+        $data['settings'] = $this->settings_model->getSettings();
+        $data['alert'] = 'Alert Stock';
+        $this->load->view('home/dashboard', $data); // just the header file
+        $this->load->view('internal_medicine_stock_alert', $data);
         $this->load->view('home/footer'); // just the header file
     }
 
