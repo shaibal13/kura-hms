@@ -1068,7 +1068,7 @@ class Pharmacy extends MX_Controller {
 
         $item_quantity_array = array();
         $item_quantity_array = array_combine($item_selected, $quantity);
-        
+
         foreach ($item_quantity_array as $key => $value) {
             $internal_medicine = $this->medicine_model->getInternalMedicineById($key);
             $current_medicine = $this->db->get_where('medicine', array('id' => $internal_medicine->medicine_id))->row();
@@ -1077,12 +1077,12 @@ class Pharmacy extends MX_Controller {
 
             $qty = $value;
             $item_price[] = $unit_price * $value;
-            $category_name[] = $key. '*' . $unit_price . '*' . $qty . '*' . $cost . '*' . $current_medicine->id ;
-             $category_name1[] = $current_medicine->id. '*' . $unit_price . '*' . $qty . '*' . $cost . '*' . $key ;
+            $category_name[] = $key . '*' . $unit_price . '*' . $qty . '*' . $cost . '*' . $current_medicine->id;
+            $category_name1[] = $current_medicine->id . '*' . $unit_price . '*' . $qty . '*' . $cost . '*' . $key;
         }
 
         $category_name = implode(',', $category_name);
-         $category_name1 = implode(',', $category_name1);
+        $category_name1 = implode(',', $category_name1);
         $amount = array_sum($item_price);
         $sub_total = $amount;
         $discount_type = $this->finance_model->getDiscountType();
@@ -1137,7 +1137,7 @@ class Pharmacy extends MX_Controller {
                 'requisition_id' => $id,
             );
         }
-       
+
         if (empty($invoice_id)) {
             $this->pharmacy_model->insertPayment($data);
             $payment_id = $this->db->insert_id();
@@ -1147,7 +1147,7 @@ class Pharmacy extends MX_Controller {
                 $previous_qty_medicine = $this->db->get_where('internal_medicine', array('id' => $key))->row();
                 $previous_qty = $this->db->get_where('medicine', array('id' => $previous_qty_medicine->medicine_id))->row()->quantity;
                 $new_qty = $previous_qty - $value;
-                $new_qty_internal=$previous_qty_medicine + $value;
+                $new_qty_internal = $previous_qty_medicine + $value;
                 $this->db->where('id', $key);
                 $this->db->update('internal_medicine', array('quantity' => $new_qty_internal));
                 $this->db->where('id', $previous_qty_medicine->medicine_id);
@@ -1168,7 +1168,7 @@ class Pharmacy extends MX_Controller {
                     if ($o_s_value[0] == $previous_qty_medicine->medicine_id) {
                         $previous_qty1 = $previous_qty + $o_s_value[2];
                         $new_qty = $previous_qty1 - $value;
-                        $new_qty_internal=$previous_qty_medicine->quantity+ $o_s_value[2]-$value;
+                        $new_qty_internal = $previous_qty_medicine->quantity + $o_s_value[2] - $value;
                         $this->db->where('id', $key);
                         $this->db->update('internal_medicine', array('quantity' => $new_qty_internal));
                         $this->db->where('id', $key);
@@ -1182,13 +1182,28 @@ class Pharmacy extends MX_Controller {
         $this->session->set_flashdata('feedback', lang('requisition_medicine_approved'));
         redirect("finance/pharmacy/medicineRequisition");
     }
-      function invoiceRequisition() {
+
+    function invoiceRequisition() {
         $id = $this->input->get('id');
         $data['settings'] = $this->settings_model->getSettings();
         $data['discount_type'] = $this->settings_model->getDiscountType();
         $data['requisition'] = $this->medicine_model->getRequisitionById($id);
         $this->load->view('home/dashboard', $data); // just the header file
         $this->load->view('pharmacy/invoice_requisition', $data);
+        $this->load->view('home/footer'); // just the header file
+    }
+
+    function inventoryReport() {
+        if ($this->ion_auth->in_group(array('Pharmacist'))) {
+            $data['inventory'] = $this->pharmacy_model->getInventory();
+        } else {
+            $user = $this->ion_auth->get_user_id();
+            $pharmacist = $this->pharmacist_model->getPharmacistByIonUserId($user);
+            $data['inventory'] = $this->pharmacy_model->getInventoryByPharmacist($pharmacist);
+        }
+        $data['settings']= $this->settings_model->getSettings();
+        $this->load->view('home/dashboard', $data); // just the header file
+        $this->load->view('pharmacy/inventory_report', $data);
         $this->load->view('home/footer'); // just the header file
     }
 

@@ -963,7 +963,7 @@
                                     <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
                                         <li><a  href="medicine/addInternalCategoryView"><i class="fa fa-plus-circle"></i><?php echo lang('add_medicine_category'); ?></a></li>
                                     <?php } ?>
-                                        <li><a  href="medicine/medicineRequisition"><i class="fa fa-plus-circle"></i><?php echo lang('medicine_requisition'); ?></a></li>
+                                    <li><a  href="medicine/medicineRequisition"><i class="fa fa-plus-circle"></i><?php echo lang('medicine_requisition'); ?></a></li>
                                     <li><a  href="medicine/internalMedicineStockAlert"><i class="fa fa-plus-circle"></i><?php echo lang('medicine_stock_alert'); ?></a></li>
 
 
@@ -1048,18 +1048,21 @@
                                             </a>
                                             <ul class="sub">
                                                 <li><a  href="finance/pharmacy/financialReport"><i class="fa fa-book"></i><?php echo lang('pharmacy'); ?> <?php echo lang('report'); ?> </a></li>
-                                                <li><a  href="finance/pharmacy/monthly"><i class="fa fa-chart-bar"></i> <?php echo lang('monthly_sales'); ?> </a></li>
-                                                <li><a  href="finance/pharmacy/daily"><i class="fa fa-chart-bar"></i> <?php echo lang('daily_sales'); ?> </a></li>
-                                                <li><a  href="finance/pharmacy/monthlyExpense"><i class="fa fa-chart-area"></i> <?php echo lang('monthly_expense'); ?> </a></li>
-                                                <li><a  href="finance/pharmacy/dailyExpense"><i class="fa fa-chart-area"></i> <?php echo lang('daily_expense'); ?> </a></li>                              
-                                            </ul>
-                                        </li> 
-                                    <?php } ?>
+                                                <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist'))){  ?>
+                                                <li><a  href="finance/pharmacy/inventoryReport"><i class="fa fa-book"></i><?php echo lang('inventory'); ?> <?php echo lang('report'); ?> </a></li>
+                                            <?php } ?>
+                                            <li><a  href="finance/pharmacy/monthly"><i class="fa fa-chart-bar"></i> <?php echo lang('monthly_sales'); ?> </a></li>
+                                            <li><a  href="finance/pharmacy/daily"><i class="fa fa-chart-bar"></i> <?php echo lang('daily_sales'); ?> </a></li>
+                                            <li><a  href="finance/pharmacy/monthlyExpense"><i class="fa fa-chart-area"></i> <?php echo lang('monthly_expense'); ?> </a></li>
+                                            <li><a  href="finance/pharmacy/dailyExpense"><i class="fa fa-chart-area"></i> <?php echo lang('daily_expense'); ?> </a></li>                              
+                                        </ul>
+                                    </li> 
+                                <?php } ?>
 
 
 
-                                </ul>
-                            </li> 
+                            </ul>
+                        </li> 
                         <?php } ?>
 
 
@@ -1392,7 +1395,7 @@
 
                         <!--
                         <?php if ($this->ion_auth->in_group('Doctor')) { ?>
-                                                                                                                                                    <li><a href="meeting/settings"><i class="fa fa-headphones"></i><?php echo lang('zoom'); ?> <?php echo lang('settings'); ?></a></li>
+                                                                                                                                                        <li><a href="meeting/settings"><i class="fa fa-headphones"></i><?php echo lang('zoom'); ?> <?php echo lang('settings'); ?></a></li>
                         <?php } ?>
                         -->
 
@@ -1471,12 +1474,12 @@
                                 <ul class="sub">
 
                                     <li><a  href="supply"><i class="fa fa-medkit"></i><?php echo lang('supply'); ?> <?php echo lang('invoices'); ?></a></li>
-                                     <li><a  href="supply/addNewSupply"><i class="fa fa-medkit"></i><?php echo lang('add'); ?> <?php echo lang('supply'); ?> <?php echo lang('medicine'); ?></a></li>
+                                    <li><a  href="supply/addNewSupply"><i class="fa fa-medkit"></i><?php echo lang('add'); ?> <?php echo lang('supply'); ?> <?php echo lang('medicine'); ?></a></li>
 
 
                                 </ul>
                             </li>
-                             <li><a  href="finance/pharmacy/medicineRequisition"><i class="fa fa-plus-circle"></i><?php echo lang('medicine_requisition'); ?> <?php echo lang('list')?></a></li>
+                            <li><a  href="finance/pharmacy/medicineRequisition"><i class="fa fa-plus-circle"></i><?php echo lang('medicine_requisition'); ?> <?php echo lang('list') ?></a></li>
                             <li>
                                 <a href="medicine" >
                                     <i class="fa fa-medkit"></i>

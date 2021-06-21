@@ -557,5 +557,17 @@ class Pharmacy_model extends CI_model {
 
         return $total;
     }
+    function getInventory() {
+        $this->db->order_by('id', 'desc');
+        $query = $this->db->get('inventory_report');
+        return $query->result();
+    }
+    function getInventoryByPharmacist($pharmacist) {
+        $this->db->order_by('id', 'desc');
+        $this->db->where('pharmacist',$pharmacist);
+        $query = $this->db->get('inventory_report');
+        return $query->result();
+    }
+
 
 }
