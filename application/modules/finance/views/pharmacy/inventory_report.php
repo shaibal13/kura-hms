@@ -7,8 +7,10 @@
         <section class="panel">
             <header class="panel-heading">
                 <?php echo lang('inventory'); ?> <?php echo lang('report'); ?>
+               
 
             </header>
+             <?php if ($this->ion_auth->in_group(array('Pharmacist'))){  ?>
             <div class="col-md-12">
                 <div class="col-md-12 row">
                     <section>
@@ -36,13 +38,14 @@
 
 
                                 <div class="col-md-2 no-print" style="margin-top: 6px;">
-                                    <button type="submit" name="submit" class="btn btn-info range_submit"><?php echo lang('submit'); ?></button>
+                                    <button type="submit" name="submit" class="btn btn-info range_submit"><?php echo lang('create'); ?></button>
                                 </div>
                             </div>
                         </form>
                     </section>
                 </div>
             </div>
+            <?php } ?>
             <div class="panel-body">
                 <div class="adv-table editable-table ">
 
@@ -60,8 +63,23 @@
                             </tr>
                         </thead>
                         <tbody>
-                          
-
+                            <?php foreach ($inventory as $inventories) { ?>
+                            
+                            <tr>
+                                <td><?php echo $inventories->date; ?></td>
+                                <td><?php echo $inventories->title; ?></td>
+                                <td><?php echo $inventories->description; ?></td>
+                                <td><?php  if ($this->ion_auth->in_group(array('admin'))) { ?>
+                                     <a class="btn btn-info btn-xs btn_width editbutton" href="finance/pharmacy/editInventory?id=<?php echo $inventories->id; ?>" ><i class="fa fa-edit"> <?php echo lang('edit'); ?></i></a>
+                                <?php } ?>
+                                      <a class="btn btn-success btn-xs btn_width" href="finance/pharmacy/viewInventory?id=<?php echo $inventories->id; ?>" ><i class="fa fa-info"> <?php echo lang('view'); ?></i></a>
+                                       <a class="btn btn-primary btn-xs btn_width" href="finance/pharmacy/compareInventory?id=<?php echo $inventories->id; ?>" ><i class="fa fa-abacus"> <?php echo lang('compare'); ?></i></a>
+                                     <?php  if ($this->ion_auth->in_group(array('admin'))) { ?>
+                                     <a class="btn btn-info btn-xs btn_width delete_button" href="finance/pharmacy/deleteInventory?id=<?php echo $inventories->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"> <?php echo lang('delete'); ?></i></a>
+                                <?php } ?>
+                                </td>
+                            </tr>
+                            <?php } ?>
                         </tbody>
 
                         <tfoot>

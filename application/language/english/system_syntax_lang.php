@@ -912,3 +912,7 @@ $lang['unapproved'] = 'Unapproved';
 $lang['approved'] = 'Approved';
 $lang['requisition_medicine_approved'] = ' Requisition Medicine Approved';
 $lang['inventory'] = 'Inventory';
+$lang['compare'] = 'Compare';
+$lang['registered_quantity'] = 'Regiistered Quantity';
+$lang['current_quantity'] = 'Current Quantity';
+$lang['difference'] = 'Difference';

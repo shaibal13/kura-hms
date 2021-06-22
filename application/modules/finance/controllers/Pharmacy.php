@@ -12,6 +12,8 @@ class Pharmacy extends MX_Controller {
         $this->load->model('settings/settings_model');
         $this->load->model('department/department_model');
         $this->load->model('finance/finance_model');
+        $this->load->model('pharmacist/pharmacist_model');
+        $this->load->library("excel");
         $data['settings'] = $this->settings_model->getSettings();
         $group_permission = $this->ion_auth->get_users_groups()->row();
 
@@ -1194,29 +1196,99 @@ class Pharmacy extends MX_Controller {
     }
 
     function inventoryReport() {
-        if ($this->ion_auth->in_group(array('Pharmacist'))) {
+        if ($this->ion_auth->in_group(array('admin'))) {
             $data['inventory'] = $this->pharmacy_model->getInventory();
         } else {
             $user = $this->ion_auth->get_user_id();
             $pharmacist = $this->pharmacist_model->getPharmacistByIonUserId($user);
-            $data['inventory'] = $this->pharmacy_model->getInventoryByPharmacist($pharmacist);
+            $data['inventory'] = $this->pharmacy_model->getInventoryByPharmacist($pharmacist->id);
         }
-        $data['settings']= $this->settings_model->getSettings();
+        $data['settings'] = $this->settings_model->getSettings();
         $this->load->view('home/dashboard', $data); // just the header file
         $this->load->view('pharmacy/inventory_report', $data);
         $this->load->view('home/footer'); // just the header file
     }
-    function addInventoryReport(){
-        $data['date']= $this->input->post('date');
-        $data['title']= $this->input->post('title');
-         $data['description']= $this->input->post('description');
-        $user= $this->ion_auth->get_user_id();
-        $data['pharmacist']= $this->pharmacist_model->getPharmacistByIonUserId($user);
-        $data['medicine']= $this->medicine_model->getMedicineByPharmacist( $data['pharmacist']->id);
+
+    function addInventoryReport() {
+        $data['date'] = $this->input->post('date');
+        $data['title'] = $this->input->post('title');
+        $data['description'] = $this->input->post('description');
+        $user = $this->ion_auth->get_user_id();
+        $data['pharmacist'] = $this->pharmacist_model->getPharmacistByIonUserId($user);
+        $data['medicines'] = $this->medicine_model->getMedicineByPharmacist($data['pharmacist']->id);
+        // print_r($data);
+        //die();
         $this->load->view('home/dashboard', $data); // just the header file
-        $this->load->view('pharmacy/inventory_report_view', $data);
+        $this->load->view('pharmacy/add_inventory_report_view', $data);
         $this->load->view('home/footer'); // just the header file
-        
+    }
+
+    function addInventoryReportExcel() {
+        $ids = $this->input->post('id');
+        $inventory_id = $this->input->post('inventory_id');
+        $quantity = $this->input->post('quantity');
+        $items = array();
+        $items = array_combine($ids, $quantity);
+        foreach ($items as $key => $value) {
+            $item_list[] = $key . '**' . $value;
+        }
+        $item = implode(",", $item_list);
+        $title = $this->input->post('title');
+        $date = $this->input->post('date');
+        $description = $this->input->post('description');
+        $user = $this->ion_auth->get_user_id();
+        $pharmacist = $this->pharmacist_model->getPharmacistByIonUserId($user);
+        $data = array();
+        $data = array(
+            'date' => $date,
+            'description' => $description,
+            'title' => $title,
+            'pharmacist' => $pharmacist->id,
+            'pharmacist_name' => $pharmacist->name,
+            'item' => $item
+        );
+        if (empty($inventory_id)) {
+            $this->pharmacy_model->insertInventory($data);
+            $this->session->set_flashdata('feedback', lang('added'));
+        } else {
+            $this->pharmacy_model->updateInventory($inventory_id, $data);
+            $this->session->set_flashdata('feedback', lang('updated'));
+        }
+        redirect("finance/pharmacy/inventoryReport");
+    }
+
+    function viewInventory() {
+        $id = $this->input->get('id');
+        $data['text'] = 'view';
+        $data['inventories'] = $this->pharmacy_model->getInventoryById($id);
+        $this->load->view('home/dashboard', $data); // just the header file
+        $this->load->view('pharmacy/view_inventory_report', $data);
+        $this->load->view('home/footer'); // just the header file
+    }
+
+    function compareInventory() {
+        $id = $this->input->get('id');
+        $data['text'] = 'compare';
+        $data['inventories'] = $this->pharmacy_model->getInventoryById($id);
+        $this->load->view('home/dashboard', $data); // just the header file
+        $this->load->view('pharmacy/view_inventory_report', $data);
+        $this->load->view('home/footer'); // just the header file
+    }
+
+    function deleteInventory() {
+        $id = $this->input->get('id');
+        $this->pharmacy_model->deleteInventory($id);
+        $this->session->set_flashdata('feedback', lang('deleted'));
+        redirect("finance/pharmacy/inventoryReport");
+    }
+
+    function editInventory() {
+        $id = $this->input->get('id');
+
+        $data['inventories'] = $this->pharmacy_model->getInventoryById($id);
+        $this->load->view('home/dashboard', $data); // just the header file
+        $this->load->view('pharmacy/edit_inventory_view', $data);
+        $this->load->view('home/footer'); // just the header file
     }
 
 }

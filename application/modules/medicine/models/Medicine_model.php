@@ -681,7 +681,7 @@ class Medicine_model extends CI_model {
      function getMedicineByPharmacist($id) {
         $this->db->where('pharmacist', $id);
         $query = $this->db->get('medicine');
-        return $query->row();
+        return $query->result();
     }
 
 
