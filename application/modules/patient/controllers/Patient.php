@@ -14,7 +14,7 @@ class Patient extends MX_Controller {
         $this->load->model('lab/lab_model');
         $this->load->model('packages/packages_model');
         $this->load->model('pcategory/pcategory_model');
-           $this->load->model('category/category_model');
+        $this->load->model('category/category_model');
         $this->load->model('finance/finance_model');
         $this->load->model('finance/pharmacy_model');
         $this->load->model('sms/sms_model');
@@ -23,8 +23,9 @@ class Patient extends MX_Controller {
         require APPPATH . 'third_party/stripe/stripe-php/init.php';
         $this->load->model('medicine/medicine_model');
         $this->load->model('doctor/doctor_model');
-            $this->load->model('surgery/surgery_model');
+        $this->load->model('surgery/surgery_model');
         $this->load->model('pgateway/pgateway_model');
+        $this->load->model('log/log_model');
         $this->load->module('paypal');
 
         $group_permission = $this->ion_auth->get_users_groups()->row();
@@ -240,6 +241,7 @@ class Patient extends MX_Controller {
                     $patient_user_id = $this->db->get_where('patient', array('email' => $email))->row()->id;
                     $id_info = array('ion_user_id' => $ion_user_id);
                     $this->patient_model->updatePatient($patient_user_id, $id_info);
+                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Patient', $patient_user_id);
 //sms
                     $set['settings'] = $this->settings_model->getSettings();
                     $autosms = $this->sms_model->getAutoSmsByType('patient');
@@ -321,6 +323,7 @@ class Patient extends MX_Controller {
                 } else {
                     $password = $this->ion_auth_model->hash_password($password);
                 }
+              //  $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Edit Patient', $id);
                 $this->patient_model->updateIonUser($username, $email, $password, $ion_user_id);
                 $this->patient_model->updatePatient($id, $data);
                 $this->session->set_flashdata('feedback', lang('updated'));
@@ -567,13 +570,13 @@ class Patient extends MX_Controller {
         $payment_id = $this->input->post('payment_id');
         $date = time();
         $remarks = $this->input->post('remarks');
-      /*  $payment_details = $this->finance_model->getPaymentById($payment_id);
-        if ($payment_details->payment_from == 'bed' || $payment_details->payment_from == 'bed_service') {
-            if (empty($payment_details->remarks)) {
-                $data_payment = array('remarks' => $remarks);
-                $this->finance_model->updatePayment($payment_id, $data_payment);
-            }
-        }*/
+        /*  $payment_details = $this->finance_model->getPaymentById($payment_id);
+          if ($payment_details->payment_from == 'bed' || $payment_details->payment_from == 'bed_service') {
+          if (empty($payment_details->remarks)) {
+          $data_payment = array('remarks' => $remarks);
+          $this->finance_model->updatePayment($payment_id, $data_payment);
+          }
+          } */
         $deposited_amount = $this->input->post('deposited_amount');
 
         $deposit_type = $this->input->post('deposit_type');
@@ -928,7 +931,7 @@ class Patient extends MX_Controller {
                 $data_case['status'] = 'unpaid';
                 //  $data_case['case_status'] = $status;
                 $data_case['date'] = time();
-                 $data_case['date_string'] = date('d-m-Y');
+                $data_case['date_string'] = date('d-m-Y');
 
                 $this->patient_model->insertMedicalHistory($data);
                 $inserted_id_medical = $this->db->insert_id('medical_history');
@@ -1410,16 +1413,16 @@ class Patient extends MX_Controller {
         }
         $data['packages'] = $this->packages_model->getPackages();
         $data['payment_category'] = $this->finance_model->getPaymentCategory();
-        $data['categories_pay']= $this->category_model->getCategory();
-        $cat_update='';
-        foreach ( $data['categories_pay'] as $cat){
-            $cat_name= strtolower($cat->name);
-            if($cat_name=='surgery'){
-                $cat_update=$cat->name;
+        $data['categories_pay'] = $this->category_model->getCategory();
+        $cat_update = '';
+        foreach ($data['categories_pay'] as $cat) {
+            $cat_name = strtolower($cat->name);
+            if ($cat_name == 'surgery') {
+                $cat_update = $cat->name;
             }
         }
-        if(!empty($cat_update)){
-         $data['surgery_category'] = $this->finance_model->getPaymentCategoryBySurgery($cat_update);
+        if (!empty($cat_update)) {
+            $data['surgery_category'] = $this->finance_model->getPaymentCategoryBySurgery($cat_update);
         }
         $data['surgeries'] = $this->surgery_model->getSurgery();
         $this->load->view('home/dashboard'); // just the header file
@@ -1622,6 +1625,7 @@ class Patient extends MX_Controller {
         $this->db->where('id', $ion_user_id);
         $this->db->delete('users');
         $this->patient_model->delete($id);
+        $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Delete Patient', $id);
         $this->session->set_flashdata('feedback', lang('deleted'));
         redirect('patient');
     }
@@ -2758,18 +2762,18 @@ class Patient extends MX_Controller {
         $package = $this->input->get('package');
         $medical_analysis_details = $this->finance_model->getPaymentCategoryById($medical_analysis);
         $packages = $this->packages_model->getPackagesById($package);
-        $option2=$option5=" ";
+        $option2 = $option5 = " ";
 //$category = $this->category_model->getCategoryById($medical_analysis_details->type);
         $option4 = '<select class="form-control js-example-basic-single" name="done[]"><option value="done">Done</option><option value="undone">Undone</option></select>';
         $option3 = '<input type="text" class="form-control  default-date-picker" name="date_to_done[]"  readonly>';
         if (!empty($medical_analysis_details) && $this->ion_auth->in_group(array('admin'))) {
             $option2 = '<button class="btn btn-info btn-xs btn_width delete_button" id="td-med-' . $medical_analysis_details->id . '"><i class="fa fa-trash"> </i></button>';
         }
-        if (!empty($packages)&& $this->ion_auth->in_group(array('admin'))) {
+        if (!empty($packages) && $this->ion_auth->in_group(array('admin'))) {
             $option5 = '<button class="btn btn-info btn-xs btn_width delete_button" id="td-pack-' . $packages->id . '"><i class="fa fa-trash"> </i></button>';
         }
         $option = '';
-        if (!empty($medical_analysis_details) ) {
+        if (!empty($medical_analysis_details)) {
             $option .= '<tr class="proccedure" id="tr-med-' . $medical_analysis_details->id . '"><td><input type="hidden" name="type_id[]" id="input_id-med-' . $medical_analysis_details->id . '" value="' . $medical_analysis_details->id . '" readonly><input type="text" class="input-category" name="type[]" id="input-med-' . $medical_analysis_details->id . '" value="' . $medical_analysis_details->category . '"readonly></td><td>' . lang('medical_analysis') . ' <input type="hidden" name="from[]" class="from_where" value="Medical Analysis"></td><td><input class="price-indivudual" type="text" name="price[]" style="width:100px;" id="price-' . $medical_analysis_details->id . '" value="' . $medical_analysis_details->c_price . '" ></td><td>' . $option3 . '</td><td>' . $option4 . '</td><td>' . $option2 . '</td></tr>';
         }
         if (!empty($packages)) {

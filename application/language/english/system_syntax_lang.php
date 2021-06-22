@@ -916,3 +916,4 @@ $lang['compare'] = 'Compare';
 $lang['registered_quantity'] = 'Regiistered Quantity';
 $lang['current_quantity'] = 'Current Quantity';
 $lang['difference'] = 'Difference';
+$lang['log'] = 'Log';

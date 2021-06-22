@@ -1048,21 +1048,21 @@
                                             </a>
                                             <ul class="sub">
                                                 <li><a  href="finance/pharmacy/financialReport"><i class="fa fa-book"></i><?php echo lang('pharmacy'); ?> <?php echo lang('report'); ?> </a></li>
-                                                <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist'))){  ?>
-                                                <li><a  href="finance/pharmacy/inventoryReport"><i class="fa fa-book"></i><?php echo lang('inventory'); ?> <?php echo lang('report'); ?> </a></li>
-                                            <?php } ?>
-                                            <li><a  href="finance/pharmacy/monthly"><i class="fa fa-chart-bar"></i> <?php echo lang('monthly_sales'); ?> </a></li>
-                                            <li><a  href="finance/pharmacy/daily"><i class="fa fa-chart-bar"></i> <?php echo lang('daily_sales'); ?> </a></li>
-                                            <li><a  href="finance/pharmacy/monthlyExpense"><i class="fa fa-chart-area"></i> <?php echo lang('monthly_expense'); ?> </a></li>
-                                            <li><a  href="finance/pharmacy/dailyExpense"><i class="fa fa-chart-area"></i> <?php echo lang('daily_expense'); ?> </a></li>                              
-                                        </ul>
-                                    </li> 
-                                <?php } ?>
+                                                <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist'))) { ?>
+                                                    <li><a  href="finance/pharmacy/inventoryReport"><i class="fa fa-book"></i><?php echo lang('inventory'); ?> <?php echo lang('report'); ?> </a></li>
+                                                <?php } ?>
+                                                <li><a  href="finance/pharmacy/monthly"><i class="fa fa-chart-bar"></i> <?php echo lang('monthly_sales'); ?> </a></li>
+                                                <li><a  href="finance/pharmacy/daily"><i class="fa fa-chart-bar"></i> <?php echo lang('daily_sales'); ?> </a></li>
+                                                <li><a  href="finance/pharmacy/monthlyExpense"><i class="fa fa-chart-area"></i> <?php echo lang('monthly_expense'); ?> </a></li>
+                                                <li><a  href="finance/pharmacy/dailyExpense"><i class="fa fa-chart-area"></i> <?php echo lang('daily_expense'); ?> </a></li>                              
+                                            </ul>
+                                        </li> 
+                                    <?php } ?>
 
 
 
-                            </ul>
-                        </li> 
+                                </ul>
+                            </li> 
                         <?php } ?>
 
 
@@ -1395,7 +1395,7 @@
 
                         <!--
                         <?php if ($this->ion_auth->in_group('Doctor')) { ?>
-                                                                                                                                                        <li><a href="meeting/settings"><i class="fa fa-headphones"></i><?php echo lang('zoom'); ?> <?php echo lang('settings'); ?></a></li>
+                                                                                                                                                            <li><a href="meeting/settings"><i class="fa fa-headphones"></i><?php echo lang('zoom'); ?> <?php echo lang('settings'); ?></a></li>
                         <?php } ?>
                         -->
 
@@ -1625,8 +1625,15 @@
                             </li> 
                         <?php } ?> 
 
+                        <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
 
-
+                            <li>
+                                <a href="log" >
+                                    <i class="fa fa-history"></i>
+                                    <span> <?php echo lang('log'); ?> </span>
+                                </a>
+                            </li>
+                        <?php } ?>
                         <li>
                             <a href="profile" >
                                 <i class="fa fa-user"></i>
