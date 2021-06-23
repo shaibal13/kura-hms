@@ -201,6 +201,7 @@ class Finance extends MX_Controller {
                     $this->patient_model->insertPatient($data_p);
                     $patient_user_id = $this->db->get_where('patient', array('email' => $p_email))->row()->id;
                     $id_info = array('ion_user_id' => $ion_user_id);
+                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Patient', $patient_user_id);
                     $this->patient_model->updatePatient($patient_user_id, $id_info);
                 }
 //    }
@@ -331,7 +332,7 @@ class Finance extends MX_Controller {
 
                 $this->finance_model->insertPayment($data);
                 $inserted_id = $this->db->insert_id();
-                $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Financial Invoice ', $inserted_id);
+                $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Invoice ', $inserted_id);
                 $dataupdate = array(
                     'patient' => $patient,
                     'amount_received' => $amount_received
@@ -375,10 +376,7 @@ class Finance extends MX_Controller {
                             'user' => $user,
                             'cardholdername' => $cardHoldername
                         );
-                        //    $data_payments['all_details'] = $all_details;
-                        //    $this->load->view('home/dashboard'); // just the header file
-                        //    $this->load->view('paypal/confirmation', $data_payments);
-                        //    $this->load->view('home/footer'); // just the header file
+
                         if ($amount_received > 0) {
 
                             $this->smsAndEmail($dataupdate);
@@ -413,7 +411,7 @@ class Finance extends MX_Controller {
                                 $this->smsAndEmail($dataupdate);
                             }
                             $this->finance_model->insertDeposit($data1);
-                              $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
+                            $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
                             $data_payment = array('amount_received' => $amount_received, 'deposit_type' => $deposit_type);
                             $this->finance_model->updatePayment($inserted_id, $data_payment);
                         } else {
@@ -578,7 +576,9 @@ class Finance extends MX_Controller {
                         'payment_from' => 'payment'
                     );
                     $this->finance_model->insertDeposit($data1);
-                       $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
+                    if ($amount_received > 0) {
+                        $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
+                    }
                     $data_payment = array('amount_received' => $amount_received, 'deposit_type' => $deposit_type);
                     $this->finance_model->updatePayment($inserted_id, $data_payment);
 
@@ -1577,7 +1577,7 @@ class Finance extends MX_Controller {
                                 'remarks' => $remarks
                             );
                             $this->finance_model->insertDeposit($data1);
-                              $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
+                            $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
                             $this->session->set_flashdata('feedback', 'Added');
                             if ($this->ion_auth->in_group(array('Patient'))) {
                                 redirect('patient/myPaymentHistory');
@@ -1632,7 +1632,7 @@ class Finance extends MX_Controller {
                                 'remarks' => $remarks
                             );
                             $this->finance_model->insertDeposit($data1);
-                              $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
+                            $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
                             $this->session->set_flashdata('feedback', lang('added'));
                             redirect('finance/patientPaymentHistory?patient=' . $patient);
                         } else {

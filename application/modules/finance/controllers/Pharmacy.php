@@ -13,6 +13,7 @@ class Pharmacy extends MX_Controller {
         $this->load->model('department/department_model');
         $this->load->model('finance/finance_model');
         $this->load->model('pharmacist/pharmacist_model');
+        $this->load->model('log/log_model');
         $this->load->library("excel");
         $data['settings'] = $this->settings_model->getSettings();
         $group_permission = $this->ion_auth->get_users_groups()->row();
@@ -250,6 +251,7 @@ class Pharmacy extends MX_Controller {
                 );
                 $this->pharmacy_model->insertPayment($data);
                 $inserted_id = $this->db->insert_id();
+                $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Pharmacy Invoice', $inserted_id);
                 foreach ($item_quantity_array as $key => $value) {
                     $previous_qty = $this->db->get_where('medicine', array('id' => $key))->row()->quantity;
                     $new_qty = $previous_qty - $value;
@@ -286,6 +288,7 @@ class Pharmacy extends MX_Controller {
                     }
                 }
                 $this->pharmacy_model->updatePayment($id, $data);
+                $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Edited Pharmacy Invoice', $id);
                 $this->session->set_flashdata('feedback', lang('updated'));
                 redirect("finance/pharmacy/invoice?id=" . "$id");
             }
@@ -326,6 +329,7 @@ class Pharmacy extends MX_Controller {
             }
 
             $this->pharmacy_model->deletePayment($id);
+            $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Deleted Pharmacy Invoice', $id);
             $this->session->set_flashdata('feedback', lang('deleted'));
             redirect('finance/pharmacy/payment');
         }
@@ -1143,6 +1147,7 @@ class Pharmacy extends MX_Controller {
         if (empty($invoice_id)) {
             $this->pharmacy_model->insertPayment($data);
             $payment_id = $this->db->insert_id();
+            $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Pharmacy Invoice', $payment_id);
             $data_requisition['invoice_id'] = $payment_id;
             $this->medicine_model->updateRequisition($id, $data_requisition);
             foreach ($item_quantity_array as $key => $value) {
@@ -1179,6 +1184,7 @@ class Pharmacy extends MX_Controller {
                 }
             }
             $this->pharmacy_model->updatePayment($invoice_id, $data);
+            $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Edit Pharmacy Invoice', $invoice_id);
         }
 
         $this->session->set_flashdata('feedback', lang('requisition_medicine_approved'));
