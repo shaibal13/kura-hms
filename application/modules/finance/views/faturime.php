@@ -379,6 +379,207 @@
                                                                     <?php
                                                                 }
                                                             }
+                                                        } elseif ($payment->payment_from == 'bed' || $payment->payment_from == 'pre_surgery_medicine' || $payment->payment_from == 'post_surgery_medicine') {
+                                                            $payment_cat = explode("#", $payment->category_name);
+                                                            $pay_final = array();
+                                                            foreach ($payment_cat as $value) {
+                                                                $pay = array();
+                                                                $pay = explode("*", $value);
+                                                                $department_id=$this->db->get_where('internal_medicine',array('id'=>$pay[0]))->row();
+                                                                if ($department_id->department == $department_choose) {
+
+                                                                        $pay_final[] = '1';
+                                                                    }
+                                                              
+                                                            }
+
+                                                            if (in_array("1", $pay_final)) {
+                                                                if ($status == 'paid') {
+                                                                    if ($payment->gross_total - $this->finance_model->getDepositAmountByPaymentId($payment->id) == 0) {
+                                                                        ?>
+                                                                        <tr>
+                                                                            <td><a class="" title="<?php echo lang('invoice'); ?> " href="finance/invoice?id=<?php echo $payment->id; ?>"target="_blank"> <?php echo $payment->id ;?></a></td>
+                                                                            <td><?php
+                                                                                $patient_info = $this->db->get_where('patient', array('id' => $payment->patient))->row();
+                                                                                if (!empty($patient_info)) {
+                                                                                    $patient_details = $patient_info->name . '</br>' . $patient_info->address . '</br>' . $patient_info->phone . '</br>';
+                                                                                } else {
+                                                                                    $patient_details = ' ';
+                                                                                }
+                                                                                echo $patient_details;
+                                                                                ?></td>
+                                                                            <td><?php echo date('d-m-y', $payment->date); ?></td>
+                                                                            <td><?php
+                                                                                if ($payment->payment_from == 'case') {
+                                                                                    $from = lang('case');
+                                                                                } elseif ($payment->payment_from == 'pre_service') {
+                                                                                    $from = lang('pre_surgery') . ' ' . lang('service');
+                                                                                } elseif ($payment->payment_from == 'post_service') {
+                                                                                    $from = lang('post_surgery') . ' ' . lang('service');
+                                                                                } elseif ($payment->payment_from == 'surgery') {
+                                                                                    $from = lang('surgery');
+                                                                                } elseif ($payment->payment_from == 'pre_surgery_medical_analysis') {
+                                                                                    $from = lang('pre_surgery') . ' ' . lang('medical_analysis');
+                                                                                } elseif ($payment->payment_from == 'post_surgery_medical_analysis') {
+                                                                                    $from = lang('post_surgery') . ' ' . lang('medical_analysis');
+                                                                                } elseif ($payment->payment_from == 'pre_surgery_medicine') {
+                                                                                    $from = lang('pre_surgery') . ' ' . lang('medicine');
+                                                                                } elseif ($payment->payment_from == 'post_surgery_medicine') {
+                                                                                    $from = lang('post_surgery') . ' ' . lang('medicine');
+                                                                                }elseif ($payment->payment_from == 'bed') {
+                                                                                    $from = lang('bed') . ' ' . lang('medicine');
+                                                                                }
+                                                                                echo $from;
+                                                                                ?></td>
+                                                                            <td><?php
+                                                                                $amount[] = $payment->amount;
+                                                                                echo $settings->currency . ' ' . $payment->amount;
+                                                                                ?></td>
+                                                                            <td><?php
+                                                                                $discount = $payment->discount;
+                                                                                if (empty($discount)) {
+                                                                                    $discount = 0;
+                                                                                }
+                                                                                $discount_up[] = $payment->discount;
+                                                                                echo $settings->currency . ' ' . $discount;
+                                                                                ?></td>
+                                                                            <td><?php
+                                                                                $gross[] = $payment->gross_total;
+                                                                                echo $settings->currency . ' ' . $payment->gross_total;
+                                                                                ?></td>
+                                                                            <td><?php
+                                                                                $deposit[] = $this->finance_model->getDepositAmountByPaymentId($payment->id);
+                                                                                echo $settings->currency . ' ' . $this->finance_model->getDepositAmountByPaymentId($payment->id);
+                                                                                ?></td>
+                                                                            <td><?php echo $settings->currency . ' ' . ($payment->gross_total - $this->finance_model->getDepositAmountByPaymentId($payment->id)); ?></td>
+
+                                                                        </tr>
+                                                                        <?php
+                                                                    }
+                                                                } elseif ($status == 'unpaid') {
+                                                                    if ($payment->gross_total - $this->finance_model->getDepositAmountByPaymentId($payment->id) > 0) {
+                                                                        ?>
+                                                                        <tr>
+                                                                             <td><a class="" title="<?php echo lang('invoice'); ?> " href="finance/invoice?id=<?php echo $payment->id; ?>"target="_blank"> <?php echo $payment->id ;?></a></td>
+                                                                            <td><?php
+                                                                                $patient_info = $this->db->get_where('patient', array('id' => $payment->patient))->row();
+                                                                                if (!empty($patient_info)) {
+                                                                                    $patient_details = $patient_info->name . '</br>' . $patient_info->address . '</br>' . $patient_info->phone . '</br>';
+                                                                                } else {
+                                                                                    $patient_details = ' ';
+                                                                                }
+                                                                                echo $patient_details;
+                                                                                ?></td>
+                                                                            <td><?php echo date('d-m-y', $payment->date); ?></td>
+                                                                            <td><?php
+                                                                                if ($payment->payment_from == 'case') {
+                                                                                    $from = lang('case');
+                                                                                } elseif ($payment->payment_from == 'pre_service') {
+                                                                                    $from = lang('pre_surgery') . ' ' . lang('service');
+                                                                                } elseif ($payment->payment_from == 'post_service') {
+                                                                                    $from = lang('post_surgery') . ' ' . lang('service');
+                                                                                } elseif ($payment->payment_from == 'surgery') {
+                                                                                    $from = lang('surgery');
+                                                                                } elseif ($payment->payment_from == 'pre_surgery_medical_analysis') {
+                                                                                    $from = lang('pre_surgery') . ' ' . lang('medical_analysis');
+                                                                                } elseif ($payment->payment_from == 'post_surgery_medical_analysis') {
+                                                                                    $from = lang('post_surgery') . ' ' . lang('medical_analysis');
+                                                                                } elseif ($payment->payment_from == 'pre_surgery_medicine') {
+                                                                                    $from = lang('pre_surgery') . ' ' . lang('medicine');
+                                                                                } elseif ($payment->payment_from == 'post_surgery_medicine') {
+                                                                                    $from = lang('post_surgery') . ' ' . lang('medicine');
+                                                                                }elseif ($payment->payment_from == 'bed') {
+                                                                                    $from = lang('bed') . ' ' . lang('medicine');
+                                                                                }
+                                                                                echo $from;
+                                                                                ?></td>
+                                                                            <td><?php
+                                                                                $amount[] = $payment->amount;
+                                                                                echo $settings->currency . ' ' . $payment->amount;
+                                                                                ?></td>
+                                                                            <td><?php
+                                                                                $discount = $payment->discount;
+                                                                                if (empty($discount)) {
+                                                                                    $discount = 0;
+                                                                                }
+                                                                                $discount_up[] = $payment->discount;
+                                                                                echo $settings->currency . ' ' . $discount;
+                                                                                ?></td>
+                                                                            <td><?php
+                                                                                $gross[] = $payment->gross_total;
+                                                                                echo $settings->currency . ' ' . $payment->gross_total;
+                                                                                ?></td>
+                                                                            <td><?php
+                                                                                $deposit[] = $this->finance_model->getDepositAmountByPaymentId($payment->id);
+                                                                                echo $settings->currency . ' ' . $this->finance_model->getDepositAmountByPaymentId($payment->id);
+                                                                                ?></td>
+                                                                            <td><?php echo $settings->currency . ' ' . ($payment->gross_total - $this->finance_model->getDepositAmountByPaymentId($payment->id)); ?></td>
+
+                                                                        </tr>
+                                                                        <?php
+                                                                    }
+                                                                } else {
+                                                                    ?>
+                                                                    <tr>
+                                                                         <td><a class="" title="<?php echo lang('invoice'); ?> " href="finance/invoice?id=<?php echo $payment->id; ?>"target="_blank"> <?php echo $payment->id ;?></a></td>
+                                                                        <td><?php
+                                                                            $patient_info = $this->db->get_where('patient', array('id' => $payment->patient))->row();
+                                                                            if (!empty($patient_info)) {
+                                                                                $patient_details = $patient_info->name . '</br>' . $patient_info->address . '</br>' . $patient_info->phone . '</br>';
+                                                                            } else {
+                                                                                $patient_details = ' ';
+                                                                            }
+                                                                            echo $patient_details;
+                                                                            ?></td>
+                                                                        <td><?php echo date('d-m-y', $payment->date); ?></td>
+                                                                        <td><?php
+                                                                            if ($payment->payment_from == 'case') {
+                                                                                $from = lang('case');
+                                                                            } elseif ($payment->payment_from == 'pre_service') {
+                                                                                $from = lang('pre_surgery') . ' ' . lang('service');
+                                                                            } elseif ($payment->payment_from == 'post_service') {
+                                                                                $from = lang('post_surgery') . ' ' . lang('service');
+                                                                            } elseif ($payment->payment_from == 'surgery') {
+                                                                                $from = lang('surgery');
+                                                                            } elseif ($payment->payment_from == 'pre_surgery_medical_analysis') {
+                                                                                $from = lang('pre_surgery') . ' ' . lang('medical_analysis');
+                                                                            } elseif ($payment->payment_from == 'post_surgery_medical_analysis') {
+                                                                                $from = lang('post_surgery') . ' ' . lang('medical_analysis');
+                                                                            } elseif ($payment->payment_from == 'pre_surgery_medicine') {
+                                                                                $from = lang('pre_surgery') . ' ' . lang('medicine');
+                                                                            } elseif ($payment->payment_from == 'post_surgery_medicine') {
+                                                                                $from = lang('post_surgery') . ' ' . lang('medicine');
+                                                                            }elseif ($payment->payment_from == 'bed') {
+                                                                                    $from = lang('bed') . ' ' . lang('medicine');
+                                                                                }
+                                                                            echo $from;
+                                                                            ?></td>
+                                                                        <td><?php
+                                                                            $amount[] = $payment->amount;
+                                                                            echo $settings->currency . ' ' . $payment->amount;
+                                                                            ?></td>
+                                                                        <td><?php
+                                                                            $discount = $payment->discount;
+                                                                            if (empty($discount)) {
+                                                                                $discount = 0;
+                                                                            }
+                                                                            $discount_up[] = $payment->discount;
+                                                                            echo $settings->currency . ' ' . $discount;
+                                                                            ?></td>
+                                                                        <td><?php
+                                                                            $gross[] = $payment->gross_total;
+                                                                            echo $settings->currency . ' ' . $payment->gross_total;
+                                                                            ?></td>
+                                                                        <td><?php
+                                                                            $deposit[] = $this->finance_model->getDepositAmountByPaymentId($payment->id);
+                                                                            echo $settings->currency . ' ' . $this->finance_model->getDepositAmountByPaymentId($payment->id);
+                                                                            ?></td>
+                                                                        <td><?php echo $settings->currency . ' ' . ($payment->gross_total - $this->finance_model->getDepositAmountByPaymentId($payment->id)); ?></td>
+
+                                                                    </tr>
+                                                                    <?php
+                                                                }
+                                                            }
                                                         }
                                                     } elseif ($filter_by == 'payment_proccedure') {
                                                         if ($payment->payment_from == 'case' || $payment->payment_from == 'surgery' || $payment->payment_from == 'pre_surgery_medical_analysis' || $payment->payment_from == 'post_surgery_medical_analysis') {

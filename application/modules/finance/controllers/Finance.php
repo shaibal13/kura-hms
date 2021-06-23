@@ -2611,6 +2611,7 @@ class Finance extends MX_Controller {
 
         $date_from = strtotime($this->input->post('date_from'));
         $date_to = strtotime($this->input->post('date_to'));
+        
         if (!empty($date_to)) {
             $date_to = $date_to + 86399;
         }
@@ -2632,6 +2633,7 @@ class Finance extends MX_Controller {
 
         $data['type_choose'] = $this->input->post('type');
         $data['laboratorist_choose'] = $this->input->post('laboratorist_choose');
+       
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('faturime', $data);
         $this->load->view('home/footer'); // just the footer fida
