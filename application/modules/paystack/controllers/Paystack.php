@@ -15,6 +15,7 @@ class Paystack extends MX_Controller {
         parent::__construct();
         $this->load->helper('url');
         $this->load->model('finance/finance_model');
+          $this->load->model('log/log_model');
     }
 
     private function getPaymentInfo($ref) {
@@ -196,6 +197,7 @@ class Paystack extends MX_Controller {
                 );
             }
             $this->finance_model->insertDeposit($data1);
+             $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
         }
         //
         //   $data = array();

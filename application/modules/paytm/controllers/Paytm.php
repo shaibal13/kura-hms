@@ -14,6 +14,7 @@ class Paytm extends MX_Controller {
         parent::__construct();
         $this->load->helper('url');
         $this->load->model('finance/finance_model');
+        $this->load->model('log/log_model');
         $paytm = $this->db->get_where('paymentGateway', array('name =' => 'Paytm'))->row();
         $merchant_key = $paytm->merchant_key;
         $merchant_mid = $paytm->merchant_mid;
@@ -170,7 +171,7 @@ class Paytm extends MX_Controller {
 
 
                 $date = time();
-                 if ($redirectlink == '10' || $redirectlink == '11' || $redirectlink == '12' || $redirectlink == '13'|| $redirectlink == '14'|| $redirectlink == '15') {
+                if ($redirectlink == '10' || $redirectlink == '11' || $redirectlink == '12' || $redirectlink == '13' || $redirectlink == '14' || $redirectlink == '15') {
                     $data1 = array(
                         'date' => $date,
                         'patient' => $patient,
@@ -185,6 +186,7 @@ class Paytm extends MX_Controller {
                     $data_payment = array('amount_received' => $amount, 'deposit_type' => 'Card', 'status' => 'paid', 'date' => time(), 'date_string' => date('d-m-y', time()));
                     $this->finance_model->updatePayment($inserted_id, $data_payment);
                     $this->finance_model->insertDeposit($data1);
+                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
                     $appointment_id = $this->finance_model->getPaymentById($inserted_id)->appointment_id;
                     $appointment_details = $this->appointment_model->getAppointmentById($appointment_id);
                     if ($appointment_details->status == 'Requested') {
@@ -206,8 +208,7 @@ class Paytm extends MX_Controller {
                     } elseif ($redirectlink == '15') {
                         redirect("frontend");
                     }
-                }
-                elseif ($redirectlink == '0') {
+                } elseif ($redirectlink == '0') {
                     $data1 = array(
                         'date' => $date,
                         'patient' => $patient,
@@ -222,6 +223,7 @@ class Paytm extends MX_Controller {
                     $data_payment = array('amount_received' => $amount, 'deposit_type' => 'Card');
                     $this->finance_model->updatePayment($inserted_id, $data_payment);
                     $this->finance_model->insertDeposit($data1);
+                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
                     redirect("finance/invoice?id=" . $inserted_id);
                 } else {
                     $data1 = array(
@@ -233,9 +235,9 @@ class Paytm extends MX_Controller {
                         'deposit_type' => 'Card',
                         'user' => $this->ion_auth->get_user_id(),
                         'payment_from' => 'payment',
-                       
                     );
                     $this->finance_model->insertDeposit($data1);
+                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
                     if ($this->ion_auth->in_group(array('Patient'))) {
                         $sesdata = $this->session->userdata('insertid');
                         redirect("patient/myPaymentHistory");
@@ -259,7 +261,7 @@ class Paytm extends MX_Controller {
                 $redirectlink = $orderdetails[3];
                 if ($this->ion_auth->in_group(array('Patient'))) {
                     redirect("patient/myPaymentHistory");
-                }elseif ($redirectlink == '11') {
+                } elseif ($redirectlink == '11') {
                     redirect('appointment/todays');
                 } elseif ($redirectlink == '12') {
                     redirect('appointment/upcoming');
@@ -296,7 +298,7 @@ class Paytm extends MX_Controller {
             if ($this->ion_auth->in_group(array('Patient'))) {
                 $sesdata = $this->session->userdata($session['insertid']);
                 redirect("patient/myPaymentHistory");
-            }elseif ($redirectlink == '11') {
+            } elseif ($redirectlink == '11') {
                 $sesdata = $this->session->userdata($session['insertid']);
                 redirect('appointment/todays');
             } elseif ($redirectlink == '12') {

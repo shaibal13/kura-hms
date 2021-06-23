@@ -17,10 +17,59 @@ class Log_model extends CI_model {
             'user_id' => $user_id,
             'user_email' => $user_email,
             'date_time' => $date,
+            'date'=>date('d-m-Y', strtotime($date)),
             'action' => $action,
             'action_id' => $action_id
         );
         $this->db->insert('logs', $data);
+    }
+    function getLogBySearch($search, $order, $dir) {
+        if ($order != null) {
+            $this->db->order_by($order, $dir);
+        } else {
+            $this->db->order_by('id', 'desc');
+        }
+         $this->db->like('id', $search);
+        $this->db->or_like('user_email', $search);
+        $this->db->or_like('date', $search);
+        $query = $this->db->get('logs');
+        return $query->result();
+    }
+
+    function getLogByLimit($limit, $start, $order, $dir) {
+        if ($order != null) {
+            $this->db->order_by($order, $dir);
+        } else {
+            $this->db->order_by('id', 'desc');
+        }
+        $this->db->limit($limit, $start);
+        $query = $this->db->get('logs');
+        return $query->result();
+    }
+
+    function getLogByLimitBySearch($limit, $start, $search, $order, $dir) {
+        if ($order != null) {
+            $this->db->order_by($order, $dir);
+        } else {
+            $this->db->order_by('id', 'desc');
+        }
+        $this->db->like('id', $search);
+        $this->db->or_like('user_email', $search);
+        $this->db->or_like('date', $search);
+       
+
+        $this->db->limit($limit, $start);
+        $query = $this->db->get('logs');
+        return $query->result();
+    }
+     function getLog($order, $dir) {
+        if ($order != null) {
+            $this->db->order_by($order, $dir);
+        } else {
+            $this->db->order_by('id', 'asc');
+        }
+        $query = $this->db->get('logs');
+        return $query->result();
     }
 
 }

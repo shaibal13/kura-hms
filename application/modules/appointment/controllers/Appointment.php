@@ -14,6 +14,7 @@ class Appointment extends MX_Controller {
         $this->load->model('sms/sms_model');
         $this->load->model('pgateway/pgateway_model');
         $this->load->model('finance/finance_model');
+        $this->load->model('log/log_model');
         $this->load->module('sms');
         require APPPATH . 'third_party/stripe/stripe-php/init.php';
         $group_permission = $this->ion_auth->get_users_groups()->row();
@@ -252,8 +253,8 @@ class Appointment extends MX_Controller {
             } else {
                 $data['patients'] = $this->patient_model->getPatient();
                 $data['doctors'] = $this->doctor_model->getDoctor();
-              $data['settings'] = $this->settings_model->getSettings();
-        $data['gateway'] = $this->pgateway_model->getPaymentGatewaySettingsByName($data['settings']->payment_gateway);
+                $data['settings'] = $this->settings_model->getSettings();
+                $data['gateway'] = $this->pgateway_model->getPaymentGatewaySettingsByName($data['settings']->payment_gateway);
                 $this->load->view('home/dashboard', $data); // just the header file
                 $this->load->view('add_new', $data);
                 $this->load->view('home/footer'); // just the header file
@@ -365,6 +366,7 @@ class Appointment extends MX_Controller {
                 $data['payment_status'] = 'unpaid';
                 $this->appointment_model->insertAppointment($data);
                 $appointment_id = $this->db->insert_id('appointment');
+                 $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Appointment with '.$doctorname, $appointment_id);
                 $data_appointment['appointment_id'] = $appointment_id;
                 $this->finance_model->insertPayment($data_appointment);
                 $inserted_id = $this->db->insert_id('payment');
@@ -1320,7 +1322,7 @@ class Appointment extends MX_Controller {
         $data['appointment'] = $this->appointment_model->getAppointmentById($id);
         $data['patients'] = $this->patient_model->getPatientById($data['appointment']->patient);
         $data['doctors'] = $this->doctor_model->getDoctorById($data['appointment']->doctor);
-          $data['visits'] = $this->doctor_model->getDoctorVisitByDoctorId($data['appointment']->doctor);
+        $data['visits'] = $this->doctor_model->getDoctorVisitByDoctorId($data['appointment']->doctor);
         $this->load->view('home/dashboard', $data); // just the header file
         $this->load->view('add_new', $data);
         $this->load->view('home/footer'); // just the footer file 
@@ -1370,8 +1372,10 @@ class Appointment extends MX_Controller {
     function delete() {
         $data = array();
         $id = $this->input->get('id');
+        $appointment_doctor= $this->appointment_model->getAppointmentById($id)->doctorname;
         $doctor_id = $this->input->get('doctor_id');
         $this->appointment_model->delete($id);
+        $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Delete Appointment with '.$appointment_doctor, $id);
         $this->session->set_flashdata('feedback', lang('deleted'));
         if (!empty($doctor_id)) {
             redirect('appointment/getAppointmentByDoctorId?id=' . $doctor_id);
@@ -1629,7 +1633,7 @@ class Appointment extends MX_Controller {
                 $appointment->remarks,
                 $payment_status,
                 $appointment_status,
-                $option1 . ' ' . $option2 . ' ' . $options7.' '. $option3
+                $option1 . ' ' . $option2 . ' ' . $options7 . ' ' . $option3
             );
         }
 
@@ -2944,7 +2948,7 @@ class Appointment extends MX_Controller {
                         $appointment->remarks,
                         $payment_status,
                         $appointment_status,
-                        $options7.' '.$option3
+                        $options7 . ' ' . $option3
                     );
                     $i = $i + 1;
                 } else {

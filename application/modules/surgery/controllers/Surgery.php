@@ -15,6 +15,7 @@ class Surgery extends MX_Controller {
         $this->load->model('medicine/medicine_model');
         $this->load->model('pservice/pservice_model');
         $this->load->model('nurse/nurse_model');
+        $this->load->model('log/log_model');
         $this->load->model('surgery_model');
         $group_permission = $this->ion_auth->get_users_groups()->row();
 
@@ -188,7 +189,7 @@ class Surgery extends MX_Controller {
                 $this->finance_model->insertPayment($data_surgery);
 
                 $inserted_id = $this->db->insert_id('payment');
-
+                $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Invoice', $inserted_id);
                 $data_up = array('payment_id' => $inserted_id);
                 $this->surgery_model->updateSurgery($inserted_id_medical, $data_up);
 
@@ -1245,7 +1246,9 @@ class Surgery extends MX_Controller {
                 'payment_from' => 'pre_surgery_medicine'
             );
             $this->finance_model->insertPayment($data);
+
             $inserted_id = $this->db->insert_id('payment');
+            $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new invoice', $inserted_id);
             $data_update_medicine = array('payment_id' => $inserted_id);
             foreach ($ids as $id_bed_medicine) {
                 $this->surgery_model->updatePreSurgeryMedicine($id_bed_medicine, $data_update_medicine);
@@ -1387,7 +1390,9 @@ class Surgery extends MX_Controller {
                 'payment_from' => 'on_surgery_medicine'
             );
             $this->finance_model->insertPayment($data);
+
             $inserted_id = $this->db->insert_id('payment');
+            $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new invoice', $inserted_id);
             $data_update_medicine = array('payment_id' => $inserted_id);
             foreach ($ids as $id_bed_medicine) {
                 $this->surgery_model->updateOnSurgeryMedicine($id_bed_medicine, $data_update_medicine);
@@ -1543,6 +1548,7 @@ class Surgery extends MX_Controller {
             );
             $this->finance_model->insertPayment($data);
             $inserted_id = $this->db->insert_id('payment');
+            $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new invoice', $inserted_id);
             $data_update_medicine = array('payment_id' => $inserted_id);
             foreach ($ids as $id_bed_medicine) {
                 $this->surgery_model->updatePostSurgeryMedicine($id_bed_medicine, $data_update_medicine);
@@ -1949,6 +1955,7 @@ class Surgery extends MX_Controller {
                 );
                 $this->finance_model->insertPayment($data);
                 $inserted_id = $this->db->insert_id('payment');
+                $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new invoice', $inserted_id);
                 if (!empty($previous_payment_ids)) {
                     $new_payment_id = $previous_payment_ids . ',' . $inserted_id;
                 } else {
@@ -2354,6 +2361,7 @@ class Surgery extends MX_Controller {
                 );
                 $this->finance_model->insertPayment($data);
                 $inserted_id = $this->db->insert_id('payment');
+                $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new invoice', $inserted_id);
                 if (!empty($previous_payment_ids)) {
                     $new_payment_id = $previous_payment_ids . ',' . $inserted_id;
                 } else {
@@ -2782,6 +2790,7 @@ class Surgery extends MX_Controller {
                     'payment_from' => 'post_service'
                 );
                 $this->finance_model->insertPayment($data);
+                $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new invoice', $inserted_id);
                 $inserted_id = $this->db->insert_id('payment');
                 if (!empty($previous_payment_ids)) {
                     $new_payment_id = $previous_payment_ids . ',' . $inserted_id;

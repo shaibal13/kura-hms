@@ -12,6 +12,7 @@ class Status extends MX_Controller {
         $this->load->model('finance/pharmacy_model');
         $this->load->model('pgateway/pgateway_model');
         $this->load->model('appointment/appointment_model');
+        $this->load->model('log/log_model');
     }
 
     public function index() {
@@ -62,7 +63,7 @@ class Status extends MX_Controller {
                 'payment_from' => 'payment'
             );
             $this->finance_model->insertDeposit($data);
-
+            $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
             $this->session->set_flashdata('feedback', 'Payment Completed Successfully');
 
             if ($this->ion_auth->in_group(array('Patient'))) {
@@ -125,7 +126,7 @@ class Status extends MX_Controller {
                 'payment_from' => 'payment'
             );
             $this->finance_model->insertDeposit($data);
-
+            $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
             $data_payment = array('amount_received' => $amount, 'deposit_type' => 'Card');
             $this->finance_model->updatePayment($productinfo, $data_payment);
 
@@ -237,6 +238,7 @@ class Status extends MX_Controller {
                 'payment_from' => 'appointment'
             );
             $this->finance_model->insertDeposit($data);
+            $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
             $data_payment = array('amount_received' => $amount, 'deposit_type' => 'Card', 'status' => 'paid', 'date' => time(), 'date_string' => date('d-m-y', time()));
             $this->finance_model->updatePayment($productinfo, $data_payment);
             $appointment_id = $this->finance_model->getPaymentById($productinfo)->appointment_id;

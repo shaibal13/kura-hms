@@ -12,6 +12,7 @@ class Paypal extends MX_Controller {
         parent::__construct();
         $this->load->model('finance/finance_model');
         $this->load->model('appointment/appointment_model');
+        $this->load->model('log/log_model');
     }
 
     public function paymentPaypal($data) {
@@ -63,7 +64,7 @@ class Paypal extends MX_Controller {
                         'payment_from' => 'payment'
                     );
                     $this->finance_model->insertDeposit($data1);
-
+                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
                     $data_payment = array('amount_received' => $data['deposited_amount'], 'deposit_type' => 'Card');
                     $this->finance_model->updatePayment($data['payment_id'], $data_payment);
 
@@ -82,7 +83,7 @@ class Paypal extends MX_Controller {
                         'payment_from' => 'case'
                     );
                     $this->finance_model->insertDeposit($data1);
-
+                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
                     $data_payment = array('status' => 'paid', 'amount_received' => $data['deposited_amount'], 'deposit_type' => 'Card');
                     $this->finance_model->updatePayment($data['payment_id'], $data_payment);
                     $caselist = $this->finance_model->getPaymentById($data['payment_id']);
@@ -94,7 +95,6 @@ class Paypal extends MX_Controller {
                     } else {
                         redirect('patient/medicalHistory?id=' . $data['patient']);
                     }
-                    
                 } elseif ($data['from'] == '10' || $data['from'] == 'my_today' || $data['from'] == 'upcoming' || $data['from'] == 'med_his' || $data['from'] == 'request' || $data['from'] == 'frontend') {
 
                     $data1 = array(
@@ -109,7 +109,7 @@ class Paypal extends MX_Controller {
                         'payment_from' => 'appointment'
                     );
                     $this->finance_model->insertDeposit($data1);
-
+                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
                     $data_payment = array('amount_received' => $data['deposited_amount'], 'deposit_type' => 'Card', 'date' => time(), 'date_string' => date('d-m-y', time()));
                     $this->finance_model->updatePayment($data['payment_id'], $data_payment);
                     $appointment_id = $this->finance_model->getPaymentById($data['payment_id'])->appointment_id;
@@ -144,7 +144,7 @@ class Paypal extends MX_Controller {
                         'gateway' => 'PayPal',
                         'user' => $this->ion_auth->get_user_id(),
                         'payment_from' => 'payment',
-                         'remarks' => $data['remarks']
+                        'remarks' => $data['remarks']
                     );
                     $this->finance_model->insertDeposit($data1);
                     $this->session->set_flashdata('feedback', lang('payment_successful'));

@@ -18,6 +18,7 @@ class Finance extends MX_Controller {
         $this->load->model('surgery/surgery_model');
         $this->load->model('department/department_model');
         $this->load->model('laboratorist/laboratorist_model');
+        $this->load->model('log/log_model');
         $this->load->module('sms');
 
         require APPPATH . 'third_party/stripe/stripe-php/init.php';
@@ -330,7 +331,7 @@ class Finance extends MX_Controller {
 
                 $this->finance_model->insertPayment($data);
                 $inserted_id = $this->db->insert_id();
-
+                $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Financial Invoice ', $inserted_id);
                 $dataupdate = array(
                     'patient' => $patient,
                     'amount_received' => $amount_received
@@ -412,6 +413,7 @@ class Finance extends MX_Controller {
                                 $this->smsAndEmail($dataupdate);
                             }
                             $this->finance_model->insertDeposit($data1);
+                              $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
                             $data_payment = array('amount_received' => $amount_received, 'deposit_type' => $deposit_type);
                             $this->finance_model->updatePayment($inserted_id, $data_payment);
                         } else {
@@ -531,7 +533,7 @@ class Finance extends MX_Controller {
                                 'payment_from' => 'payment'
                             );
                             $this->finance_model->insertDeposit($data1);
-
+                            $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
                             $data_payment = array('amount_received' => $amount_received, 'deposit_type' => $deposit_type);
                             $this->finance_model->updatePayment($inserted_id, $data_payment);
                             if ($amount_received > 0) {
@@ -576,7 +578,7 @@ class Finance extends MX_Controller {
                         'payment_from' => 'payment'
                     );
                     $this->finance_model->insertDeposit($data1);
-
+                       $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
                     $data_payment = array('amount_received' => $amount_received, 'deposit_type' => $deposit_type);
                     $this->finance_model->updatePayment($inserted_id, $data_payment);
 
@@ -644,6 +646,7 @@ class Finance extends MX_Controller {
                     $this->finance_model->insertDeposit($data1);
                 }
                 $this->finance_model->updatePayment($id, $data);
+                $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Edit Financial Invoice ', $id);
                 $this->session->set_flashdata('feedback', lang('updated'));
                 redirect("finance/invoice?id=" . "$id");
             }
@@ -772,28 +775,28 @@ class Finance extends MX_Controller {
                 $this->surgery_model->deletePostMedicalSurgery($medical->id);
                 $this->finance_model->deletePayment($id);
                 $this->finance_model->deleteDepositByInvoiceId($id);
-            }elseif ($payment->payment_from == 'pre_surgery_medicine') {
+            } elseif ($payment->payment_from == 'pre_surgery_medicine') {
                 $medicine = $this->surgery_model->getPreSurgeryMedicineByPaymentId($payment->id);
-                foreach ($medicine as $med){
-                    $data=array();
-                    $data=array('payment_id'=>'');
-                    $this->surgery_model->updatePreSurgeryMedicine($med->id,$data);
+                foreach ($medicine as $med) {
+                    $data = array();
+                    $data = array('payment_id' => '');
+                    $this->surgery_model->updatePreSurgeryMedicine($med->id, $data);
                 }
-               
+
                 $this->finance_model->deletePayment($id);
                 $this->finance_model->deleteDepositByInvoiceId($id);
-            }elseif ($payment->payment_from == 'post_surgery_medicine') {
+            } elseif ($payment->payment_from == 'post_surgery_medicine') {
                 $medicine = $this->surgery_model->getPostSurgeryMedicineByPaymentId($payment->id);
-                foreach ($medicine as $med){
-                    $data=array();
-                    $data=array('payment_id'=>'');
-                    $this->surgery_model->updatePostSurgeryMedicine($med->id,$data);
+                foreach ($medicine as $med) {
+                    $data = array();
+                    $data = array('payment_id' => '');
+                    $this->surgery_model->updatePostSurgeryMedicine($med->id, $data);
                 }
-               
+
                 $this->finance_model->deletePayment($id);
                 $this->finance_model->deleteDepositByInvoiceId($id);
             }
-
+            $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Deleted Invoice ', $id);
 
             $this->session->set_flashdata('feedback', lang('deleted'));
             redirect('finance/payment');
@@ -1574,6 +1577,7 @@ class Finance extends MX_Controller {
                                 'remarks' => $remarks
                             );
                             $this->finance_model->insertDeposit($data1);
+                              $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
                             $this->session->set_flashdata('feedback', 'Added');
                             if ($this->ion_auth->in_group(array('Patient'))) {
                                 redirect('patient/myPaymentHistory');
@@ -1628,6 +1632,7 @@ class Finance extends MX_Controller {
                                 'remarks' => $remarks
                             );
                             $this->finance_model->insertDeposit($data1);
+                              $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
                             $this->session->set_flashdata('feedback', lang('added'));
                             redirect('finance/patientPaymentHistory?patient=' . $patient);
                         } else {
@@ -1670,6 +1675,7 @@ class Finance extends MX_Controller {
                     }
                 } else {
                     $this->finance_model->insertDeposit($data);
+                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
                     $this->session->set_flashdata('feedback', lang('added'));
                     if ($this->ion_auth->in_group(array('Patient'))) {
                         redirect('patient/myPaymentHistory');
@@ -1679,7 +1685,7 @@ class Finance extends MX_Controller {
                 }
             } else {
                 $this->finance_model->updateDeposit($id, $data);
-
+                $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Edit Payments', $id);
                 $amount_received_id = $this->finance_model->getDepositById($id)->amount_received_id;
                 if (!empty($amount_received_id)) {
                     $amount_received_payment_id = explode('.', $amount_received_id);
@@ -1713,7 +1719,7 @@ class Finance extends MX_Controller {
         }
 
         $this->finance_model->deleteDeposit($id);
-
+        $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Deleted Payment', $id);
         redirect('finance/patientPaymentHistory?patient=' . $patient);
     }
 
@@ -2124,7 +2130,7 @@ class Finance extends MX_Controller {
                 $options2 = '<a class="btn btn-info btn-xs invoicebutton" title="' . lang('invoice') . '" style="color: #fff;" href="finance/invoice?id=' . $payment->id . '"><i class="fa fa-file-invoice"></i> ' . lang('invoice') . '</a>';
                 $options4 = '<a class="btn btn-info btn-xs invoicebutton" title="' . lang('print') . '" style="color: #fff;" href="finance/printInvoice?id=' . $payment->id . '"target="_blank"> <i class="fa fa-print"></i> ' . lang('print') . '</a>';
             }
-            
+
             if ($this->ion_auth->in_group(array('admin', 'Accountant')) || $permis_2 == 'ok') {
                 if ($payment->payment_from == 'post_surgery_medicine' || $payment->payment_from == 'pre_surgery_medicine' || $payment->payment_from == 'payment' || $payment->payment_from == 'post_surgery_medical_analysis' || $payment->payment_from == 'pre_surgery_medical_analysis' || $payment->payment_from == 'pre_service' || $payment->payment_from == 'post_service') {
                     $options3 = '<a class="btn btn-info btn-xs delete_button" title="' . lang('delete') . '" href="finance/delete?id=' . $payment->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"></i> ' . lang('delete') . '</a>';
@@ -2611,7 +2617,7 @@ class Finance extends MX_Controller {
 
         $date_from = strtotime($this->input->post('date_from'));
         $date_to = strtotime($this->input->post('date_to'));
-        
+
         if (!empty($date_to)) {
             $date_to = $date_to + 86399;
         }
@@ -2633,7 +2639,7 @@ class Finance extends MX_Controller {
 
         $data['type_choose'] = $this->input->post('type');
         $data['laboratorist_choose'] = $this->input->post('laboratorist_choose');
-       
+
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('faturime', $data);
         $this->load->view('home/footer'); // just the footer fida

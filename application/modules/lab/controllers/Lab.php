@@ -16,6 +16,7 @@ class Lab extends MX_Controller {
         $this->load->model('receptionist/receptionist_model');
         $this->load->model('packages/packages_model');
         $this->load->model('laboratorist/laboratorist_model');
+        $this->load->model('log/log_model');
         $group_permission = $this->ion_auth->get_users_groups()->row();
 
         if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
@@ -315,7 +316,7 @@ class Lab extends MX_Controller {
 
                 $this->lab_model->insertLab($data);
                 $inserted_id = $this->db->insert_id();
-
+                $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Lab Reports ', $inserted_id);
                 $this->session->set_flashdata('feedback', lang('added'));
                 redirect($redirect);
             } else {
@@ -333,6 +334,7 @@ class Lab extends MX_Controller {
                     'to_be_id' => $this->input->post('id_from_to_be')
                 );
                 $this->lab_model->updateLab($id, $data);
+                $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Edit Lab Reports (id=' . $id . ')', $id);
                 $this->session->set_flashdata('feedback', lang('updated'));
                 redirect($redirect);
             }
@@ -358,6 +360,7 @@ class Lab extends MX_Controller {
         if ($this->ion_auth->in_group(array('admin', 'Laboratorist'))) {
             $id = $this->input->get('id');
             $this->lab_model->deleteLab($id);
+            $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Deleted Lab Reports (id=' . $id . ')', $id);
             $this->session->set_flashdata('feedback', lang('deleted'));
             redirect('lab/lab');
         } else {

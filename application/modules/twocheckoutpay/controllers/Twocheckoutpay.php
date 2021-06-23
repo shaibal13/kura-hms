@@ -9,6 +9,7 @@ class Twocheckoutpay extends MX_Controller {
         parent::__construct();
         require APPPATH . 'third_party/twocheckout/Twocheckout.php';
         $this->load->model('finance/finance_model');
+            $this->load->model('log/log_model');
         $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row();
         Twocheckout::verifySSL(false);
         Twocheckout::sellerId($twocheckout->merchantcode);

@@ -12,6 +12,7 @@ class Authorizenet extends MX_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('finance/finance_model');
+        $this->load->model('log/log_model');
     }
 
     function index() {
@@ -143,7 +144,7 @@ class Authorizenet extends MX_Controller {
                             
                         );
                         $this->finance_model->insertDeposit($data1);
-
+                        $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
                         $data_payment = array('amount_received' => $data['amount'], 'deposit_type' => 'Card', 'status' => 'paid', 'date' => time(), 'date_string' => date('d-m-y', time()));
                         $this->finance_model->updatePayment($data['insertid'], $data_payment);
                         $appointment_id = $this->finance_model->getPaymentById($data['insertid'])->appointment_id;
@@ -183,7 +184,7 @@ class Authorizenet extends MX_Controller {
                             'payment_from' => 'payment'
                         );
                         $this->finance_model->insertDeposit($data1);
-
+                        $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
                         $data_payment = array('amount_received' => $data['amount'], 'deposit_type' => 'Card');
                         $this->finance_model->updatePayment($data['insertid'], $data_payment);
 
@@ -203,6 +204,7 @@ class Authorizenet extends MX_Controller {
                              'remarks' => $data['remarks']
                         );
                         $this->finance_model->insertDeposit($data1);
+                        $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
                         $this->session->set_flashdata('feedback', lang('payment_successful'));
                         redirect('finance/patientPaymentHistory?patient=' . $data['patient']);
                     }
@@ -219,6 +221,7 @@ class Authorizenet extends MX_Controller {
                             
                         );
                         $this->finance_model->insertDeposit($data1);
+                        $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
                         $this->session->set_flashdata('feedback', lang('payment_successful'));
                         redirect('patient/myPaymentHistory');
                     }
