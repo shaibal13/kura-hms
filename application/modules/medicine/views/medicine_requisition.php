@@ -23,11 +23,11 @@
         foreach ($permission_access_group_explode as $perm) {
             $perm_explode = array();
             $perm_explode = explode(",", $perm);
-            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Medicine') {
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Hospital-Medicine') {
                 $permis = 'ok';
                 //  break;
             }
-             if (in_array('3', $perm_explode) && $perm_explode[0] == 'Medicine') {
+             if (in_array('3', $perm_explode) && $perm_explode[0] == 'Hospital-Medicine') {
                 $permis_2 = 'ok';
                 //  break;
             }

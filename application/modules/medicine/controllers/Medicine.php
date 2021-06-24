@@ -1067,10 +1067,10 @@ class Medicine extends MX_Controller {
             $perm_explode = array();
 
             $perm_explode = explode(",", $perm);
-            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Medicine') {
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Hospital-Medicine') {
                 $permis = 'ok';
             }
-            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Medicine') {
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Hospital-Medicine') {
                 $permis_1 = 'ok';
             }
         }

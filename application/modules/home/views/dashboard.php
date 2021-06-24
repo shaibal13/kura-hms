@@ -935,13 +935,13 @@
 
 
                         <?php
-                        if ($this->ion_auth->in_group(array('admin')) || in_array('Medicine', $pers)) {
+                        if ($this->ion_auth->in_group(array('admin')) || in_array('Hospital-Medicine', $pers)) {
                             $permis = '';
                             $permis_1 = '';
                             foreach ($permission_access_group_explode as $perm) {
                                 $perm_explode = array();
                                 $perm_explode = explode(",", $perm);
-                                if (in_array('2', $perm_explode) && $perm_explode[0] == 'Medicine') {
+                                if (in_array('2', $perm_explode) && $perm_explode[0] == 'Hospital-Medicine') {
                                     $permis = 'ok';
                                     //  break;
                                 }
@@ -979,7 +979,7 @@
 
 
                         <?php
-                        if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) || in_array('Pharmacy', $pers)) {
+                        if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) || in_array('Pharmacy', $pers)|| in_array('Medicine', $pers)) {
                             $permis = '';
                             $permis_1 = '';
                             foreach ($permission_access_group_explode as $perm) {
@@ -993,6 +993,14 @@
                                     $permis_1 = 'ok';
                                     //  break;
                                 }
+                                if (in_array('2', $perm_explode) && $perm_explode[0] == 'Medicine') {
+                                    $permis_2 = 'ok';
+                                    //  break;
+                                }
+                                if (in_array('1', $perm_explode) && $perm_explode[0] == 'Medicine') {
+                                    $permis_3 = 'ok';
+                                    //  break;
+                                }
                             }
                             ?>
                             <li class="sub-menu">
@@ -1001,7 +1009,7 @@
                                     <span><?php echo lang('pharmacy'); ?></span>
                                 </a>
                                 <ul class="sub">
-                                    <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
+                                    <?php if ($this->ion_auth->in_group(array('admin')) || in_array('Medicine', $pers) ) { ?>
 
 
                                         <li class="sub-menu">
@@ -1011,13 +1019,14 @@
                                             </a>
                                             <ul class="sub">
                                                 <li><a  href="medicine"><i class="fa fa-medkit"></i><?php echo lang('medicine_list'); ?></a></li>
-                                                <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
+                                                <?php if ($this->ion_auth->in_group(array('admin')) || $permis_2 == 'ok') { ?>
                                                     <li><a  href="medicine/addmedicineView"><i class="fa fa-plus-circle"></i><?php echo lang('add_medicine'); ?></a></li>
                                                 <?php } ?>
                                                 <li><a  href="medicine/medicineCategory"><i class="fa fa-edit"></i><?php echo lang('medicine_category'); ?></a></li>
-                                                <?php if ($this->ion_auth->in_group(array('admin')) || $permis == 'ok') { ?>
+                                                <?php if ($this->ion_auth->in_group(array('admin')) || $permis_2 == 'ok') { ?>
                                                     <li><a  href="medicine/addCategoryView"><i class="fa fa-plus-circle"></i><?php echo lang('add_medicine_category'); ?></a></li>
                                                 <?php } ?>
+                                                  <li><a  href="finance/pharmacy/medicineRequisition"><i class="fa fa-plus-circle"></i><?php echo lang('medicine_requisition'); ?> <?php echo lang('list') ?></a></li>
                                                 <li><a  href="supply"><i class="fa fa-medkit"></i><?php echo lang('supply'); ?> <?php echo lang('invoices'); ?></a></li>
                                                 <li><a  href="supply/addNewSupply"><i class="fa fa-medkit"></i><?php echo lang('add'); ?> <?php echo lang('supply'); ?> <?php echo lang('medicine'); ?></a></li>
                                                 <li><a  href="medicine/medicineStockAlert"><i class="fa fa-plus-circle"></i><?php echo lang('medicine_stock_alert'); ?></a></li>
@@ -1048,7 +1057,7 @@
                                             </a>
                                             <ul class="sub">
                                                 <li><a  href="finance/pharmacy/financialReport"><i class="fa fa-book"></i><?php echo lang('pharmacy'); ?> <?php echo lang('report'); ?> </a></li>
-                                                <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist'))) { ?>
+                                                <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) || (in_array('Pharmacy', $pers))) { ?>
                                                     <li><a  href="finance/pharmacy/inventoryReport"><i class="fa fa-book"></i><?php echo lang('inventory'); ?> <?php echo lang('report'); ?> </a></li>
                                                 <?php } ?>
                                                 <li><a  href="finance/pharmacy/monthly"><i class="fa fa-chart-bar"></i> <?php echo lang('monthly_sales'); ?> </a></li>

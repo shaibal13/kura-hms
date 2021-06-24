@@ -32,9 +32,7 @@ class Supply extends MX_Controller {
     }
 
     public function index() {
-        if (!$this->ion_auth->in_group(array('admin', 'Pharmacist'))) {
-            redirect('home/permission');
-        }
+
 
         $this->load->view('home/dashboard', $data); // just the header file
         $this->load->view('supply', $data);
@@ -42,9 +40,7 @@ class Supply extends MX_Controller {
     }
 
     public function addNewSupply() {
-        if (!$this->ion_auth->in_group(array('admin', 'Pharmacist'))) {
-            redirect('home/permission');
-        }
+
 
         $data['medicines'] = $this->medicine_model->getMedicine();
         $data['settings'] = $this->settings_model->getSettings();
@@ -102,7 +98,6 @@ class Supply extends MX_Controller {
                     'address' => $this->input->post('address'),
                     'phone' => $this->input->post('phone'),
                     'nipt' => $this->input->post('nipt'),
-                   
                 );
             }
             if (empty($id)) {
@@ -156,9 +151,9 @@ class Supply extends MX_Controller {
                         $this->medicine_model->updateMedicine($key, $data_med);
                     }
                 }
-                
+
                 $supply = $this->supply_model->updateSupply($id, $data);
-                  $this->session->set_flashdata('feedback', lang('quantity_updated_in_medicine'));
+                $this->session->set_flashdata('feedback', lang('quantity_updated_in_medicine'));
             }
             redirect("supply");
         }
@@ -208,7 +203,22 @@ class Supply extends MX_Controller {
         }
 
         $i = 0;
-
+        $permis = '';
+        $permis_1 = '';
+        foreach ($this->permission_access_group_explode as $perm) {
+            $perm_explode = array();
+            //$permis='';
+            // $permis_1='';
+            $perm_explode = explode(",", $perm);
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Medicine') {
+                $permis = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Medicine') {
+                $permis_1 = 'ok';
+                //  break;
+            }
+        }
         $count = 0;
         foreach ($data['supplies'] as $supply) {
             $i = $i + 1;
@@ -221,16 +231,16 @@ class Supply extends MX_Controller {
             } else {
                 $quan = $medicine->quantity;
             }
+            $option1 = '<a class="btn btn-info btn-xs invoicebutton" title="' . lang('invoice') . '" style="color: #fff;" href="supply/invoice?id=' . $supply->id . '"><i class="fa fa-file-invoice"></i> ' . lang('invoice') . '</a>';
+            if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) || $permis == 'ok') {
 
-            if ($this->ion_auth->in_group(array('admin', 'Pharmacist'))) {
-                $option1 = '<a class="btn btn-info btn-xs invoicebutton" title="' . lang('invoice') . '" style="color: #fff;" href="supply/invoice?id=' . $supply->id . '"><i class="fa fa-file-invoice"></i> ' . lang('invoice') . '</a>';
                 $option2 = '<a class="btn btn-info btn-xs btn_width editbutton" href="supply/editSupply?id=' . $supply->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
             }
 
             if ($this->ion_auth->in_group(array('admin', 'Pharmacist'))) {
                 $info[] = array(
                     $i,
-                    '00-'.$supply->id,
+                    '00-' . $supply->id,
                     $supply->date_string,
                     $supply->vendor_name,
                     $supply->address,
@@ -274,14 +284,16 @@ class Supply extends MX_Controller {
 
         echo json_encode($output);
     }
-   function invoice(){
-        $id= $this->input->get('id');
-         $data['settings']= $this->settings_model->getSettings();
-        $data['supply']= $this->supply_model->getSupplyById($id);
+
+    function invoice() {
+        $id = $this->input->get('id');
+        $data['settings'] = $this->settings_model->getSettings();
+        $data['supply'] = $this->supply_model->getSupplyById($id);
         $this->load->view('home/dashboard', $data); // just the header file
         $this->load->view('invoice', $data);
         $this->load->view('home/footer'); // just the header file
-   }
+    }
+
 }
 
 /* End of file medicine.php */

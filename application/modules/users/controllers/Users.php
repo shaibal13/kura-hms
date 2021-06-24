@@ -68,6 +68,7 @@ class Users extends MX_Controller {
 
     function addGroup() {
         $data['permissions'] = $this->db->get('permission_features')->result();
+       
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('add_group', $data);
         $this->load->view('home/footer');
@@ -79,6 +80,7 @@ class Users extends MX_Controller {
         $data['group'] = $this->db->get('groups')->row();
         $data['permissions'] = $this->db->get('permission_features')->result();
         $data['permission_access'] = $this->users_model->getPermissionAccess($id);
+         
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('add_group', $data);
         $this->load->view('home/footer');
@@ -220,6 +222,7 @@ class Users extends MX_Controller {
             $permission_granted[] = $permission_access_group;
         }
         $permission_access_final = implode("***", $permission_granted);
+        
         if (!empty($id)) {
             if ($this->form_validation->run() == false) {
                 $this->session->set_flashdata('feedback', 'Validation Error!');

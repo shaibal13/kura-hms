@@ -993,8 +993,23 @@ class Pharmacy extends MX_Controller {
             $option1 = '';
             $option2 = $option3 = '';
             $settings = $this->settings_model->getSettings();
-
-            if ($this->ion_auth->in_group(array('Pharmacist'))) {
+               $permis = '';
+               $permis_1 = '';
+        foreach ($this->permission_access_group_explode as $perm) {
+            $perm_explode = array();
+            //$permis='';
+            // $permis_1='';
+            $perm_explode = explode(",", $perm);
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Medicine') {
+                $permis = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Medicine') {
+                $permis_1 = 'ok';
+                //  break;
+            }
+        }
+            if ($this->ion_auth->in_group(array('Pharmacist')) || $permis == 'ok' ) {
                 if ($requisition->status == 'unapproved' || empty($requisition->status)) {
                     $option1 = '<a class="btn btn-info btn-xs btn_width editbutton" href="finance/pharmacy/editRequisition?id=' . $requisition->id . '"><i class="fa fa-edit"> </i> ' . lang('edit') . '</a>';
                 }

@@ -31,12 +31,16 @@
                 $permis_2 = 'ok';
                 //  break;
             }
+             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Medicine') {
+                $permis_3 = 'ok';
+                //  break;
+            }
         }
         ?>
         <section class="panel">
             <header class="panel-heading">
                 <?php echo lang('medicine_categories'); ?>
-                <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist'))) { ?>
+                <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) || $permis_3=='ok') { ?>
                     <div class="col-md-4 no-print pull-right"> 
                         <a data-toggle="modal" href="#myModal">
                             <div class="btn-group pull-right">
@@ -56,7 +60,7 @@
                             <tr>
                                 <th> <?php echo lang('category'); ?></th>
                                 <th> <?php echo lang('description'); ?></th>
-                                <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist'))) { ?>
+                                <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) || $permis=='ok' || $permis_2=='ok') { ?>
                                     <th> <?php echo lang('options'); ?></th>
                                 <?php } ?>
                             </tr>
@@ -81,10 +85,10 @@
                                 <td> <?php echo $category->description; ?></td> 
                                 <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist'))) { ?>
                                     <td>
-                                        <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist'))) { ?>
+                                        <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) || $permis=='ok') { ?>
                                             <button type="button" class="btn btn-info btn-xs btn_width editbutton" data-toggle="modal" data-id="<?php echo $category->id; ?>"><i class="fa fa-edit"> <?php echo lang('edit'); ?></i></button>   
                                         <?php } ?>
-                                        <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist'))) { ?>
+                                        <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) || $permis_2=='ok') { ?>
                                             <a class="btn btn-info btn-xs btn_width delete_button" href="medicine/deleteMedicineCategory?id=<?php echo $category->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"> <?php echo lang('delete'); ?></i></a>
                                         <?php } ?>
                                     </td>
