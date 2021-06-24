@@ -245,7 +245,7 @@ class Sslcommerzpayment extends MX_Controller {
             );
 
             $this->finance_model->insertDeposit($data1);
-            $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
+            $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment(id='.$this->db->insert_id().' )', $this->db->insert_id());
             $data_payment = array('amount_received' => $post_data->amount, 'deposit_type' => 'Card', 'status' => 'paid', 'date' => time(), 'date_string' => date('d-m-y', time()));
             $this->finance_model->updatePayment($post_data->value_a, $data_payment);
             $appointment_id = $this->finance_model->getPaymentById($post_data->value_a)->appointment_id;
@@ -285,7 +285,7 @@ class Sslcommerzpayment extends MX_Controller {
             );
 
             $this->finance_model->insertDeposit($data1);
-            $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
+            $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment(id='.$this->db->insert_id().' )', $this->db->insert_id());
             $data_payment = array('amount_received' => $post_data->amount, 'deposit_type' => 'Card');
             $this->finance_model->updatePayment($post_data->value_a, $data_payment);
             redirect("finance/invoice?id=" . $post_data->value_a);
@@ -305,7 +305,7 @@ class Sslcommerzpayment extends MX_Controller {
             );
 
             $this->finance_model->insertDeposit($data1);
-            $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
+            $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment(id='.$this->db->insert_id().' )', $this->db->insert_id());
             //  redirect('finance/patientPaymentHistory?patient=' .$post_data->value_b );
 
             $this->redirectlink($post_data->value_b);

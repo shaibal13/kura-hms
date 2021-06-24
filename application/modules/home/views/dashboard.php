@@ -1625,7 +1625,7 @@
                             </li> 
                         <?php } ?> 
 
-                        <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
+                        <?php if ($this->ion_auth->in_group(array('admin')) || in_array('Log', $pers)) { ?>
 
                             <li>
                                 <a href="log" >

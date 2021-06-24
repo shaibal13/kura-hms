@@ -316,7 +316,7 @@ class Lab extends MX_Controller {
 
                 $this->lab_model->insertLab($data);
                 $inserted_id = $this->db->insert_id();
-                $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Lab Reports ', $inserted_id);
+                $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Lab Reports (id='.$inserted_id.' )', $inserted_id);
                 $this->session->set_flashdata('feedback', lang('added'));
                 redirect($redirect);
             } else {

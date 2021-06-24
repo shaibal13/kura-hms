@@ -197,7 +197,7 @@ class Paystack extends MX_Controller {
                 );
             }
             $this->finance_model->insertDeposit($data1);
-             $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
+             $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment(id='.$this->db->insert_id().' )', $this->db->insert_id());
         }
         //
         //   $data = array();

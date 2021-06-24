@@ -64,7 +64,7 @@ class Paypal extends MX_Controller {
                         'payment_from' => 'payment'
                     );
                     $this->finance_model->insertDeposit($data1);
-                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
+                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment(id='.$this->db->insert_id().' )', $this->db->insert_id());
                     $data_payment = array('amount_received' => $data['deposited_amount'], 'deposit_type' => 'Card');
                     $this->finance_model->updatePayment($data['payment_id'], $data_payment);
 
@@ -83,7 +83,7 @@ class Paypal extends MX_Controller {
                         'payment_from' => 'case'
                     );
                     $this->finance_model->insertDeposit($data1);
-                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
+                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment(id='.$this->db->insert_id().' )', $this->db->insert_id());
                     $data_payment = array('status' => 'paid', 'amount_received' => $data['deposited_amount'], 'deposit_type' => 'Card');
                     $this->finance_model->updatePayment($data['payment_id'], $data_payment);
                     $caselist = $this->finance_model->getPaymentById($data['payment_id']);
@@ -109,7 +109,7 @@ class Paypal extends MX_Controller {
                         'payment_from' => 'appointment'
                     );
                     $this->finance_model->insertDeposit($data1);
-                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
+                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment(id='.$this->db->insert_id().' )', $this->db->insert_id());
                     $data_payment = array('amount_received' => $data['deposited_amount'], 'deposit_type' => 'Card', 'date' => time(), 'date_string' => date('d-m-y', time()));
                     $this->finance_model->updatePayment($data['payment_id'], $data_payment);
                     $appointment_id = $this->finance_model->getPaymentById($data['payment_id'])->appointment_id;

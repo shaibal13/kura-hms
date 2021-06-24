@@ -186,7 +186,7 @@ class Paytm extends MX_Controller {
                     $data_payment = array('amount_received' => $amount, 'deposit_type' => 'Card', 'status' => 'paid', 'date' => time(), 'date_string' => date('d-m-y', time()));
                     $this->finance_model->updatePayment($inserted_id, $data_payment);
                     $this->finance_model->insertDeposit($data1);
-                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
+                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment(id='.$this->db->insert_id().' )', $this->db->insert_id());
                     $appointment_id = $this->finance_model->getPaymentById($inserted_id)->appointment_id;
                     $appointment_details = $this->appointment_model->getAppointmentById($appointment_id);
                     if ($appointment_details->status == 'Requested') {
@@ -223,7 +223,7 @@ class Paytm extends MX_Controller {
                     $data_payment = array('amount_received' => $amount, 'deposit_type' => 'Card');
                     $this->finance_model->updatePayment($inserted_id, $data_payment);
                     $this->finance_model->insertDeposit($data1);
-                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
+                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment(id='.$this->db->insert_id().' )', $this->db->insert_id());
                     redirect("finance/invoice?id=" . $inserted_id);
                 } else {
                     $data1 = array(
@@ -237,7 +237,7 @@ class Paytm extends MX_Controller {
                         'payment_from' => 'payment',
                     );
                     $this->finance_model->insertDeposit($data1);
-                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
+                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment(id='.$this->db->insert_id().' )', $this->db->insert_id());
                     if ($this->ion_auth->in_group(array('Patient'))) {
                         $sesdata = $this->session->userdata('insertid');
                         redirect("patient/myPaymentHistory");

@@ -9,9 +9,9 @@ class Log extends MX_Controller {
         parent::__construct();
         $this->load->model('log_model');
         $this->load->model("settings/settings_model");
-        if (!$this->ion_auth->in_group(array('admin'))) {
+        /*if (!$this->ion_auth->in_group(array('admin'))) {
             redirect('home/permission');
-        }
+        }*/
     }
 
     public function index() {

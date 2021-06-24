@@ -241,7 +241,7 @@ class Patient extends MX_Controller {
                     $patient_user_id = $this->db->get_where('patient', array('email' => $email))->row()->id;
                     $id_info = array('ion_user_id' => $ion_user_id);
                     $this->patient_model->updatePatient($patient_user_id, $id_info);
-                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Patient', $patient_user_id);
+                    $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Patient(id='.$patient_user_id.' )', $patient_user_id);
 //sms
                     $set['settings'] = $this->settings_model->getSettings();
                     $autosms = $this->sms_model->getAutoSmsByType('patient');
@@ -684,7 +684,7 @@ class Patient extends MX_Controller {
                                 'user' => $user
                             );
                             $this->finance_model->insertDeposit($data1);
-                              $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
+                              $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment(id='.$this->db->insert_id().' )', $this->db->insert_id());
                             $this->session->set_flashdata('feedback', lang('added'));
                             redirect('patient/myPaymentHistory');
                         } else {
@@ -746,7 +746,7 @@ class Patient extends MX_Controller {
                                 'user' => $user
                             );
                             $this->finance_model->insertDeposit($data1);
-                              $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
+                              $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment(id='.$this->db->insert_id().' )', $this->db->insert_id());
                             $this->session->set_flashdata('feedback', 'Added');
                             redirect('patient/myPaymentHistory');
                         } else {
@@ -791,12 +791,12 @@ class Patient extends MX_Controller {
                     }
                 } else {
                     $this->finance_model->insertDeposit($data);
-                      $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment', $this->db->insert_id());
+                      $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add new Payment(id='.$this->db->insert_id().' )', $this->db->insert_id());
                     $this->session->set_flashdata('feedback', lang('added'));
                 }
             } else {
                 $this->finance_model->updateDeposit($id, $data);
-               $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Edited Payment', $id);
+               $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Edited Payment(id='.$id.' )', $id);
                 $amount_received_id = $this->finance_model->getDepositById($id)->amount_received_id;
                 if (!empty($amount_received_id)) {
                     $amount_received_payment_id = explode('.', $amount_received_id);
@@ -938,7 +938,7 @@ class Patient extends MX_Controller {
 
                 $this->patient_model->insertMedicalHistory($data);
                 $inserted_id_medical = $this->db->insert_id('medical_history');
-                 $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Case', $inserted_id_medical);
+                 $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Case(id='.$inserted_id_medical.' )', $inserted_id_medical);
                 $data_case['case_id'] = $inserted_id_medical;
 
                 $this->finance_model->insertPayment($data_case);
@@ -1591,7 +1591,7 @@ class Patient extends MX_Controller {
         $redirect = $this->input->get('redirect');
         $case_history = $this->patient_model->getMedicalHistoryById($id);
         $this->patient_model->deleteMedicalHistory($id);
-         $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Delete Case History', $id);
+         $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Delete Case History(id='.$id.' )', $id);
         $this->session->set_flashdata('feedback', lang('deleted'));
         if ($redirect == 'case') {
             redirect('patient/caseList');
@@ -1630,7 +1630,7 @@ class Patient extends MX_Controller {
         $this->db->where('id', $ion_user_id);
         $this->db->delete('users');
         $this->patient_model->delete($id);
-        $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Delete Patient', $id);
+        $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Delete Patient(id='.$id.' )', $id);
         $this->session->set_flashdata('feedback', lang('deleted'));
         redirect('patient');
     }
