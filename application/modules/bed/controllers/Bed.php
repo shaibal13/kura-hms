@@ -97,7 +97,7 @@ class Bed extends MX_Controller {
             );
             if (empty($id)) {
                 $this->bed_model->insertBed($data);
-                 $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Bed', $this->db->insert_id());
+                 $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Bed(id='.$this->db->insert_id().' )', $this->db->insert_id());
                 $this->session->set_flashdata('feedback', lang('added'));
             } else {
                 $this->bed_model->updateBed($id, $data);
@@ -126,7 +126,7 @@ class Bed extends MX_Controller {
     function delete() {
         $id = $this->input->get('id');
         $this->bed_model->deleteBed($id);
-        $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Delete Bed', $id);
+        $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Delete Bed(id='.$id.' )', $id);
         redirect('bed');
     }
 
@@ -321,7 +321,7 @@ class Bed extends MX_Controller {
 
             if (empty($id)) {
                 $this->bed_model->insertAllotment($data);
-                $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Bed Allotment', $this->db->insert_id());
+                $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Bed Allotment(id='.$this->db->insert_id().' )', $this->db->insert_id());
                 $this->bed_model->updateBedByBedId($bed_id, $data1);
                 $this->session->set_flashdata('feedback', lang('added'));
             } else {
@@ -354,7 +354,7 @@ class Bed extends MX_Controller {
     function deleteAllotment() {
         $id = $this->input->get('id');
         $this->bed_model->deleteBedAllotment($id);
-        $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Delete Bed Allotment', $id);
+        $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Delete Bed Allotment(id='.$id.' )', $id);
         $this->session->set_flashdata('feedback', lang('deleted'));
         redirect('bed/bedAllotment');
     }

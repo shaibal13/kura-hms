@@ -366,7 +366,7 @@ class Appointment extends MX_Controller {
                 $data['payment_status'] = 'unpaid';
                 $this->appointment_model->insertAppointment($data);
                 $appointment_id = $this->db->insert_id('appointment');
-                 $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Appointment with '.$doctorname, $appointment_id);
+                 $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Appointment with '.$doctorname.' (id='.$appointment_id.' )', $appointment_id);
                 $data_appointment['appointment_id'] = $appointment_id;
                 $this->finance_model->insertPayment($data_appointment);
                 $inserted_id = $this->db->insert_id('payment');
@@ -1375,7 +1375,7 @@ class Appointment extends MX_Controller {
         $appointment_doctor= $this->appointment_model->getAppointmentById($id)->doctorname;
         $doctor_id = $this->input->get('doctor_id');
         $this->appointment_model->delete($id);
-        $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Delete Appointment with '.$appointment_doctor, $id);
+        $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Delete Appointment with '.$appointment_doctor.' (id='.$id.' )', $id);
         $this->session->set_flashdata('feedback', lang('deleted'));
         if (!empty($doctor_id)) {
             redirect('appointment/getAppointmentByDoctorId?id=' . $doctor_id);
