@@ -995,6 +995,7 @@ class Pharmacy extends MX_Controller {
             $settings = $this->settings_model->getSettings();
                $permis = '';
                $permis_1 = '';
+                      $permis_2 = '';
         foreach ($this->permission_access_group_explode as $perm) {
             $perm_explode = array();
             //$permis='';
@@ -1006,6 +1007,10 @@ class Pharmacy extends MX_Controller {
             }
             if (in_array('3', $perm_explode) && $perm_explode[0] == 'Medicine') {
                 $permis_1 = 'ok';
+                //  break;
+            }
+             if (in_array('1', $perm_explode) && $perm_explode[0] == 'Medicine') {
+                $permis_2 = 'ok';
                 //  break;
             }
         }
@@ -1022,7 +1027,7 @@ class Pharmacy extends MX_Controller {
 
             $option3 = '<a class="btn btn-info btn-xs invoicebutton" title="' . lang('invoice') . '" style="color: #fff;" href="finance/pharmacy/invoiceRequisition?id=' . $requisition->id . '"><i class="fa fa-file-invoice"></i> ' . lang('invoice') . '</a>';
 
-            if ($this->ion_auth->in_group(array('Pharmacist'))) {
+            if ($this->ion_auth->in_group(array('Pharmacist')) || $permis=='ok' || $permis_1=='ok' || $permis_2=='ok') {
                 $info[] = array(
                     $i,
                     $requisition->date_string,
@@ -1220,9 +1225,9 @@ class Pharmacy extends MX_Controller {
         if ($this->ion_auth->in_group(array('admin'))) {
             $data['inventory'] = $this->pharmacy_model->getInventory();
         } else {
-            $user = $this->ion_auth->get_user_id();
-            $pharmacist = $this->pharmacist_model->getPharmacistByIonUserId($user);
-            $data['inventory'] = $this->pharmacy_model->getInventoryByPharmacist($pharmacist->id);
+           $user = $this->ion_auth->get_user_id();
+           $pharmacist = $this->db->get_where('users',array('id'=>$user))->row();
+           $data['inventory'] = $this->pharmacy_model->getInventoryByPharmacist($pharmacist->id);
         }
         $data['settings'] = $this->settings_model->getSettings();
         $this->load->view('home/dashboard', $data); // just the header file
@@ -1235,7 +1240,7 @@ class Pharmacy extends MX_Controller {
         $data['title'] = $this->input->post('title');
         $data['description'] = $this->input->post('description');
         $user = $this->ion_auth->get_user_id();
-        $data['pharmacist'] = $this->pharmacist_model->getPharmacistByIonUserId($user);
+        $data['pharmacist'] = $this->db->get_where('users',array('id'=>$user))->row();;
         $data['medicines'] = $this->medicine_model->getMedicineByPharmacist($data['pharmacist']->id);
         // print_r($data);
         //die();
@@ -1258,14 +1263,14 @@ class Pharmacy extends MX_Controller {
         $date = $this->input->post('date');
         $description = $this->input->post('description');
         $user = $this->ion_auth->get_user_id();
-        $pharmacist = $this->pharmacist_model->getPharmacistByIonUserId($user);
+        $pharmacist = $this->db->get_where('users',array('id'=>$user))->row();
         $data = array();
         $data = array(
             'date' => $date,
             'description' => $description,
             'title' => $title,
             'pharmacist' => $pharmacist->id,
-            'pharmacist_name' => $pharmacist->name,
+            'pharmacist_name' => $pharmacist->username,
             'item' => $item
         );
         if (empty($inventory_id)) {

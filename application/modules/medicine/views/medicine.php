@@ -74,7 +74,7 @@
                                 <th> <?php echo lang('company'); ?></th>
                                 <th> <?php echo lang('effects'); ?></th>
                                 <th> <?php echo lang('expiry_date'); ?></th>
-                                <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist'))) { ?>
+                                <?php if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) || in_array('Medicine', $pers)) { ?>
                                     <th> <?php echo lang('department'); ?></th>
                                 <?php } ?>
                                 <?php if ($this->ion_auth->in_group(array('admin'))) { ?>

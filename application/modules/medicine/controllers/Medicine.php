@@ -159,9 +159,11 @@ class Medicine extends MX_Controller {
             $pharmacist_name = $this->pharmacist_model->getPharmacistById($pharmacist)->name;
         } else {
             $user = $this->ion_auth->get_user_id();
-            $pharmacist_details = $this->pharmacist_model->getPharmacistByIonUserId($user);
+            $pharmacist_details= $this->db->get_where('users',array('id'=>$user))->row();
+            
+            //$pharmacist_details = $this->pharmacist_model->getPharmacistByIonUserId($user);
             $pharmacist = $pharmacist_details->id;
-            $pharmacist_name = $pharmacist_details->name;
+            $pharmacist_name = $pharmacist_details->username;
         }
         if ((empty($id))) {
             $add_date = date('m/d/y');
@@ -389,6 +391,10 @@ class Medicine extends MX_Controller {
                 $permis_1 = 'ok';
                 //  break;
             }
+             if (in_array('1', $perm_explode) && $perm_explode[0] == 'Medicine') {
+                $permis_2 = 'ok';
+                //  break;
+            }
         }
         $count = 0;
         foreach ($data['medicines'] as $medicine) {
@@ -409,11 +415,11 @@ class Medicine extends MX_Controller {
             if ($this->ion_auth->in_group(array('admin', 'Pharmacist')) || $permis_1 == 'ok') {
                 $option2 = '<a class="btn btn-info btn-xs btn_width delete_button" href="medicine/delete?id=' . $medicine->id . '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-trash"> </i> ' . lang('delete') . '</a>';
             }
-            $pharmacist = $this->pharmacist_model->getPharmacistById($medicine->pharmacist);
+            $pharmacist=$this->db->get_where('users',array('id'=>$medicine->pharmacist))->row();
             if (empty($pharmacist)) {
                 $pharmacist_name = $medicine->pharmacist_name;
             } else {
-                $pharmacist_name = $pharmacist->name;
+                $pharmacist_name = $pharmacist->username;
             }
             if ($this->ion_auth->in_group(array('admin'))) {
                 $info[] = array(
@@ -434,7 +440,7 @@ class Medicine extends MX_Controller {
                         //  $options2
                 );
                 $count = $count + 1;
-            } elseif ($this->ion_auth->in_group(array('Pharmacist'))) {
+            } elseif ($this->ion_auth->in_group(array('Pharmacist')) ||$permis=='ok'||$permis_1=='ok'||$permis_2=='ok' ) {
                 $info[] = array(
                     $i,
                     $medicine->name,
@@ -772,7 +778,7 @@ class Medicine extends MX_Controller {
     }
 
     public function internalMedicine() {
-        if (!$this->ion_auth->in_group(array('admin', 'Doctor')) && !in_array('Medicine', $this->pers)) {
+        if (!$this->ion_auth->in_group(array('admin', 'Doctor')) && !in_array('Hospital-Medicine', $this->pers)) {
             redirect('home/permission');
         }
         if ($this->ion_auth->in_group(array('admin', 'Doctor'))) {
@@ -1249,7 +1255,7 @@ class Medicine extends MX_Controller {
 
             $qty = $value;
             $item_price[] = $unit_price * $value;
-            $category_name[] = $key . '*' . $unit_price . '*' . $qty . '*' . $cost . '*' . $key . '*' . $current_medicine->id;
+            $category_name[] = $key . '*' . $unit_price . '*' . $qty . '*' . $cost . '*' .  $current_medicine->id;
         }
 
         $category_name = implode(',', $category_name);
@@ -1326,10 +1332,10 @@ class Medicine extends MX_Controller {
             $perm_explode = array();
 
             $perm_explode = explode(",", $perm);
-            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Medicine') {
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Hospital-Medicine') {
                 $permis = 'ok';
             }
-            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Medicine') {
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Hospital-Medicine') {
                 $permis_1 = 'ok';
             }
         }

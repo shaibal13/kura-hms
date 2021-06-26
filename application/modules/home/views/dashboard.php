@@ -1026,7 +1026,7 @@
                                                 <?php if ($this->ion_auth->in_group(array('admin')) || $permis_2 == 'ok') { ?>
                                                     <li><a  href="medicine/addCategoryView"><i class="fa fa-plus-circle"></i><?php echo lang('add_medicine_category'); ?></a></li>
                                                 <?php } ?>
-                                                  <li><a  href="finance/pharmacy/medicineRequisition"><i class="fa fa-plus-circle"></i><?php echo lang('medicine_requisition'); ?> <?php echo lang('list') ?></a></li>
+                                                  <li><a  href="finance/pharmacy/medicineRequisition"><i class="fa fa-plus-circle"></i><?php echo lang('requisition'); ?> <?php echo lang('list') ?></a></li>
                                                 <li><a  href="supply"><i class="fa fa-medkit"></i><?php echo lang('supply'); ?> <?php echo lang('invoices'); ?></a></li>
                                                 <li><a  href="supply/addNewSupply"><i class="fa fa-medkit"></i><?php echo lang('add'); ?> <?php echo lang('supply'); ?> <?php echo lang('medicine'); ?></a></li>
                                                 <li><a  href="medicine/medicineStockAlert"><i class="fa fa-plus-circle"></i><?php echo lang('medicine_stock_alert'); ?></a></li>
