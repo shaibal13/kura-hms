@@ -28,9 +28,7 @@ class Notice extends MX_Controller {
     }
 
     public function index() {
-        if (!$this->ion_auth->in_group(array('admin', 'Nurse', 'Accountant', 'Doctor', 'Laboratorist', 'im', 'Patient'))) {
-            redirect('home/permission');
-        }
+       
         $data['notices'] = $this->notice_model->getNotice();
         $data['settings'] = $this->settings_model->getSettings();
         $this->load->view('home/dashboard', $data); // just the header file

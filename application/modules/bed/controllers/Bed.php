@@ -329,7 +329,13 @@ class Bed extends MX_Controller {
                 $this->bed_model->updateBedByBedId($bed_id, $data1);
                 $this->session->set_flashdata('feedback', lang('updated'));
             }
-            redirect('bed/bedAllotment');
+            $redirect= $this->input->post('redirect');
+            if ($redirect=='redirect'){
+                 redirect('patient/medicalHistory?id='.$patient);
+            }else{
+               redirect('bed/bedAllotment'); 
+            }
+            
         }
     }
 

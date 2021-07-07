@@ -690,7 +690,9 @@ class Medicine extends MX_Controller {
             $data['categories'] = $this->medicine_model->getInternalMedicineCategory();
         } else {
             $user = $this->ion_auth->get_user_id();
-            $department = $this->db->get_where('users', array('id' => $user))->department;
+            
+            $department = $this->db->get_where('users', array('id' => $user))->row()->department;
+            
             $data['categories'] = $this->medicine_model->getInternalMedicineCategoryByDepartment($department);
         }
 

@@ -1429,6 +1429,9 @@ class Patient extends MX_Controller {
             $data['surgery_category'] = $this->finance_model->getPaymentCategoryBySurgery($cat_update);
         }
         $data['surgeries'] = $this->surgery_model->getSurgery();
+        $data['blood_group'] = $this->bed_model->getBloodGroup();
+
+        $data['room_no'] = $this->bed_model->getBedCategory();
         $this->load->view('home/dashboard'); // just the header file
         $this->load->view('medical_history', $data);
         $this->load->view('home/footer'); // just the footer file

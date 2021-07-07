@@ -690,7 +690,7 @@
                             <div class="">
                                 <?php if ($this->ion_auth->in_group(array('Doctor')) || $permis_b_2 == 'ok') { ?>
                                     <div class=" no-print">
-                                        <a class="btn btn-info btn_width btn-xs" data-toggle="modal" href="#myModa3">
+                                        <a class="btn btn-info btn_width btn-xs" data-toggle="modal" href="#myModal3">
                                             <i class="fa fa-plus-circle"> </i> <?php echo lang('add_new'); ?> 
                                         </a>
                                     </div>
@@ -827,7 +827,7 @@
 
 <!-- Add Medical History Modal-->
 <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="width: 64% !important;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -883,7 +883,7 @@
                         }
                         ?>' placeholder="" readonly="">
                     </div>
-                    <?php if ($this->ion_auth->in_group(array('admin'))) { ?>
+                    <?php if ($this->ion_auth->in_group(array('admin'))  || $permis_p_2 == 'ok') { ?>
                         <div class="separator col-md-12"><?php echo lang('select'); ?></div>
                         <br>  <br>
                         <div class="col-md-12" style="margin-top:20px;">
@@ -1572,7 +1572,7 @@ if ($this->ion_auth->in_group('Doctor')) {
 <!-- Edit Patient Modal-->
 <!-- Add Medical History Modal-->
 <div class="modal fade" id="myModalSurgery" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="width: 64% !important;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -1668,6 +1668,152 @@ if ($this->ion_auth->in_group('Doctor')) {
                         <button type="submit" name="submit" class="btn btn-info submit_button pull-right">Submit</button>
                     </div>
                 </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<!-- End Surgery -->
+<div class="modal fade" id="myModal3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog" style="width: 64% !important;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">  <?php echo lang('add_bed'); ?></h4>
+            </div> 
+            <div class="modal-body">
+                <form role="form" action="bed/addAllotment" class="clearfix row" method="post" enctype="multipart/form-data">
+                            <div class="form-group col-md-12">
+
+                                <label for="exampleInputEmail1" style="margin-right: 20px;"><?php echo lang('covid_19'); ?>:</label>
+
+                                <span></span>
+                                <input type="radio" name="covid_19" value="po">
+                                <label style="margin-right: 56px;"><?php echo lang('po'); ?></label>
+                                <input type="radio" name="covid_19" value="jo">
+                                <label><?php echo lang('jo'); ?></label>
+
+                            </div>
+                             <div class="form-group col-md-12">
+                                <label for="exampleInputEmail1"><?php echo lang('alloted_time'); ?></label>
+                                <div data-date="" class="input-group date form_datetime-meridian">
+                                    <div class="input-group-btn"> 
+                                        <button type="button" class="btn btn-info date-set"><i class="fa fa-calendar"></i></button>
+                                        <button type="button" class="btn btn-danger date-reset"><i class="fa fa-times"></i></button>
+                                    </div>
+                                    <input type="text" class="form-control" readonly="" name="a_time" id="alloted_time" value='<?php
+                                    if (!empty($allotment->a_time)) {
+                                        echo $allotment->a_time;
+                                    }
+                                    ?>' placeholder="">
+                                </div>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label for="exampleInputEmail1"><?php echo lang('room_no'); ?></label>
+                                <select class="form-control m-bot15" id="room_no" name="category" value=''>
+                                    <option><?php echo lang('select'); ?></option>
+                                    <?php foreach ($room_no as $room) { ?>
+                                        <option value="<?php echo $room->category; ?>" <?php
+                                        if (!empty($allotment->category)) {
+                                            if ($allotment->category == $room->category) {
+                                                echo 'selected';
+                                            }
+                                        }
+                                        ?> > <?php echo $room->category; ?> </option>
+                                            <?php } ?> 
+                                </select>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label for="exampleInputEmail1"><?php echo lang('bed_id'); ?></label>
+                                <select class="form-control m-bot15" id="bed_id" name="bed_id" value=''> 
+                                    <option value="select"><?php echo lang('select'); ?></option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label for="exampleInputEmail1"><?php echo lang('patient'); ?></label>
+                                <select class="form-control m-bot15" id="patientchoose" name="patient" value=''> 
+                                    <option value="<?php echo $patient->id; ?>"><?php echo $patient->name.'(id:'.$patient->id.')';?></option>
+                                </select>
+                            </div>
+
+                           
+                            <div class="form-group col-md-12">
+
+                                <label for="exampleInputEmail1" style="margin-right: 20px;"><?php echo lang('category'); ?>:</label>
+
+                                <span></span>
+                                <input type="checkbox" name="category_status[]" value="urgent">
+                                <label style="margin-right: 56px;"><?php echo lang('urgent'); ?></label>
+                                <input type="checkbox" name="category_status[]" value="planned">
+                                <label><?php echo lang('planned'); ?></label>
+
+                            </div>
+                            <div class="form-group col-md-12">
+
+                                <label for="exampleInputEmail1" style="margin-right: 20px;"><?php echo lang('reaksione'); ?>:</label>
+                                <textarea name="reaksione" class='form-control'> </textarea>
+
+                            </div>
+                            <div class="form-group col-md-12">
+
+                                <label for="exampleInputEmail1" style="margin-right: 20px;"><?php echo lang('transferred_from'); ?>:</label>
+                                <textarea name="transferred_from" class='form-control'> </textarea>
+
+                            </div>
+                            <div class="form-group col-md-12">
+
+                                <label for="exampleInputEmail1"><?php echo lang('diagnoza_a_shtrimit'); ?>:</label>
+                                <textarea name="diagnoza_a_shtrimit" class='form-control'> </textarea>
+
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label for="exampleInputEmail1"><?php echo lang('doctor'); ?></label>
+                                <select class="form-control m-bot15" id="doctors" name="doctor" value=''> 
+
+                                </select>
+                            </div>
+                            <div class="form-group col-md-12">
+
+                                <label for="exampleInputEmail1"><?php echo lang('diagnosis'); ?>:</label>
+                                <textarea name="diagnosis" class='form-control'> </textarea>
+
+                            </div>
+                            <div class="form-group col-md-12">
+
+                                <label for="exampleInputEmail1"><?php echo lang('other_illnesses'); ?>:</label>
+                                <textarea name="other_illnesses" class='form-control'> </textarea>
+
+                            </div>
+                            <div class="form-group col-md-12">
+
+                                <label for="exampleInputEmail1"><?php echo lang('anamneza'); ?>:</label>
+                                <textarea name="anamneza" class='form-control'> </textarea>
+
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label for="exampleInputEmail1"><?php echo lang('blood_group'); ?></label>
+                                <select class="form-control m-bot15" id="blood_group" name="blood_group" value=''> 
+                                    <?php foreach ($blood_group as $blood_group) {
+                                        ?>
+
+                                        <option value="<?php echo $blood_group->id; ?>"><?php echo $blood_group->group; ?> </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label for="exampleInputEmail1"><?php echo lang('accepting_doctor'); ?></label>
+                                <select class="form-control m-bot15" id="accepting_doctors" name="accepting_doctor" value=''> 
+
+                                </select>
+                            </div>
+                    <input type="hidden" name="redirect" value="redirect">
+
+                            <input type="hidden" name="id" value=''>
+
+                            <div class="form-group col-md-12">
+                                <button type="submit" name="submit" class="btn btn-info pull-right"><?php echo lang('submit'); ?></button>
+                            </div>
+
+                        </form>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -2187,7 +2333,55 @@ if ($this->ion_auth->in_group('Doctor')) {
         });
     });
 </script>
+<script>
+    $(document).ready(function () {
+        $("#doctors").select2({
+            placeholder: '<?php echo lang('select_doctor'); ?>',
+            allowClear: true,
+            ajax: {
+                url: 'doctor/getDoctorInfo',
+                type: "post",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        searchTerm: params.term // search term
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
 
+        });
+        $("#accepting_doctors").select2({
+            placeholder: '<?php echo lang('select_doctor'); ?>',
+            allowClear: true,
+            ajax: {
+                url: 'doctor/getDoctorInfo',
+                type: "post",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        searchTerm: params.term // search term
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+
+        });
+        
+        });
+        </script>
 <script>
     $(document).ready(function () {
 
@@ -2840,7 +3034,24 @@ if ($this->ion_auth->in_group('Doctor')) {
         });
     });
 </script>
+<script>
+    $(document).ready(function () {
+        $('#room_no').change(function () {
+            var id = $(this).val();
+            $('#bed_id').html(" ");
+            var alloted_time = $('#alloted_time').val();
+            $.ajax({
+                url: 'bed/getBedByRoomNo?id=' + id + '&alloted_time=' + alloted_time,
+                method: 'GET',
+                data: '',
+                dataType: 'json',
+            }).success(function (response) {
+                $('#bed_id').html(response.response);
+            });
 
+        })
+    })
+</script>
 <script>
     $(document).ready(function () {
         $(".flashmessage").delay(3000).fadeOut(100);

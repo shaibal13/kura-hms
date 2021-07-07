@@ -812,7 +812,7 @@
                                     <span><?php echo lang('medical_data'); ?></span>
                                 </a>
                                 <ul class="sub">
-                                    <?php if ($this->ion_auth->in_group('admin') || in_array('Finance', $pers)) { ?>
+                                    <?php if ($this->ion_auth->in_group('admin') || in_array('Medical-Data', $pers)) { ?>
                                         <li><a  href="finance/paymentCategory"><i class="fa fa-edit"></i><?php echo lang('payment_procedures'); ?></a></li>
                                     <?php } ?>
                                     <?php if ($this->ion_auth->in_group('admin') || in_array('Medical-Data', $pers)) { ?>
