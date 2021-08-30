@@ -36,6 +36,18 @@
                 $permis_1 = 'ok';
                 //  break;
             }
+             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Patient') {
+                $permis_4 = 'ok';
+                //  break;
+            }
+            if (in_array('3', $perm_explode) && $perm_explode[0] == 'Patient') {
+                $permis_5 = 'ok';
+                //  break;
+            }
+            if (in_array('1', $perm_explode) && $perm_explode[0] == 'Patient') {
+                $permis_6 = 'ok';
+                //  break;
+            }
         }
         ?>
         <section class="no-print col-md-8">
@@ -43,7 +55,7 @@
                 <?php echo lang('payment_history'); ?>
 
 
-                <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist')) || $permis == 'ok') { ?>
+                <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist')) || $permis_4 == 'ok') { ?>
                     <div class="panel-body no-print pull-right">
                         <a data-toggle="modal" href="#myModal">
                             <div class="btn-group">
@@ -506,7 +518,7 @@
                         </div>
                         <div class=""> 
                             <select class="form-control m-bot15 js-example-basic-single selecttype" id="selecttype" name="deposit_type" value=''> 
-<?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist'))) { ?>
+<?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist'))  || $permis_4 == 'ok' ) { ?>
                                     <option value="Cash"> <?php echo lang('cash'); ?> </option>
                                     <option value="Card"> <?php echo lang('card'); ?> </option>
 <?php } ?>

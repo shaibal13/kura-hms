@@ -70,6 +70,10 @@
                 .price-indivudual{
                     border: none !important;
                 }
+                .discount-price-case{
+                    border: none !important;
+                }
+
                 .from_where{
                     border: none !important;
                 }
@@ -138,6 +142,8 @@
                                             <th style=""><?php echo lang('items'); ?></th>
                                             <th style=""><?php echo lang('type'); ?></th>
                                             <th style=""><?php echo lang('price'); ?></th>
+                                            <th style=""><?php echo lang('discount'); ?></th>
+                                            <th style=";"><?php echo lang('grand_total'); ?></th>
                                             <th style=""><?php echo lang('date_to_be_done'); ?></th>
                                             <th style=""><?php echo lang('status'); ?></th>
                                             <th style="" class="no-print"><?php echo lang('options'); ?></th>
@@ -148,10 +154,14 @@
                                         <?php
                                         if (!empty($case->id)) {
                                             $cat_price = explode("##", $case->description);
+                                            $case_discount_price = explode("**", $case->discount);
+                                            $total_discount_pre = array_sum($case_discount_price);
                                             foreach ($cat_price as $cat_individual) {
 
                                                 $individual = array();
                                                 $individual = explode("**", $cat_individual);
+                                                $total_sum[] = $individual[3];
+                                                $discount_sum[] = $individual[6];
                                                 if ($individual[0] == 'Package') {
                                                     ?>
                                                     <tr class="proccedure" id="tr-pack-<?php echo $individual[2] ?>">
@@ -165,8 +175,17 @@
                                                             <input type="hidden" name="from[]" class="from_where" value="Package">
                                                         </td>
                                                         <td>
-                                                            <input class="price-indivudual" type="text" name="price[]" style="width:100px;" id="price-<?php echo $individual[2]; ?>" value="<?php echo $individual[3]; ?>" >
+                                                            <input class="price-indivudual" type="text" name="price[]" style="width:58px;" id="price-pack-<?php echo $individual[2]; ?>" value="<?php echo $individual[3]; ?>" >
                                                         </td>
+                                                        <td><input style="width:41px;" type="number" min="0" step="0.01" name="discount_case[]" value="<?php
+                                                            if (!empty($individual[6])) {
+                                                                $dis = $individual[6];
+                                                            } else {
+                                                                $dis = '0';
+                                                            }
+                                                            echo $dis;
+                                                            ?>" class="discount-price-case" id="case-discount-pack-<?php echo $individual[2]; ?>" <?php if (!$this->ion_auth->in_group(array('admin'))) { ?> readonly="" <?php } ?>></td>
+                                                        <td class="grand-case" id="grand-case-pack-<?php echo $individual[2]; ?>"><?php echo $individual[3] - $dis; ?></td>
                                                         <td>
                                                             <input type="text" class="form-control  default-date-picker" name="date_to_done[]" value="<?php
                                                             if (!empty($case->id)) {
@@ -209,11 +228,23 @@
                                                             <input type="hidden" name="from[]" class="from_where" value="Medical Analysis">
                                                         </td>
                                                         <td>
-                                                            <input class="price-indivudual" type="text" name="price[]" style="width:100px;" id="price-<?php echo $individual[2]; ?>" value="<?php echo $individual[3]; ?>" <?php if (!empty($case->id)) {
-                                                            if ($case->status == 'Confirmed') { 
-                                                                echo 'readonly';
-                                                            } }?>>
+                                                            <input class="price-indivudual" type="text" name="price[]" style="width:58px;" id="price-med-<?php echo $individual[2]; ?>" value="<?php echo $individual[3]; ?>" <?php
+                                                            if (!empty($case->id)) {
+                                                                if ($case->status == 'Confirmed') {
+                                                                    echo 'readonly';
+                                                                }
+                                                            }
+                                                            ?>>
                                                         </td>
+                                                        <td><input style="width:41px;"  type="number" min="0" step="0.01" name="discount_case[]" value="<?php
+                                                            if (!empty($individual[6])) {
+                                                                $dis = $individual[6];
+                                                            } else {
+                                                                $dis = '0';
+                                                            }
+                                                            echo $dis;
+                                                            ?>" class="discount-price-case" id="case-discount-med-<?php echo $individual[2]; ?>" <?php if (!$this->ion_auth->in_group(array('admin'))) { ?> readonly="" <?php } ?>></td>
+                                                        <td class="grand-case" id="discount-case-med-<?php echo $individual[2]; ?>"><?php echo $individual[3] - $dis; ?></td>
                                                         <td>
                                                             <input type="text" class="form-control  default-date-picker" name="date_to_done[]" value="<?php
                                                             if (!empty($case->id)) {
@@ -255,170 +286,81 @@
                             }
                             ?>'>
                             <input type="hidden" name="redirect" value='case_list'>
-                            <div class="form-group col-md-12">
-                                <label for="exampleInputEmail1"><?php echo lang('total_value'); ?></label>
-                                <input type="text" class="form-control" name="total_value" id="total_value" value='<?php
-                                if (!empty($setval)) {
-                                    echo set_value('total_value');
-                                }
-                                if (!empty($case->total_price)) {
-                                    echo $case->total_price;
-                                }
-                                ?>' placeholder="" readonly="">
-                            </div>
                             <?php
-                            if (!empty($case->id)) {
-                                if ($case->status != 'Confirmed') {
-                                    ?>
-        <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Nurse', 'Doctor', 'Laboratorist', 'Receptionist')) || $permis == 'ok') { ?>
-                                        <div class="separator col-md-12"><?php echo lang('select'); ?></div>
-                                        <br>  <br>
-                                        <div class="col-md-12" style="margin-top:20px;">
-                                            <div class="col-md-5">
-
-                                                <select style=" display: block;"class="form-control m-bot15 js-example-basic-single" id="package" name="package" value='' required=""> 
-                                                    <option><?php echo lang('select'); ?> <?php echo lang('packages'); ?></option>
-                                                            <?php foreach ($packages as $package) { ?>
-                                                        <option value="<?php echo $package->id;
-                                                                ?>"><?php echo $package->name; ?></option>
-            <?php } ?>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-5">
-
-                                                <select style=" display: block;"class="form-control m-bot15 js-example-basic-single" id="medical_analysis" name="medical_analysis" value='' required=""> 
-                                                    <option><?php echo lang('select'); ?> <?php echo lang('medical_analysis'); ?></option>
-                                                            <?php foreach ($payment_category as $category) { ?>
-                                                        <option value="<?php echo $category->id;
-                                                                ?>"><?php echo $category->category; ?></option>
-            <?php } ?>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <button class="btn btn-info" id="add_type"><i class="fa fa-save"></i></button>     
-                                            </div>
+                            if (empty($case->id)) {
+                                $price_total = '0';
+                                $discount_total_new = '0';
+                                $grand_total_new = '0';
+                            } else {
 
 
+                                $price_total = array_sum($total_sum);
+                                $discount_total_new = array_sum($discount_sum);
+                                $grand_total_new = $price_total - $discount_total_new;
+                            }
+                            ?>
+                            <div class="form-group col-md-12">
+                                <div class="form-group col-md-4">
+                                    <label for="exampleInputEmail1"><?php echo lang('total_value'); ?></label>
+                                    <input type="text" class="form-control total_value_case" name="total_value" id="total_value" value='<?php
+                                    echo $price_total;
+                                    ?>' placeholder="" readonly="">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="exampleInputEmail1"><?php echo lang('total_discount'); ?></label>
+                                    <input type="text" class="form-control" name="total_discount" id="total_discount_case" value='<?php
+                                    echo $discount_total_new;
+                                    ?>' placeholder="" readonly="">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="exampleInputEmail1"><?php echo lang('grand_total'); ?></label>
+                                    <input type="text" class="form-control" name="grand_total" id="grand_total_case" value='<?php
+                                    echo $grand_total_new;
+                                    ?>' placeholder="" readonly="">
+                                </div>
+                            </div>
 
+                            <?php
+                            if (empty($case->id) || $case->status != 'Confirmed') {
+                                // if ($case->status != 'Confirmed') {
+                                ?>
+                                <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Nurse', 'Doctor', 'Laboratorist', 'Receptionist')) || $permis == 'ok') { ?>
+                                    <div class="separator col-md-12"><?php echo lang('select'); ?></div>
+                                    <br>  <br>
+                                    <div class="col-md-12" style="margin-top:20px;">
+                                        <div class="col-md-5">
+
+                                            <select style=" display: block;"class="form-control m-bot15 js-example-basic-single" id="package" name="package" value='' required=""> 
+                                                <option><?php echo lang('select'); ?> <?php echo lang('packages'); ?></option>
+                                                <?php foreach ($packages as $package) { ?>
+                                                    <option value="<?php echo $package->id;
+                                                    ?>"><?php echo $package->name; ?></option>
+                                                        <?php } ?>
+                                            </select>
                                         </div>
-                                    <?php }
+                                        <div class="col-md-5">
+
+                                            <select style=" display: block;"class="form-control m-bot15 js-example-basic-single" id="medical_analysis" name="medical_analysis" value='' required=""> 
+                                                <option><?php echo lang('select'); ?> <?php echo lang('medical_analysis'); ?></option>
+                                                <?php foreach ($payment_category as $category) { ?>
+                                                    <option value="<?php echo $category->id;
+                                                    ?>"><?php echo $category->category; ?></option>
+                                                        <?php } ?>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button class="btn btn-info" id="add_type"><i class="fa fa-save"></i></button>     
+                                        </div>
+
+
+
+                                    </div>
+                                    <?php
                                 }
-                            } ?>
-                            <!--
-<?php if ($case->payment_status == 'paid') { ?>
-                                                                <div class="form-group col-md-12" style="padding-top: 20px;">
-                                                                    <label for="exampleInputEmail1"><?php echo lang('payment'); ?> <?php echo lang('status'); ?></label>
-                                                                    <input type="text" class="form-control" name="" id="" value='<?php echo lang('paid'); ?>' placeholder="" readonly="">
-                                                                </div> 
-                                                                <div class="form-group  payment  right-six col-md-12">
-                                                                    <button type="submit" name="submit2" id="submit1" class="btn btn-info row pull-right"> <?php echo lang('add_case'); ?><</button>
-                                                                </div>
-<?php } else { ?>
-                                                                <div class="col-md-12" style="margin-top: 10px;">
-                                                                    <input type="checkbox" id="pay_now_case" name="pay_now_case" value="pay_now_case">
-                                                                    <label for=""> <?php echo lang('pay_now'); ?></label><br>
-                                
-                                                                </div>
-                                                                <div class="payment_label col-md-12 hidden deposit_type" style="text-align: left !important ;margin: 0% !important ;"> 
-                                                                    <label for="exampleInputEmail1"><?php echo lang('deposit_type'); ?></label>
-                                
-                                                                    <div class=""> 
-                                                                        <select class="form-control m-bot15 js-example-basic-single selecttype" id="selecttype" name="deposit_type" value=''> 
-                                <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist'))) { ?>
-                                                                                    <option value="Cash"> <?php echo lang('cash'); ?> </option>
-                                                                                    <option value="Card"> <?php echo lang('card'); ?> </option>
-    <?php } ?>
-                                
-                                                                        </select>
-                                                                    </div>
-                                
-                                                                </div>
-                                                                <div class="col-md-12">
-    <?php
-    $payment_gateway = $settings->payment_gateway;
-    ?>
-                                
-                                
-                                
-                                                                    <div class = "card">
-                                
-                                                                        <hr>
-    <?php if ($payment_gateway != 'Paymob') { ?>
-                                                                                <div class="col-md-12 payment pad_bot">
-                                                                                    <label for="exampleInputEmail1"> <?php echo lang('accepted'); ?> <?php echo lang('cards'); ?></label>
-                                                                                    <div class="payment pad_bot">
-                                                                                        <img src="uploads/card.png" width="100%">
-                                                                                    </div> 
-                                                                                </div>
-                                <?php }
-                                ?> 
-                                
-                                
-    <?php
-    if ($payment_gateway == 'PayPal') {
-        ?>
-                                                                                <div class="col-md-12 payment pad_bot">
-                                                                                    <label for="exampleInputEmail1"> <?php echo lang('card'); ?> <?php echo lang('type'); ?></label>
-                                                                                    <select class="form-control m-bot15" name="card_type" value=''>
-                                    
-                                                                                        <option value="Mastercard"> <?php echo lang('mastercard'); ?> </option>   
-                                                                                        <option value="Visa"> <?php echo lang('visa'); ?> </option>
-                                                                                        <option value="American Express" > <?php echo lang('american_express'); ?> </option>
-                                                                                    </select>
-                                                                                </div>
-    <?php } ?>
-    <?php if ($payment_gateway == '2Checkout' || $payment_gateway == 'PayPal') {
-        ?>
-                                                                                <div class="col-md-12 payment pad_bot">
-                                                                                    <label for="exampleInputEmail1"> <?php echo lang('cardholder'); ?> <?php echo lang('name'); ?></label>
-                                                                                    <input type="text"  id="cardholder" class="form-control pay_in" name="cardholder" value='' placeholder="">
-                                                                                </div>
-    <?php } ?>
-    <?php if ($payment_gateway != 'Pay U Money' && $payment_gateway != 'Paystack' && $payment_gateway != 'SSLCOMMERZ' && $payment_gateway != 'Paytm') { ?>
-                                                                                <div class="col-md-12 payment pad_bot">
-                                                                                    <label for="exampleInputEmail1"> <?php echo lang('card'); ?> <?php echo lang('number'); ?></label>
-                                                                                    <input type="text"  id="card" class="form-control pay_in" name="card_number" value='' placeholder="">
-                                                                                </div>
-                                    
-                                    
-                                    
-                                                                                <div class="col-md-8 payment pad_bot">
-                                                                                    <label for="exampleInputEmail1"> <?php echo lang('expire'); ?> <?php echo lang('date'); ?></label>
-                                                                                    <input type="text" class="form-control pay_in" id="expire" data-date="" data-date-format="MM YY" placeholder="Expiry (MM/YY)" name="expire_date" maxlength="7" aria-describedby="basic-addon1" value='' placeholder="">
-                                                                                </div>
-                                                                                <div class="col-md-4 payment pad_bot">
-                                                                                    <label for="exampleInputEmail1"> <?php echo lang('cvv'); ?> </label>
-                                                                                    <input type="text" class="form-control pay_in" id="cvv" maxlength="3" name="cvv" value='' placeholder="">
-                                                                                </div> 
-        <?php
-    }
-    ?>
-                                                                    </div>
-                                
-                                
-                                                                </div>
-                                                                <div class="col-md-12 panel">
-                                                                    <div class="col-md-3 payment_label"> 
-                                                                    </div>
-                                                                    <div class="col-md-9"> 
-                                <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
-                                                                        <div class="form-group cashsubmit payment  right-six col-md-12">
-                                                                            <button type="submit" name="submit2" id="submit1" class="btn btn-info row pull-right"> <?php echo lang('add_case'); ?></button>
-                                                                        </div>
-                                <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
-                                                                        <div class="form-group cardsubmit  right-six col-md-12 hidden">
-                                                                            <button type="submit" name="pay_now" id="submit-btn" class="btn btn-info row pull-right" <?php if ($settings->payment_gateway == 'Stripe') {
-                                    ?>onClick="stripePay(event);"<?php }
-                        ?> <?php if ($settings->payment_gateway == '2Checkout' && $twocheckout->status == 'live') {
-                            ?>onClick="twoCheckoutPay(event);"<?php }
-                        ?>> <?php echo lang('add_case'); ?></button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-<?php }
-?>
-                            
-                            -->
+                            }
+                            //   } 
+                            ?>
+
                             <div class="form-group col-md-12" style="margin-top:20px;">
                                 <button type="submit" id="submit" name="submit" class="btn btn-info pull-right"><?php echo lang('add_case'); ?></button>
                             </div>
@@ -457,13 +399,27 @@
                     var values = $("input[name^='price[]']").map(function (idx, ele) {
                         return $(ele).val();
                     }).get();
+
                     var sum = 0;
+
                     $.each(values, function (index, value) {
                         // alert(index + ": " + value);
-                        var number = parseInt(value, 10);
+                        var number = parseFloat(value);
                         sum += number;
                     });
+                    var discount_values = $("input[name^='discount_case[]']").map(function (idx1, ele1) {
+                        return $(ele1).val();
+                    }).get();
+                    var dis_sum = 0;
+
+                    $.each(discount_values, function (index1, value1) {
+                        // alert(index + ": " + value);
+                        var number1 = parseFloat(value1);
+                        dis_sum += number1;
+                    });
+                    $('#total_discount_case').val(dis_sum);
                     $('#total_value').val(sum);
+                    $('#grand_total_case').val(parseFloat(sum - dis_sum));
                 })
             } else if ($('table#editable-table2').find('#tr-med-' + medical_analysis).length <= 0 && $('table#editable-table2').find('#tr-pack-' + package).length > 0) {
                 $.ajax({
@@ -479,10 +435,22 @@
                     var sum = 0;
                     $.each(values, function (index, value) {
                         // alert(index + ": " + value);
-                        var number = parseInt(value, 10);
+                        var number = parseFloat(value);
                         sum += number;
                     });
+                    var discount_values = $("input[name^='discount_case[]']").map(function (idx1, ele1) {
+                        return $(ele1).val();
+                    }).get();
+                    var dis_sum = 0;
+
+                    $.each(discount_values, function (index1, value1) {
+                        // alert(index + ": " + value);
+                        var number1 = parseFloat(value1);
+                        dis_sum += number1;
+                    });
+                    $('#total_discount_case').val(dis_sum);
                     $('#total_value').val(sum);
+                    $('#grand_total_case').val(parseFloat(sum - dis_sum));
                 })
             } else {
                 if (package === 'Select Packages') {
@@ -505,10 +473,22 @@
                     var sum = 0;
                     $.each(values, function (index, value) {
                         // alert(index + ": " + value);
-                        var number = parseInt(value, 10);
+                        var number = parseFloat(value);
                         sum += number;
                     });
+                    var discount_values = $("input[name^='discount_case[]']").map(function (idx1, ele1) {
+                        return $(ele1).val();
+                    }).get();
+                    var dis_sum = 0;
+
+                    $.each(discount_values, function (index1, value1) {
+                        // alert(index + ": " + value);
+                        var number1 = parseFloat(value1);
+                        dis_sum += number1;
+                    });
+                    $('#total_discount_case').val(dis_sum);
                     $('#total_value').val(sum);
+                    $('#grand_total_case').val(parseFloat(sum - dis_sum));
                 })
             }
             e.preventDefault();
@@ -535,10 +515,22 @@
             var sum = 0;
             $.each(values, function (index, value) {
                 // alert(index + ": " + value);
-                var number = parseInt(value, 10);
+                var number = parseFloat(value);
                 sum += number;
             });
+            var discount_values = $("input[name^='discount_case[]']").map(function (idx1, ele1) {
+                return $(ele1).val();
+            }).get();
+            var dis_sum = 0;
+
+            $.each(discount_values, function (index1, value1) {
+                // alert(index + ": " + value);
+                var number1 = parseFloat(value1);
+                dis_sum += number1;
+            });
+            $('#total_discount_case').val(dis_sum);
             $('#total_value').val(sum);
+            $('#grand_total_case').val(parseFloat(sum - dis_sum));
         });
         /* $("#packages_add").submit(function (e) {
          var id = $(this).attr('id');
@@ -562,6 +554,45 @@
          e.preventDefault();
          }
          });*/
+
+        $("#editable-table2").on("keyup", ".discount-price-case", function () {
+            var id = $(this).attr('id');
+            var discount_single = $('#' + id).val();
+            
+           
+            var id_split = id.split("-");
+           
+            var price = '';
+            var id_grand = '';
+            if (id_split[2] === 'med') {
+                price = $('#price-med-' + id_split[3]).val();
+                $('#discount-case-med-' + id_split[3]).html(" ");
+                id_grand = '#grand-case-med-';
+            } else {
+                price = $('#price-pack-' + id_split[3]).val();
+                $('#discount-case-pack-' + id_split[3]).html(" ");
+                id_grand = '#grand-case-pack-';
+            }
+            var grand_single = parseFloat(price - discount_single);
+            $(id_grand + id_split[3]).html(grand_single);
+             
+            var discount_values = $("input[name^='discount_case[]']").map(function (idx, ele) {
+                return $(ele).val();
+            }).get();
+            var dis_sum = 0;
+
+            $.each(discount_values, function (index1, value1) {
+                //   alert(index1 + ": " + value1);
+                var number1 = parseFloat(value1);
+                dis_sum += number1;
+            });
+            var total = $('#total_value').val();
+            var grand = parseFloat(total) - parseFloat(dis_sum);
+            $('#grand_total_case').val(grand);
+            $('#total_discount_case').val(dis_sum);
+
+            // alert(dis_sum);
+        });
 
     })
 </script>
