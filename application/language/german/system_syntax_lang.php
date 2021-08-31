@@ -921,3 +921,5 @@ $lang['log'] = 'Log';
 $lang['user_email'] = 'User Email';
 $lang['log_list'] = 'Log List';
 $lang['action'] = 'Action';
+$lang['barcode'] = 'Barcode';
+$lang['emergency-med'] = 'Emergency Medicine';

@@ -207,6 +207,8 @@ class Paytm extends MX_Controller {
                         redirect("appointment/request");
                     } elseif ($redirectlink == '15') {
                         redirect("frontend");
+                    }elseif ($redirectlink == 'frontend') {
+                        redirect("frontend");
                     }
                 } elseif ($redirectlink == '0') {
                     $data1 = array(
