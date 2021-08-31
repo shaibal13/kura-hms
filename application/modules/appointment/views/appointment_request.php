@@ -4,8 +4,8 @@
 <section id="main-content">
     <section class="wrapper site-min-height">
         <!-- page start-->
-          <?php  
-         $group_permission = $this->ion_auth->get_users_groups()->row();
+        <?php
+        $group_permission = $this->ion_auth->get_users_groups()->row();
 
         if ($group_permission->name == 'admin' || $group_permission->name == 'Patient' || $group_permission->name == 'Doctor' || $group_permission->name == 'Nurse' || $group_permission->name == 'Pharmacist' || $group_permission->name == 'Laboratorist' || $group_permission->name == 'Accountant' || $group_permission->name == 'Receptionist' || $group_permission->name == 'members') {
 
@@ -28,11 +28,10 @@
                 $permis = 'ok';
                 //  break;
             }
-             if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
+            if (in_array('2', $perm_explode) && $perm_explode[0] == 'Appointment') {
                 $permis_2 = 'ok';
                 //  break;
             }
-             
         }
         ?>
         <section class="panel">
@@ -52,7 +51,7 @@
                                 <th> <?php echo lang('doctor'); ?></th>
                                 <th> <?php echo lang('date-time'); ?></th>
                                 <th> <?php echo lang('remarks'); ?></th>
-                                 <th> <?php echo lang('payment'); ?> <?php echo lang('status'); ?></th>
+                                <th> <?php echo lang('payment'); ?> <?php echo lang('status'); ?></th>
                                 <th> <?php echo lang('status'); ?></th>
                                 <th> <?php echo lang('options'); ?></th>
                             </tr>
@@ -127,26 +126,26 @@
                             <select class="form-control" name="p_gender" value=''>
 
                                 <option value="Male" <?php
-                                if (!empty($patient->sex)) {
-                                    if ($patient->sex == 'Male') {
-                                        echo 'selected';
-                                    }
-                                }
-                                ?> > Male </option>   
+                if (!empty($patient->sex)) {
+                    if ($patient->sex == 'Male') {
+                        echo 'selected';
+                    }
+                }
+                ?> > Male </option>   
                                 <option value="Female" <?php
                                 if (!empty($patient->sex)) {
                                     if ($patient->sex == 'Female') {
                                         echo 'selected';
                                     }
                                 }
-                                ?> > Female </option>
+                ?> > Female </option>
                                 <option value="Others" <?php
                                 if (!empty($patient->sex)) {
                                     if ($patient->sex == 'Others') {
                                         echo 'selected';
                                     }
                                 }
-                                ?> > Others </option>
+                ?> > Others </option>
                             </select>
                         </div>
                     </div>
@@ -169,14 +168,13 @@
                     <div class="col-md-6 panel">
                         <label for="exampleInputEmail1"> <?php echo lang('appointment'); ?> <?php echo lang('status'); ?></label> 
                         <select class="form-control m-bot15" name="status" value=''>
-                            <option value="Pending Confirmation" <?php
-                                ?> > <?php echo lang('pending_confirmation'); ?> </option>
+                            <option value="Pending Confirmation" <?php ?> > <?php echo lang('pending_confirmation'); ?> </option>
                             <option value="Confirmed" <?php
-                                ?> > <?php echo lang('confirmed'); ?> </option>
+                ?> > <?php echo lang('confirmed'); ?> </option>
                             <option value="Treated" <?php
-                                ?> > <?php echo lang('treated'); ?> </option>
+                ?> > <?php echo lang('treated'); ?> </option>
                             <option value="Cancelled" <?php
-                                ?> > <?php echo lang('cancelled'); ?> </option>
+                ?> > <?php echo lang('cancelled'); ?> </option>
                         </select>
                     </div>
                     <div class="col-md-6 panel">
@@ -264,26 +262,26 @@
                             <select class="form-control" name="p_gender" value=''>
 
                                 <option value="Male" <?php
-                                if (!empty($patient->sex)) {
-                                    if ($patient->sex == 'Male') {
-                                        echo 'selected';
+                                    if (!empty($patient->sex)) {
+                                        if ($patient->sex == 'Male') {
+                                            echo 'selected';
+                                        }
                                     }
-                                }
-                                ?> > Male </option>   
+                ?> > Male </option>   
                                 <option value="Female" <?php
-                                if (!empty($patient->sex)) {
-                                    if ($patient->sex == 'Female') {
-                                        echo 'selected';
-                                    }
-                                }
-                                ?> > Female </option>
+                                        if (!empty($patient->sex)) {
+                                            if ($patient->sex == 'Female') {
+                                                echo 'selected';
+                                            }
+                                        }
+                                        ?> > Female </option>
                                 <option value="Others" <?php
-                                if (!empty($patient->sex)) {
-                                    if ($patient->sex == 'Others') {
-                                        echo 'selected';
-                                    }
-                                }
-                                ?> > Others </option>
+                                        if (!empty($patient->sex)) {
+                                            if ($patient->sex == 'Others') {
+                                                echo 'selected';
+                                            }
+                                        }
+                                        ?> > Others </option>
                             </select>
                         </div>
                     </div>
@@ -306,14 +304,12 @@
                     <div class="col-md-6 panel">
                         <label for="exampleInputEmail1"> <?php echo lang('appointment'); ?> <?php echo lang('status'); ?></label> 
                         <select class="form-control m-bot15" name="status" value=''>
-                            <option value="Pending Confirmation" <?php
-                                ?> > <?php echo lang('pending_confirmation'); ?> </option>
-                            <option value="Confirmed" <?php
-                                ?> > <?php echo lang('confirmed'); ?> </option>
+                            <option value="Pending Confirmation" <?php ?> > <?php echo lang('pending_confirmation'); ?> </option>
+                            <option value="Confirmed" <?php ?> > <?php echo lang('confirmed'); ?> </option>
                             <option value="Treated" <?php
-                                ?> > <?php echo lang('treated'); ?> </option>
+                                        ?> > <?php echo lang('treated'); ?> </option>
                             <option value="Cancelled" <?php
-                                ?> > <?php echo lang('cancelled'); ?> </option>
+                                        ?> > <?php echo lang('cancelled'); ?> </option>
                         </select>
                     </div>
 
@@ -321,10 +317,11 @@
                         <label for="exampleInputEmail1"> <?php echo lang('remarks'); ?></label>
                         <input type="text" class="form-control" name="remarks" id="exampleInputEmail1" value='' placeholder="">
                     </div>
-                    <!--     <div class="col-md-6 panel">
-                         <label> <?php echo lang('send_sms'); ?> ? </label> <br>
-                         <input type="checkbox" name="sms" class="" value="sms">  <?php echo lang('yes'); ?>
-                     </div> -->
+                    <input type="hidden" name="visit_charges" value="">
+                    <input type="hidden" name="discount" id="discount" value="0">
+                    <input type="hidden" name="grand_total" id="grand_total" value="0">
+                      <input type="hidden" name="category_appointment" id="category_appointment" value="">
+                    <input type="hidden" name="visit_description" id="visit_description" value="">
                     <input type="hidden" name="id" id="appointment_id" value=''>
                     <div class="col-md-12 panel">
                         <button type="submit" name="submit" class="btn btn-info pull-right"> <?php echo lang('submit'); ?></button>
@@ -348,8 +345,8 @@
             var id = $(this).attr('data-id');
 
             $('#editAppointmentForm').trigger("reset");
-               $('#editAppointmentForm').find('[name="doctor"]').html(" ");
-                $('#editAppointmentForm').find('[name="patient"]').html(" ");
+            $('#editAppointmentForm').find('[name="doctor"]').html(" ");
+            $('#editAppointmentForm').find('[name="patient"]').html(" ");
             $('#myModal2').modal('show');
             $.ajax({
                 url: 'appointment/editAppointmentByJason?id=' + iid,
@@ -373,7 +370,11 @@
                 var option1 = new Option(response.doctor.name + '-' + response.doctor.id, response.doctor.id, true, true);
                 $('#editAppointmentForm').find('[name="doctor"]').append(option1).trigger('change');
 
-
+                $('#editAppointmentForm').find('[name="visit_charges"]').val(response.appointment.visit_charges).end()
+                $('#editAppointmentForm').find('[name="discount"]').val(response.appointment.discount).end();
+                $('#editAppointmentForm').find('[name="grand_total"]').val(response.appointment.grand_total).end();
+                 $('#editAppointmentForm').find('[name="visit_description"]').val(response.appointment.visit_description).end();
+                 $('#editAppointmentForm').find('[name="category_appointment"]').val(response.appointment.category_appointment).end();
 
 
 
@@ -488,7 +489,7 @@
                     }
                 },
             ],
-             buttons: [
+            buttons: [
                 {extend: 'copyHtml5', exportOptions: {columns: [0, 1, 2, 3, 4, 5], }},
                 {extend: 'excelHtml5', exportOptions: {columns: [0, 1, 2, 3, 4, 5], }},
                 {extend: 'csvHtml5', exportOptions: {columns: [0, 1, 2, 3, 4, 5], }},
@@ -730,98 +731,6 @@
 </script>
 
 
-<script>
-    $(document).ready(function () {
-        $("#pos_select").select2({
-            placeholder: '<?php echo lang('select_patient'); ?>',
-            allowClear: true,
-            ajax: {
-                url: 'patient/getPatientinfoWithAddNewOption',
-                type: "post",
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        searchTerm: params.term // search term
-                    };
-                },
-                processResults: function (response) {
-                    return {
-                        results: response
-                    };
-                },
-                cache: true
-            }
-
-        });
-        $(".patient").select2({
-            placeholder: '<?php echo lang('select_patient'); ?>',
-            allowClear: true,
-            ajax: {
-                url: 'patient/getPatientinfoWithAddNewOption',
-                type: "post",
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        searchTerm: params.term // search term
-                    };
-                },
-                processResults: function (response) {
-                    return {
-                        results: response
-                    };
-                },
-                cache: true
-            }
-
-        });
-        $("#adoctors").select2({
-            placeholder: '<?php echo lang('select_doctor'); ?>',
-            allowClear: true,
-            ajax: {
-                url: 'doctor/getDoctorInfo',
-                type: "post",
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        searchTerm: params.term // search term
-                    };
-                },
-                processResults: function (response) {
-                    return {
-                        results: response
-                    };
-                },
-                cache: true
-            }
-
-        });
-        $("#adoctors1").select2({
-            placeholder: '<?php echo lang('select_doctor'); ?>',
-            allowClear: true,
-            ajax: {
-                url: 'doctor/getDoctorInfo',
-                type: "post",
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        searchTerm: params.term // search term
-                    };
-                },
-                processResults: function (response) {
-                    return {
-                        results: response
-                    };
-                },
-                cache: true
-            }
-
-        });
-    });
-</script>
 
 
 

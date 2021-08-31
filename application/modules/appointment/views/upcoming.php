@@ -240,6 +240,14 @@
                         <label for="exampleInputEmail1"><?php echo lang('visit'); ?> <?php echo lang('charges'); ?></label>
                         <input type="number" class="form-control"  name="visit_charges" id="visit_charges" value='' placeholder="" readonly="">
                     </div>
+                    <div class="form-group col-md-4" style="padding-top: 20px;">
+                        <label for="exampleInputEmail1"><?php echo lang('discount'); ?></label>
+                        <input type="number" class="form-control" name="discount" id="discount" value='0' placeholder="">
+                    </div>
+                    <div class="form-group col-md-4" style="padding-top: 20px;">
+                        <label for="exampleInputEmail1"><?php echo lang('grand_total'); ?></label>
+                        <input type="number" class="form-control" name="grand_total" id="grand_total" value='0' placeholder="" readonly="">
+                    </div>
                     <?php if (!$this->ion_auth->in_group(array('Nurse', 'Doctor'))) { ?>    
                         <div class="col-md-12">
                             <input type="checkbox" id="pay_now_appointment" name="pay_now_appointment" value="pay_now_appointment">
@@ -471,6 +479,14 @@
                         <label for="exampleInputEmail1"><?php echo lang('visit'); ?> <?php echo lang('charges'); ?></label>
                         <input type="number" class="form-control" name="visit_charges" id="visit_charges1" value='' placeholder="" readonly="">
                     </div>
+                    <div class="form-group col-md-4 hidden consultant_fee_div" style="padding-top: 20px;">
+                        <label for="exampleInputEmail1"><?php echo lang('discount'); ?></label>
+                        <input type="number" class="form-control" name="discount" id="discount1" value='0' placeholder="">
+                    </div>
+                    <div class="form-group col-md-4 hidden consultant_fee_div" style="padding-top: 20px;">
+                        <label for="exampleInputEmail1"><?php echo lang('grand_total'); ?></label>
+                        <input type="number" class="form-control" name="grand_total" id="grand_total1" value='0' placeholder="" readonly="">
+                    </div>
                     <?php if (!$this->ion_auth->in_group(array('Nurse', 'Doctor'))) { ?> 
                         <div class="col-md-12 hidden pay_now">
                             <input type="checkbox" id="pay_now_appointment1" name="pay_now_appointment" value="pay_now_appointment">
@@ -674,6 +690,8 @@
                                                         $('.payment_status').addClass('hidden');
                                                         // $('.deposit_type1').removeClass('hidden');
                                                         $('#editAppointmentForm').find('[name="visit_charges"]').val(response.appointment.visit_charges).end()
+                                                        $('#editAppointmentForm').find('[name="discount"]').val(response.appointment.discount).end();
+                                                        $('#editAppointmentForm').find('[name="grand_total"]').val(response.appointment.grand_total).end();
                                                     } else {
                                                         $('.payment_status').removeClass('hidden');
                                                         $('.pay_now').addClass('hidden');
@@ -839,8 +857,8 @@
                 // Populate the form fields with the data returned from server
                 //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
             });
-              $('#visit_description').html(" ");
-                 $('#visit_charges').val(" ");
+            $('#visit_description').html(" ");
+            $('#visit_charges').val(" ");
             $.ajax({
                 url: 'doctor/getDoctorVisit?id=' + doctorr,
                 method: 'GET',
@@ -970,8 +988,8 @@
                 // Populate the form fields with the data returned from server
                 //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
             });
-              $('#visit_description1').html(" ");
-                 $('#visit_charges1').val(" ");
+            $('#visit_description1').html(" ");
+            $('#visit_charges1').val(" ");
             $.ajax({
                 url: 'doctor/getDoctorVisit?id=' + doctorr,
                 method: 'GET',
@@ -1175,9 +1193,17 @@
 
 
                 $('#visit_charges').val(response.response.visit_charges).end();
-
+                var discount = $('#discount').val();
+                $('#grand_total').val(parseFloat(response.response.visit_charges - discount)).end();
 
             });
+        });
+        $("#discount").keyup(function () {
+            // Get the record's ID via attribute  
+            var discount = $(this).val();
+            var price = $('#visit_charges').val();
+            $('#grand_total').val(parseFloat(price - discount)).end();
+
         });
 
     });
@@ -1198,11 +1224,19 @@
 
 
                 $('#visit_charges1').val(response.response.visit_charges).end();
+                var discount = $('#discount1').val();
+                $('#grand_total1').val(parseFloat(response.response.visit_charges - discount)).end();
 
 
             });
         });
+        $("#discount1").keyup(function () {
+            // Get the record's ID via attribute  
+            var discount = $(this).val();
+            var price = $('#visit_charges1').val();
+            $('#grand_total1').val(parseFloat(price - discount)).end();
 
+        });
     });
 </script>
 <script type="text/javascript" src="https://js.stripe.com/v2/"></script>

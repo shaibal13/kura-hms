@@ -232,7 +232,7 @@
                                             <i class="fa fa-plus-circle"> </i> <?php echo lang('add_new'); ?>
                                         </a>
                                     </div>
-                                <?php
+                                    <?php
                                 }
                                 if ($this->ion_auth->in_group(array('Patient'))) {
                                     ?>
@@ -241,7 +241,7 @@
                                             <i class="fa fa-plus-circle"> </i> <?php echo lang('request_a_appointment'); ?>
                                         </a>
                                     </div>
-<?php } ?>
+                                <?php } ?>
                                 <div class="adv-table editable-table ">
                                     <table class="table table-striped table-hover table-bordered" id="">
                                         <thead>
@@ -253,11 +253,11 @@
                                                 <th><?php echo lang('status'); ?></th>
                                                 <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist', 'Patient')) || $permis_2 == 'ok') { ?>
                                                     <th class="no-print"><?php echo lang('options'); ?></th>
-<?php } ?>
+                                                <?php } ?>
                                             </tr>
                                         </thead>
                                         <tbody>
-<?php foreach ($appointments as $appointment) { ?>
+                                            <?php foreach ($appointments as $appointment) { ?>
                                                 <tr class="">
 
                                                     <td><?php echo date('d-m-Y', $appointment->date); ?></td>
@@ -297,9 +297,9 @@
                                                         }
                                                         echo $appointment_status;
                                                         ?></td>
-                                                        <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist', 'Patient')) || $permis_2 == 'ok' || $permis_3 == 'ok') { ?>
+                                                    <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist', 'Patient')) || $permis_2 == 'ok' || $permis_3 == 'ok') { ?>
                                                         <td class="no-print">
-        <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_2 == 'ok') { ?>
+                                                            <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_2 == 'ok') { ?>
 
                                                                 <button type="button" class="btn btn-info btn-xs btn_width editAppointmentButton" title="<?php echo lang('edit'); ?>" data-toggle="modal" data-id="<?php echo $appointment->id; ?>"><i class="fa fa-edit"></i> </button>
                                                             <?php } ?>
@@ -308,11 +308,11 @@
                                                             <?php } ?>
                                                             <?php if (!$this->ion_auth->in_group(array('Doctor')) && $appointment->status == 'Confirmed') { ?>
                                                                 <a class="btn btn-info btn-xs btn_width" href="patient/myInvoice?id=<?php echo $appointment->payment_id ?>"><i class="fa fa-file-invoice"> </i></a>
-                                                        <?php } ?>
+                                                            <?php } ?>
                                                         </td>
-                                                <?php } ?>
+                                                    <?php } ?>
                                                 </tr>
-<?php } ?>
+                                            <?php } ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -321,13 +321,13 @@
                         <div id="home" class="tab-pane">
                             <div class="">
 
-<?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 == 'ok') { ?>
+                                <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 == 'ok') { ?>
                                     <div class=" no-print">
                                         <a class="btn btn-info btn_width btn-xs" data-toggle="modal" href="#myModal">
                                             <i class="fa fa-plus-circle"> </i> <?php echo lang('add_new'); ?>
                                         </a>
                                     </div>
-<?php } ?>
+                                <?php } ?>
 
                                 <div class="adv-table editable-table ">
 
@@ -341,11 +341,11 @@
                                                 <th style=""><?php echo lang('status'); ?> </th>
                                                 <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 == 'ok' || $permis_p_3 == 'ok') { ?>
                                                     <th class="no-print"><?php echo lang('options'); ?></th>
-<?php } ?>
+                                                <?php } ?>
                                             </tr>
                                         </thead>
                                         <tbody>
-<?php foreach ($medical_histories as $medical_history) { ?>
+                                            <?php foreach ($medical_histories as $medical_history) { ?>
                                                 <tr class="">
 
                                                     <td><?php echo date('d-m-Y', $medical_history->date); ?></td>
@@ -374,9 +374,9 @@
                                                         }
                                                         echo $status;
                                                         ?></td>
-                                                        <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 == 'ok' || $permis_p_3 == 'ok') { ?>
+                                                    <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 == 'ok' || $permis_p_3 == 'ok') { ?>
                                                         <td class="no-print">
-        <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 == 'ok') { ?>
+                                                            <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 == 'ok') { ?>
                                                                 <a class="btn btn-info btn-xs btn_width" title="<?php echo lang('edit'); ?>" href="patient/editCaseHistory?id=<?php echo $medical_history->id; ?>"><i class="fa fa-edit"></i> </a>
                                                                 <!--  <button type="button" class="btn btn-info btn-xs btn_width editbutton" title="<?php echo lang('edit'); ?>" data-toggle="modal" data-id="<?php echo $medical_history->id; ?>"><i class="fa fa-edit"></i> </button>   -->
                                                             <?php } ?>
@@ -385,11 +385,11 @@
                                                             <?php } ?>
                                                             <?php if ($medical_history->status == 'Confirmed') { ?>
                                                                 <a class="btn btn-success btn-xs btn_width" title="<?php echo lang('invoice'); ?>" href="finance/invoice?id=<?php echo $medical_history->payment_id; ?>"><i class="fa fa-file-invoice"></i> </a>
-                                                        <?php } ?>
+                                                            <?php } ?>
                                                         </td>
-                                                <?php } ?>
+                                                    <?php } ?>
                                                 </tr>
-<?php } ?>
+                                            <?php } ?>
                                         </tbody>
                                     </table>
 
@@ -403,8 +403,8 @@
                                                                                 <div class="">
                                                                                     <textarea class="ckeditor form-control" name="description" id="description" value="" rows="100" cols="50">      
                                     <?php foreach ($medical_histories as $medical_history) { ?>         
-                                                                                                                                                                                                                                                                                            <td><?php echo $medical_history->description; ?></td>
-<?php } ?>
+                                                                                                                                                                                                                                                                                                    <td><?php echo $medical_history->description; ?></td>
+                                    <?php } ?>
                                                                                     </textarea>
                                                                                 </div>
                                                                             </div>
@@ -426,13 +426,13 @@
 
                         <div id="about" class="tab-pane">
                             <div class="">
-<?php if ($this->ion_auth->in_group(array('Doctor')) || $permis_pr_2 == 'ok') { ?>
+                                <?php if ($this->ion_auth->in_group(array('Doctor')) || $permis_pr_2 == 'ok') { ?>
                                     <div class=" no-print">
                                         <a class="btn btn-info btn_width btn-xs" href="prescription/addPrescriptionView">
                                             <i class="fa fa-plus-circle"> </i> <?php echo lang('add_new'); ?>
                                         </a>
                                     </div>
-<?php } ?>
+                                <?php } ?>
                                 <div class="adv-table editable-table ">
                                     <table class="table table-striped table-hover table-bordered" id="">
                                         <thead>
@@ -445,7 +445,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-<?php foreach ($prescriptions as $prescription) { ?>
+                                            <?php foreach ($prescriptions as $prescription) { ?>
                                                 <tr class="">
                                                     <td><?php echo date('m/d/Y', $prescription->date); ?></td>
                                                     <td>
@@ -508,7 +508,7 @@
                                                     </td>
 
                                                 </tr>
-<?php } ?>
+                                            <?php } ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -528,7 +528,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-<?php foreach ($labs as $lab) { ?>
+                                            <?php foreach ($labs as $lab) { ?>
                                                 <tr class="">
                                                     <td><?php echo $lab->id; ?></td>
                                                     <td><?php echo date('m/d/Y', $lab->date); ?></td>
@@ -547,7 +547,7 @@
                                                         <a class="btn btn-info btn-xs btn_width" href="lab/invoice?id=<?php echo $lab->id; ?>"><i class="fa fa-eye"> <?php echo lang('report'); ?> </i></a>
                                                     </td>
                                                 </tr>
-<?php } ?>
+                                            <?php } ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -556,16 +556,16 @@
 
                         <div id="profile" class="tab-pane">
                             <div class="">
-<?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 == 'ok') { ?>
+                                <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_p_2 == 'ok') { ?>
                                     <div class=" no-print">
                                         <a class="btn btn-info btn_width btn-xs" data-toggle="modal" href="#myModal1">
                                             <i class="fa fa-plus-circle"> </i> <?php echo lang('add_new'); ?>
                                         </a>
                                     </div>
-<?php } ?>
+                                <?php } ?>
                                 <div class="adv-table editable-table ">
                                     <div class="">
-<?php foreach ($patient_materials as $patient_material) { ?>
+                                        <?php foreach ($patient_materials as $patient_material) { ?>
                                             <div class="panel col-md-3" style="height: 200px; margin-right: 10px; margin-bottom: 36px; background: #f1f1f1; padding: 34px;">
 
                                                 <div>
@@ -604,7 +604,7 @@
                                                     <?php }
                                                     ?>
 
-                                                            <!--  <img src="<?php echo $patient_material->url; ?>" height="100" width="100">-->
+                                                                    <!--  <img src="<?php echo $patient_material->url; ?>" height="100" width="100">-->
                                                 </div>
                                                 <div class="post-info" style="text-align:center !important;">
                                                     <?php
@@ -619,18 +619,18 @@
                                                     <div style="display:inline-block !important;">
                                                         <a class="btn btn-info btn-xs btn_width" href="<?php echo $patient_material->url; ?>" download> <?php echo lang('download'); ?> </a>
                                                     </div>
-    <?php if (!$this->ion_auth->in_group(array('Patient')) || $permis_p_3 == 'ok') { ?>
+                                                    <?php if (!$this->ion_auth->in_group(array('Patient')) || $permis_p_3 == 'ok') { ?>
                                                         <div style="display:inline-block !important;">
                                                             <a class="btn btn-info btn-xs btn_width" title="<?php echo lang('delete'); ?>" href="patient/deletePatientMaterial?id=<?php echo $patient_material->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"> X </a>
                                                         </div>
-    <?php } ?>
+                                                    <?php } ?>
 
                                                 </div>
 
                                                 <hr>
 
                                             </div>
-<?php } ?>
+                                        <?php } ?>
                                     </div>
                                 </div>
                             </div>
@@ -638,13 +638,13 @@
 
                         <div id="contact" class="tab-pane">
                             <div class="">
-<?php if ($this->ion_auth->in_group(array('Doctor')) || $permis_b_2 == 'ok') { ?>
+                                <?php if ($this->ion_auth->in_group(array('Doctor')) || $permis_b_2 == 'ok') { ?>
                                     <div class=" no-print">
                                         <a class="btn btn-info btn_width btn-xs" data-toggle="modal" href="#myModal3">
                                             <i class="fa fa-plus-circle"> </i> <?php echo lang('add_new'); ?>
                                         </a>
                                     </div>
-<?php } ?>
+                                <?php } ?>
                                 <div class="adv-table editable-table ">
                                     <table class="table table-striped table-hover table-bordered" id="">
                                         <thead>
@@ -667,14 +667,14 @@
                                             }
                                         </style>
 
-<?php foreach ($beds as $bed) { ?>
+                                        <?php foreach ($beds as $bed) { ?>
                                             <tr class="">
                                                 <td><?php echo $bed->bed_id; ?></td>
                                                 <td><?php echo $bed->a_time; ?></td>
                                                 <td><?php echo $bed->d_time; ?></td>
                                                 <td> <a class="btn btn-info btn-xs btn_width" href="bed/bedAllotmentDetails?id=<?php echo $bed->id; ?>"> <?php echo lang('more'); ?></a></td>
                                             </tr>
-<?php } ?>
+                                        <?php } ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -708,11 +708,11 @@
                                                             <th><?php echo lang('total'); ?></th>
                                                             <?php if (empty($allotment->d_time) || $this->ion_auth->in_group(array('admin'))) { ?>
                                                                 <th class="no-print"><?php echo lang('options'); ?></th>
-<?php } ?>
+                                                            <?php } ?>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="medicine_table">
-<?php foreach ($daily_medicine as $medicine) { ?>
+                                                        <?php foreach ($daily_medicine as $medicine) { ?>
                                                             <tr id="<?php echo $medicine->id; ?>">
                                                                 <td><?php echo $medicine->date; ?></td>
                                                                 <td><?php echo $medicine->generic_name; ?></td>
@@ -722,13 +722,13 @@
                                                                 <td><?php echo $settings->currency . $medicine->total; ?></td>
                                                                 <?php if ((empty($allotment->d_time) && empty($medicine->payment_id)) || $this->ion_auth->in_group(array('admin'))) { ?>
                                                                     <td class="no-print" id="delete-<?php echo $medicine->id; ?>"><button type='button' class='btn btn-danger btn-xs btn_width delete_medicine' title='<?php echo lang('delete'); ?>' data-toggle='' data-id="<?php echo $medicine->id; ?>"><i class='fa fa-trash'></i></button></td>
-                                                            <?php } ?>
+                                                                <?php } ?>
                                                             </tr>
-<?php } ?>
+                                                        <?php } ?>
                                                     </tbody>
                                                 </table>
                                             </div>
-<?php if (empty($allotment->d_time) || $this->ion_auth->in_group(array('admin'))) { ?>
+                                            <?php if (empty($allotment->d_time) || $this->ion_auth->in_group(array('admin'))) { ?>
                                                 <div>
                                                     <label>---------------------------------------------------------------------------------------<?php echo "Select Medicine" ?>-----------------------------------------------------------------------</label>
                                                     <form role="form" action="" id="editMedicine" class="clearfix" method="post" enctype="multipart/form-data">
@@ -774,7 +774,7 @@
                                                         </div>
                                                     </form>
                                                 </div>
-<?php } ?>
+                                            <?php } ?>
                                         </div>
 
                                     </section>
@@ -826,13 +826,13 @@
 
                         <div id="surgery" class="tab-pane">
                             <div class="">
-<?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist', 'Receptionist')) || $permis_s_2 == 'ok') { ?>
+                                <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist', 'Receptionist')) || $permis_s_2 == 'ok') { ?>
                                     <div class=" no-print">
                                         <a class="btn btn-info btn_width btn-xs" data-toggle="modal" href="#myModalSurgery">
                                             <i class="fa fa-plus-circle"> </i> <?php echo lang('add_new'); ?>
                                         </a>
                                     </div>
-<?php } ?>
+                                <?php } ?>
                                 <div class="adv-table editable-table ">
                                     <table class="table table-striped table-hover table-bordered" id="">
                                         <thead>
@@ -843,7 +843,7 @@
                                                 <th style=""><?php echo lang('status'); ?> </th>
                                                 <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_s_2 == 'ok' || $permis_s_3 == 'ok') { ?>
                                                     <th class="no-print"><?php echo lang('options'); ?></th>
-<?php } ?>
+                                                <?php } ?>
 
                                             </tr>
                                         </thead>
@@ -859,7 +859,7 @@
                                             }
                                         </style>
 
-<?php foreach ($surgeries as $surgery) { ?>
+                                        <?php foreach ($surgeries as $surgery) { ?>
                                             <tr class="">
                                                 <td><?php echo $surgery->time_to_be_done; ?></td>
                                                 <td><?php echo $surgery->title; ?></td>
@@ -873,17 +873,17 @@
                                                     }
                                                     echo $status;
                                                     ?></td>
-    <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_s_2 == 'ok' || $permis_s_3 == 'ok') { ?>
+                                                <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_s_2 == 'ok' || $permis_s_3 == 'ok') { ?>
                                                     <td> <a class="btn btn-info btn-xs btn_width" href="surgery/surgeryDetails?id=<?php echo $surgery->id; ?>"> <?php echo lang('more'); ?></a>
                                                         <a class="btn btn-success btn-xs btn_width" href="surgery/editSurgery?id=<?php echo $surgery->id; ?>"> <?php echo lang('edit'); ?></a>
                                                         <?php if ($this->ion_auth->in_group(array('admin', 'Nurse', 'Doctor', 'Laboratorist')) || $permis_s_3 == 'ok') { ?>
                                                             <a class="btn btn-danger btn-xs btn_width" title="<?php echo lang('delete'); ?>" href="surgery/deleteSurgery?id=<?php echo $surgery->id; ?>" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash"></i> </a>
-        <?php } ?>
+                                                        <?php } ?>
                                                         <a class="btn btn-info btn-xs" title="<?php echo lang('invoice'); ?>" style="color: #fff;margin-bottom: 20px;" href="finance/invoice?id=<?php echo $surgery->payment_id; ?>" target="_blank"> <i class="fa fa-file-invoice"></i> <?php echo lang('invoice'); ?></a>
                                                     </td>
-                                            <?php } ?>
+                                                <?php } ?>
                                             </tr>
-<?php } ?>
+                                        <?php } ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -998,23 +998,23 @@
                         <div class="form-group col-md-4">
                             <label for="exampleInputEmail1"><?php echo lang('total_value'); ?></label>
                             <input type="text" class="form-control total_value_case" name="total_value" id="total_value" value='<?php
-                                   echo '0';
-                                   ?>' placeholder="" readonly="">
+                            echo '0';
+                            ?>' placeholder="" readonly="">
                         </div>
                         <div class="form-group col-md-4">
                             <label for="exampleInputEmail1"><?php echo lang('total_discount'); ?></label>
                             <input type="text" class="form-control" name="total_discount" id="total_discount_case" value='<?php
-                                   echo '0';
-                                   ?>' placeholder="" readonly="">
+                            echo '0';
+                            ?>' placeholder="" readonly="">
                         </div>
                         <div class="form-group col-md-4">
                             <label for="exampleInputEmail1"><?php echo lang('grand_total'); ?></label>
                             <input type="text" class="form-control" name="grand_total" id="grand_total_case" value='<?php
-                                   echo '0';
-                                   ?>' placeholder="" readonly="">
+                            echo '0';
+                            ?>' placeholder="" readonly="">
                         </div>
                     </div>
-<?php if ($this->ion_auth->in_group(array('admin')) || $permis_p_2 == 'ok') { ?>
+                    <?php if ($this->ion_auth->in_group(array('admin')) || $permis_p_2 == 'ok') { ?>
                         <div class="separator col-md-12"><?php echo lang('select'); ?></div>
                         <br> <br>
                         <div class="col-md-12" style="margin-top:20px;">
@@ -1022,20 +1022,20 @@
 
                                 <select style=" display: block;" class="form-control m-bot15 js-example-basic-single" id="package" name="package" value='' required="">
                                     <option><?php echo lang('select'); ?> <?php echo lang('packages'); ?></option>
-                                            <?php foreach ($packages as $package) { ?>
+                                    <?php foreach ($packages as $package) { ?>
                                         <option value="<?php echo $package->id;
-                                                ?>"><?php echo $package->name; ?></option>
-    <?php } ?>
+                                        ?>"><?php echo $package->name; ?></option>
+                                            <?php } ?>
                                 </select>
                             </div>
                             <div class="col-md-5">
 
                                 <select style=" display: block;" class="form-control m-bot15 js-example-basic-single" id="medical_analysis" name="medical_analysis" value='' required="">
                                     <option><?php echo lang('select'); ?> <?php echo lang('medical_analysis'); ?></option>
-                                            <?php foreach ($payment_category as $category) { ?>
+                                    <?php foreach ($payment_category as $category) { ?>
                                         <option value="<?php echo $category->id;
-                                                ?>"><?php echo $category->category; ?></option>
-    <?php } ?>
+                                        ?>"><?php echo $category->category; ?></option>
+                                            <?php } ?>
                                 </select>
                             </div>
                             <div class="col-md-2">
@@ -1045,7 +1045,7 @@
 
 
                         </div>
-<?php } ?>
+                    <?php } ?>
 
                     <!-- <input type="hidden" name="patient_id" value='<?php echo $patient->id; ?>'>
                     <input type="hidden" name="id" value=''>-->
@@ -1137,7 +1137,7 @@ if ($this->ion_auth->in_group('Doctor')) {
                         <label for="exampleInputEmail1"> <?php echo lang('appointment'); ?> <?php echo lang('status'); ?></label>
                         <select class="form-control m-bot15" name="status" value=''>
 
-<?php if (!$this->ion_auth->in_group('Patient')) { ?>
+                            <?php if (!$this->ion_auth->in_group('Patient')) { ?>
                                 <option value="Pending Confirmation" <?php ?>> <?php echo lang('pending_confirmation'); ?> </option>
                                 <option value="Confirmed" <?php ?>> <?php echo lang('confirmed'); ?> </option>
                                 <option value="Treated" <?php ?>> <?php echo lang('treated'); ?> </option>
@@ -1164,10 +1164,8 @@ if ($this->ion_auth->in_group('Doctor')) {
                         </select>
 
                     </div>
-                    <div class="col-md-8 panel">
-                        <label for="exampleInputEmail1"> <?php echo lang('remarks'); ?></label>
-                        <input type="text" class="form-control" name="remarks" id="exampleInputEmail1" value='' placeholder="">
-                    </div>
+
+
 
 
 
@@ -1185,10 +1183,40 @@ if ($this->ion_auth->in_group('Doctor')) {
                     ?>'>
 
 
-                    <div class="form-group col-md-4">
-                        <label for="exampleInputEmail1"><?php echo lang('visit'); ?> <?php echo lang('charges'); ?></label>
-                        <input type="number" class="form-control" name="visit_charges" id="visit_charges" value='' placeholder="" readonly="">
-                    </div>
+
+                    <?php if (!$this->ion_auth->in_group(array('Patient'))) { ?>
+                        <div class="col-md-12 panel">
+                            <label for="exampleInputEmail1"> <?php echo lang('remarks'); ?></label>
+                            <input type="text" class="form-control" name="remarks" id="exampleInputEmail1" value='' placeholder="">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="exampleInputEmail1"><?php echo lang('visit'); ?> <?php echo lang('charges'); ?></label>
+                            <input type="number" class="form-control" name="visit_charges" id="visit_charges" value='' placeholder="" readonly="">
+                        </div>
+                        <div class="form-group col-md-4" style="padding-top: 20px;">
+                            <label for="exampleInputEmail1"><?php echo lang('discount'); ?></label>
+                            <input type="number" class="form-control" name="discount" id="discount" value='0' placeholder="">
+                        </div>
+                        <div class="form-group col-md-4" style="padding-top: 20px;">
+                            <label for="exampleInputEmail1"><?php echo lang('grand_total'); ?></label>
+                            <input type="number" class="form-control" name="grand_total" id="grand_total" value='0' placeholder="" readonly="">
+                        </div>
+                    <?php } else { ?>
+                        <div class="col-md-8 panel">
+                            <label for="exampleInputEmail1"> <?php echo lang('remarks'); ?></label>
+                            <input type="text" class="form-control" name="remarks" id="exampleInputEmail1" value='' placeholder="">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="exampleInputEmail1"><?php echo lang('visit'); ?> <?php echo lang('charges'); ?></label>
+                            <input type="number" class="form-control" name="visit_charges" id="visit_charges" value='' placeholder="" readonly="">
+                        </div>
+
+
+                        <input type="hidden" class="form-control" name="discount" id="discount" value='0' placeholder="">
+
+                        <input type="hidden" class="form-control" name="grand_total" id="grand_total" value='0' placeholder="" readonly="">
+
+                    <?php } ?>
                     <?php if (!$this->ion_auth->in_group(array('Nurse', 'Doctor'))) { ?>
                         <div class="col-md-12">
                             <input type="checkbox" id="pay_now_appointment" name="pay_now_appointment" value="pay_now_appointment">
@@ -1379,10 +1407,7 @@ if ($this->ion_auth->in_group('Doctor')) {
 
                         </select>
                     </div>
-                    <div class="col-md-8 panel">
-                        <label for="exampleInputEmail1"> <?php echo lang('remarks'); ?></label>
-                        <input type="text" class="form-control" name="remarks" id="exampleInputEmail1" value='' placeholder="">
-                    </div>
+
 
 
 
@@ -1396,10 +1421,39 @@ if ($this->ion_auth->in_group('Doctor')) {
                     <input type="hidden" name="redirect" value='patient/medicalHistory?id=<?php echo $patient->id; ?>'>>
                     <input type="hidden" name="id" id="appointment_id" value=''>
 
-                    <div class="form-group col-md-12 hidden consultant_fee_div" style="padding-top: 20px;">
-                        <label for="exampleInputEmail1"><?php echo lang('visit'); ?> <?php echo lang('charges'); ?></label>
-                        <input type="number" class="form-control" name="visit_charges" id="visit_charges1" value='' placeholder="" readonly="">
-                    </div>
+                    <?php if (!$this->ion_auth->in_group(array('Patient'))) { ?>
+                        <div class="col-md-12 panel">
+                            <label for="exampleInputEmail1"> <?php echo lang('remarks'); ?></label>
+                            <input type="text" class="form-control" name="remarks" id="exampleInputEmail1" value='' placeholder="">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="exampleInputEmail1"><?php echo lang('visit'); ?> <?php echo lang('charges'); ?></label>
+                            <input type="number" class="form-control" name="visit_charges" id="visit_charges1" value='' placeholder="" readonly="">
+                        </div>
+                        <div class="form-group col-md-4" style="padding-top: 20px;">
+                            <label for="exampleInputEmail1"><?php echo lang('discount'); ?></label>
+                            <input type="number" class="form-control" name="discount" id="discount1" value='0' placeholder="">
+                        </div>
+                        <div class="form-group col-md-4" style="padding-top: 20px;">
+                            <label for="exampleInputEmail1"><?php echo lang('grand_total'); ?></label>
+                            <input type="number" class="form-control" name="grand_total" id="grand_total1" value='0' placeholder="" readonly="">
+                        </div>
+                    <?php } else { ?>
+                        <div class="col-md-8 panel">
+                            <label for="exampleInputEmail1"> <?php echo lang('remarks'); ?></label>
+                            <input type="text" class="form-control" name="remarks" id="exampleInputEmail1" value='' placeholder="">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="exampleInputEmail1"><?php echo lang('visit'); ?> <?php echo lang('charges'); ?></label>
+                            <input type="number" class="form-control" name="visit_charges" id="visit_charges1" value='' placeholder="" readonly="">
+                        </div>
+
+
+                        <input type="hidden" class="form-control" name="discount" id="discount1" value='0' placeholder="">
+
+                        <input type="hidden" class="form-control" name="grand_total" id="grand_total1" value='0' placeholder="" readonly="">
+
+                    <?php } ?>
                     <?php if (!$this->ion_auth->in_group(array('Nurse', 'Doctor'))) { ?>
                         <div class="col-md-12 hidden pay_now">
                             <input type="checkbox" id="pay_now_appointment1" name="pay_now_appointment" value="pay_now_appointment">
@@ -1777,7 +1831,7 @@ if ($this->ion_auth->in_group('Doctor')) {
                                 <select style=" display: block;"class="form-control m-bot15 js-example-basic-single" id="medical_analysis" name="medical_analysis" value='' required=""> 
                                     <option><?php echo lang('select'); ?> <?php echo lang('medical_analysis'); ?></option>
                         <?php foreach ($payment_category as $category) { ?>
-                                                <option value="<?php echo $category->id;
+                                                        <option value="<?php echo $category->id;
                             ?>"><?php echo $category->category; ?></option>
                         <?php } ?>
                                 </select>
@@ -2083,6 +2137,8 @@ if ($this->ion_auth->in_group('Doctor')) {
                     $('.payment_status').addClass('hidden');
                     // $('.deposit_type1').removeClass('hidden');
                     $('#editAppointmentForm').find('[name="visit_charges"]').val(response.appointment.visit_charges).end()
+                    $('#editAppointmentForm').find('[name="discount"]').val(response.appointment.discount).end();
+                    $('#editAppointmentForm').find('[name="grand_total"]').val(response.appointment.grand_total).end();
                 } else {
                     $('.payment_status').removeClass('hidden');
                     $('.pay_now').addClass('hidden');
@@ -2572,9 +2628,17 @@ if ($this->ion_auth->in_group('Doctor')) {
 
 
                 $('#visit_charges').val(response.response.visit_charges).end();
-
+                var discount = $('#discount').val();
+                $('#grand_total').val(parseFloat(response.response.visit_charges - discount)).end();
 
             });
+        });
+        $("#discount").keyup(function () {
+            // Get the record's ID via attribute  
+            var discount = $(this).val();
+            var price = $('#visit_charges').val();
+            $('#grand_total').val(parseFloat(price - discount)).end();
+
         });
 
     });
@@ -2595,11 +2659,19 @@ if ($this->ion_auth->in_group('Doctor')) {
 
 
                 $('#visit_charges1').val(response.response.visit_charges).end();
+                var discount = $('#discount1').val();
+                $('#grand_total1').val(parseFloat(response.response.visit_charges - discount)).end();
 
 
             });
         });
+        $("#discount1").keyup(function () {
+            // Get the record's ID via attribute  
+            var discount = $(this).val();
+            var price = $('#visit_charges1').val();
+            $('#grand_total1').val(parseFloat(price - discount)).end();
 
+        });
     });
 </script>
 

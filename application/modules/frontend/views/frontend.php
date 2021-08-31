@@ -126,11 +126,11 @@
 
             <!--<?php if (count($slides) > 1) {
                     ?>
-                                <style>
-                                    #header .owl-nav,#header .owl-dots {
-                                            display: block;
-                                        }
-                                </style>
+                                                                            <style>
+                                                                                #header .owl-nav,#header .owl-dots {
+                                                                                        display: block;
+                                                                                    }
+                                                                            </style>
             <?php }
             ?>-->
 
@@ -191,99 +191,177 @@
                                             </button>
                                         </div>
                                         <div class="modal-body" style="border: transparent !important;">
-                                            <form action="<?php echo site_url('frontend/addNew'); ?>" method="post">
-                                             <!--   <form action="frontend/addNew" method="post">-->
-                                                    <label for="exampleInputEmail1"> <?php echo lang('patient'); ?></label>
-                                                    <select class="form-control m-bot15 js-example-basic-single pos_select" id="pos_select" name="patient" value=''> 
-                                                        <option value=" ">Select .....</option>
-                                                        <option value="patient_id" style="color: #41cac0 !important;"><?php echo lang('patient_id'); ?></option>
-                                                        <option value="add_new" style="color: #41cac0 !important;"><?php echo lang('add_new'); ?></option>
-                                                    </select>
+                                            <form action="<?php echo site_url('frontend/addNew'); ?>" method="post" id="addAppointmentForm">
+                                                <!--   <form action="frontend/addNew" method="post">-->
+                                                <label for="exampleInputEmail1"> <?php echo lang('patient'); ?></label>
+                                                <select class="form-control m-bot15 js-example-basic-single pos_select" id="pos_select" name="patient" value=''> 
+                                                    <option value=" ">Select .....</option>
+                                                    <option value="patient_id" style="color: #41cac0 !important;"><?php echo lang('patient_id'); ?></option>
+                                                    <option value="add_new" style="color: #41cac0 !important;"><?php echo lang('add_new'); ?></option>
+                                                </select>
 
-                                                    <div class="pos_client_id clearfix">
+                                                <div class="pos_client_id clearfix">
 
-                                                        <div class="col-md-12 payment pad_bot pull-right">
-                                                            <div class="col-md-3 payment_label"> 
-                                                                <label for="exampleInputEmail1"> <?php echo lang('patient'); ?> <?php echo lang('id'); ?></label>
-                                                            </div>
-                                                            <div class="col-md-9"> 
-                                                                <input type="text" class="form-control pay_in" name="patient_id" placeholder="">
-                                                            </div>
+                                                    <div class="col-md-12 payment pad_bot pull-right">
+                                                        <div class="col-md-3 payment_label"> 
+                                                            <label for="exampleInputEmail1"> <?php echo lang('patient'); ?> <?php echo lang('id'); ?></label>
                                                         </div>
-
+                                                        <div class="col-md-9"> 
+                                                            <input type="text" class="form-control pay_in" name="patient_id" placeholder="">
+                                                        </div>
                                                     </div>
 
-                                                    <div class="pos_client clearfix">
+                                                </div>
 
-                                                        <label for=""><?php echo lang('patient'); ?> <?php echo lang('name'); ?></label>
-                                                        <input type="text" class="form-control" name="p_name">
-                                                        <label for=""><?php echo lang('patient'); ?> <?php echo lang('email'); ?></label>
-                                                        <input type="email" class="form-control" name="p_email">
-                                                        <label for=""><?php echo lang('patient'); ?> <?php echo lang('phone'); ?></label>
-                                                        <input type="text" class="form-control" name="p_phone">
-                                                        <!-- <label for="">HOSPITAL PHONE</label>
-                                                         <input type="text" class="form-control">-->
-                                                        <label for=""><?php echo lang('patient'); ?> <?php echo lang('gender'); ?></label>
-                                                        <select class="form-control" name="p_gender">
-                                                            <option value="Male" <?php
-                                                            if (!empty($patient->sex)) {
-                                                                if ($patient->sex == 'Male') {
-                                                                    echo 'selected';
-                                                                }
+                                                <div class="pos_client clearfix">
+
+                                                    <label for=""><?php echo lang('patient'); ?> <?php echo lang('name'); ?></label>
+                                                    <input type="text" class="form-control" name="p_name">
+                                                    <label for=""><?php echo lang('patient'); ?> <?php echo lang('email'); ?></label>
+                                                    <input type="email" class="form-control" name="p_email">
+                                                    <label for=""><?php echo lang('patient'); ?> <?php echo lang('phone'); ?></label>
+                                                    <input type="text" class="form-control" name="p_phone">
+                                                    <!-- <label for="">HOSPITAL PHONE</label>
+                                                     <input type="text" class="form-control">-->
+                                                    <label for=""><?php echo lang('patient'); ?> <?php echo lang('gender'); ?></label>
+                                                    <select class="form-control" name="p_gender">
+                                                        <option value="Male" <?php
+                                                        if (!empty($patient->sex)) {
+                                                            if ($patient->sex == 'Male') {
+                                                                echo 'selected';
                                                             }
-                                                            ?> > Male </option>   
-                                                            <option value="Female" <?php
-                                                            if (!empty($patient->sex)) {
-                                                                if ($patient->sex == 'Female') {
-                                                                    echo 'selected';
-                                                                }
+                                                        }
+                                                        ?> > Male </option>   
+                                                        <option value="Female" <?php
+                                                        if (!empty($patient->sex)) {
+                                                            if ($patient->sex == 'Female') {
+                                                                echo 'selected';
                                                             }
-                                                            ?> > Female </option>
-                                                            <option value="Others" <?php
-                                                            if (!empty($patient->sex)) {
-                                                                if ($patient->sex == 'Others') {
-                                                                    echo 'selected';
-                                                                }
+                                                        }
+                                                        ?> > Female </option>
+                                                        <option value="Others" <?php
+                                                        if (!empty($patient->sex)) {
+                                                            if ($patient->sex == 'Others') {
+                                                                echo 'selected';
                                                             }
-                                                            ?> > Others </option>
-                                                        </select>
+                                                        }
+                                                        ?> > Others </option>
+                                                    </select>
+                                                </div>
+                                                <label for=""> <?php echo lang('doctor'); ?></label>
+                                                <select class="form-control" name="doctor" id="adoctors">
+                                                    <option value="">Select .....</option>
+                                                    <?php foreach ($doctors as $doctor) { ?>
+                                                        <option value="<?php echo $doctor->id; ?>"<?php
+                                                        if (!empty($payment->doctor)) {
+                                                            if ($payment->doctor == $doctor->id) {
+                                                                echo 'selected';
+                                                            }
+                                                        }
+                                                        ?>><?php echo $doctor->name; ?> </option>
+                                                            <?php } ?>
+
+                                                </select>
+
+                                                <label for=""><?php echo lang('date'); ?></label>
+                                                <input type="text" class="form-control default-date-picker" readonly="" id="date" name="date" id="" value='' placeholder="">
+                                                <label for=""><?php echo lang('available_slots'); ?></label>
+                                                <select class="form-control m-bot15" name="time_slot" id="aslots" value=''> 
+
+                                                </select>
+
+                                                <label class=""><?php echo lang('visit'); ?> <?php echo lang('description'); ?></label>
+
+                                                <select class="form-control m-bot15" name="visit_description" id="visit_description" value=''>
+
+                                                </select>
+                                                <label for="exampleInputEmail1"> <?php echo lang('category'); ?> </label> 
+                                                <select class="form-control m-bot15" name="category_appointment" value=''> 
+                                                    <option value="Bed Allotment" <?php
+                                                            ?> > <?php echo lang('bed_allotment'); ?> </option>
+                                                    <option value="Ambulator" <?php
+                                                            ?> > <?php echo lang('ambulator'); ?> </option>
+
+                                                </select>
+                                                <label for=""> <?php echo lang('remarks'); ?></label>
+                                                <input type="text" class="form-control" name="remarks" id="" value='' placeholder="">
+
+                                                <label for="exampleInputEmail1"><?php echo lang('visit'); ?> <?php echo lang('charges'); ?></label>
+                                                <input type="number" class="form-control" name="visit_charges" id="visit_charges" value='' placeholder="" readonly="">
+                                                <input type="hidden" name="discount" value='0'>
+                                                <input type="hidden" name="grand_total" value='0'>
+                                                <input type="hidden" name="redirectlink" value='frontend'>
+                                                <input type="hidden" name="request" value=''>
+                                                <div class="col-md-12">
+                                                    <input type="checkbox" id="pay_now_appointment" name="pay_now_appointment" value="pay_now_appointment">
+                                                    <label for=""> <?php echo lang('pay_now'); ?></label><br>
+
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <?php
+                                                    $payment_gateway = $settings1->payment_gateway;
+                                                    
+                                                    ?>
+
+
+
+                                                    <div class = "card1">
+
+                                                        <hr>
+
+
+                                                        <?php
+                                                        if ($payment_gateway == 'PayPal') {
+                                                            ?>
+                                                            <div class="col-md-12 payment pad_bot">
+                                                                <label for="exampleInputEmail1"> <?php echo lang('card'); ?> <?php echo lang('type'); ?></label>
+                                                                <select class="form-control m-bot15" name="card_type" value=''>
+
+                                                                    <option value="Mastercard"> <?php echo lang('mastercard'); ?> </option>   
+                                                                    <option value="Visa"> <?php echo lang('visa'); ?> </option>
+                                                                    <option value="American Express" > <?php echo lang('american_express'); ?> </option>
+                                                                </select>
+                                                            </div>
+                                                        <?php } ?>
+                                                        <?php if ($payment_gateway == '2Checkout' || $payment_gateway == 'PayPal') {
+                                                            ?>
+                                                            <div class="col-md-12">
+                                                                <label for="exampleInputEmail1"> <?php echo lang('cardholder'); ?> <?php echo lang('name'); ?></label>
+                                                                <input type="text"  id="cardholder" class="form-control pay_in" name="cardholder" value='' placeholder="">
+                                                            </div>
+                                                        <?php } ?>
+                                                        <?php if ($payment_gateway != 'Pay U Money' && $payment_gateway != 'Paystack' && $payment_gateway != 'SSLCOMMERZ' && $payment_gateway != 'Paytm') { ?>
+                                                            <div class="col-md-12">
+                                                                <label for="exampleInputEmail1"> <?php echo lang('card'); ?> <?php echo lang('number'); ?></label>
+                                                                <input type="text"  id="card" class="form-control pay_in" name="card_number" value='' placeholder="">
+                                                            </div>
+
+
+                                                            <div class="col-md-12">
+                                                                <div class="" style="">
+                                                                    <label for="exampleInputEmail1"> <?php echo lang('expire'); ?> <?php echo lang('date'); ?></label>
+                                                                    <input type="text" class="form-control pay_in" id="expire" data-date="" data-date-format="MM YY" placeholder="Expiry (MM/YY)" name="expire_date" maxlength="7" aria-describedby="basic-addon1" value='' placeholder="">
+                                                                </div>
+                                                                <div class="" style="">
+                                                                    <label for="exampleInputEmail1"> <?php echo lang('cvv'); ?> </label>
+                                                                    <input type="text" class="form-control pay_in" id="cvv" maxlength="3" name="cvv" value='' placeholder="">
+                                                                </div>  </div> 
+                                                            <?php
+                                                        }
+                                                        ?>
                                                     </div>
-                                                    <label for=""> <?php echo lang('doctor'); ?></label>
-                                                    <select class="form-control" name="doctor" id="adoctors">
-                                                        <option value="">Select .....</option>
-                                                        <?php foreach ($doctors as $doctor) { ?>
-                                                            <option value="<?php echo $doctor->id; ?>"<?php
-                                                            if (!empty($payment->doctor)) {
-                                                                if ($payment->doctor == $doctor->id) {
-                                                                    echo 'selected';
-                                                                }
-                                                            }
-                                                            ?>><?php echo $doctor->name; ?> </option>
-                                                                <?php } ?>
 
-                                                    </select>
 
-                                                    <label for=""><?php echo lang('date'); ?></label>
-                                                    <input type="text" class="form-control default-date-picker" readonly="" id="date" name="date" id="" value='' placeholder="">
-                                                    <label for=""><?php echo lang('available_slots'); ?></label>
-                                                    <select class="form-control m-bot15" name="time_slot" id="aslots" value=''> 
+                                                </div>
+                                                  <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
+                                                <button type="submit" name="pay_now" id="submit-btn" class="btn btn-primary mt-3 pull-right" <?php if ($settings1->payment_gateway == 'Stripe') {
+                                                            ?>onClick="stripePay(event);"<?php }
+                                                        ?> <?php if ($settings1->payment_gateway == '2Checkout' && $twocheckout->status == 'live') {
+                                                            ?>onClick="twoCheckoutPay(event);"<?php }
+                                                        ?>> <?php echo lang('submit'); ?></button>
 
-                                                    </select>
-                                                    <label for="exampleInputEmail1"> <?php echo lang('category'); ?> </label> 
-                                                    <select class="form-control m-bot15" name="category_appointment" value=''> 
-                                                        <option value="Bed Allotment" <?php
-                                                                ?> > <?php echo lang('bed_allotment'); ?> </option>
-                                                        <option value="Ambulator" <?php
-                                                                ?> > <?php echo lang('ambulator'); ?> </option>
 
-                                                    </select>
-                                                    <label for=""> <?php echo lang('remarks'); ?></label>
-                                                    <input type="text" class="form-control" name="remarks" id="" value='' placeholder="">
-                                                    <input type="hidden" name="request" value=''>
-
-                                                    <button type="submit" name="submit" class="btn btn-primary mt-3 pull-right"> <?php echo lang('submit'); ?></button>
-
-                                                </form>
+                                            </form>
                                         </div>
 
                                     </div>
@@ -517,7 +595,7 @@
                     <script src="front/js/revulation-slide.js"></script>-->
         <script>
 <?php if ($this->session->flashdata('success')) { ?>
-            toastr.success("<?php echo $this->session->flashdata('success'); ?>");
+                                            toastr.success("<?php echo $this->session->flashdata('success'); ?>");
 <?php } ?>
         </script>
         <script>
@@ -587,6 +665,7 @@
                     var date = $('#date').val();
                     var doctorr = $('#adoctors').val();
                     $('#aslots').find('option').remove();
+                    $('#visit_description').html(" ");
                     // $('#default').trigger("reset");
                     $.ajax({
                         url: 'frontend/getAvailableSlotByDoctorByDateByJason?date=' + date + '&doctor=' + doctorr,
@@ -604,7 +683,21 @@
                         }
                         // Populate the form fields with the data returned from server
                         //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
+
+                        $('#visit_charges').val(" ");
+                        $.ajax({
+                            url: 'frontend/getDoctorVisit?id=' + doctorr,
+                            method: 'GET',
+                            data: '',
+                            dataType: 'json',
+                        }).done(function (response) {
+
+
+                            $('#visit_description').html(response.response).end();
+
+                        });
                     });
+
                 });
             });
             $(document).ready(function () {
@@ -671,7 +764,50 @@
             }
 
         </script>
+        <script>
+            $(document).ready(function () {
+                $("#visit_description").change(function () {
+                    // Get the record's ID via attribute  
+                    var id = $(this).val();
 
+                    $('#visit_charges').val(" ");
+                      $('#grand_total').val(" ");
+                    // $('#default').trigger("reset");
+
+                    $.ajax({
+                        url: 'frontend/getDoctorVisitCharges?id=' + id,
+                        method: 'GET',
+                        data: '',
+                        dataType: 'json',
+                    }).done(function (response) {
+
+
+                        $('#visit_charges').val(response.response.visit_charges).end();
+                        var discount = $('#discount').val();
+                        $('#grand_total').val(parseFloat(response.response.visit_charges - discount)).end();
+
+                    });
+                });
+                $('.card1').hide();
+                $("#pay_now_appointment").change(function () {
+                    if (this.checked) {
+                        $('.card1').show();
+
+<?php if ($payment_gateway != 'Pay U Money' && $payment_gateway != 'Paystack' && $payment_gateway != 'SSLCOMMERZ' && $payment_gateway != 'Paytm') { ?>
+                            $('#expire').prop("required", true);
+                            $('#cvv').prop("required", true);
+<?php } ?>
+                    } else {
+
+                        $('.card1').hide();
+<?php if ($payment_gateway != 'Pay U Money' && $payment_gateway != 'Paystack' && $payment_gateway != 'SSLCOMMERZ' && $payment_gateway != 'Paytm') { ?>
+                            $('#expire').removeAttr("required");
+                            $('#cvv').removeAttr("required");
+<?php } ?>
+                    }
+                });
+            });
+        </script>
         <script>
 
             $(document).ready(function () {
@@ -751,5 +887,151 @@
                 })
             });
         </script>
+        <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+        <script>
+    function cardValidation() {
+        var valid = true;
+        var cardNumber = $('#card').val();
+        var expire = $('#expire').val();
+        var cvc = $('#cvv').val();
+
+        $("#error-message").html("").hide();
+
+        if (cardNumber.trim() == "") {
+            valid = false;
+        }
+
+        if (expire.trim() == "") {
+            valid = false;
+        }
+        if (cvc.trim() == "") {
+            valid = false;
+        }
+
+        if (valid == false) {
+            $("#error-message").html("All Fields are required").show();
+        }
+
+        return valid;
+    }
+//set your publishable key
+    Stripe.setPublishableKey("<?php echo $gateway->publish; ?>");
+
+//callback to handle the response from stripe
+    function stripeResponseHandler(status, response) {
+        if (response.error) {
+            //enable the submit button
+            $("#submit-btn").show();
+            $("#loader").css("display", "none");
+            //display the errors on the form
+            $("#error-message").html(response.error.message).show();
+        } else {
+            //get token id
+            var token = response['id'];
+            //insert the token into the form
+            $('#token').val(token);
+            $("#addAppointmentForm").append("<input type='hidden' name='token' value='" + token + "' />");
+            //submit form to the server
+            $("#addAppointmentForm").submit();
+        }
+    }
+
+    function stripePay(e) {
+        e.preventDefault();
+        var valid = cardValidation();
+
+        if (valid == true) {
+            $("#submit-btn").attr("disabled", true);
+            $("#loader").css("display", "inline-block");
+            var expire = $('#expire').val()
+            var arr = expire.split('/');
+            Stripe.createToken({
+                number: $('#card').val(),
+                cvc: $('#cvv').val(),
+                exp_month: arr[0],
+                exp_year: arr[1]
+            }, stripeResponseHandler);
+
+            //submit from callback
+            return false;
+        }
+    }
+
+</script>
+
+<script src="common/js/moment.min.js"></script>
+
+<script type="text/javascript" src="https://www.2checkout.com/checkout/api/2co.min.js"></script>
+<?php if ($settings1->payment_gateway == '2Checkout') { ?> 
+    <script>
+
+    //   $(document).ready(function () {
+    // Called when token created successfully.
+        var successCallback = function (data) {
+            var myForm = document.getElementById('addAppointmentForm');
+            // Set the token as the value for the token input
+            // alert(data.response.token.token);
+            $("#addAppointmentForm").append("<input type='hidden' name='token' value='" + data.response.token.token + "' />");
+            //    myForm.token.value = data.response.token.token;
+            // IMPORTANT: Here we call `submit()` on the form element directly instead of using jQuery to prevent and infinite token request loop.
+            myForm.submit();
+        };
+    // Called when token creation fails.
+        var errorCallback = function (data) {
+            if (data.errorCode === 200) {
+                tokenRequest();
+            } else {
+                alert(data.errorMsg);
+            }
+        };
+        var tokenRequest = function () {
+    <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
+            // Setup token request arguments  
+            var expire = $("#expire").val();
+            var expiresep = expire.split("/");
+            var dateformat = moment(expiresep[1], "YY");
+            var year = dateformat.format("YYYY");
+            var args = {
+                sellerId: "<?php echo $twocheckout->merchantcode; ?>",
+                publishableKey: "<?php echo $twocheckout->publishablekey; ?>",
+                ccNo: $("#card").val(),
+                cvv: $("#cvv").val(),
+                expMonth: expiresep[0],
+                expYear: year
+            };
+            console.log($("#card").val() + '-' + $("#cvv").val() + expiresep[0] + year + "<?php echo $twocheckout->merchantcode; ?>");
+            // Make the token request
+
+            TCO.requestToken(successCallback, errorCallback, args);
+        };
+    //   });
+        function twoCheckoutPay(e) {
+            e.preventDefault();
+
+            // try {
+            // Pull in the public encryption key for our environment
+            // TCO.loadPubKey('production');
+            TCO.loadPubKey('sandbox', function () {  // for sandbox environment
+                publishableKey = "<?php echo $twocheckout->publishablekey; ?>"//your public key
+                tokenRequest();
+            });
+            //  $("#editPaymentForm").submit(function (e) {
+            // Call our token request function
+
+
+            // Prevent form from submitting
+            return false;
+            // });
+            // } catch (e) {
+            //     alert(e.toSource());
+            //  }
+        }
+    // Pull in the public encryption key for our environment
+
+    //});
+    </script>
+<?php } ?>
+
+
     </body>
 </html>

@@ -289,6 +289,22 @@
                                 echo $appointment->visit_charges;
                             } ?>' placeholder="" readonly="">
                         </div>
+                        <div class="form-group col-md-12" style="padding-top: 20px;">
+                            <label for="exampleInputEmail1"><?php echo lang('discount'); ?></label>
+                            <input type="number" class="form-control" name="discount" id="discount" value='<?php if(!empty($appointment->id)){
+                                echo $appointment->discount;
+                            }else{
+                                echo '0';
+                            } ?>' placeholder="">
+                        </div>
+                        <div class="form-group col-md-12" style="padding-top: 20px;">
+                            <label for="exampleInputEmail1"><?php echo lang('grand_total'); ?></label>
+                            <input type="number" class="form-control" name="grand_total" id="grand_total" value='<?php if(!empty($appointment->id)){
+                                echo $appointment->grand_total;
+                            }else{
+                                echo '0';
+                                } ?>' placeholder="" readonly="">
+                        </div>
 
                         <?php if (!$this->ion_auth->in_group(array('Nurse', 'Doctor'))) { ?> 
                         <?php if ($appointment->payment_status == 'paid') { ?>
@@ -733,11 +749,19 @@
 
 
                     $('#visit_charges').val(response.response.visit_charges).end();
+                    var discount=$('#discount').val();
+                    $('#grand_total').val(parseFloat(response.response.visit_charges-discount)).end();
 
 
                 });
             });
-
+           $("#discount").keyup(function () {
+                // Get the record's ID via attribute  
+                var discount = $(this).val();
+                var price=$('#visit_charges').val();
+                $('#grand_total').val(parseFloat(price-discount)).end();
+               
+            });
         });
     </script>
 

@@ -103,7 +103,9 @@ class Paystack extends MX_Controller {
             $callback_url = base_url() . 'appointment/todays';
         } elseif ($redirlink == 'upcoming') {
             $callback_url = base_url() . 'appointment/upcoming';
-        } elseif ($redirlink == 'request') {
+        }elseif ($redirlink == 'frontend') {
+            $callback_url = base_url() . 'frontend';
+        }  elseif ($redirlink == 'request') {
             $callback_url = base_url() . 'appointment/request';
         } elseif ($redirlink == '0') {
             $callback_url = base_url() . 'finance/invoice?id=' . $inserted_id;

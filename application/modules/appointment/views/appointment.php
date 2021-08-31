@@ -1,4 +1,3 @@
-
 <!--sidebar end-->
 <!--main content start-->
 <section id="main-content">
@@ -42,11 +41,23 @@
                         <a data-toggle="modal" href="#myModal">
                             <div class="btn-group pull-right">
                                 <button id="" class="btn green btn-xs">
-                                    <i class="fa fa-plus-circle"></i>  <?php echo lang('add_appointment'); ?> 
+                                    <i class="fa fa-plus-circle"></i> <?php echo lang('add_appointment'); ?>
                                 </button>
+
                             </div>
                         </a>
                     </div>
+                    <!-- <div class="clearfix no-print col-md-2 pull-right">
+                         <a data-toggle="modal" href="#notes">
+                             <div class="btn-group pull-right">
+                                 <button id="" class="btn green btn-xs">
+                                     <i class="fa fa-plus-circle"></i> Add Notes
+                                 </button>
+
+                             </div>
+                         </a>
+                     </div>-->
+
                 <?php } ?>
             </header>
 
@@ -73,7 +84,9 @@
                         </li>
                     </ul>
 
-                    <div class="pull-right col-md-4"><div class="pull-right custom_buttonss"></div></div>
+                    <div class="pull-right col-md-4">
+                        <div class="pull-right custom_buttonss"></div>
+                    </div>
 
                 </header>
             </div>
@@ -94,7 +107,7 @@
                                                 <th> <?php echo lang('doctor'); ?></th>
                                                 <th> <?php echo lang('date-time'); ?></th>
                                                 <th> <?php echo lang('remarks'); ?></th>
-                                                   <th> <?php echo lang('payment'); ?> <?php echo lang('status'); ?></th>
+                                                <th> <?php echo lang('payment'); ?> <?php echo lang('status'); ?></th>
                                                 <th> <?php echo lang('status'); ?></th>
                                                 <?php if ($this->ion_auth->in_group(array('admin', 'Patient', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
                                                     <th> <?php echo lang('options'); ?></th>
@@ -104,15 +117,13 @@
                                         <tbody>
 
                                         <style>
-
-                                            .img_url{
-                                                height:20px;
-                                                width:20px;
-                                                background-size: contain; 
-                                                max-height:20px;
+                                            .img_url {
+                                                height: 20px;
+                                                width: 20px;
+                                                background-size: contain;
+                                                max-height: 20px;
                                                 border-radius: 100px;
                                             }
-
                                         </style>
 
 
@@ -136,7 +147,7 @@
                                                 <th> <?php echo lang('doctor'); ?></th>
                                                 <th> <?php echo lang('date-time'); ?></th>
                                                 <th> <?php echo lang('remarks'); ?></th>
-                                                   <th> <?php echo lang('payment'); ?> <?php echo lang('status'); ?></th>
+                                                <th> <?php echo lang('payment'); ?> <?php echo lang('status'); ?></th>
                                                 <th> <?php echo lang('status'); ?></th>
                                                 <?php if ($this->ion_auth->in_group(array('admin', 'Patient', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
                                                     <th> <?php echo lang('options'); ?></th>
@@ -146,15 +157,13 @@
                                         <tbody>
 
                                         <style>
-
-                                            .img_url{
-                                                height:20px;
-                                                width:20px;
-                                                background-size: contain; 
-                                                max-height:20px;
+                                            .img_url {
+                                                height: 20px;
+                                                width: 20px;
+                                                background-size: contain;
+                                                max-height: 20px;
                                                 border-radius: 100px;
                                             }
-
                                         </style>
 
 
@@ -178,7 +187,7 @@
                                                 <th> <?php echo lang('doctor'); ?></th>
                                                 <th> <?php echo lang('date-time'); ?></th>
                                                 <th> <?php echo lang('remarks'); ?></th>
-                                                   <th> <?php echo lang('payment'); ?> <?php echo lang('status'); ?></th>
+                                                <th> <?php echo lang('payment'); ?> <?php echo lang('status'); ?></th>
                                                 <th> <?php echo lang('status'); ?></th>
                                                 <?php if ($this->ion_auth->in_group(array('admin', 'Patient', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
                                                     <th> <?php echo lang('options'); ?></th>
@@ -188,15 +197,13 @@
                                         <tbody>
 
                                         <style>
-
-                                            .img_url{
-                                                height:20px;
-                                                width:20px;
-                                                background-size: contain; 
-                                                max-height:20px;
+                                            .img_url {
+                                                height: 20px;
+                                                width: 20px;
+                                                background-size: contain;
+                                                max-height: 20px;
                                                 border-radius: 100px;
                                             }
-
                                         </style>
 
 
@@ -221,7 +228,7 @@
                                                 <th> <?php echo lang('doctor'); ?></th>
                                                 <th> <?php echo lang('date-time'); ?></th>
                                                 <th> <?php echo lang('remarks'); ?></th>
-                                                   <th> <?php echo lang('payment'); ?> <?php echo lang('status'); ?></th>
+                                                <th> <?php echo lang('payment'); ?> <?php echo lang('status'); ?></th>
                                                 <th> <?php echo lang('status'); ?></th>
                                                 <?php if ($this->ion_auth->in_group(array('admin', 'Patient', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
                                                     <th> <?php echo lang('options'); ?></th>
@@ -231,15 +238,13 @@
                                         <tbody>
 
                                         <style>
-
-                                            .img_url{
-                                                height:20px;
-                                                width:20px;
-                                                background-size: contain; 
-                                                max-height:20px;
+                                            .img_url {
+                                                height: 20px;
+                                                width: 20px;
+                                                background-size: contain;
+                                                max-height: 20px;
                                                 border-radius: 100px;
                                             }
-
                                         </style>
 
 
@@ -249,7 +254,6 @@
                             </div>
                         </div>
                     </div>
-
 
                     <div id="all" class="tab-pane active">
                         <div class="">
@@ -264,7 +268,7 @@
                                                 <th> <?php echo lang('patient'); ?></th>
                                                 <th> <?php echo lang('doctor'); ?></th>
                                                 <th> <?php echo lang('date-time'); ?></th>
-                                                <th> <?php echo lang('remarks'); ?></th>  
+                                                <th> <?php echo lang('remarks'); ?></th>
                                                 <th> <?php echo lang('payment'); ?> <?php echo lang('status'); ?></th>
                                                 <th> <?php echo lang('status'); ?></th>
                                                 <?php if ($this->ion_auth->in_group(array('admin', 'Patient', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
@@ -275,15 +279,13 @@
                                         <tbody>
 
                                         <style>
-
-                                            .img_url{
-                                                height:20px;
-                                                width:20px;
-                                                background-size: contain; 
-                                                max-height:20px;
+                                            .img_url {
+                                                height: 20px;
+                                                width: 20px;
+                                                background-size: contain;
+                                                max-height: 20px;
                                                 border-radius: 100px;
                                             }
-
                                         </style>
 
 
@@ -294,7 +296,6 @@
                             </div>
                         </div>
                     </div>
-
 
                     <div id="requested" class="tab-pane">
                         <div class="">
@@ -309,7 +310,7 @@
                                                 <th> <?php echo lang('doctor'); ?></th>
                                                 <th> <?php echo lang('date-time'); ?></th>
                                                 <th> <?php echo lang('remarks'); ?></th>
-                                                   <th> <?php echo lang('payment'); ?> <?php echo lang('status'); ?></th>
+                                                <th> <?php echo lang('payment'); ?> <?php echo lang('status'); ?></th>
                                                 <th> <?php echo lang('status'); ?></th>
                                                 <?php if ($this->ion_auth->in_group(array('admin', 'Patient', 'Nurse', 'Doctor', 'Receptionist')) || $permis == 'ok' || $permis_2 == 'ok') { ?>
                                                     <th> <?php echo lang('options'); ?></th>
@@ -319,15 +320,13 @@
                                         <tbody>
 
                                         <style>
-
-                                            .img_url{
-                                                height:20px;
-                                                width:20px;
-                                                background-size: contain; 
-                                                max-height:20px;
+                                            .img_url {
+                                                height: 20px;
+                                                width: 20px;
+                                                background-size: contain;
+                                                max-height: 20px;
                                                 border-radius: 100px;
                                             }
-
                                         </style>
 
 
@@ -359,13 +358,13 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">  <?php echo lang('add_appointment'); ?></h4>
+                <h4 class="modal-title"> <?php echo lang('add_appointment'); ?></h4>
             </div>
             <div class="modal-body row">
                 <form role="form" id="addAppointmentForm" action="appointment/addNew" method="post" class="clearfix" enctype="multipart/form-data">
                     <div class="col-md-6 panel">
-                        <label for="exampleInputEmail1"> <?php echo lang('patient'); ?></label> 
-                        <select class="form-control m-bot15 pos_select" id="pos_select" name="patient" value=''> 
+                        <label for="exampleInputEmail1"> <?php echo lang('patient'); ?></label>
+                        <select class="form-control m-bot15 pos_select" id="pos_select" name="patient" value=''>
 
 
                         </select>
@@ -373,7 +372,7 @@
                     <input type="hidden" name="redirectlink" value="10">
                     <div class="pos_client clearfix col-md-6">
                         <div class="payment pad_bot pull-right">
-                            <label for="exampleInputEmail1"> <?php echo lang('patient'); ?> <?php echo lang('name'); ?></label> 
+                            <label for="exampleInputEmail1"> <?php echo lang('patient'); ?> <?php echo lang('name'); ?></label>
                             <input type="text" class="form-control pay_in" name="p_name" value='' placeholder="">
                         </div>
                         <div class="payment pad_bot pull-right">
@@ -385,10 +384,10 @@
                             <input type="text" class="form-control pay_in" name="p_phone" value='' placeholder="">
                         </div>
                         <div class="payment pad_bot pull-right">
-                            <label for="exampleInputEmail1"> <?php echo lang('patient'); ?> <?php echo lang('age'); ?></label> 
+                            <label for="exampleInputEmail1"> <?php echo lang('patient'); ?> <?php echo lang('age'); ?></label>
                             <input type="text" class="form-control pay_in" name="p_age" value='' placeholder="">
-                        </div> 
-                        <div class="payment pad_bot"> 
+                        </div>
+                        <div class="payment pad_bot">
                             <label for="exampleInputEmail1"> <?php echo lang('patient'); ?> <?php echo lang('gender'); ?></label>
                             <select class="form-control" name="p_gender" value=''>
 
@@ -398,27 +397,27 @@
                                         echo 'selected';
                                     }
                                 }
-                                ?> > Male </option>   
+                                ?>> Male </option>
                                 <option value="Female" <?php
                                 if (!empty($patient->sex)) {
                                     if ($patient->sex == 'Female') {
                                         echo 'selected';
                                     }
                                 }
-                                ?> > Female </option>
+                                ?>> Female </option>
                                 <option value="Others" <?php
                                 if (!empty($patient->sex)) {
                                     if ($patient->sex == 'Others') {
                                         echo 'selected';
                                     }
                                 }
-                                ?> > Others </option>
+                                ?>> Others </option>
                             </select>
                         </div>
                     </div>
                     <div class="col-md-6 panel">
-                        <label for="exampleInputEmail1">  <?php echo lang('doctor'); ?></label> 
-                        <select class="form-control m-bot15" id="adoctors" name="doctor" value=''>  
+                        <label for="exampleInputEmail1"> <?php echo lang('doctor'); ?></label>
+                        <select class="form-control m-bot15" id="adoctors" name="doctor" value=''>
 
                         </select>
                     </div>
@@ -429,27 +428,27 @@
                     </div>
                     <div class="col-md-6 panel">
                         <label for="exampleInputEmail1">Available Slots</label>
-                        <select class="form-control m-bot15" name="time_slot" id="aslots" value=''> 
+                        <select class="form-control m-bot15" name="time_slot" id="aslots" value=''>
 
                         </select>
                     </div>
                     <div class="col-md-6 panel">
-                        <label for="exampleInputEmail1"> <?php echo lang('appointment'); ?> <?php echo lang('status'); ?></label> 
-                        <select class="form-control m-bot15" name="status" value=''> 
-                            <option value="Pending Confirmation" <?php ?> > <?php echo lang('pending_confirmation'); ?> </option>
+                        <label for="exampleInputEmail1"> <?php echo lang('appointment'); ?> <?php echo lang('status'); ?></label>
+                        <select class="form-control m-bot15" name="status" value=''>
+                            <option value="Pending Confirmation" <?php ?>> <?php echo lang('pending_confirmation'); ?> </option>
                             <option value="Confirmed" <?php
-                                ?> > <?php echo lang('confirmed'); ?> </option>
+                                ?>> <?php echo lang('confirmed'); ?> </option>
                             <option value="Treated" <?php
-                                ?> > <?php echo lang('treated'); ?> </option>
+                                ?>> <?php echo lang('treated'); ?> </option>
                             <option value="Cancelled" <?php
-                                ?> > <?php echo lang('cancelled'); ?> </option>
+                                ?>> <?php echo lang('cancelled'); ?> </option>
                         </select>
                     </div>
                     <div class="col-md-6 panel">
-                        <label for="exampleInputEmail1"> <?php echo lang('category'); ?> </label> 
-                        <select class="form-control m-bot15" name="category_appointment" value=''> 
-                            <option value="Bed Allotment" <?php ?> > <?php echo lang('bed_allotment'); ?> </option>
-                            <option value="Ambulator" <?php ?> > <?php echo lang('ambulator'); ?> </option>
+                        <label for="exampleInputEmail1"> <?php echo lang('category'); ?> </label>
+                        <select class="form-control m-bot15" name="category_appointment" value=''>
+                            <option value="Bed Allotment" <?php ?>> <?php echo lang('bed_allotment'); ?> </option>
+                            <option value="Ambulator" <?php ?>> <?php echo lang('ambulator'); ?> </option>
 
                         </select>
                     </div>
@@ -461,29 +460,37 @@
 
                         <label class=""><?php echo lang('visit'); ?> <?php echo lang('description'); ?></label>
 
-                        <select class="form-control m-bot15" name="visit_description" id="visit_description" value=''> 
+                        <select class="form-control m-bot15" name="visit_description" id="visit_description" value=''>
 
                         </select>
 
                     </div>
-                    <div class="form-group col-md-12" style="padding-top: 20px;">
+                    <div class="form-group col-md-4" style="padding-top: 20px;">
                         <label for="exampleInputEmail1"><?php echo lang('visit'); ?> <?php echo lang('charges'); ?></label>
-                        <input type="number" class="form-control"  name="visit_charges" id="visit_charges" value='' placeholder="" readonly="">
+                        <input type="number" class="form-control" name="visit_charges" id="visit_charges" value='' placeholder="" readonly="">
                     </div>
-                    <?php if (!$this->ion_auth->in_group(array('Nurse', 'Doctor'))) { ?>    
+                    <div class="form-group col-md-4" style="padding-top: 20px;">
+                        <label for="exampleInputEmail1"><?php echo lang('discount'); ?></label>
+                        <input type="number" class="form-control" name="discount" id="discount" value='0' placeholder="">
+                    </div>
+                    <div class="form-group col-md-4" style="padding-top: 20px;">
+                        <label for="exampleInputEmail1"><?php echo lang('grand_total'); ?></label>
+                        <input type="number" class="form-control" name="grand_total" id="grand_total" value='0' placeholder="" readonly="">
+                    </div>
+                    <?php if (!$this->ion_auth->in_group(array('Nurse', 'Doctor'))) { ?>
                         <div class="col-md-12">
                             <input type="checkbox" id="pay_now_appointment" name="pay_now_appointment" value="pay_now_appointment">
                             <label for=""> <?php echo lang('pay_now'); ?></label><br>
-                            <?php if (!$this->ion_auth->in_group(array('Patient'))) { ?> 
+                            <?php if (!$this->ion_auth->in_group(array('Patient'))) { ?>
                                 <span style="color:red;"><?php echo lang('if_pay_now_checked_please_select_status_to_confirmed') ?></span>
                             <?php } ?>
                         </div>
 
-                        <div class="payment_label col-md-12 hidden deposit_type" style="text-align: left !important ;margin: 0% !important ;"> 
+                        <div class="payment_label col-md-12 hidden deposit_type" style="text-align: left !important ;margin: 0% !important ;">
                             <label for="exampleInputEmail1"><?php echo lang('deposit_type'); ?></label>
 
-                            <div class=""> 
-                                <select class="form-control m-bot15 js-example-basic-single selecttype" id="selecttype" name="deposit_type" value=''> 
+                            <div class="">
+                                <select class="form-control m-bot15 js-example-basic-single selecttype" id="selecttype" name="deposit_type" value=''>
                                     <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist'))) { ?>
                                         <option value="Cash"> <?php echo lang('cash'); ?> </option>
                                         <option value="Card"> <?php echo lang('card'); ?> </option>
@@ -500,7 +507,7 @@
 
 
 
-                            <div class = "card">
+                            <div class="card">
 
                                 <hr>
                                 <?php if ($payment_gateway != 'Paymob') { ?>
@@ -508,7 +515,7 @@
                                         <label for="exampleInputEmail1"> <?php echo lang('accepted'); ?> <?php echo lang('cards'); ?></label>
                                         <div class="payment pad_bot">
                                             <img src="uploads/card.png" width="100%">
-                                        </div> 
+                                        </div>
                                     </div>
                                 <?php }
                                 ?>
@@ -520,9 +527,9 @@
                                         <label for="exampleInputEmail1"> <?php echo lang('card'); ?> <?php echo lang('type'); ?></label>
                                         <select class="form-control m-bot15" name="card_type" value=''>
 
-                                            <option value="Mastercard"> <?php echo lang('mastercard'); ?> </option>   
+                                            <option value="Mastercard"> <?php echo lang('mastercard'); ?> </option>
                                             <option value="Visa"> <?php echo lang('visa'); ?> </option>
-                                            <option value="American Express" > <?php echo lang('american_express'); ?> </option>
+                                            <option value="American Express"> <?php echo lang('american_express'); ?> </option>
                                         </select>
                                     </div>
                                 <?php } ?>
@@ -530,13 +537,13 @@
                                     ?>
                                     <div class="col-md-12 payment pad_bot">
                                         <label for="exampleInputEmail1"> <?php echo lang('cardholder'); ?> <?php echo lang('name'); ?></label>
-                                        <input type="text"  id="cardholder" class="form-control pay_in" name="cardholder" value='' placeholder="">
+                                        <input type="text" id="cardholder" class="form-control pay_in" name="cardholder" value='' placeholder="">
                                     </div>
                                 <?php } ?>
                                 <?php if ($payment_gateway != 'Pay U Money' && $payment_gateway != 'Paystack' && $payment_gateway != 'SSLCOMMERZ' && $payment_gateway != 'Paytm') { ?>
                                     <div class="col-md-12 payment pad_bot">
                                         <label for="exampleInputEmail1"> <?php echo lang('card'); ?> <?php echo lang('number'); ?></label>
-                                        <input type="text"  id="card" class="form-control pay_in" name="card_number" value='' placeholder="">
+                                        <input type="text" id="card" class="form-control pay_in" name="card_number" value='' placeholder="">
                                     </div>
 
 
@@ -548,7 +555,7 @@
                                     <div class="col-md-4 payment pad_bot">
                                         <label for="exampleInputEmail1"> <?php echo lang('cvv'); ?> </label>
                                         <input type="text" class="form-control pay_in" id="cvv" maxlength="3" name="cvv" value='' placeholder="">
-                                    </div> 
+                                    </div>
                                     <?php
                                 }
                                 ?>
@@ -557,9 +564,9 @@
 
                         </div>
                         <div class="col-md-12 panel">
-                            <div class="col-md-3 payment_label"> 
+                            <div class="col-md-3 payment_label">
                             </div>
-                            <div class="col-md-9"> 
+                            <div class="col-md-9">
                                 <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
                                 <div class="form-group cashsubmit payment  right-six col-md-12">
                                     <button type="submit" name="submit2" id="submit1" class="btn btn-info row pull-right"> <?php echo lang('submit'); ?></button>
@@ -567,9 +574,9 @@
                                 <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
                                 <div class="form-group cardsubmit  right-six col-md-12 hidden">
                                     <button type="submit" name="pay_now" id="submit-btn" class="btn btn-info row pull-right" <?php if ($settings->payment_gateway == 'Stripe') {
-                                    ?>onClick="stripePay(event);"<?php }
+                                    ?>onClick="stripePay(event);" <?php }
                                 ?> <?php if ($settings->payment_gateway == '2Checkout' && $twocheckout->status == 'live') {
-                                    ?>onClick="twoCheckoutPay(event);"<?php }
+                                    ?>onClick="twoCheckoutPay(event);" <?php }
                                 ?>> <?php echo lang('submit'); ?></button>
                                 </div>
                             </div>
@@ -586,6 +593,55 @@
 </div>
 <!-- Add Appointment Modal-->
 
+<!-- Add Notes Modal-->
+<div class="modal fade" id="notes" tabindex="-1" role="dialog" aria-labelledby="notesLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title"> Add Note</h4>
+            </div>
+            <div class="modal-body row">
+                <form role="form" id="addNoteForm" action="appointment/addNewNote" method="post" class="clearfix" enctype="multipart/form-data">
+
+                    <div class="col-md-6 panel">
+                        <label for="exampleInputEmail1"> <?php echo lang('doctor'); ?></label>
+                        <select class="form-control m-bot15" id="adoctors_note" name="doctor_notes" value=''>
+
+                        </select>
+                    </div>
+                    <div class="col-md-6 panel">
+                        <label for="exampleInputEmail1"> <?php echo lang('date'); ?></label>
+                        <input type="text" class="form-control default-date-picker" id="date2_notes" readonly="" name="date" id="exampleInputEmail1" value='' placeholder="">
+                    </div>
+                    <div class="col-md-12 panel">
+                        <label for="exampleInputEmail1">Available Slots</label>
+                        <select class="form-control m-bot15" name="time_slot_notes" id="aslots2_notes" value=''>
+
+                        </select>
+                    </div>
+                    <div class="col-md-12 panel">
+                        <label for="favcolor"> Choose your note color</label>
+                        <input class="form-control" type="color" id="choosenColor" name="choosenColor" value="#B0F35E">
+                    </div>
+                    <div class="col-md-12 panel">
+                        <label for="exampleInputEmail1">Details</label></br>
+                        <textarea rows="4" cols="77"  name="remarks_notes" id="exampleInputEmail1" ></textarea>
+                    </div>
+
+
+
+                    <div class="form-group  payment  right-six col-md-12">
+                        <button type="submit" name="submit2" id="submit2" class="btn btn-info row pull-right"> <?php echo lang('submit'); ?></button>
+                    </div>
+
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<!-- Add Notes Modal-->
+
 <div class="modal fade" tabindex="-1" role="dialog" id="cmodal">
     <div class="modal-dialog modal-lg" role="document" style="width: 80%;">
         <div class="modal-content">
@@ -600,7 +656,7 @@
             <div id='medical_history'>
                 <div class="col-md-12">
 
-                </div> 
+                </div>
             </div>
             <div class="modal-footer">
                 <div class="col-md-12">
@@ -621,19 +677,19 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">  <?php echo lang('edit_appointment'); ?></h4>
+                <h4 class="modal-title"> <?php echo lang('edit_appointment'); ?></h4>
             </div>
             <div class="modal-body row">
                 <form role="form" id="editAppointmentForm" action="appointment/addNew" class="clearfix" method="post" enctype="multipart/form-data">
                     <div class="col-md-6 panel">
-                        <label for="exampleInputEmail1"> <?php echo lang('patient'); ?></label> 
-                        <select class="form-control m-bot15  pos_select patient" id="pos_select" name="patient" value=''> 
+                        <label for="exampleInputEmail1"> <?php echo lang('patient'); ?></label>
+                        <select class="form-control m-bot15  pos_select patient" id="pos_select" name="patient" value=''>
 
                         </select>
                     </div>
                     <div class="pos_client clearfix col-md-6">
                         <div class="payment pad_bot pull-right">
-                            <label for="exampleInputEmail1"> <?php echo lang('patient'); ?> <?php echo lang('name'); ?></label> 
+                            <label for="exampleInputEmail1"> <?php echo lang('patient'); ?> <?php echo lang('name'); ?></label>
                             <input type="text" class="form-control pay_in" name="p_name" value='' placeholder="">
                         </div>
                         <div class="payment pad_bot pull-right">
@@ -645,10 +701,10 @@
                             <input type="text" class="form-control pay_in" name="p_phone" value='' placeholder="">
                         </div>
                         <div class="payment pad_bot pull-right">
-                            <label for="exampleInputEmail1"> <?php echo lang('patient'); ?> <?php echo lang('age'); ?></label> 
+                            <label for="exampleInputEmail1"> <?php echo lang('patient'); ?> <?php echo lang('age'); ?></label>
                             <input type="text" class="form-control pay_in" name="p_age" value='' placeholder="">
-                        </div> 
-                        <div class="payment pad_bot"> 
+                        </div>
+                        <div class="payment pad_bot">
                             <label for="exampleInputEmail1"> <?php echo lang('patient'); ?> <?php echo lang('gender'); ?></label>
                             <select class="form-control" name="p_gender" value=''>
 
@@ -658,27 +714,27 @@
                                         echo 'selected';
                                     }
                                 }
-                                ?> > Male </option>   
+                                ?>> Male </option>
                                 <option value="Female" <?php
                                 if (!empty($patient->sex)) {
                                     if ($patient->sex == 'Female') {
                                         echo 'selected';
                                     }
                                 }
-                                ?> > Female </option>
+                                ?>> Female </option>
                                 <option value="Others" <?php
                                 if (!empty($patient->sex)) {
                                     if ($patient->sex == 'Others') {
                                         echo 'selected';
                                     }
                                 }
-                                ?> > Others </option>
+                                ?>> Others </option>
                             </select>
                         </div>
                     </div>
                     <div class="col-md-6 panel">
-                        <label for="exampleInputEmail1">  <?php echo lang('doctor'); ?></label> 
-                        <select class="form-control m-bot15 doctor" id="adoctors1" name="doctor" value=''>  
+                        <label for="exampleInputEmail1"> <?php echo lang('doctor'); ?></label>
+                        <select class="form-control m-bot15 doctor" id="adoctors1" name="doctor" value=''>
 
                         </select>
                     </div>
@@ -688,25 +744,24 @@
                     </div>
                     <div class="col-md-6 panel">
                         <label for="exampleInputEmail1">Available Slots</label>
-                        <select class="form-control m-bot15" name="time_slot" id="aslots1" value=''> 
+                        <select class="form-control m-bot15" name="time_slot" id="aslots1" value=''>
 
                         </select>
                     </div>
                     <div class="col-md-6 panel">
-                        <label for="exampleInputEmail1"> <?php echo lang('appointment'); ?> <?php echo lang('status'); ?></label> 
+                        <label for="exampleInputEmail1"> <?php echo lang('appointment'); ?> <?php echo lang('status'); ?></label>
                         <select class="form-control m-bot15" name="status" value=''>
-                            <option value="Pending Confirmation" <?php ?> > <?php echo lang('pending_confirmation'); ?> </option>
-                            <option value="Confirmed" <?php ?> > <?php echo lang('confirmed'); ?> </option>
-                            <option value="Treated" <?php ?> > <?php echo lang('treated'); ?> </option>
-                            <option value="Cancelled" <?php ?> > <?php echo lang('cancelled'); ?> </option>
+                            <option value="Pending Confirmation" <?php ?>> <?php echo lang('pending_confirmation'); ?> </option>
+                            <option value="Confirmed" <?php ?>> <?php echo lang('confirmed'); ?> </option>
+                            <option value="Treated" <?php ?>> <?php echo lang('treated'); ?> </option>
+                            <option value="Cancelled" <?php ?>> <?php echo lang('cancelled'); ?> </option>
                         </select>
                     </div>
                     <div class="col-md-6 panel">
-                        <label for="exampleInputEmail1"> <?php echo lang('category'); ?> </label> 
-                        <select class="form-control m-bot15" name="category_appointment" value=''> 
-                            <option value="Bed Allotment" <?php ?> > <?php echo lang('bed_allotment'); ?> </option>
-                            <option value="Ambulator" <?php
-                                ?> > <?php echo lang('ambulator'); ?> </option>
+                        <label for="exampleInputEmail1"> <?php echo lang('category'); ?> </label>
+                        <select class="form-control m-bot15" name="category_appointment" value=''>
+                            <option value="Bed Allotment" <?php ?>> <?php echo lang('bed_allotment'); ?> </option>
+                            <option value="Ambulator" <?php ?>> <?php echo lang('ambulator'); ?> </option>
 
                         </select>
                     </div>
@@ -718,18 +773,26 @@
 
                         <label class=""><?php echo lang('visit'); ?> <?php echo lang('description'); ?></label>
 
-                        <select class="form-control m-bot15" name="visit_description" id="visit_description1" value=''> 
+                        <select class="form-control m-bot15" name="visit_description" id="visit_description1" value=''>
 
                         </select>
 
                     </div>
 
                     <input type="hidden" name="id" id="appointment_id" value=''>
-                    <div class="form-group col-md-12 hidden consultant_fee_div" style="padding-top: 20px;">
+                    <div class="form-group col-md-4 hidden consultant_fee_div" style="padding-top: 20px;">
                         <label for="exampleInputEmail1"><?php echo lang('visit'); ?> <?php echo lang('charges'); ?></label>
                         <input type="number" class="form-control" name="visit_charges" id="visit_charges1" value='' placeholder="" readonly="">
                     </div>
-                    <?php if (!$this->ion_auth->in_group(array('Nurse', 'Doctor'))) { ?> 
+                    <div class="form-group col-md-4 hidden consultant_fee_div" style="padding-top: 20px;">
+                        <label for="exampleInputEmail1"><?php echo lang('discount'); ?></label>
+                        <input type="number" class="form-control" name="discount" id="discount1" value='0' placeholder="">
+                    </div>
+                    <div class="form-group col-md-4 hidden consultant_fee_div" style="padding-top: 20px;">
+                        <label for="exampleInputEmail1"><?php echo lang('grand_total'); ?></label>
+                        <input type="number" class="form-control" name="grand_total" id="grand_total1" value='0' placeholder="" readonly="">
+                    </div>
+                    <?php if (!$this->ion_auth->in_group(array('Nurse', 'Doctor'))) { ?>
                         <div class="col-md-12 hidden pay_now">
                             <input type="checkbox" id="pay_now_appointment1" name="pay_now_appointment" value="pay_now_appointment">
                             <label for=""> <?php echo lang('pay_now'); ?></label><br>
@@ -737,15 +800,15 @@
                         </div>
                         <div class="col-md-12 hidden payment_status form-group">
                             <label for=""> <?php echo lang('payment'); ?> <?php echo lang('status'); ?></label><br>
-                            <input type="text"class="form-control" id="pay_now_appointment" name="payment_status_appointment" value="paid" readonly="">
+                            <input type="text" class="form-control" id="pay_now_appointment" name="payment_status_appointment" value="paid" readonly="">
 
 
                         </div>
-                        <div class="payment_label col-md-12 hidden deposit_type1" style="text-align: left !important ;margin: 0% !important ;"> 
+                        <div class="payment_label col-md-12 hidden deposit_type1" style="text-align: left !important ;margin: 0% !important ;">
                             <label for="exampleInputEmail1"><?php echo lang('deposit_type'); ?></label>
 
-                            <div class=""> 
-                                <select class="form-control m-bot15 js-example-basic-single selecttype1" id="selecttype1" name="deposit_type" value=''> 
+                            <div class="">
+                                <select class="form-control m-bot15 js-example-basic-single selecttype1" id="selecttype1" name="deposit_type" value=''>
                                     <?php if ($this->ion_auth->in_group(array('admin', 'Accountant', 'Receptionist'))) { ?>
                                         <option value="Cash"> <?php echo lang('cash'); ?> </option>
                                         <option value="Card"> <?php echo lang('card'); ?> </option>
@@ -762,7 +825,7 @@
 
 
 
-                            <div class = "card">
+                            <div class="card">
 
                                 <hr>
                                 <?php if ($payment_gateway != 'Paymob') { ?>
@@ -770,7 +833,7 @@
                                         <label for="exampleInputEmail1"> <?php echo lang('accepted'); ?> <?php echo lang('cards'); ?></label>
                                         <div class="payment pad_bot">
                                             <img src="uploads/card.png" width="100%">
-                                        </div> 
+                                        </div>
                                     </div>
                                     <?php
                                 }
@@ -782,9 +845,9 @@
                                         <label for="exampleInputEmail1"> <?php echo lang('card'); ?> <?php echo lang('type'); ?></label>
                                         <select class="form-control m-bot15" name="card_type" value=''>
 
-                                            <option value="Mastercard"> <?php echo lang('mastercard'); ?> </option>   
+                                            <option value="Mastercard"> <?php echo lang('mastercard'); ?> </option>
                                             <option value="Visa"> <?php echo lang('visa'); ?> </option>
-                                            <option value="American Express" > <?php echo lang('american_express'); ?> </option>
+                                            <option value="American Express"> <?php echo lang('american_express'); ?> </option>
                                         </select>
                                     </div>
                                 <?php } ?>
@@ -792,13 +855,13 @@
                                     ?>
                                     <div class="col-md-12 payment pad_bot">
                                         <label for="exampleInputEmail1"> <?php echo lang('cardholder'); ?> <?php echo lang('name'); ?></label>
-                                        <input type="text"  id="cardholder1" class="form-control pay_in" name="cardholder" value='' placeholder="">
+                                        <input type="text" id="cardholder1" class="form-control pay_in" name="cardholder" value='' placeholder="">
                                     </div>
                                 <?php } ?>
                                 <?php if ($payment_gateway != 'Pay U Money' && $payment_gateway != 'Paystack' && $payment_gateway != 'SSLCOMMERZ' && $payment_gateway != 'Paytm') { ?>
                                     <div class="col-md-12 payment pad_bot">
                                         <label for="exampleInputEmail1"> <?php echo lang('card'); ?> <?php echo lang('number'); ?></label>
-                                        <input type="text"  id="card1" class="form-control pay_in" name="card_number" value='' placeholder="">
+                                        <input type="text" id="card1" class="form-control pay_in" name="card_number" value='' placeholder="">
                                     </div>
 
 
@@ -810,7 +873,7 @@
                                     <div class="col-md-4 payment pad_bot">
                                         <label for="exampleInputEmail1"> <?php echo lang('cvv'); ?> </label>
                                         <input type="text" class="form-control pay_in" id="cvv1" maxlength="3" name="cvv" value='' placeholder="">
-                                    </div> 
+                                    </div>
                                     <?php
                                 }
                                 ?>
@@ -819,9 +882,9 @@
 
                         </div>
                         <div class="col-md-12 panel">
-                            <div class="col-md-3 payment_label"> 
+                            <div class="col-md-3 payment_label">
                             </div>
-                            <div class="col-md-9"> 
+                            <div class="col-md-9">
                                 <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
                                 <div class="form-group cashsubmit1 payment  right-six col-md-12">
                                     <button type="submit" name="submit2" id="submit1" class="btn btn-info row pull-right"> <?php echo lang('submit'); ?></button>
@@ -829,9 +892,9 @@
                                 <?php $twocheckout = $this->db->get_where('paymentGateway', array('name =' => '2Checkout'))->row(); ?>
                                 <div class="form-group cardsubmit1  right-six col-md-12 hidden">
                                     <button type="submit" name="pay_now" id="submit-btn1" class="btn btn-info row pull-right" <?php if ($settings->payment_gateway == 'Stripe') {
-                                    ?>onClick="stripePay1(event);"<?php }
+                                    ?>onClick="stripePay1(event);" <?php }
                                 ?> <?php if ($settings->payment_gateway == '2Checkout' && $twocheckout->status == 'live') {
-                                    ?>onClick="twoCheckoutPay1(event);"<?php }
+                                    ?>onClick="twoCheckoutPay1(event);" <?php }
                                 ?>> <?php echo lang('submit'); ?></button>
                                 </div>
                             </div>
@@ -864,7 +927,7 @@
                                                 $('.payment_status').addClass('hidden');
                                                 $('.deposit_type1').addClass('hidden');
                                                 $('#editAppointmentForm').find('[name="doctor"]').html(" ");
-                                                  $('#editAppointmentForm').find('[name="patient"]').html(" ");
+                                                $('#editAppointmentForm').find('[name="patient"]').html(" ");
                                                 $('#myModal2').modal('show');
                                                 $.ajax({
                                                     url: 'appointment/editAppointmentByJason?id=' + iid,
@@ -909,13 +972,23 @@
                                                         $('.payment_status').addClass('hidden');
                                                         // $('.deposit_type1').removeClass('hidden');
                                                         $('#editAppointmentForm').find('[name="visit_charges"]').val(response.appointment.visit_charges).end()
+                                                          $('#editAppointmentForm').find('[name="discount"]').val(response.appointment.discount).end()
+                                                            $('#editAppointmentForm').find('[name="grand_total"]').val(response.appointment.grand_total).end()
                                                     } else {
                                                         $('.payment_status').removeClass('hidden');
                                                         $('.pay_now').addClass('hidden');
                                                         $('.consultant_fee_div').addClass('hidden');
                                                         //  $('.deposit_type1').addClass('hidden');
-                                                        $("#editAppointmentForm").find('[id="adoctors1"]').select2([{id: response.doctor.id, text: response.doctor.name + '-' + response.doctor.id, locked: true}]);
-                                                        $("#editAppointmentForm").find('[id="pos_select"]').select2([{id: response.patient.id, text: response.patient.name + '-' + response.patient.id, locked: true}]);
+                                                        $("#editAppointmentForm").find('[id="adoctors1"]').select2([{
+                                                                id: response.doctor.id,
+                                                                text: response.doctor.name + '-' + response.doctor.id,
+                                                                locked: true
+                                                            }]);
+                                                        $("#editAppointmentForm").find('[id="pos_select"]').select2([{
+                                                                id: response.patient.id,
+                                                                text: response.patient.name + '-' + response.patient.id,
+                                                                locked: true
+                                                            }]);
                                                     }
 
 
@@ -939,7 +1012,7 @@
                                                                 .find("option[value=" + response.current_value + "]").attr('selected', true);
                                                         //  $('#aslots1 option[value=' + response.current_value + ']').attr("selected", "selected");
                                                         //   $("#default-step-1 .button-next").trigger("click");
-                                                        if ($('#aslots1').has('option').length == 0) {                    //if it is blank. 
+                                                        if ($('#aslots1').has('option').length == 0) { //if it is blank. 
                                                             $('#aslots1').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
                                                         }
                                                         // Populate the form fields with the data returned from server
@@ -990,16 +1063,7 @@
         });
 
     });
-
-
 </script>
-
-
-
-
-
-
-
 
 
 
@@ -1009,6 +1073,7 @@
             // Get the record's ID via attribute  
             var iid = $('#date').val();
             var doctorr = $('#adoctors').val();
+
             $('#aslots').find('option').remove();
             // $('#default').trigger("reset");
             $.ajax({
@@ -1022,14 +1087,16 @@
                     $('#aslots').append($('<option>').text(value).val(value)).end();
                 });
                 //   $("#default-step-1 .button-next").trigger("click");
-                if ($('#aslots').has('option').length == 0) {                    //if it is blank. 
+                if ($('#aslots').has('option').length == 0) { //if it is blank. 
                     $('#aslots').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
                 }
                 // Populate the form fields with the data returned from server
                 //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
             });
-             $('#visit_description').html(" ");
-                 $('#visit_charges').val(" ");
+
+
+            $('#visit_description').html(" ");
+            $('#visit_charges').val(" ");
             $.ajax({
                 url: 'doctor/getDoctorVisit?id=' + doctorr,
                 method: 'GET',
@@ -1040,13 +1107,58 @@
 
                 $('#visit_description').html(response.response).end();
 
-                //   $("#default-step-1 .button-next").trigger("click");
-                //if ($('#visit_description').has('option').length == 0) {                    //if it is blank. 
-                //   $('#visit_description').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
-                // }
-                // Populate the form fields with the data returned from server
-                //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
             });
+        });
+        //Doctor Change notes
+        $("#adoctors_note").change(function () {
+            // Get the record's ID via attribute  
+            var date_notes = $('#date2_notes').val();
+            var doc_notes = $('#adoctors_note').val();
+
+            $('#aslots2_notes').find('option').remove();
+            $.ajax({
+                url: 'schedule/getAvailableSlotByDoctorByDateByJason?date=' + date_notes + '&doctor=' + doc_notes,
+                method: 'GET',
+                data: '',
+                dataType: 'json',
+            }).success(function (response) {
+                var slots = response.aslots;
+                $.each(slots, function (key, value) {
+                    $('#aslots2_notes').append($('<option>').text(value).val(value)).end();
+                });
+                //   $("#default-step-1 .button-next").trigger("click");
+                if ($('#aslots2_notes').has('option').length == 0) { //if it is blank. 
+                    $('#aslots2_notes').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
+                }
+            });
+
+        });
+
+    });
+
+    //Notes_JS Populate Doc Time slots
+    $(document).ready(function () {
+        var date_notes = $('#date2_notes').val();
+        var doc_notes = $('#adoctors_note').val();
+        $('#aslots2_notes').find('option').remove();
+
+        //DOC_NOTES_SLOTS
+        $.ajax({
+            url: 'schedule/getAvailableSlotByDoctorByDateByJason?date=' + date_notes + '&doctor=' + doc_notes,
+            method: 'GET',
+            data: '',
+            dataType: 'json',
+        }).success(function (response) {
+            var slots = response.aslots;
+            $.each(slots, function (key, value) {
+                $('#aslots2_notes').append($('<option>').text(value).val(value)).end();
+            });
+            //   $("#default-step-1 .button-next").trigger("click");
+            if ($('#aslots2_notes').has('option').length == 0) { //if it is blank. 
+                $('#aslots2_notes').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
+            }
+            // Populate the form fields with the data returned from server
+            //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
         });
 
     });
@@ -1067,7 +1179,7 @@
                 $('#aslots').append($('<option>').text(value).val(value)).end();
             });
             //   $("#default-step-1 .button-next").trigger("click");
-            if ($('#aslots').has('option').length == 0) {                    //if it is blank. 
+            if ($('#aslots').has('option').length == 0) { //if it is blank. 
                 $('#aslots').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
             }
             // Populate the form fields with the data returned from server
@@ -1075,8 +1187,6 @@
         });
 
     });
-
-
 
 
     $(document).ready(function () {
@@ -1087,6 +1197,17 @@
                 //Listen for the change even on the input
                 .change(dateChanged)
                 .on('changeDate', dateChanged);
+    });
+
+    //NOTES Date change js
+    $(document).ready(function () {
+        $('#date2_notes').datepicker({
+            format: "dd-mm-yyyy",
+            autoclose: true,
+        })
+                //Listen for the change even on the input
+                .change(dateChangedNotes)
+                .on('changeDate', dateChangedNotes);
     });
 
     function dateChanged() {
@@ -1106,7 +1227,7 @@
                 $('#aslots').append($('<option>').text(value).val(value)).end();
             });
             //   $("#default-step-1 .button-next").trigger("click");
-            if ($('#aslots').has('option').length == 0) {                    //if it is blank. 
+            if ($('#aslots').has('option').length == 0) { //if it is blank. 
                 $('#aslots').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
             }
 
@@ -1117,21 +1238,35 @@
 
     }
 
+    //DateChanged for Notes
+    function dateChangedNotes() {
+        // Get the record's ID via attribute  
+        var date_notes = $('#date2_notes').val();
+        var doc_notes = $('#adoctors_note').val();
+        $('#aslots2_notes').find('option').remove();
+        // $('#default').trigger("reset");
+        $.ajax({
+            url: 'schedule/getAvailableSlotByDoctorByDateByJason?date=' + date_notes + '&doctor=' + doc_notes,
+            method: 'GET',
+            data: '',
+            dataType: 'json',
+        }).success(function (response) {
+            var slots = response.aslots;
+            $.each(slots, function (key, value) {
+                $('#aslots2_notes').append($('<option>').text(value).val(value)).end();
+            });
+            //   $("#default-step-1 .button-next").trigger("click");
+            if ($('#aslots2_notes').has('option').length == 0) { //if it is blank. 
+                $('#aslots2_notes').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
+            }
 
 
+            // Populate the form fields with the data returned from server
+            //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
+        });
 
+    }
 </script>
-
-
-
-
-
-
-
-
-
-
-
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -1153,14 +1288,14 @@
                     $('#aslots1').append($('<option>').text(value).val(value)).end();
                 });
                 //   $("#default-step-1 .button-next").trigger("click");
-                if ($('#aslots1').has('option').length == 0) {                    //if it is blank. 
+                if ($('#aslots1').has('option').length == 0) { //if it is blank. 
                     $('#aslots1').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
                 }
                 // Populate the form fields with the data returned from server
                 //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
             });
-             $('#visit_description1').html(" ");
-                 $('#visit_charges1').val(" ");
+            $('#visit_description1').html(" ");
+            $('#visit_charges1').val(" ");
             $.ajax({
                 url: 'doctor/getDoctorVisit?id=' + doctorr,
                 method: 'GET',
@@ -1171,14 +1306,9 @@
 
                 $('#visit_description1').html(response.response).end();
 
-                //   $("#default-step-1 .button-next").trigger("click");
-                //if ($('#visit_description').has('option').length == 0) {                    //if it is blank. 
-                //   $('#visit_description').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
-                // }
-                // Populate the form fields with the data returned from server
-                //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
             });
         });
+
     });
 
     $(document).ready(function () {
@@ -1198,7 +1328,7 @@
                 $('#aslots1').append($('<option>').text(value).val(value)).end();
             });
             //   $("#default-step-1 .button-next").trigger("click");
-            if ($('#aslots1').has('option').length == 0) {                    //if it is blank. 
+            if ($('#aslots1').has('option').length == 0) { //if it is blank. 
                 $('#aslots1').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
             }
             // Populate the form fields with the data returned from server
@@ -1238,7 +1368,7 @@
                 $('#aslots1').append($('<option>').text(value).val(value)).end();
             });
             //   $("#default-step-1 .button-next").trigger("click");
-            if ($('#aslots1').has('option').length == 0) {                    //if it is blank. 
+            if ($('#aslots1').has('option').length == 0) { //if it is blank. 
                 $('#aslots1').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
             }
 
@@ -1248,17 +1378,136 @@
         });
 
     }
+</script>
 
 
 
 
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#adoctors2").change(function () {
+            // Get the record's ID via attribute 
+            var id = $('#appointment_id').val();
+            var date = $('#date2').val();
+            var doctorr = $('#adoctors2').val();
+            $('#aslots2').find('option').remove();
+            // $('#default').trigger("reset");
+            $.ajax({
+                url: 'schedule/getAvailableSlotByDoctorByDateByAppointmentIdByJason?date=' + date + '&doctor=' + doctorr + '&appointment_id=' + id,
+                method: 'GET',
+                data: '',
+                dataType: 'json',
+            }).success(function (response) {
+                var slots = response.aslots;
+                $.each(slots, function (key, value) {
+                    $('#aslots2').append($('<option>').text(value).val(value)).end();
+                });
+                //   $("#default-step-1 .button-next").trigger("click");
+                if ($('#aslots2').has('option').length == 0) { //if it is blank. 
+                    $('#aslots2').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
+                }
+                // Populate the form fields with the data returned from server
+                //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
+            });
+            $('#visit_description2').html(" ");
+            $('#visit_charges2').val(" ");
+            $.ajax({
+                url: 'doctor/getDoctorVisit?id=' + doctorr,
+                method: 'GET',
+                data: '',
+                dataType: 'json',
+            }).success(function (response) {
+
+
+                $('#visit_description2').html(response.response).end();
+
+                //   $("#default-step-1 .button-next").trigger("click");
+                //if ($('#visit_description').has('option').length == 0) {                    //if it is blank. 
+                //   $('#visit_description').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
+                // }
+                // Populate the form fields with the data returned from server
+                //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        var id = $('#appointment_id').val();
+        var date = $('#date2').val();
+        var doctorr = $('#adoctors2').val();
+        $('#aslots2').find('option').remove();
+        // $('#default').trigger("reset");
+        $.ajax({
+            url: 'schedule/getAvailableSlotByDoctorByDateByAppointmentIdByJason?date=' + date + '&doctor=' + doctorr + '&appointment_id=' + id,
+            method: 'GET',
+            data: '',
+            dataType: 'json',
+        }).success(function (response) {
+            var slots = response.aslots;
+            $.each(slots, function (key, value) {
+                $('#aslots2').append($('<option>').text(value).val(value)).end();
+            });
+            //   $("#default-step-1 .button-next").trigger("click");
+            if ($('#aslots2').has('option').length == 0) { //if it is blank. 
+                $('#aslots2').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
+            }
+            // Populate the form fields with the data returned from server
+            //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
+        });
+
+    });
+
+
+
+
+    $(document).ready(function () {
+        $('#date2').datepicker({
+            format: "dd-mm-yyyy",
+            autoclose: true,
+        })
+                //Listen for the change even on the input
+                .change(dateChanged1)
+                .on('changeDate', dateChanged1);
+    });
+
+    function dateChanged1() {
+        // Get the record's ID via attribute  
+        var id = $('#appointment_id').val();
+        var iid = $('#date2').val();
+        var doctorr = $('#adoctors2').val();
+        $('#aslots2').find('option').remove();
+        // $('#default').trigger("reset");
+        $.ajax({
+            url: 'schedule/getAvailableSlotByDoctorByDateByAppointmentIdByJason?date=' + iid + '&doctor=' + doctorr + '&appointment_id=' + id,
+            method: 'GET',
+            data: '',
+            dataType: 'json',
+        }).success(function (response) {
+            var slots = response.aslots;
+            $.each(slots, function (key, value) {
+                $('#aslots2').append($('<option>').text(value).val(value)).end();
+            });
+            //   $("#default-step-1 .button-next").trigger("click");
+            if ($('#aslots2').has('option').length == 0) { //if it is blank. 
+                $('#aslots2').append($('<option>').text('No Further Time Slots').val('Not Selected')).end();
+            }
+
+
+            // Populate the form fields with the data returned from server
+            //  $('#default').find('[name="staff"]').val(response.appointment.staff).end()
+        });
+
+    }
 </script>
 
 <script>
     $(document).ready(function () {
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             $.fn.dataTable
-                    .tables({visible: true, api: true})
+                    .tables({
+                        visible: true,
+                        api: true
+                    })
                     .columns.adjust()
                     .responsive.recalc();
         });
@@ -1267,8 +1516,6 @@
 
 
 <script>
-
-
     $(document).ready(function () {
         var table = $('#editable-sample5').DataTable({
             responsive: true,
@@ -1287,19 +1534,45 @@
             dom: "<'row'<'col-sm-3'l><'col-sm-5 text-center'B><'col-sm-4'f>>" +
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
-            buttons: [
-                {extend: 'copyHtml5', exportOptions: {columns: [0, 1, 2, 3, 4, 5], }},
-                {extend: 'excelHtml5', exportOptions: {columns: [0, 1, 2, 3, 4, 5], }},
-                {extend: 'csvHtml5', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5], }},
-                {extend: 'pdfHtml5', exportOptions: {columns: [0, 1, 2, 3, 4, 5], }},
-                {extend: 'print', exportOptions: {columns: [0, 1, 2, 3, 4, 5], }},
+            buttons: [{
+                    extend: 'copyHtml5',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5],
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5],
+                    }
+                },
+                {
+                    extend: 'csvHtml5',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5],
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5],
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5],
+                    }
+                },
             ],
             aLengthMenu: [
                 [10, 25, 50, 100, -1],
                 [10, 25, 50, 100, "All"]
             ],
             iDisplayLength: 100,
-            "order": [[0, "desc"]],
+            "order": [
+                [0, "desc"]
+            ],
             "language": {
                 "lengthMenu": "_MENU_",
                 search: "_INPUT_",
@@ -1310,9 +1583,8 @@
         table.buttons().container().appendTo('.custom_buttons');
     });
 </script>
+
 <script>
-
-
     $(document).ready(function () {
         var table = $('#editable-sample6').DataTable({
             responsive: true,
@@ -1332,19 +1604,45 @@
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
 
-            buttons: [
-                {extend: 'copyHtml5', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
-                {extend: 'excelHtml5', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
-                {extend: 'csvHtml5', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
-                {extend: 'pdfHtml5', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
-                {extend: 'print', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
+            buttons: [{
+                    extend: 'copyHtml5',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
+                {
+                    extend: 'csvHtml5',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
             ],
             aLengthMenu: [
                 [10, 25, 50, 100, -1],
                 [10, 25, 50, 100, "All"]
             ],
             iDisplayLength: 100,
-            "order": [[0, "desc"]],
+            "order": [
+                [0, "desc"]
+            ],
             "language": {
                 "lengthMenu": "_MENU_",
                 search: "_INPUT_",
@@ -1357,8 +1655,6 @@
 </script>
 
 <script>
-
-
     $(document).ready(function () {
         var table = $('#editable-sample1').DataTable({
             responsive: true,
@@ -1378,19 +1674,45 @@
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
 
-            buttons: [
-                {extend: 'copyHtml5', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
-                {extend: 'excelHtml5', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
-                {extend: 'csvHtml5', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
-                {extend: 'pdfHtml5', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
-                {extend: 'print', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
+            buttons: [{
+                    extend: 'copyHtml5',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
+                {
+                    extend: 'csvHtml5',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
             ],
             aLengthMenu: [
                 [10, 25, 50, 100, -1],
                 [10, 25, 50, 100, "All"]
             ],
             iDisplayLength: 100,
-            "order": [[0, "desc"]],
+            "order": [
+                [0, "desc"]
+            ],
             "language": {
                 "lengthMenu": "_MENU_",
                 search: "_INPUT_",
@@ -1401,9 +1723,8 @@
         table.buttons().container().appendTo('.custom_buttons');
     });
 </script>
+
 <script>
-
-
     $(document).ready(function () {
         var table = $('#editable-sample2').DataTable({
             responsive: true,
@@ -1423,19 +1744,45 @@
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
 
-            buttons: [
-                {extend: 'copyHtml5', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
-                {extend: 'excelHtml5', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
-                {extend: 'csvHtml5', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
-                {extend: 'pdfHtml5', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
-                {extend: 'print', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
+            buttons: [{
+                    extend: 'copyHtml5',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
+                {
+                    extend: 'csvHtml5',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
             ],
             aLengthMenu: [
                 [10, 25, 50, 100, -1],
                 [10, 25, 50, 100, "All"]
             ],
             iDisplayLength: 100,
-            "order": [[0, "desc"]],
+            "order": [
+                [0, "desc"]
+            ],
             "language": {
                 "lengthMenu": "_MENU_",
                 search: "_INPUT_",
@@ -1448,8 +1795,6 @@
 </script>
 
 <script>
-
-
     $(document).ready(function () {
         var table = $('#editable-sample3').DataTable({
             responsive: true,
@@ -1469,19 +1814,45 @@
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
 
-            buttons: [
-                {extend: 'copyHtml5', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
-                {extend: 'excelHtml5', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
-                {extend: 'csvHtml5', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
-                {extend: 'pdfHtml5', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
-                {extend: 'print', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
+            buttons: [{
+                    extend: 'copyHtml5',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
+                {
+                    extend: 'csvHtml5',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
             ],
             aLengthMenu: [
                 [10, 25, 50, 100, -1],
                 [10, 25, 50, 100, "All"]
             ],
             iDisplayLength: 100,
-            "order": [[0, "desc"]],
+            "order": [
+                [0, "desc"]
+            ],
             "language": {
                 "lengthMenu": "_MENU_",
                 search: "_INPUT_",
@@ -1494,8 +1865,6 @@
 </script>
 
 <script>
-
-
     $(document).ready(function () {
         var table = $('#editable-sample4').DataTable({
             responsive: true,
@@ -1515,19 +1884,45 @@
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
 
-            buttons: [
-                {extend: 'copyHtml5', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
-                {extend: 'excelHtml5', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
-                {extend: 'csvHtml5', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
-                {extend: 'pdfHtml5', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
-                {extend: 'print', exportOptions: {columns: [0, 0, 1, 2, 3, 4, 5, 5], }},
+            buttons: [{
+                    extend: 'copyHtml5',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
+                {
+                    extend: 'csvHtml5',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 0, 1, 2, 3, 4, 5, 5],
+                    }
+                },
             ],
             aLengthMenu: [
                 [10, 25, 50, 100, -1],
                 [10, 25, 50, 100, "All"]
             ],
             iDisplayLength: 100,
-            "order": [[0, "desc"]],
+            "order": [
+                [0, "desc"]
+            ],
             "language": {
                 "lengthMenu": "_MENU_",
                 search: "_INPUT_",
@@ -1538,11 +1933,13 @@
         table.buttons().container().appendTo('.custom_buttons');
     });
 </script>
+
 <script>
     $(document).ready(function () {
         $(".flashmessage").delay(3000).fadeOut(100);
     });
 </script>
+
 <script>
     $(document).ready(function () {
         $("#visit_description").change(function () {
@@ -1561,9 +1958,17 @@
 
 
                 $('#visit_charges').val(response.response.visit_charges).end();
-
+                var discount = $('#discount').val();
+                $('#grand_total').val(parseFloat(response.response.visit_charges - discount)).end();
 
             });
+        });
+        $("#discount").keyup(function () {
+            // Get the record's ID via attribute  
+            var discount = $(this).val();
+            var price = $('#visit_charges').val();
+            $('#grand_total').val(parseFloat(price - discount)).end();
+
         });
 
     });
@@ -1584,12 +1989,21 @@
 
 
                 $('#visit_charges1').val(response.response.visit_charges).end();
+                var discount = $('#discount1').val();
+                $('#grand_total1').val(parseFloat(response.response.visit_charges - discount)).end();
 
 
             });
         });
+        $("#discount1").keyup(function () {
+            // Get the record's ID via attribute  
+            var discount = $(this).val();
+            var price = $('#visit_charges1').val();
+            $('#grand_total1').val(parseFloat(price - discount)).end();
 
+        });
     });
+
     $(document).ready(function () {
         $("#pos_select").select2({
             placeholder: '<?php echo lang('select_patient'); ?>',
@@ -1657,6 +2071,28 @@
             }
 
         });
+        $("#adoctors_note").select2({
+            placeholder: '<?php echo lang('select_doctor'); ?>',
+            allowClear: true,
+            ajax: {
+                url: 'doctor/getDoctorInfo',
+                type: "post",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        searchTerm: params.term // search term
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+
+        });
         $("#adoctors1").select2({
             placeholder: '<?php echo lang('select_doctor'); ?>',
             allowClear: true,
@@ -1681,6 +2117,7 @@
         });
     });
 </script>
+
 <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
 <script>
     $(document).ready(function () {
@@ -1749,9 +2186,8 @@
 
         })
     });
-
-
 </script>
+
 <script>
     function cardValidation() {
         var valid = true;
@@ -1778,10 +2214,10 @@
 
         return valid;
     }
-//set your publishable key
+    //set your publishable key
     Stripe.setPublishableKey("<?php echo $gateway->publish; ?>");
 
-//callback to handle the response from stripe
+    //callback to handle the response from stripe
     function stripeResponseHandler(status, response) {
         if (response.error) {
             //enable the submit button
@@ -1820,8 +2256,8 @@
             return false;
         }
     }
-
 </script>
+
 <script>
     function cardValidation1() {
         var valid = true;
@@ -1848,10 +2284,10 @@
 
         return valid;
     }
-//set your publishable key
+    //set your publishable key
     Stripe.setPublishableKey("<?php echo $gateway->publish; ?>");
 
-//callback to handle the response from stripe
+    //callback to handle the response from stripe
     function stripeResponseHandler1(status, response) {
         if (response.error) {
             //enable the submit button
@@ -1890,16 +2326,14 @@
             return false;
         }
     }
-
 </script>
 <script src="common/js/moment.min.js"></script>
 
 <script type="text/javascript" src="https://www.2checkout.com/checkout/api/2co.min.js"></script>
-<?php if ($settings->payment_gateway == '2Checkout') { ?> 
+<?php if ($settings->payment_gateway == '2Checkout') { ?>
     <script>
-
-    //   $(document).ready(function () {
-    // Called when token created successfully.
+        //   $(document).ready(function () {
+        // Called when token created successfully.
         var successCallback = function (data) {
             var myForm = document.getElementById('addAppointmentForm');
             // Set the token as the value for the token input
@@ -1909,7 +2343,7 @@
             // IMPORTANT: Here we call `submit()` on the form element directly instead of using jQuery to prevent and infinite token request loop.
             myForm.submit();
         };
-    // Called when token creation fails.
+        // Called when token creation fails.
         var errorCallback = function (data) {
             if (data.errorCode === 200) {
                 tokenRequest();
@@ -1937,15 +2371,15 @@
 
             TCO.requestToken(successCallback, errorCallback, args);
         };
-    //   });
+        //   });
         function twoCheckoutPay(e) {
             e.preventDefault();
 
             // try {
             // Pull in the public encryption key for our environment
             // TCO.loadPubKey('production');
-            TCO.loadPubKey('sandbox', function () {  // for sandbox environment
-                publishableKey = "<?php echo $twocheckout->publishablekey; ?>"//your public key
+            TCO.loadPubKey('sandbox', function () { // for sandbox environment
+                publishableKey = "<?php echo $twocheckout->publishablekey; ?>" //your public key
                 tokenRequest();
             });
             //  $("#editPaymentForm").submit(function (e) {
@@ -1959,14 +2393,14 @@
             //     alert(e.toSource());
             //  }
         }
-    // Pull in the public encryption key for our environment
+        // Pull in the public encryption key for our environment
 
-    //});
+        //});
     </script>
 <?php } ?>
-<?php if ($settings->payment_gateway == '2Checkout') { ?> 
-    <script>
 
+<?php if ($settings->payment_gateway == '2Checkout') { ?>
+    <script>
         //   $(document).ready(function () {
         // Called when token created successfully.
         var successCallback1 = function (data) {
@@ -2013,8 +2447,8 @@
             // try {
             // Pull in the public encryption key for our environment
             // TCO.loadPubKey('production');
-            TCO.loadPubKey('sandbox', function () {  // for sandbox environment
-                publishableKey = "<?php echo $twocheckout->publishablekey; ?>"//your public key
+            TCO.loadPubKey('sandbox', function () { // for sandbox environment
+                publishableKey = "<?php echo $twocheckout->publishablekey; ?>" //your public key
                 tokenRequest1();
             });
             //  $("#editPaymentForm").submit(function (e) {

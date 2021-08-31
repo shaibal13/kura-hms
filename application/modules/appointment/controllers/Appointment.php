@@ -175,7 +175,6 @@ class Appointment extends MX_Controller {
         $app_time = strtotime(date('d-m-Y', $date) . ' ' . $s_time);
         $app_time_full_format = date('d-m-Y', $date) . ' ' . $s_time . '-' . $e_time;
 
-
         $remarks = $this->input->post('remarks');
 
         $sms = $this->input->post('sms');
@@ -210,7 +209,6 @@ class Appointment extends MX_Controller {
         }
 
         $s_time_key = $this->getArrayKey($s_time);
-
 
         $p_name = $this->input->post('p_name');
         $p_email = $this->input->post('p_email');
@@ -315,7 +313,15 @@ class Appointment extends MX_Controller {
             $doctorname = $this->doctor_model->getDoctorById($doctor)->name;
             $patient_details = $this->patient_model->getPatientById($patient);
             $data = array();
-            $data = array(
+           
+           
+            $username = $this->input->post('name');
+            $consultant_fee = $this->input->post('visit_charges');
+           
+            
+            $data_appointment = array();
+          
+                 $data = array(
                 'patient' => $patient,
                 'patientname' => $patientname,
                 'doctor' => $doctor,
@@ -338,21 +344,21 @@ class Appointment extends MX_Controller {
                 'category_appointment' => $this->input->post('category_appointment'),
                 'visit_description' => $this->input->post('visit_description'),
                 'visit_charges' => $this->input->post('visit_charges'),
+                'discount' => $this->input->post('discount'),
+                'grand_total' => $this->input->post('grand_total'),
             );
-            $username = $this->input->post('name');
-            $consultant_fee = $this->input->post('visit_charges');
-            $data_appointment = array();
+           
             $data_appointment = array(
                 'category_name' => 'Consultant Fee',
                 'patient' => $patient,
                 'amount' => $consultant_fee,
                 'doctor' => $doctor,
-                'discount' => '0',
+                'discount' => $this->input->post('discount'),
                 'flat_discount' => '0',
-                'gross_total' => $consultant_fee,
+                'gross_total' => $this->input->post('grand_total'),
                 'status' => 'unpaid',
                 'hospital_amount' => '0',
-                'doctor_amount' => $consultant_fee,
+                'doctor_amount' => $this->input->post('grand_total'),
                 'user' => $user,
                 'patient_name' => $patient_details->name,
                 'patient_phone' => $patient_details->phone,
@@ -364,10 +370,13 @@ class Appointment extends MX_Controller {
             if (empty($id)) {
                 // Adding New department
                 $data['payment_status'] = 'unpaid';
+
                 $this->appointment_model->insertAppointment($data);
                 $appointment_id = $this->db->insert_id('appointment');
-                 $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Appointment with '.$doctorname.' (id='.$appointment_id.' )', $appointment_id);
+                $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Appointment with ' . $doctorname . ' (id=' . $appointment_id . ' )', $appointment_id);
                 $data_appointment['appointment_id'] = $appointment_id;
+                $data_appointment['date'] = time();
+                $data_appointment['date_string'] = date('d-m-Y');
                 $this->finance_model->insertPayment($data_appointment);
                 $inserted_id = $this->db->insert_id('payment');
                 $deposit_type = $this->input->post('deposit_type');
@@ -375,7 +384,6 @@ class Appointment extends MX_Controller {
                 $data_update_payment_id_in_appointment = array('payment_id' => $inserted_id);
                 $this->appointment_model->updateAppointment($appointment_id, $data_update_payment_id_in_appointment);
                 $patient_doctors = explode(',', $patient_doctor);
-
 
                 if (!in_array($doctor, $patient_doctors)) {
                     $patient_doctors[] = $doctor;
@@ -394,7 +402,9 @@ class Appointment extends MX_Controller {
                         'expire_date' => $this->input->post('expire_date'),
                         'cardHoldername' => $this->input->post('cardholder'),
                         'cvv' => $this->input->post('cvv'),
-                        'token' => $this->input->post('token')
+                        'token' => $this->input->post('token'),
+                        'discount' => $this->input->post('discount'),
+                        'grand_total' => $this->input->post('grand_total'),
                     );
                     $date = time();
                     $this->appointmentPayment($deposit_type, $data_for_payment, $patient, $doctor, $consultant_fee, $date, $inserted_id, $redirectlink);
@@ -419,10 +429,13 @@ class Appointment extends MX_Controller {
                     }
                 }
                 $this->appointment_model->updateAppointment($id, $data);
+                
                 $appointment_contingent = $this->appointment_model->getAppointmentById($id);
+                $this->finance_model->updatePayment($appointment_contingent->payment_id, $data_appointment);
                 if ($appointment_contingent->payment_status == 'unpaid') {
                     $pay_now_appointment = $this->input->post('pay_now_appointment');
                     if (!empty($pay_now_appointment)) {
+
                         $deposit_type = $this->input->post('deposit_type');
                         $data_for_payment = array();
                         $data_for_payment = array(
@@ -431,7 +444,9 @@ class Appointment extends MX_Controller {
                             'expire_date' => $this->input->post('expire_date'),
                             'cardHoldername' => $this->input->post('cardholder'),
                             'cvv' => $this->input->post('cvv'),
-                            'token' => $this->input->post('token')
+                            'token' => $this->input->post('token'),
+                            'discount' => $this->input->post('discount'),
+                            'grand_total' => $this->input->post('grand_total'),
                         );
                         $date = time();
                         $this->appointmentPayment($deposit_type, $data_for_payment, $patient, $doctor, $consultant_fee, $date, $appointment_contingent->payment_id, $redirectlink);
@@ -460,6 +475,100 @@ class Appointment extends MX_Controller {
         }
     }
 
+    public function addNewNote() {
+        $id = $this->input->post('id');
+        $doctor = $this->input->post('doctor_notes');
+        $date = $this->input->post('date');
+        $choosenColor = $this->input->post('choosenColor');
+        if (!empty($date)) {
+            $date = strtotime($date);
+        }
+
+        $time_slot = $this->input->post('time_slot_notes');
+
+        $time_slot_explode = explode('To', $time_slot);
+
+        $s_time = trim($time_slot_explode[0]);
+        $e_time = trim($time_slot_explode[1]);
+
+        $app_time = strtotime(date('d-m-Y', $date) . ' ' . $s_time);
+        $app_time_full_format = date('d-m-Y', $date) . ' ' . $s_time . '-' . $e_time;
+
+        $remarks = $this->input->post('remarks_notes');
+
+        $status = $this->input->post('status');
+
+        $user = $this->ion_auth->get_user_id();
+
+        if ((empty($id))) {
+            $add_date = date('m/d/y');
+            $registration_time = time();
+        } else {
+            $add_date = $this->appointment_model->getAppointmentById($id)->add_date;
+            $registration_time = $this->appointment_model->getAppointmentById($id)->registration_time;
+        }
+
+        $s_time_key = $this->getArrayKey($s_time);
+
+        // Validating Password Field
+        $this->form_validation->set_rules('doctor_notes', 'Doctor', 'trim|min_length[1]|max_length[100]|xss_clean');
+
+        // Validating Email Field
+        $this->form_validation->set_rules('date', 'Date', 'trim|required|min_length[1]|max_length[100]|xss_clean');
+        // Validating Email Field
+        $this->form_validation->set_rules('s_time', 'Start Time', 'trim|min_length[1]|max_length[100]|xss_clean');
+        // Validating Email Field
+        $this->form_validation->set_rules('e_time', 'End Time', 'trim|min_length[1]|max_length[100]|xss_clean');
+        // Validating Address Field   
+        $this->form_validation->set_rules('remarks_notes', 'Remarks', 'trim|min_length[1]|max_length[1000]|xss_clean');
+
+        if ($this->form_validation->run() == FALSE) {
+            if (!empty($id)) {
+                redirect("appointment/editAppointment?id=$id");
+            } else {
+                $data['doctors'] = $this->doctor_model->getDoctor();
+                $this->load->view('home/dashboard', $data); // just the header file
+                $this->load->view('add_new', $data);
+                $this->load->view('home/footer'); // just the header file
+            }
+        } else {
+
+            $doctorname = $this->doctor_model->getDoctorById($doctor)->name;
+            $data = array();
+            $data = array(
+                'doctor' => $doctor,
+                'doctorname' => $doctorname,
+                'date' => $date,
+                's_time' => $s_time,
+                'e_time' => $e_time,
+                'time_slot' => $time_slot,
+                'remarks' => $remarks,
+                'add_date' => $add_date,
+                'registration_time' => $registration_time,
+                'status' => $status,
+                's_time_key' => $s_time_key,
+                'user' => $user,
+                'app_time' => $app_time,
+                'app_time_full_format' => $app_time_full_format,
+                'category_appointment' => $this->input->post('category_appointment'),
+                'visit_description' => $this->input->post('visit_description'),
+                'visit_charges' => $this->input->post('visit_charges'),
+                'choosenColor' => $this->input->post('choosenColor'),
+            );
+            if (empty($id)) {
+                // Adding New department
+                $data['payment_status'] = 'unpaid';
+                $notice = $this->appointment_model->insertNotice($data);
+                $appointment_id = $this->db->insert_id('notice');
+                $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Appointment with ' . $doctorname . ' (id=' . $appointment_id . ' )', $appointment_id);
+
+                redirect('appointment');
+            } else {
+                redirect('calendar');
+            }
+        }
+    }
+
     public function appointmentPayment($deposit_type, $data, $patient, $doctor, $consultant_fee, $date, $inserted_id, $redirectlink) {
         $patient_details = $this->patient_model->getPatientById($patient);
         $user = $this->ion_auth->get_user_id();
@@ -479,7 +588,7 @@ class Appointment extends MX_Controller {
                     'date' => $date,
                     'amount' => $consultant_fee,
                     'doctor' => $doctor,
-                    'gross_total' => $consultant_fee,
+                    'gross_total' => $data['grand_total'],
                     //'hospital_amount' => $hospital_amount,
                     // 'doctor_amount' => $doctor_amount,
                     'patient_name' => $patient_details->name,
@@ -487,7 +596,7 @@ class Appointment extends MX_Controller {
                     'patient_address' => $patient_details->address,
                     'doctor_name' => $doctorname,
                     'date_string' => date('d-m-y', $date),
-                    'deposited_amount' => $consultant_fee,
+                    'deposited_amount' => $data['grand_total'],
                     'payment_id' => $inserted_id,
                     'card_type' => $card_type,
                     'card_number' => $card_number,
@@ -511,7 +620,7 @@ class Appointment extends MX_Controller {
                 $stripe = $this->db->get_where('paymentGateway', array('name =' => 'Stripe'))->row();
                 \Stripe\Stripe::setApiKey($stripe->secret);
                 $charge = \Stripe\Charge::create(array(
-                            "amount" => $consultant_fee * 100,
+                            "amount" => $data['grand_total'] * 100,
                             "currency" => "usd",
                             "source" => $token
                 ));
@@ -521,14 +630,14 @@ class Appointment extends MX_Controller {
                         'date' => $date,
                         'patient' => $patient,
                         'payment_id' => $inserted_id,
-                        'deposited_amount' => $consultant_fee,
+                        'deposited_amount' => $data['grand_total'],
                         'amount_received_id' => $inserted_id . '.' . 'gp',
                         'gateway' => 'Stripe',
                         'user' => $user,
                         'payment_from' => 'appointment'
                     );
                     $this->finance_model->insertDeposit($data1);
-                    $data_payment = array('amount_received' => $consultant_fee, 'deposit_type' => $deposit_type, 'status' => 'paid', 'date' => time(), 'date_string' => date('d-m-y', time()));
+                    $data_payment = array('amount_received' => $data['grand_total'], 'deposit_type' => $deposit_type, 'status' => 'paid', 'date' => time(), 'date_string' => date('d-m-y', time()));
                     $this->finance_model->updatePayment($inserted_id, $data_payment);
                     $appointment_id = $this->finance_model->getPaymentById($inserted_id)->appointment_id;
 
@@ -545,11 +654,11 @@ class Appointment extends MX_Controller {
                     $this->session->set_flashdata('feedback', lang('transaction_failed'));
                 }
             } elseif ($gateway == 'Pay U Money') {
-                redirect("payu/check4?deposited_amount=" . $consultant_fee . '&payment_id=' . $inserted_id . '&redirectlink=' . $redirectlink);
+                redirect("payu/check4?deposited_amount=" . $data['grand_total'] . '&payment_id=' . $inserted_id . '&redirectlink=' . $redirectlink);
             } elseif ($gateway == 'Paystack') {
 
                 $ref = date('Y') . '-' . rand() . date('d') . '-' . date('m');
-                $amount_in_kobo = $consultant_fee;
+                $amount_in_kobo = $data['grand_total'];
                 $this->load->module('paystack');
                 $this->paystack->paystack_standard($amount_in_kobo, $ref, $patient, $inserted_id, $this->ion_auth->get_user_id(), $redirectlink);
 
@@ -567,7 +676,7 @@ class Appointment extends MX_Controller {
                 } elseif ($redirectlink == 'request') {
                     $ref = date('Y') . '-' . rand() . date('d') . '-' . date('m') . '-14';
                 }
-                $amount = $consultant_fee;
+                $amount = $data['grand_total'];
                 $this->load->module('paytm');
                 // $configuration=$this->paytm->Configuration();
                 //   if($configuration){
@@ -592,7 +701,7 @@ class Appointment extends MX_Controller {
                 //  $cardHoldername =  $data['cardHoldername'];
                 $cvv = $data['cvv'];
                 $ref = date('Y') . rand() . date('d');
-                $amount = $consultant_fee;
+                $amount = $data['grand_total'];
 
                 $card_number = base64_encode($card_number);
                 $cvv = base64_encode($cvv);
@@ -619,7 +728,7 @@ class Appointment extends MX_Controller {
                 $cardHoldername = $data['cardHoldername'];
                 $cvv = $data['cvv'];
                 $ref = date('Y') . rand() . date('d');
-                $amount = $consultant_fee;
+                $amount = $data['grand_total'];
                 $token = $this->input->post('token');
                 //   $token = $this->input->post('token');
                 //  $card_number = base64_encode($card_number);
@@ -627,7 +736,7 @@ class Appointment extends MX_Controller {
                 //     if ($configuration) {
                 $datapayment = array(
                     'ref' => $ref,
-                    'amount' => $consultant_fee,
+                    'amount' => $data['grand_total'],
                     'patient' => $patient,
                     'insertid' => $inserted_id,
                     'card_type' => $card_type,
@@ -644,7 +753,7 @@ class Appointment extends MX_Controller {
                     $data1 = array(
                         'date' => $date,
                         'patient' => $patient,
-                        'deposited_amount' => $consultant_fee,
+                        'deposited_amount' => $data['grand_total'],
                         'payment_id' => $inserted_id,
                         'amount_received_id' => $inserted_id . '.' . 'gp',
                         'deposit_type' => $deposit_type,
@@ -653,7 +762,7 @@ class Appointment extends MX_Controller {
                     );
                     $this->finance_model->insertDeposit($data1);
 
-                    $data_payment = array('amount_received' => $consultant_fee, 'deposit_type' => $deposit_type, 'status' => 'paid', 'date' => time(), 'date_string' => date('d-m-y', time()));
+                    $data_payment = array('amount_received' => $data['grand_total'], 'deposit_type' => $deposit_type, 'status' => 'paid', 'date' => time(), 'date_string' => date('d-m-y', time()));
                     $this->finance_model->updatePayment($inserted_id, $data_payment);
                     $appointment_id = $this->finance_model->getPaymentById($inserted_id)->appointment_id;
                     $appointment_details = $this->appointment_model->getAppointmentById($appointment_id);
@@ -674,7 +783,7 @@ class Appointment extends MX_Controller {
 
                 $this->load->module('sslcommerzpayment');
 
-                $this->sslcommerzpayment->request_api_hosted($consultant_fee, $patient, $inserted_id, $this->ion_auth->get_user_id(), $redirectlink);
+                $this->sslcommerzpayment->request_api_hosted($data['grand_total'], $patient, $inserted_id, $this->ion_auth->get_user_id(), $redirectlink);
             } else {
                 $this->session->set_flashdata('feedback', lang('payment_failed_no_gateway_selected'));
                 $appointment_id = $this->finance_model->getPaymentById($inserted_id)->appointment_id;
@@ -686,7 +795,7 @@ class Appointment extends MX_Controller {
             $data1 = array(
                 'date' => $date,
                 'patient' => $patient,
-                'deposited_amount' => $consultant_fee,
+                'deposited_amount' => $data['grand_total'],
                 'payment_id' => $inserted_id,
                 'amount_received_id' => $inserted_id . '.' . 'gp',
                 'deposit_type' => $deposit_type,
@@ -695,7 +804,7 @@ class Appointment extends MX_Controller {
             );
             $this->finance_model->insertDeposit($data1);
 
-            $data_payment = array('amount_received' => $consultant_fee, 'deposit_type' => 'Cash', 'status' => 'paid');
+            $data_payment = array('amount_received' => $data['grand_total'], 'deposit_type' => 'Cash', 'status' => 'paid');
             $this->finance_model->updatePayment($inserted_id, $data_payment);
             $appointment_id = $this->finance_model->getPaymentById($inserted_id)->appointment_id;
             $data_appointment_status = array('payment_status' => 'paid');
@@ -1185,18 +1294,18 @@ class Appointment extends MX_Controller {
 
     function getAppointmentByJason() {
 
-
-
         if ($this->ion_auth->in_group(array('Doctor'))) {
             $doctor_ion_id = $this->ion_auth->get_user_id();
             $doctor = $this->db->get_where('doctor', array('ion_user_id' => $doctor_ion_id))->row()->id;
             $query = $this->appointment_model->getAppointmentByDoctor($doctor);
+            $query = $this->appointment_model->getNotesByDoctor($doctor);
         } elseif ($this->ion_auth->in_group(array('Patient'))) {
             $patient_ion_id = $this->ion_auth->get_user_id();
             $patient = $this->db->get_where('patient', array('ion_user_id' => $patient_ion_id))->row()->id;
             $query = $this->appointment_model->getAppointmentByPatient($patient);
         } else {
             $query = $this->appointment_model->getAppointmentForCalendar();
+            $query2 = $this->appointment_model->getNotesForCalendar();
         }
         $jsonevents = array();
 
@@ -1295,6 +1404,90 @@ class Appointment extends MX_Controller {
             );
         }
 
+        foreach ($query2 as $entry) {
+
+            $doctor = $this->doctor_model->getDoctorById($entry->doctor);
+            if (!empty($doctor)) {
+                $doctor = $doctor->name;
+            } else {
+                $doctor = '';
+            }
+            $time_slot = $entry->time_slot;
+            $time_slot_new = explode(' To ', $time_slot);
+            $start_time = explode(' ', $time_slot_new[0]);
+            $end_time = explode(' ', $time_slot_new[1]);
+
+            if ($start_time[1] == 'AM') {
+                $start_time_second = explode(':', $start_time[0]);
+                if ($start_time_second[0] == 12) {
+                    $day_start_time_second = $start_time_second[1] * 60;
+                } else {
+                    $day_start_time_second = $start_time_second[0] * 60 * 60 + $start_time_second[1] * 60;
+                }
+            } else {
+                $start_time_second = explode(':', $start_time[0]);
+                if ($start_time_second[0] == 12) {
+                    $day_start_time_second = 12 * 60 * 60 + $start_time_second[1] * 60;
+                } else {
+                    $day_start_time_second = 12 * 60 * 60 + $start_time_second[0] * 60 * 60 + $start_time_second[1] * 60;
+                }
+            }
+
+            if ($end_time[1] == 'AM') {
+                $end_time_second = explode(':', $end_time[0]);
+                if ($end_time_second[0] == 12) {
+                    $day_end_time_second = $end_time_second[1] * 60;
+                } else {
+                    $day_end_time_second = $end_time_second[0] * 60 * 60 + $end_time_second[1] * 60;
+                }
+            } else {
+                $end_time_second = explode(':', $end_time[0]);
+                if ($end_time_second[0] == 12) {
+                    $day_end_time_second = 12 * 60 * 60 + $end_time_second[1] * 60;
+                } else {
+                    $day_end_time_second = 12 * 60 * 60 + $end_time_second[0] * 60 * 60 + $end_time_second[1] * 60;
+                }
+            }
+
+            $patient_details = $this->patient_model->getPatientById($entry->patient);
+
+            if (!empty($patient_details)) {
+                $patient_mobile = "No patient phone";
+                $patient_name = "No Patient name";
+            } else {
+                $patient_mobile = "No patient phone";
+                $patient_name = "No Patient name";
+            }
+
+            if ($entry->status == 'Pending Confirmation') {
+                $appointment_status = lang('pending_confirmation');
+            } elseif ($entry->status == 'Confirmed') {
+                $appointment_status = lang('confirmed');
+            } elseif ($entry->status == 'Treated') {
+                $appointment_status = lang('treated');
+            } elseif ($entry->status == 'Cancelled') {
+                $appointment_status = lang('cancelled');
+            } elseif ($entry->status == 'Requested') {
+                $appointment_status = lang('requested');
+            }
+
+            $info = '<br>' . lang('doctor') . ': ' . $doctor .
+                    '<br/> Time Slot: ' . $time_slot .
+                    '<br/>' . lang('remarks') . ': ' . '<p>' . $entry->remarks . '</p>';
+
+            $color = $entry->choosenColor;
+
+            $jsonevents[] = array(
+                'id' => "N" + $entry->id,
+                'title' => $info,
+                'description' => 'Click to see note',
+                'start' => date('Y-m-d H:i:s', $entry->date + $day_start_time_second),
+                'end' => date('Y-m-d H:i:s', $entry->date + $day_end_time_second),
+                'color' => $color,
+                'rem' => $entry->remarks,
+            );
+        }
+
         echo json_encode($jsonevents);
 
         //  echo json_encode($data);
@@ -1372,10 +1565,14 @@ class Appointment extends MX_Controller {
     function delete() {
         $data = array();
         $id = $this->input->get('id');
-        $appointment_doctor= $this->appointment_model->getAppointmentById($id)->doctorname;
+        $appointment_doctor = $this->appointment_model->getAppointmentById($id)->doctorname;
+         $appointment = $this->appointment_model->getAppointmentById($id);
+         if($appointment->status=='Request'){
+             $this->finance_model->deletePayment($appointment->payment_id);
+         }
         $doctor_id = $this->input->get('doctor_id');
         $this->appointment_model->delete($id);
-        $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Delete Appointment with '.$appointment_doctor.' (id='.$id.' )', $id);
+        $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Delete Appointment with ' . $appointment_doctor . ' (id=' . $id . ' )', $id);
         $this->session->set_flashdata('feedback', lang('deleted'));
         if (!empty($doctor_id)) {
             redirect('appointment/getAppointmentByDoctorId?id=' . $doctor_id);
@@ -2155,7 +2352,6 @@ class Appointment extends MX_Controller {
         $values = $this->settings_model->getColumnOrder($order, $columns_valid);
         $dir = $values[0];
         $order = $values[1];
-
 
         if ($this->ion_auth->in_group(array('Doctor'))) {
             $doctor_ion_id = $this->ion_auth->get_user_id();
