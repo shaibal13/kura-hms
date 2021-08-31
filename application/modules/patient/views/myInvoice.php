@@ -195,7 +195,7 @@
                                     <th><?php echo lang('type'); ?></th>
                                     <th><?php echo lang('date_to_be_done'); ?></th>
                                     <th><?php echo lang('amount'); ?></th>
-                                    <?php if ($payment->payment_from == 'pre_surgery_medical_analysis' || $payment->payment_from == 'post_surgery_medical_analysis') { ?>
+                                    <?php if ($payment->payment_from == 'case' ||$payment->payment_from == 'pre_surgery_medical_analysis' || $payment->payment_from == 'post_surgery_medical_analysis') { ?>
                                         <th><?php echo lang('discount'); ?></th>
                                         <th><?php echo lang('grand_total'); ?></th>
                                     <?php } ?>
@@ -274,7 +274,7 @@
                                             <?php } ?>
                                             <td class=""> <?php echo $cat_new[4]; ?> </td>
                                             <td class=""><?php echo $settings->currency; ?> <?php echo $cat_new[3]; ?> </td>
-                                            <?php if ($payment->payment_from == 'pre_surgery_medical_analysis' || $payment->payment_from == 'post_surgery_medical_analysis') { ?>
+                                            <?php if ($payment->payment_from == 'case' ||$payment->payment_from == 'pre_surgery_medical_analysis' || $payment->payment_from == 'post_surgery_medical_analysis') { ?>
                                                 <td class=""><?php echo $settings->currency; ?> <?php echo $cat_new[6]; ?> </td>
                                                 <td class=""><?php echo $settings->currency; ?> <?php echo $cat_new[3] - $cat_new[6]; ?> </td>
                                             <?php }
