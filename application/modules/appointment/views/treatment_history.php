@@ -5,7 +5,7 @@
         <!-- page start-->
         <section class="panel">
             <header class="panel-heading">
-              <i class="fa fa-money"></i>   <?php  echo lang('treatment_history'); ?>
+                <i class="fa fa-money"></i>   <?php echo lang('treatment_history'); ?>
             </header>
             <div class="space15"></div>
             <div class="col-md-12">
@@ -21,19 +21,19 @@
                                         if (!empty($from)) {
                                             echo $from;
                                         }
-                                        ?>" placeholder=" <?php  echo lang('date_from'); ?>">
-                                        <span class="input-group-addon"><?php  echo lang('to'); ?></span>
+                                        ?>" placeholder=" <?php echo lang('date_from'); ?>">
+                                        <span class="input-group-addon"><?php echo lang('to'); ?></span>
                                         <input type="text" class="form-control dpd2" name="date_to" value="<?php
                                         if (!empty($to)) {
                                             echo $to;
                                         }
-                                        ?>" placeholder=" <?php  echo lang('date_to'); ?>">
+                                        ?>" placeholder=" <?php echo lang('date_to'); ?>">
                                     </div>
                                     <div class="row"></div>
                                     <span class="help-block"></span> 
                                 </div>
                                 <div class="col-md-6">
-                                    <button type="submit" name="submit" class="btn btn-info range_submit"> <?php  echo lang('submit'); ?></button>
+                                    <button type="submit" name="submit" class="btn btn-info range_submit"> <?php echo lang('submit'); ?></button>
                                 </div>
                             </div>
                         </form>
@@ -61,10 +61,13 @@
                     <table class="table table-striped table-hover table-bordered" id="editable-sample">
                         <thead>
                             <tr>
-                                <th> <?php  echo lang('doctor_id'); ?></th>
-                                <th> <?php  echo lang('doctor'); ?></th>
-                                <th> <?php  echo lang('number_of_patient_treated'); ?></th>
-                                <th> <?php  echo lang('actions'); ?></th>
+                                <th> <?php echo lang('doctor_id'); ?></th>
+                                <th> <?php echo lang('doctor'); ?></th>
+                                <th> <?php echo lang('number_of_patient_treated'); ?></th>
+                                <th> <?php echo lang('amount'); ?></th>
+                                <th> <?php echo lang('discount'); ?></th>
+                                <th> <?php echo lang('total'); ?></th>
+                                <th> <?php echo lang('actions'); ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -93,9 +96,9 @@
                                     <?php
                                     foreach ($appointments as $appointment) {
                                         if ($appointment->doctor == $doctor->id) {
-                                         //   if ($payment->status == 'paid'|| $payment->status == 'paid-last') {
-                                                $appointment_number[] = 1;
-                                         //   }
+                                            //   if ($payment->status == 'paid'|| $payment->status == 'paid-last') {
+                                            $appointment_number[] = 1;
+                                            //   }
                                         }
                                     }
                                     if (!empty($appointment_number)) {
@@ -107,13 +110,46 @@
                                     }
                                     ?>
                                 </td>
-                                 <td> <a class="btn btn-info btn-xs btn_width add_payment_button" style="width: 100px;" href="appointment/getAppointmentByDoctorId?id=<?php echo $doctor->id; ?>"><i class="fa fa-money"></i>  <?php  echo lang('details'); ?></a></td>
-                               
-                               
+                                <?php
+                                $discount = array();
+                                $amount = array();
+                                $grand_total = array();
+                                foreach ($appointments as $appointment) {
+                                    if ($appointment->doctor == $doctor->id) {
+                                       // if ($appointment->payment_status == 'paid') {
+                                            $amount[] = $appointment->visit_charges;
+                                            $discount[] = $appointment->discount;
+                                            $grand_total[] = $appointment->grand_total;
+                                      //  }
+                                    }
+                                }
+                                ?>
+                                <td><?php echo $settings->currency; ?> <?php
+                                    if (!empty($amount)) {
+                                        echo array_sum($amount);
+                                    } else {
+                                        echo '0';
+                                    }
+                                    ?></td>
+                                <td><?php echo $settings->currency; ?> <?php if (!empty($discount)) {
+                                        echo array_sum($discount);
+                                    } else {
+                                        echo '0';
+                                    }
+                                    ?></td>
+                                <td><?php echo $settings->currency; ?> <?php if (!empty($grand_total)) {
+                            echo array_sum($grand_total);
+                        } else {
+                            echo '0';
+                        }
+                        ?></td>
+                                <td> <a class="btn btn-info btn-xs btn_width add_payment_button" style="width: 100px;" href="appointment/getAppointmentByDoctorId?id=<?php echo $doctor->id; ?>"><i class="fa fa-money"></i>  <?php echo lang('details'); ?></a></td>
+
+
                             </tr>
-                            <?php $appointment_number = NULL; ?>
-                            <?php $appointment_total = NULL; ?>
-                        <?php } ?>
+    <?php $appointment_number = NULL; ?>
+    <?php $appointment_total = NULL; ?>
+<?php } ?>
 
 
 
