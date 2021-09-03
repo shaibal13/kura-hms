@@ -56,7 +56,7 @@
                                         <button class="export" onclick="javascript:window.print();">Print</button>  
                                     </div>
                                     <div class="space15"></div>
-                                    <table class="table table-striped table-hover table-bordered" id="editable-sample">
+                                    <table class="table table-striped table-hover table-bordered" id="editable-sample" style="width: 100% !important;">
                                         <thead>
                                             <tr>
                                                 <th> <?php echo lang('id'); ?></th>

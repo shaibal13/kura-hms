@@ -96,8 +96,10 @@
                                     <?php
                                     foreach ($appointments as $appointment) {
                                         if ($appointment->doctor == $doctor->id) {
+                                             if ($appointment->status == 'Treated') {
                                             //   if ($payment->status == 'paid'|| $payment->status == 'paid-last') {
                                             $appointment_number[] = 1;
+                                             }
                                             //   }
                                         }
                                     }
@@ -116,13 +118,16 @@
                                 $grand_total = array();
                                 foreach ($appointments as $appointment) {
                                     if ($appointment->doctor == $doctor->id) {
+                                        if ($appointment->status == 'Treated') {
                                        // if ($appointment->payment_status == 'paid') {
                                             $amount[] = $appointment->visit_charges;
                                             $discount[] = $appointment->discount;
                                             $grand_total[] = $appointment->grand_total;
                                       //  }
+                                        }
                                     }
                                 }
+                                
                                 ?>
                                 <td><?php echo $settings->currency; ?> <?php
                                     if (!empty($amount)) {

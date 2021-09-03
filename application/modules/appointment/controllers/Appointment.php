@@ -313,15 +313,13 @@ class Appointment extends MX_Controller {
             $doctorname = $this->doctor_model->getDoctorById($doctor)->name;
             $patient_details = $this->patient_model->getPatientById($patient);
             $data = array();
-           
-           
+
             $username = $this->input->post('name');
             $consultant_fee = $this->input->post('visit_charges');
-           
-            
+
             $data_appointment = array();
-          
-                 $data = array(
+
+            $data = array(
                 'patient' => $patient,
                 'patientname' => $patientname,
                 'doctor' => $doctor,
@@ -343,11 +341,8 @@ class Appointment extends MX_Controller {
                 'app_time_full_format' => $app_time_full_format,
                 'category_appointment' => $this->input->post('category_appointment'),
                 'visit_description' => $this->input->post('visit_description'),
-                'visit_charges' => $this->input->post('visit_charges'),
-                'discount' => $this->input->post('discount'),
-                'grand_total' => $this->input->post('grand_total'),
             );
-           
+
             $data_appointment = array(
                 'category_name' => 'Consultant Fee',
                 'patient' => $patient,
@@ -370,7 +365,9 @@ class Appointment extends MX_Controller {
             if (empty($id)) {
                 // Adding New department
                 $data['payment_status'] = 'unpaid';
-
+                $data['visit_charges'] = $this->input->post('visit_charges');
+                $data['discount'] = $this->input->post('discount');
+                $data['grand_total'] = $this->input->post('grand_total');
                 $this->appointment_model->insertAppointment($data);
                 $appointment_id = $this->db->insert_id('appointment');
                 $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Add New Appointment with ' . $doctorname . ' (id=' . $appointment_id . ' )', $appointment_id);
@@ -428,11 +425,14 @@ class Appointment extends MX_Controller {
                         $response = $this->sendSmsDuringAppointment($id, $data, $patient, $doctor, $status);
                     }
                 }
-                $this->appointment_model->updateAppointment($id, $data);
-                
                 $appointment_contingent = $this->appointment_model->getAppointmentById($id);
-                $this->finance_model->updatePayment($appointment_contingent->payment_id, $data_appointment);
                 if ($appointment_contingent->payment_status == 'unpaid') {
+                    $data['visit_charges'] = $this->input->post('visit_charges');
+                    $data['discount'] = $this->input->post('discount');
+                    $data['grand_total'] = $this->input->post('grand_total');
+                    $this->appointment_model->updateAppointment($id, $data);
+
+                    $this->finance_model->updatePayment($appointment_contingent->payment_id, $data_appointment);
                     $pay_now_appointment = $this->input->post('pay_now_appointment');
                     if (!empty($pay_now_appointment)) {
 
@@ -451,6 +451,8 @@ class Appointment extends MX_Controller {
                         $date = time();
                         $this->appointmentPayment($deposit_type, $data_for_payment, $patient, $doctor, $consultant_fee, $date, $appointment_contingent->payment_id, $redirectlink);
                     }
+                } else {
+                    $this->appointment_model->updateAppointment($id, $data);
                 }
                 $this->session->set_flashdata('feedback', lang('updated'));
                 if ($redirectlink == 'my_today') {
@@ -1566,10 +1568,10 @@ class Appointment extends MX_Controller {
         $data = array();
         $id = $this->input->get('id');
         $appointment_doctor = $this->appointment_model->getAppointmentById($id)->doctorname;
-         $appointment = $this->appointment_model->getAppointmentById($id);
-         if($appointment->status=='Request'){
-             $this->finance_model->deletePayment($appointment->payment_id);
-         }
+        $appointment = $this->appointment_model->getAppointmentById($id);
+        if ($appointment->status == 'Request') {
+            $this->finance_model->deletePayment($appointment->payment_id);
+        }
         $doctor_id = $this->input->get('doctor_id');
         $this->appointment_model->delete($id);
         $this->log_model->insertLog($this->ion_auth->get_user_id(), date('d-m-Y H:i:s', time()), 'Delete Appointment with ' . $appointment_doctor . ' (id=' . $id . ' )', $id);
